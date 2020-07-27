@@ -171,8 +171,8 @@
 									
 							<ul>
 								<li class="file">
-									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/hello-world/">
-										hello-world
+									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20Adapter---%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
+										01 Adapter---适配器模式
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -393,18 +393,18 @@
 
 <div id="article-content">
 	<h1 id="时序图"><a href="#时序图" class="headerlink" title="时序图"></a>时序图</h1><p>时序图用于描述对象之间的传递消息的时间顺序, 即用例中的行为顺序.当执行一个用例时, 时序图中的每条消息对应了一个类操作或者引起转换的触发事件.<br>在 UML 中, 时序图表示为一个二维的关系图, 其中, 纵轴是时间轴, 时间延竖线向下延伸. 横轴代表在协作中各个独立的对象. 当对象存在时, 生命线用一条虚线表示, 消息用从一个对象的生命线到另一个对象的生命线的箭头表示. 箭头以时间的顺序在图中上下排列.</p>
-<img src="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/01%20%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/1.gif" class="" title="图 1. ATM 用户成功登陆的时序图">
+<img src="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/01%20%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/1.gif" class="" title="图1. ATM 用户成功登陆的时序图">
 <p>时序图中的基本概念</p>
 <ul>
 <li>对象: 时序图中对象使用矩形表示, 并且对象名称下有下划线. 将对象置于时序图的顶部说明在交互开始时对象就已经存在了. 如果对象的位置不在顶部, 表示对象是在交互的过程中被创建的.</li>
 <li>生命线: 生命线是一条垂直的虚线. 表示时序图中的对象在一段生命周期内存在. 每个对象底部中心的位置都带有生命线.</li>
 <li>消息: 两个对象之间的单路通信. 从发送方指向接收方. 在时序图中很少使用返回消息.</li>
-<li>激活: 时序图可以描述对象的激活和钝化. 激活表示该对象被占用以完成某个任务. 钝化指对象处于空闲状态, 等待消息. 在 UML 中, 对象激活时将对象的生命线拓宽为矩形来表示的. 矩形称为计划条或控制期. 对象就是在激活条的顶部被激活的. 对象在完成自己的工作后被钝化.<br>对象的创建和销毁: 在时序图中, 对象的默认位置是在图的顶部. 这说明对象在交互开始之前就已经存在了. 如果对象是在交互过程中创建的, 那么就应该将对象放到中间部分. 如果要撤销一个对象, 在其生命线终止点处放置 “ X” 符号.<br>  练习:  <img src="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/01%20%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/2.gif" class="" title="图 2.孙中山的......">
+<li>激活: 时序图可以描述对象的激活和钝化. 激活表示该对象被占用以完成某个任务. 钝化指对象处于空闲状态, 等待消息. 在 UML 中, 对象激活时将对象的生命线拓宽为矩形来表示的. 矩形称为计划条或控制期. 对象就是在激活条的顶部被激活的. 对象在完成自己的工作后被钝化.<br>对象的创建和销毁: 在时序图中, 对象的默认位置是在图的顶部. 这说明对象在交互开始之前就已经存在了. 如果对象是在交互过程中创建的, 那么就应该将对象放到中间部分. 如果要撤销一个对象, 在其生命线终止点处放置 “ X” 符号.<br>  练习:  <img src="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/01%20%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/2.gif" class="" title="图2.孙中山的......">
 
 </li>
 </ul>
 <h1 id="活动图"><a href="#活动图" class="headerlink" title="活动图"></a>活动图</h1><p>在 UML 中, 活动图本质上就是流程图. 它用于描述系统的活动, 判定点和分支等.</p>
-<img src="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/01%20%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/3.gif" class="" title="图 3.活动图">
+<img src="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/01%20%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/3.gif" class="" title="图3.活动图">
 
 <p>活动图中的基本概念：</p>
 <ul>
@@ -489,7 +489,7 @@
 		</span>
 	
 	<br>
-	Powered by <a href="//fly542.cn" target="_blank">fly542</a>
+	Powered by <a href="//fly542.cn" target="_blank">Fly542</a>
 	</p>
 </div>
 <script>
@@ -501,6 +501,7 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
+
 	<button id="totop-toggle" class="toggle"><i class="fa fa-angle-double-up" aria-hidden="true"></i></button>
 </body>
 </html>

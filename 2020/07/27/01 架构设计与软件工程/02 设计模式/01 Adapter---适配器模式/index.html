@@ -9,7 +9,7 @@
 	
 	<title>
 	
-		Hello World | 
+		Adapter---适配器模式 | 
 	 
 	Fly542
 	</title>
@@ -171,8 +171,8 @@
 									
 							<ul>
 								<li class="file active">
-									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/hello-world/">
-										hello-world
+									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20Adapter---%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
+										01 Adapter---适配器模式
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -378,12 +378,12 @@
 	<div id="content">
 		<h1 id="article-title">
 
-	hello-world
+	01 Adapter---适配器模式
 </h1>
 <div class="article-meta">
 	
 	<span>Fly542</span>
-	<span>2020-07-27 10:26:00</span>
+	<span>2020-07-27 12:20:49</span>
     
 		<div id="article-categories">
             
@@ -392,19 +392,20 @@
 </div>
 
 <div id="article-content">
-	<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+	<h2 id="1-意图："><a href="#1-意图：" class="headerlink" title="1. 意图："></a>1. 意图：</h2><p>将一个类的接口转换为客户希望的另外一个接口。此模式是的原本由于接口不兼容而不能一起工作的那些类可以一起工作</p>
+<h2 id="2-适用性："><a href="#2-适用性：" class="headerlink" title="2. 适用性："></a>2. 适用性：</h2><ol>
+<li>想使用一个已经存在的类，而它的接口不符合你的需求。</li>
+<li>想创建一个可以复用的类，该类可以与其他不相关的类或不可预见的类协同工作</li>
+<li>想使用一些已经存在的类，但是不可能对每一个都进行子类化以匹配他们的接口。对象适配器可以适配他的父类接口</li>
+</ol>
+<img src="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20Adapter---%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/1.png" class="">
+<img src="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20Adapter---%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/2.png" class="">
 
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<h2 id="3-伪代码："><a href="#3-伪代码：" class="headerlink" title="3. 伪代码："></a>3. 伪代码：</h2><p>此模式较为简单，有两种实现方式，一种采用组合方式，另外一种采用继承方式</p>
+<h3 id="3-1-组合方式"><a href="#3-1-组合方式" class="headerlink" title="3.1 组合方式"></a>3.1 组合方式</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"> class Adaptee</span><br><span class="line">&#123;</span><br><span class="line">    public：</span><br><span class="line">        SpecificRequest();</span><br><span class="line">        ....other...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">class Target</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">    virtual void Request(); </span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">class Adapter : public Target</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">    virtual void Request()</span><br><span class="line">    &#123;</span><br><span class="line">        m_daptee.SpecificRequest();</span><br><span class="line">    &#125;</span><br><span class="line">private:</span><br><span class="line">    Adaptee m_daptee;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">void main()</span><br><span class="line">&#123;</span><br><span class="line">    Target * mytarget &#x3D; new Adapter;</span><br><span class="line">    mytarget-&gt;Request();</span><br><span class="line">    delete mytarget;</span><br><span class="line">    mytarget &#x3D; NULL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+<h3 id="3-2-继承方式"><a href="#3-2-继承方式" class="headerlink" title="3.2 继承方式"></a>3.2 继承方式</h3><p>直接将Adapter中的继承替换为多继承，继承Target，同时还继承Adaptee</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Adapter : public Target，public Adaptee</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">    virtual void Request()</span><br><span class="line">    &#123;</span><br><span class="line">        SpecificRequest();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 </div>
 
@@ -412,16 +413,11 @@
     <div class="post-guide">
         <div class="item left">
             
-              <a href="/2020/07/27/03%20%E5%BC%80%E5%8F%91/03%20%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80/02%20Rust/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E6%8F%90%E7%A4%BA%E3%80%8Aremove%20this%20mut%E3%80%8B/">
-                  <i class="fa fa-angle-left" aria-hidden="true"></i>
-                  02 Rust
-              </a>
-            
         </div>
         <div class="item right">
             
-              <a href="/2020/07/27/03%20%E5%BC%80%E5%8F%91/02%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/hello-world/">
-                hello-world
+              <a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/01%20%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/UML%E7%B1%BB%E5%9B%BE%E5%9B%BE%E7%A4%BA%E6%A0%B7%E4%BE%8B/">
+                UML类图图示样例
                 <i class="fa fa-angle-right" aria-hidden="true"></i>
               </a>
             
@@ -470,7 +466,7 @@
 		</span>
 	
 	<br>
-	Powered by <a href="//fly542.cn" target="_blank">fly542</a>
+	Powered by <a href="//fly542.cn" target="_blank">Fly542</a>
 	</p>
 </div>
 <script>
@@ -482,6 +478,7 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
+
 	<button id="totop-toggle" class="toggle"><i class="fa fa-angle-double-up" aria-hidden="true"></i></button>
 </body>
 </html>
