@@ -9,7 +9,7 @@
 	
 	<title>
 	
-		常见架构模式 | 
+		常用git命令 | 
 	 
 	Fly542
 	</title>
@@ -121,7 +121,7 @@
 									</a>
 									
 							<ul>
-								<li class="file active">
+								<li class="file">
 									<a href="/2020/07/25/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/00%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/%E5%B8%B8%E8%A7%81%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F/">
 										常见架构模式
 									</a>
@@ -230,7 +230,7 @@
 							</ul>
 			
 							<ul>
-								<li class="file">
+								<li class="file active">
 									<a href="/2020/07/27/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/01%20%E5%B8%B8%E7%94%A8git%E5%91%BD%E4%BB%A4/">
 										01 常用git命令
 									</a>
@@ -416,12 +416,12 @@
 	<div id="content">
 		<h1 id="article-title">
 
-	常见架构模式
+	01 常用git命令
 </h1>
 <div class="article-meta">
 	
 	<span>Fly542</span>
-	<span>2020-07-25 07:05:25</span>
+	<span>2020-07-27 17:39:42</span>
     
 		<div id="article-categories">
             
@@ -430,20 +430,68 @@
 </div>
 
 <div id="article-content">
-	<h1 id="1-分层模式"><a href="#1-分层模式" class="headerlink" title="1. 分层模式"></a>1. 分层模式</h1><h1 id="2-客户端-服务器模式"><a href="#2-客户端-服务器模式" class="headerlink" title="2. 客户端-服务器模式"></a>2. 客户端-服务器模式</h1><h1 id="3-主从设备模式"><a href="#3-主从设备模式" class="headerlink" title="3. 主从设备模式"></a>3. 主从设备模式</h1><h1 id="4-管道-过滤器模式"><a href="#4-管道-过滤器模式" class="headerlink" title="4. 管道-过滤器模式"></a>4. 管道-过滤器模式</h1><h1 id="5-代理模式"><a href="#5-代理模式" class="headerlink" title="5. 代理模式"></a>5. 代理模式</h1><h1 id="6-点对点模式"><a href="#6-点对点模式" class="headerlink" title="6. 点对点模式"></a>6. 点对点模式</h1><h1 id="7-事件总线模式"><a href="#7-事件总线模式" class="headerlink" title="7. 事件总线模式"></a>7. 事件总线模式</h1><h1 id="8-MVC模式"><a href="#8-MVC模式" class="headerlink" title="8. MVC模式"></a>8. MVC模式</h1><h1 id="9-黑板模式"><a href="#9-黑板模式" class="headerlink" title="9. 黑板模式"></a>9. 黑板模式</h1><h1 id="10-解释器模式"><a href="#10-解释器模式" class="headerlink" title="10. 解释器模式"></a>10. 解释器模式</h1>
+	<h3 id="1-远程主机操作"><a href="#1-远程主机操作" class="headerlink" title="1. 远程主机操作"></a>1. 远程主机操作</h3><pre><code>//查看该主机的详细信息
+git remote show &lt;主机名&gt;
+//添加远程主机，添加后通过《 8.取回远程主机某个分支的更新》来建立本地新的分支
+git remote add &lt;主机名&gt; &lt;网址&gt;
+//删除远程主机
+git remote rm &lt;主机名&gt;
+远程主机的改名
+git remote rename &lt;原主机名&gt; &lt;新主机名&gt;</code></pre><h3 id="2-checkout-远端指定分支"><a href="#2-checkout-远端指定分支" class="headerlink" title="2.checkout 远端指定分支"></a>2.checkout 远端指定分支</h3><pre><code>$ git checkout -b xxxx&lt;本地分支名称&gt; yyyy&lt;远端分支名&gt;</code></pre><h3 id="3-合并多个commit"><a href="#3-合并多个commit" class="headerlink" title="3.合并多个commit"></a>3.合并多个commit</h3><pre><code>$ git rebase -i HEAD~n  
+# 将commit的前n个合并，在出现的窗口中将要合并的pick修改为squash
+$ git push -f</code></pre><h3 id="4-清理远端已经删除的本地分支"><a href="#4-清理远端已经删除的本地分支" class="headerlink" title="4.清理远端已经删除的本地分支"></a>4.清理远端已经删除的本地分支</h3><pre><code>$ git pull -p
+# 等同于下面的命令
+$ git fetch --prune origin 
+$ git fetch -p</code></pre><h3 id="5-删除远端分支"><a href="#5-删除远端分支" class="headerlink" title="5.删除远端分支"></a>5.删除远端分支</h3><pre><code>$ git push origin :xxx
+# 等同于
+$ git push origin --delete xxx</code></pre><h3 id="6-添加标签"><a href="#6-添加标签" class="headerlink" title="6.添加标签"></a>6.添加标签</h3><pre><code>$git tag -a xxx -m&quot;xxxxxxx&quot;
+将标签推送到服务器
+$git push origin tag-name</code></pre><h3 id="7-清理本地没有的tag"><a href="#7-清理本地没有的tag" class="headerlink" title="7.清理本地没有的tag"></a>7.清理本地没有的tag</h3><pre><code>先清理本地所有tag再获取远端的tag
+$ git tag -l | xargs git tag -d
+$ git fetch -t -p -f</code></pre><h3 id="8-推送到远端"><a href="#8-推送到远端" class="headerlink" title="8.推送到远端"></a>8.推送到远端</h3><pre><code>git push &lt;远程主机名&gt; &lt;本地分支名&gt;:&lt;远程分支名&gt;</code></pre><h3 id="9-取回远程主机某个分支的更新"><a href="#9-取回远程主机某个分支的更新" class="headerlink" title="9.取回远程主机某个分支的更新"></a>9.取回远程主机某个分支的更新</h3><pre><code>git pull &lt;远程主机名&gt; &lt;远程分支名&gt;:&lt;本地分支名&gt;</code></pre><h3 id="10-撤销commit，但未git-push的命令"><a href="#10-撤销commit，但未git-push的命令" class="headerlink" title="10.撤销commit，但未git push的命令"></a>10.撤销commit，但未git push的命令</h3><pre><code>git reset --hard id 
+完成撤销,同时将代码恢复到前一commit_id 对应的版本
+git reset id 
+完成Commit命令的撤销，但是不对代码修改进行撤销，可以直接通过git commit 重新提交对本地代码的修改
+git reset --hard HEAD
+撤销当前的所有修改</code></pre><h3 id="11-比较两个版本间的差异"><a href="#11-比较两个版本间的差异" class="headerlink" title="11.比较两个版本间的差异"></a>11.比较两个版本间的差异</h3><pre><code>git diff commit_id_old commit_id_new</code></pre><h3 id="12-更改远端分支"><a href="#12-更改远端分支" class="headerlink" title="12.更改远端分支"></a>12.更改远端分支</h3><pre><code>先删除老的分支
+git push --delete origin old_branch
+修改本地的分支名
+git branch -m old_branch new_branch
+推送本地的新分支到远端
+git push origin new_branch:new_branch</code></pre><h3 id="13-生成patch"><a href="#13-生成patch" class="headerlink" title="13.生成patch"></a>13.生成patch</h3><pre><code>生成从commitid为xxx到当前提交的patch，每个提交一个patch文件, 存放在当前的dir目录下
+git format-patch xxx -o dir</code></pre><h3 id="14-应用patch"><a href="#14-应用patch" class="headerlink" title="14.应用patch"></a>14.应用patch</h3><pre><code>先检测xxx.patch文件是否和当前的版本有冲突
+git apply --check xxx.patch
+再将xxx.patch合并到当前的分支中
+git apply xxx.patch</code></pre><h3 id="15-修改源地址"><a href="#15-修改源地址" class="headerlink" title="15.修改源地址"></a>15.修改源地址</h3><pre><code>git remove set-url origin newaddr</code></pre><h3 id="16-合并某个commit到当前aa分支上"><a href="#16-合并某个commit到当前aa分支上" class="headerlink" title="16.合并某个commit到当前aa分支上"></a>16.合并某个commit到当前aa分支上</h3><pre><code>git checkout aa
+git cherry-pick commit_id
+其中commit_id是某个非aa分支上的commit_id</code></pre><h3 id="17-修改分支名"><a href="#17-修改分支名" class="headerlink" title="17. 修改分支名"></a>17. 修改分支名</h3><pre><code>git  branch -m old_branch new_branch</code></pre><h3 id="18-合并分支多个commit到主分支，使主分支只有有一个干净清晰的log"><a href="#18-合并分支多个commit到主分支，使主分支只有有一个干净清晰的log" class="headerlink" title="18. 合并分支多个commit到主分支，使主分支只有有一个干净清晰的log"></a>18. 合并分支多个commit到主分支，使主分支只有有一个干净清晰的log</h3><pre><code>git checkout master //切换回主分支
+git pull origin master //拉取远端master代码
+git merge --squash 分支名  //如遇冲突就解决冲突
+git commit -m &quot;这里是注释&quot;
+git push origin master //提交master代码到远端</code></pre><h3 id="19-git-submodule-添加子仓库"><a href="#19-git-submodule-添加子仓库" class="headerlink" title="19.git submodule 添加子仓库"></a>19.git submodule 添加子仓库</h3><p>Git Submodule 允许一个git仓库，作为另一个git仓库的子目录，并且保持父项目和子项目相互独立</p>
+<pre><code><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 查看子模块</span><br><span class="line">$ git submodule</span><br><span class="line"># 为当前工程添加指定分支 xx 的 submodule</span><br><span class="line">$ git submodule add -b xx &lt;仓库地址&gt; &lt;本地路径&gt;</span><br><span class="line"># 为当前工程添加submodule</span><br><span class="line">$ git submodule add &lt;仓库地址&gt; &lt;本地路径&gt;</span><br><span class="line"># 下载的工程带有submodule,使用以下命令下载子模块内容</span><br><span class="line">$ git submodule update --init --recursive</span><br><span class="line"># 更新子模块为远程项目的最新版本</span><br><span class="line">$ git submodule update --remote</span><br><span class="line"># 删除子模块需要经过以下4步, 以删除assets文件夹为例</span><br><span class="line">	#1. 删除子模块文件夹</span><br><span class="line">	$ git rm --cached assets</span><br><span class="line">	#2. 删除.gitmodules文件中相关子模块信息</span><br><span class="line">	#3. 删除.git&#x2F;config中的相关子模块信息</span><br><span class="line">	#4. 删除.git文件夹中的相关子模块文件</span><br></pre></td></tr></table></figure></code></pre><h3 id="20-更新源地址"><a href="#20-更新源地址" class="headerlink" title="20 更新源地址"></a>20 更新源地址</h3><pre><code><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git remote set-url origin &lt;new_addr&gt;</span><br></pre></td></tr></table></figure></code></pre><h2 id="二-遇到问题及解决方法"><a href="#二-遇到问题及解决方法" class="headerlink" title="二. 遇到问题及解决方法"></a>二. 遇到问题及解决方法</h2><h3 id="1-git-push-或者-clone-出错"><a href="#1-git-push-或者-clone-出错" class="headerlink" title="1. git push 或者 clone 出错"></a>1. git push 或者 clone 出错</h3><p>出错代码:<br>    <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">error: RPC failed; curl 56 OpenSSL SSL_read: error:1408F119:SSL routines:ssl3_get_record:decryption failed or bad record mac, errno 0</span><br><span class="line">fatal: the remote end hung up unexpectedly</span><br><span class="line">fatal: early EOF</span><br><span class="line">fatal: index-pack failed</span><br></pre></td></tr></table></figure></p>
+<p>解决方法：增大 postbuffer<br>    <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git config --global http.postBuffer 1048576000</span><br></pre></td></tr></table></figure></p>
+<h3 id="21-git-archive-时没有同步submodule"><a href="#21-git-archive-时没有同步submodule" class="headerlink" title="21 git archive 时没有同步submodule"></a>21 git archive 时没有同步submodule</h3><p>在使用 git archive的时候，发现并没有把项目里的submodule里的文件归档过去，只有一个submodule的文件夹</p>
+<p>解决思路：1、先在父目录使用git archive后，再通过git submodule foreach遍历submodule，对sudmodule里的文件进行git archive，这样最后，所有文件都能归档到一个地方了</p>
+<pre><code><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 函数第一个参数为项目名</span><br><span class="line">function pack() &#123;</span><br><span class="line">	PKG_NAME&#x3D;$&#123;1&#125;</span><br><span class="line">	PKG_VERSION&#x3D;$(grep &#39;^Version:&#39; $&#123;PKG_NAME&#125;.spec | awk &#39;&#123;print $2&#125;&#39;)</span><br><span class="line">	cd ..</span><br><span class="line">	curDir&#x3D;&#96;pwd&#96;</span><br><span class="line">	PROJECT_NAME&#x3D;&quot;$&#123;PKG_NAME&#125;-$&#123;PKG_VERSION&#125;&quot;</span><br><span class="line">	git archive --format&#x3D;tar --prefix&#x3D;$PROJECT_NAME&#x2F; HEAD | (tar xpf -) #归档父项目后解压到指定目录</span><br><span class="line">	git submodule foreach | while read subdir; do </span><br><span class="line">		subdir&#x3D;$&#123;subdir#*\&#39;&#125;; #去除最左边的单引号</span><br><span class="line">		subdir&#x3D;$&#123;subdir%*\&#39;&#125;; #去除最右边的单引号</span><br><span class="line">		[ &quot;$&#123;subdir&#125;&quot; &#x3D; &quot;&quot; ] &amp;&amp; continue; #加一步判断，subdir为&quot;&quot;则continue</span><br><span class="line">		echo Running git archive submodules... $&#123;subdir&#125;</span><br><span class="line">		(cd $&#123;subdir&#125; &amp;&amp; git archive --format&#x3D;tar --prefix&#x3D;$&#123;subdir&#125;&#x2F; HEAD | (cd $&#123;curDir&#125;&#x2F;$&#123;PROJECT_NAME&#125;&#x2F; &amp;&amp; tar xpf -)); #归档submodule后解压到父目录</span><br><span class="line">	done</span><br><span class="line"></span><br><span class="line">	tar zcpf $&#123;PROJECT_NAME&#125;.tar.gz $&#123;PROJECT_NAME&#125;</span><br><span class="line">	&#x2F;bin&#x2F;mv -f $&#123;PROJECT_NAME&#125;.tar.gz packaging</span><br><span class="line">	rm -rf $&#123;PKG_NAME&#125;-$&#123;PKG_VERSION&#125;</span><br><span class="line">	cd -</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></code></pre>
 </div>
 
 
     <div class="post-guide">
         <div class="item left">
             
-              <a href="/2020/07/25/03%20%E5%BC%80%E5%8F%91/02%20Rust/rust-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%B0%86u32%E8%BD%AC%E6%8D%A2%E4%B8%BAchar%EF%BC%9F/">
+              <a href="/2020/07/27/03%20%E5%BC%80%E5%8F%91/00%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/MD5%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/">
                   <i class="fa fa-angle-left" aria-hidden="true"></i>
-                  rust-为什么不能将u32转换为char？
+                  MD5算法原理
               </a>
             
         </div>
         <div class="item right">
+            
+              <a href="/2020/07/27/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/00%20%E5%B8%B8%E7%94%A8git%E5%91%BD%E4%BB%A4/">
+                00 常用git命令
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+              </a>
             
         </div>
     </div>

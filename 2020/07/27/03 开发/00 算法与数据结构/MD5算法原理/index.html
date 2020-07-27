@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+	
+	<!-- title -->
+	
+	<title>
+	
+		MD5算法原理 | 
+	 
+	Fly542
+	</title>
+	
+	<!-- keywords,description -->
+	 
+
+	<!-- favicon -->
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+	
+  
+
+	
+<link rel="stylesheet" href="/css/main.css">
+
+	
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/styles/darcula.min.css">
+
+
+	
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/highlight.min.js"></script>
+
+	
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+
+	
+<script src="https://cdn.jsdelivr.net/npm/jquery-pjax@2.0.1/jquery.pjax.min.js"></script>
+
+	
+<script src="/js/main.js"></script>
+
+	
+		
+<script src="https://cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js"></script>
+
+		
+<script src="https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+
+	
+	
+		<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+	
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+	<header id="header">
+    <a id="title" href="/" class="logo">Fly542</a>
+
+	<ul id="menu">
+		<li class="menu-item">
+			<a href="/about" class="menu-item-link">关于我</a>
+		</li>
+		
+		<li class="menu-item">
+			<a href="https://fly542.cn" class="menu-item-link" target="_blank">
+				<i class="fa fa-github fa-2x"></i>
+			</a>
+		</li>
+	</ul>
+</header>
+
+
+	
+<div id="sidebar">
+	<button id="sidebar-toggle" class="toggle" ><i class="fa fa-arrow-right " aria-hidden="true"></i></button>
+	
+	<div id="site-toc">
+		<input id="search-input" class="search-input" type="text" placeholder="search...">
+		<div id="tree">
+			
+
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 操作系统
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+										linux下AIO应用详解
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 架构设计与软件工程
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 架构设计
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/25/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/00%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/%E5%B8%B8%E8%A7%81%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F/">
+										常见架构模式
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 软件工程
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/01%20%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/UML%E7%B1%BB%E5%9B%BE%E5%9B%BE%E7%A4%BA%E6%A0%B7%E4%BE%8B/">
+										UML类图图示样例
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/01%20%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/">
+										时序图、活动图、状态图、协作图的区别
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 设计模式
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20Adapter---%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
+										01 Adapter---适配器模式
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 DevOps
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 程序运维
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/26/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/%E5%AE%9A%E4%BD%8Dcpu%20100_p%E7%9A%84%E6%96%B9%E6%B3%95/">
+										定位cpu 100_p的方法
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 常用软件
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/00%20%E5%B8%B8%E7%94%A8git%E5%91%BD%E4%BB%A4/">
+										00 常用git命令
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/01%20%E5%B8%B8%E7%94%A8git%E5%91%BD%E4%BB%A4/">
+										01 常用git命令
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										03 开发
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 算法与数据结构
+									</a>
+									
+							<ul>
+								<li class="file active">
+									<a href="/2020/07/27/03%20%E5%BC%80%E5%8F%91/00%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/MD5%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/">
+										MD5算法原理
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 C&C++
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/26/03%20%E5%BC%80%E5%8F%91/01%20C&C++/%E5%A4%A7%E7%AB%AF-%E5%B0%8F%E7%AB%AF%E5%AF%B9%E9%BD%90%E5%88%A4%E5%AE%9A%E5%87%BD%E6%95%B0/">
+										大端-小端对齐判定函数
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 Rust
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/25/03%20%E5%BC%80%E5%8F%91/02%20Rust/rust-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%B0%86u32%E8%BD%AC%E6%8D%A2%E4%B8%BAchar%EF%BC%9F/">
+										rust-为什么不能将u32转换为char？
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/03%20%E5%BC%80%E5%8F%91/02%20Rust/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E6%8F%90%E7%A4%BA%E3%80%8Aremove%20this%20mut%E3%80%8B/">
+										为什么函数参数提示《remove this mut》
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										04 网络
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/04%20%E7%BD%91%E7%BB%9C/hello-world/">
+										hello-world
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										05 分布式及数据库
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 传统数据库
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 mysql
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/00%20%E4%BC%A0%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93/00%20mysql/mysql%20%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
+										mysql 常用命令
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 sqlite
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/26/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/00%20%E4%BC%A0%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93/01%20sqlite/sqlite3%20%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/">
+										sqlite3 客户端操作命令
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+		</div>
+	</div>
+</div>
+
+	<!-- 引入正文 -->
+	<div id="content">
+		<h1 id="article-title">
+
+	MD5算法原理
+</h1>
+<div class="article-meta">
+	
+	<span>Fly542</span>
+	<span>2020-07-27 17:51:20</span>
+    
+		<div id="article-categories">
+            
+		</div>
+    
+</div>
+
+<div id="article-content">
+	<h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h1><p>MD5算法是一种消息摘要算法(Message Digest Algorithm)，此算法以任意长度的信息(message)作为输入进行计算，产生一个128-bit(16-byte)的指纹或报文摘要(fingerprint or message digest)。两个不同的message产生相同message digest的几率相当小，从一个给定的message digest逆向产生原始message更是困难(不过据说我国的某个教授很善于从message digest构造message)，因此MD5算法适合用在数字签名应用中。MD5实现简单，在32位的机器上运行速度也相当快，当然实际应用也不仅仅局限于数字签名。</p>
+<h1 id="2-MD5-Algorithm-Description"><a href="#2-MD5-Algorithm-Description" class="headerlink" title="2. MD5 Algorithm Description"></a>2. MD5 Algorithm Description</h1><p>假设输入信息(input message)的长度为b(bit)，我们想要产生它的报文摘要，在此处b为任意的非负整数：b也可能为0，也不一定为8的整数倍，且可能是任意大的长度。设该信息的比特流表示如下：</p>
+<p>M[0] M[1] M[2] … M[b-1]</p>
+<p>计算此信息的报文摘要需要如下5步：</p>
+<h2 id="2-1-Append-Padding-Bits"><a href="#2-1-Append-Padding-Bits" class="headerlink" title="2.1 Append Padding Bits"></a>2.1 Append Padding Bits</h2><p>信息计算前先要进行位补位，设补位后信息的长度为LEN(bit)，则LEN%512 = 448(bit)，即数据扩展至<br>K<em>512+448(bit)。即K</em>64+56(byte)，K为整数。补位操作始终要执行，即使补位前信息的长度对512求余的结果是448。具体补位操作：补一个1，然后补0至满足上述要求。总共最少要补1bit，最多补512bit。</p>
+<h2 id="2-2-Append-Length"><a href="#2-2-Append-Length" class="headerlink" title="2.2 Append Length"></a>2.2 Append Length</h2><p>将输入信息的原始长度b(bit)表示成一个64-bit的数字，把它添加到上一步的结果后面(在32位的机器上，这64位将用2个字来表示并且低位在前)。当遇到b大于2^64这种极少的情况时，b的高位被截去，仅使用b的低64位。经过上面两步，数据就被填补成长度为512(bit)的倍数。也就是说，此时的数据长度是16个字(32byte)的整数倍。此时的数据表示为：</p>
+<p>M[0 … N-1]</p>
+<p>其中的N是16的倍数。</p>
+<h2 id="2-3-Initialize-MD-Buffer"><a href="#2-3-Initialize-MD-Buffer" class="headerlink" title="2.3 Initialize MD Buffer"></a>2.3 Initialize MD Buffer</h2><p>用一个四个字的缓冲器(A，B，C，D)来计算报文摘要，A,B,C,D分别是32位的寄存器，初始化使用的是十六进制表示的数字，注意低字节在前：</p>
+<p>word A: 01 23 45 67<br>word B: 89 ab cd ef<br>word C: fe dc ba 98<br>word D: 76 54 32 10</p>
+<h2 id="2-4-Process-Message-in-16-Word-Blocks"><a href="#2-4-Process-Message-in-16-Word-Blocks" class="headerlink" title="2.4 Process Message in 16-Word Blocks"></a>2.4 Process Message in 16-Word Blocks</h2><p>首先定义4个辅助函数，每个函数的输入是三个32位的字，输出是一个32位的字：</p>
+<p>F(X,Y,Z) = XY v not(X) Z<br>G(X,Y,Z) = XZ v Y not(Z)<br>H(X,Y,Z) = X xor Y xor Z<br>I(X,Y,Z) = Y xor (X v not(Z))</p>
+<p>NOTE：not(X)代表X的按位补运算，X v Y 表示X和Y的按位或运算，X xor Y代表X和Y的按位异或运算，XY代表X和Y的按位与运算。</p>
+<p>具体过程如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;* Process each 16-word block. *&#x2F;</span><br><span class="line">For i &#x3D; 0 to N&#x2F;16-1 do</span><br><span class="line"></span><br><span class="line">&#x2F;* Copy block i into X. *&#x2F;</span><br><span class="line">For j &#x3D; 0 to 15 do</span><br><span class="line">Set X[j] to M[i*16+j].</span><br><span class="line">end &#x2F;* of loop on j *&#x2F;</span><br><span class="line"></span><br><span class="line">&#x2F;* Save A as AA, B as BB, C as CC, and D as DD. *&#x2F;</span><br><span class="line">AA &#x3D; A</span><br><span class="line">BB &#x3D; B</span><br><span class="line">CC &#x3D; C</span><br><span class="line">DD &#x3D; D</span><br><span class="line"></span><br><span class="line">&#x2F;* Round 1. *&#x2F;</span><br><span class="line">&#x2F;* Let [abcd k s i] denote the operation</span><br><span class="line">a &#x3D; b + ((a + F(b,c,d) + X[k] + T[i]) &lt;&lt;&lt; s). *&#x2F;</span><br><span class="line">&#x2F;* Do the following 16 operations. *&#x2F;</span><br><span class="line">[ABCD 0 7 1] [DABC 1 12 2] [CDAB 2 17 3] [BCDA 3 22 4]</span><br><span class="line">[ABCD 4 7 5] [DABC 5 12 6] [CDAB 6 17 7] [BCDA 7 22 8]</span><br><span class="line">[ABCD 8 7 9] [DABC 9 12 10] [CDAB 10 17 11] [BCDA 11 22 12]</span><br><span class="line">[ABCD 12 7 13] [DABC 13 12 14] [CDAB 14 17 15] [BCDA 15 22 16]</span><br><span class="line"></span><br><span class="line">&#x2F;* Round 2. *&#x2F;</span><br><span class="line">&#x2F;* Let [abcd k s i] denote the operation</span><br><span class="line">a &#x3D; b + ((a + G(b,c,d) + X[k] + T[i]) &lt;&lt;&lt; s). *&#x2F;</span><br><span class="line">&#x2F;* Do the following 16 operations. *&#x2F;</span><br><span class="line">[ABCD 1 5 17] [DABC 6 9 18] [CDAB 11 14 19] [BCDA 0 20 20]</span><br><span class="line">[ABCD 5 5 21] [DABC 10 9 22] [CDAB 15 14 23] [BCDA 4 20 24]</span><br><span class="line">[ABCD 9 5 25] [DABC 14 9 26] [CDAB 3 14 27] [BCDA 8 20 28]</span><br><span class="line">[ABCD 13 5 29] [DABC 2 9 30] [CDAB 7 14 31] [BCDA 12 20 32]</span><br><span class="line"></span><br><span class="line">&#x2F;* Round 3. *&#x2F;</span><br><span class="line">&#x2F;* Let [abcd k s t] denote the operation</span><br><span class="line">a &#x3D; b + ((a + H(b,c,d) + X[k] + T[i]) &lt;&lt;&lt; s). *&#x2F;</span><br><span class="line">&#x2F;* Do the following 16 operations. *&#x2F;</span><br><span class="line">[ABCD 5 4 33] [DABC 8 11 34] [CDAB 11 16 35] [BCDA 14 23 36]</span><br><span class="line">[ABCD 1 4 37] [DABC 4 11 38] [CDAB 7 16 39] [BCDA 10 23 40]</span><br><span class="line">[ABCD 13 4 41] [DABC 0 11 42] [CDAB 3 16 43] [BCDA 6 23 44]</span><br><span class="line">[ABCD 9 4 45] [DABC 12 11 46] [CDAB 15 16 47] [BCDA 2 23 48]</span><br><span class="line"></span><br><span class="line">&#x2F;* Round 4. *&#x2F;</span><br><span class="line">&#x2F;* Let [abcd k s t] denote the operation</span><br><span class="line">a &#x3D; b + ((a + I(b,c,d) + X[k] + T[i]) &lt;&lt;&lt; s). *&#x2F;</span><br><span class="line">&#x2F;* Do the following 16 operations. *&#x2F;</span><br><span class="line">[ABCD 0 6 49] [DABC 7 10 50] [CDAB 14 15 51] [BCDA 5 21 52]</span><br><span class="line">[ABCD 12 6 53] [DABC 3 10 54] [CDAB 10 15 55] [BCDA 1 21 56]</span><br><span class="line">[ABCD 8 6 57] [DABC 15 10 58] [CDAB 6 15 59] [BCDA 13 21 60]</span><br><span class="line">[ABCD 4 6 61] [DABC 11 10 62] [CDAB 2 15 63] [BCDA 9 21 64]</span><br><span class="line"></span><br><span class="line">&#x2F;* Then perform the following additions. (That is increment each</span><br><span class="line">of the four registers by the value it had before this block</span><br><span class="line">was started.) *&#x2F;</span><br><span class="line">A &#x3D; A + AA</span><br><span class="line">B &#x3D; B + BB</span><br><span class="line">C &#x3D; C + CC</span><br><span class="line">D &#x3D; D + DD</span><br><span class="line"></span><br><span class="line">end &#x2F;* of loop on i *&#x2F;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-5-Output"><a href="#2-5-Output" class="headerlink" title="2.5 Output"></a>2.5 Output</h2><p>报文摘要的产生后的形式为：A，B，C，D。也就是低位字节A开始，高位字节D结束。</p>
+<h1 id="3-C-Implementation"><a href="#3-C-Implementation" class="headerlink" title="3. C++ Implementation"></a>3. C++ Implementation</h1><p>有了上面5个步骤的算法描述，用C++实现起来就很直接了。需要注意的是在具体实现的时候上述5个步骤的顺序会有所变动，因为在大多数情况下我们都无法或很难提前计算出输入信息的长度b(如输入信息来自文件或网络)。因此在具体实现时Append Padding Bits和Append Length这两步会放在最后面。</p>
+<h1 id="4-Test-Suite"><a href="#4-Test-Suite" class="headerlink" title="4. Test Suite"></a>4. Test Suite</h1><p>由于实现代码比较长，在这里就不贴出来了，在本文后面会提供下载。MD5类的public接口如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">md5.h</span><br><span class="line">class MD5 &#123;</span><br><span class="line">public:</span><br><span class="line">	MD5();</span><br><span class="line">	MD5(const void* input, size_t length);</span><br><span class="line">	MD5(const string&amp; str);</span><br><span class="line">	MD5(ifstream &amp;in);</span><br><span class="line">	void update(const void* input, size_t length);</span><br><span class="line">	void update(const string&amp; str);</span><br><span class="line">	void update(ifstream&amp; in);</span><br><span class="line">	const byte* digest();</span><br><span class="line">	string toString();</span><br><span class="line">	void reset();</span><br><span class="line"> ...</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>下面简单介绍一下具体用法：</p>
+<h2 id="4-1-计算字符串的MD5值"><a href="#4-1-计算字符串的MD5值" class="headerlink" title="4.1 计算字符串的MD5值"></a>4.1 计算字符串的MD5值</h2><p>下面的代码计算字符串”abc”的MD5值并用cout输出：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MD5 md5;</span><br><span class="line">md5.update(&quot;abc&quot;);</span><br><span class="line">cout &lt;&lt; md5.toString() &lt;&lt; endl;</span><br><span class="line">&#x2F;&#x2F;或者更简单点</span><br><span class="line">cout &lt;&lt; MD5(&quot;abc&quot;).toString() &lt;&lt; endl;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-2-计算文件的MD5值"><a href="#4-2-计算文件的MD5值" class="headerlink" title="4.2 计算文件的MD5值"></a>4.2 计算文件的MD5值</h2><p>下面的代码计算文本文件”D:\test.txt”的MD5值并用cout输出，如果是二进制文件打开的时候记得要指定ios::binary模式。另外需要注意的是用来计算的文件必须存在，所以最好在计算前先判断下ifstream的状态。<br>(本来判断ifstream是否有效不该是客户的责任，原本想在ifstream无效时用文件名做参数抛出FileNotFoundException之类的异常，后来却发现从ifstream中居然无法得到文件名…)</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MD5 md5;</span><br><span class="line">md5.update(ifstream(&quot;D:\\test.txt&quot;));</span><br><span class="line">cout &lt;&lt; md5.toString() &lt;&lt; endl;</span><br><span class="line">&#x2F;&#x2F;或者更简单点</span><br><span class="line">cout &lt;&lt; MD5(ifstream(&quot;D:\\test.txt&quot;)).toString() &lt;&lt; endl;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-3-最基本的用法"><a href="#4-3-最基本的用法" class="headerlink" title="4.3 最基本的用法"></a>4.3 最基本的用法</h2><p>上面的用来计算字符串和文件MD5值的接口都是为了方便才提供的，其实最基本的接口是：<br>void update(const void *input, size_t length);<br>update的另外两个重载都是基于它来实现的，下面的代码用上述接口来实现FileDigest函数，该函数用来计算文件的MD5值：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">string FileDigest(const string&amp; file) &#123;</span><br><span class="line">	ifstream in(file.c_str(), ios::binary);</span><br><span class="line">	if (!in) return &quot;&quot;;</span><br><span class="line"></span><br><span class="line">	MD5 md5;</span><br><span class="line">	std::streamsize length;</span><br><span class="line">	char buffer[1024];</span><br><span class="line">	while (!in.eof()) &#123;</span><br><span class="line">		in.read(buffer, 1024);</span><br><span class="line">		length &#x3D; in.gcount();</span><br><span class="line">		if (length &gt; 0)</span><br><span class="line">		md5.update(buffer, length);</span><br><span class="line">	&#125;</span><br><span class="line">	in.close();</span><br><span class="line">	return md5.toString();</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-4-下面看看测试代码："><a href="#4-4-下面看看测试代码：" class="headerlink" title="4.4 下面看看测试代码："></a>4.4 下面看看测试代码：</h2><p>test.cpp</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include &quot;md5.h&quot;</span><br><span class="line">#include &lt;iostream&gt;</span><br><span class="line"></span><br><span class="line">using namespace std;</span><br><span class="line">void PrintMD5(const string&amp; str, MD5&amp; md5) &#123;</span><br><span class="line">	cout &lt;&lt; &quot;MD5(\&quot;&quot; &lt;&lt; str &lt;&lt; &quot;\&quot;) &#x3D; &quot; &lt;&lt; md5.toString() &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">	MD5 md5;</span><br><span class="line">	md5.update(&quot;&quot;);</span><br><span class="line">	PrintMD5(&quot;&quot;, md5);</span><br><span class="line">	</span><br><span class="line">	md5.update(&quot;a&quot;);</span><br><span class="line">	PrintMD5(&quot;a&quot;, md5);</span><br><span class="line">	</span><br><span class="line">	md5.update(&quot;bc&quot;);</span><br><span class="line">	PrintMD5(&quot;abc&quot;, md5);</span><br><span class="line">	</span><br><span class="line">	md5.update(&quot;defghijklmnopqrstuvwxyz&quot;);</span><br><span class="line">	PrintMD5(&quot;abcdefghijklmnopqrstuvwxyz&quot;, md5);</span><br><span class="line">	</span><br><span class="line">	md5.reset();</span><br><span class="line">	md5.update(&quot;message digest&quot;);</span><br><span class="line">	PrintMD5(&quot;message digest&quot;, md5);</span><br><span class="line">	</span><br><span class="line">	md5.reset();</span><br><span class="line">	md5.update(ifstream(&quot;D:\\test.txt&quot;));</span><br><span class="line">	PrintMD5(&quot;D:\\test.txt&quot;, md5);</span><br><span class="line">	</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试结果：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MD5(&quot;&quot;) &#x3D; d41d8cd98f00b204e9800998ecf8427e</span><br><span class="line">MD5(&quot;a&quot;) &#x3D; 0cc175b9c0f1b6a831c399e269772661</span><br><span class="line">MD5(&quot;abc&quot;) &#x3D; 900150983cd24fb0d6963f7d28e17f72</span><br><span class="line">MD5(&quot;abcdefghijklmnopqrstuvwxyz&quot;) &#x3D; c3fcd3d76192e4007dfb496cca67e13b</span><br><span class="line">MD5(&quot;message digest&quot;) &#x3D; f96b697d7cb7938d525a2f31aaf161d0</span><br><span class="line">MD5(&quot;D:\test.txt&quot;) &#x3D; 7ac66c0f148de9519b8bd264312c4d64</span><br></pre></td></tr></table></figure>
+
+<h1 id="5-测试程序"><a href="#5-测试程序" class="headerlink" title="5 测试程序"></a>5 测试程序</h1><a href="/2020/07/27/03%20%E5%BC%80%E5%8F%91/00%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/MD5%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/md5_test.rar" title="md5_test">md5_test</a>
+</div>
+
+
+    <div class="post-guide">
+        <div class="item left">
+            
+        </div>
+        <div class="item right">
+            
+              <a href="/2020/07/27/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/01%20%E5%B8%B8%E7%94%A8git%E5%91%BD%E4%BB%A4/">
+                01 常用git命令
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+              </a>
+            
+        </div>
+    </div>
+
+
+
+	<div id="vcomments"></div>
+
+
+<script>
+	
+		// 评论
+		new Valine({
+			av: AV,
+			el: '#vcomments',
+			notify: false,
+			verify: false,
+			path: window.location.pathname,
+			appId: 'kqRG1YI357MX0zgAERzjbptL-gzGzoHsz',
+			appKey: '2PLYnaLv42a7NAbLhpOadDfj',
+			placeholder: '请输入评论',
+			avatar: 'retro',
+			recordIP: false
+		})
+	
+	
+</script>
+	</div>
+	<div id="footer">
+	<p>
+	©2019-<span id="footerYear"></span> 
+	<a href="/">Fly542</a> 
+	
+	
+		|
+		<span id="busuanzi_container_site_pv">
+			pv
+			<span id="busuanzi_value_site_pv"></span>
+		</span>
+		|
+		<span id="busuanzi_container_site_uv"> 
+			uv
+			<span id="busuanzi_value_site_uv"></span>
+		</span>
+	
+	<br>
+	Powered by <a href="//fly542.cn" target="_blank">Fly542</a>
+	</p>
+</div>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?a630d6a8f1929d069d0a6c8ade4e9add";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+	<button id="totop-toggle" class="toggle"><i class="fa fa-angle-double-up" aria-hidden="true"></i></button>
+</body>
+</html>
