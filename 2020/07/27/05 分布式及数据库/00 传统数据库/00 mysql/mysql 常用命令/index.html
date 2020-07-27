@@ -9,7 +9,7 @@
 	
 	<title>
 	
-		sqlite3 客户端操作命令 | 
+		mysql 常用命令 | 
 	 
 	Fly542
 	</title>
@@ -346,12 +346,32 @@
 								<li class="directory">
 									<a href="#" class="directory">
 										<i class="fa fa-plus-square-o"></i>
-										sqlite
+										00 mysql
 									</a>
 									
 							<ul>
 								<li class="file active">
-									<a href="/2020/07/26/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/00%20%E4%BC%A0%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93/sqlite/sqlite3%20%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/">
+									<a href="/2020/07/27/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/00%20%E4%BC%A0%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93/00%20mysql/mysql%20%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
+										mysql 常用命令
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 sqlite
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/26/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/00%20%E4%BC%A0%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93/01%20sqlite/sqlite3%20%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/">
 										sqlite3 客户端操作命令
 									</a>
 								</li>
@@ -378,12 +398,12 @@
 	<div id="content">
 		<h1 id="article-title">
 
-	sqlite3 客户端操作命令
+	mysql 常用命令
 </h1>
 <div class="article-meta">
 	
 	<span>Fly542</span>
-	<span>2020-07-26 22:25:55</span>
+	<span>2020-07-27 12:28:10</span>
     
 		<div id="article-categories">
             
@@ -392,17 +412,48 @@
 </div>
 
 <div id="article-content">
-	<p>导出查询内容到文件中</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sqlite3 www_cache.db;</span><br><span class="line">sqlite&gt; .output 1.txt</span><br><span class="line">sqlite&gt; select path,size from file_info;</span><br><span class="line">sqlite&gt; .output stdout</span><br></pre></td></tr></table></figure>
-
-<h1 id="直接执行后面的sql语句"><a href="#直接执行后面的sql语句" class="headerlink" title="直接执行后面的sql语句"></a>直接执行后面的sql语句</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sqlite3 data1&#x2F;www&#x2F;uri_meta.db &quot;select count(*) from uri_meta&quot;</span><br></pre></td></tr></table></figure>
-
-<p>#查询表结构信息</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sqlite3 &#x2F;opt&#x2F;soft&#x2F;cachedb&#x2F;data&#x2F;data1&#x2F;www&#x2F;uri_meta.db &quot;select * from sqlite_master &quot;</span><br></pre></td></tr></table></figure>
-
-<p>#统计记录数，通过查询mtime列快速查询记录数</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sqlite3 &#x2F;opt&#x2F;soft&#x2F;cachedb&#x2F;data&#x2F;data1&#x2F;www&#x2F;uri_meta.db &quot;select count(mtime) from uri_meta &quot;</span><br></pre></td></tr></table></figure>
-
+	<ul>
+<li><p>显示当前的缓存状态<br><code>show variables like &#39;%query_cache%&#39;;</code></p>
+</li>
+<li><p>显示当前的存储类型<br><code>show engines;</code></p>
+</li>
+<li><p>删除数据库test_db下所有表<br><code>select concat(&#39;drop table &#39;,table_name,&#39;;&#39;) from information_schema.tables where table_schema=&#39;test_db&#39;;</code></p>
+</li>
+<li><p>清空表数据<br>truncate tablename;</p>
+</li>
+<li><p>查询库csgw中所有表的记录数<br><code>use information_schema</code><br><code>select table_name,table_rows from tables where TABLE_SCHEMA=&#39;csgw&#39; order by table_rows desc;</code></p>
+</li>
+<li><p>显示当前数据库的user表结构<br>show columns from user;</p>
+</li>
+<li><p>切换当前数据库到whb_test<br><code>user whb_test;</code></p>
+</li>
+<li><p>创建一个user表，主键为name，20字符，passwd字段为64字符不能为空<br><code>CREATE TABLE user(name VARCHAR(20) not null primary key, passwd VARCHAR(64) not null, id int(4));</code></p>
+</li>
+<li><p>给一个用户赋予数据库权限</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">语法：mysql&gt; grant 权限1,权限2,...权限n on 数据库名称.表名称 to 用户名@用户地址 identified by &#39;连接口令&#39;;</span><br><span class="line">权限1,权限2,...权限n代表</span><br><span class="line">select,insert,update,delete,create,drop,index,alter,grant,references,reload,shutdown,process,file等14个权限</span><br><span class="line"></span><br><span class="line">实例：mysql&gt;grant select,insert,update,delete,create,drop on whb_test.employee to joe@10.163.225.87 identified by &#39;123456&#39;;</span><br><span class="line">给来自10.163.225.87的用户joe分配可对数据库whb_test的employee表进行select,insert,update,delete,create,drop等操作的权限，并设定口令为123456。</span><br><span class="line">mysql&gt;grant all privileges on whb_test.* to whb@10.163.225.87 identified by &#39;123456&#39;;</span><br><span class="line">给来自10.163.225.87的用户whb分配可对数据库whb_test所有表进行所有操作的权限，并设定口令为123。</span><br><span class="line">mysql&gt;grant all privileges on *.* to joe@10.163.225.87 identified by &#39;123&#39;;</span><br><span class="line">给来自10.163.225.87的用户joe分配可对所有数据库的所有表进行所有操作的权限，并设定口令为123。</span><br><span class="line">mysql&gt;grant all privileges on *.* to joe@localhost identified by &#39;123&#39;;</span><br><span class="line">给本机用户joe分配可对所有数据库的所有表进行所有操作的权限，并设定口令为123。</span><br><span class="line"></span><br><span class="line">刷新权限：</span><br><span class="line">FLUSH   PRIVILEGES;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建一个名为whb_test的数据库<br><code>CREATE DATABASE whb_test CHARACTER SET &#39;utf8&#39; COLLATE &#39;utf8_general_ci&#39;;</code></p>
+</li>
+<li><p>用whb用户登录172.16.1.110服务器的mysql：<br><code>mysql -uwhb -p -h 172.16.1.110</code><br>使用此方法登录必须有ip</p>
+</li>
+<li><p>删除一个用户名为whb的用户</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">drop user &#39;whb&#39;@&#39;%&#39;; </span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建一个用户名为whb，密码为123456的用户<br><code>create user whb identified by &#39;123456&#39;;</code></p>
+</li>
+<li><p>创建一个密码为123456的用户test_user，对所有数据库有操作权限<br><code>grant select,insert,update,delete on *.* to test_user@&quot;%&quot; Identified by &quot;123456&quot;;</code></p>
+</li>
+<li><p>登录方法：<br><code>mysql -uxxxx -pxxxx --host=192.168.1.110</code></p>
+</li>
+<li><p>root登录</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql -uroot -p123456 mysql</span><br><span class="line">mysql -utest_user -p123456 -h 192.168.188.125 -P 3306</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看mytable表编码格式<br><code>show create table mytable;</code></p>
+</li>
+<li><p>查看test数据库的编码格式<br><code>show create database test;</code></p>
+</li>
+</ul>
+<p>设置数据库db_name默认为utf8:<br>???</p>
 
 </div>
 
@@ -410,16 +461,11 @@
     <div class="post-guide">
         <div class="item left">
             
-              <a href="/2020/07/26/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/%E5%AE%9A%E4%BD%8Dcpu%20100_p%E7%9A%84%E6%96%B9%E6%B3%95/">
-                  <i class="fa fa-angle-left" aria-hidden="true"></i>
-                  
-              </a>
-            
         </div>
         <div class="item right">
             
-              <a href="/2020/07/26/03%20%E5%BC%80%E5%8F%91/03%20%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80/00%20C&C++/%E5%A4%A7%E7%AB%AF-%E5%B0%8F%E7%AB%AF%E5%AF%B9%E9%BD%90%E5%88%A4%E5%AE%9A%E5%87%BD%E6%95%B0/">
-                大端-小端对齐判定函数
+              <a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20Adapter---%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
+                
                 <i class="fa fa-angle-right" aria-hidden="true"></i>
               </a>
             
