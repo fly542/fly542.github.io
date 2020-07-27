@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+	
+	<!-- title -->
+	
+	<title>
+	
+		为什么函数参数提示《remove this mut》 | 
+	 
+	Fly542
+	</title>
+	
+	<!-- keywords,description -->
+	 
+
+	<!-- favicon -->
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+	
+  
+
+	
+<link rel="stylesheet" href="/css/main.css">
+
+	
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/styles/darcula.min.css">
+
+
+	
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/highlight.min.js"></script>
+
+	
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+
+	
+<script src="https://cdn.jsdelivr.net/npm/jquery-pjax@2.0.1/jquery.pjax.min.js"></script>
+
+	
+<script src="/js/main.js"></script>
+
+	
+		
+<script src="https://cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js"></script>
+
+		
+<script src="https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+
+	
+	
+		<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+	
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+	<header id="header">
+    <a id="title" href="/" class="logo">Fly542</a>
+
+	<ul id="menu">
+		<li class="menu-item">
+			<a href="/about" class="menu-item-link">关于我</a>
+		</li>
+		
+		<li class="menu-item">
+			<a href="https://fly542.cn" class="menu-item-link" target="_blank">
+				<i class="fa fa-github fa-2x"></i>
+			</a>
+		</li>
+	</ul>
+</header>
+
+
+	
+<div id="sidebar">
+	<button id="sidebar-toggle" class="toggle" ><i class="fa fa-arrow-right " aria-hidden="true"></i></button>
+	
+	<div id="site-toc">
+		<input id="search-input" class="search-input" type="text" placeholder="search...">
+		<div id="tree">
+			
+
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 操作系统
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+										linux下AIO应用详解
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 架构设计与软件工程
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 架构设计
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/25/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/00%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/%E5%B8%B8%E8%A7%81%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F/">
+										常见架构模式
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 软件工程
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/01%20%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/UML%E7%B1%BB%E5%9B%BE%E5%9B%BE%E7%A4%BA%E6%A0%B7%E4%BE%8B/">
+										UML类图图示样例
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/01%20%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/">
+										时序图、活动图、状态图、协作图的区别
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 设计模式
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/hello-world/">
+										hello-world
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 DevOps
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 程序运维
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/26/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/%E5%AE%9A%E4%BD%8Dcpu%20100_p%E7%9A%84%E6%96%B9%E6%B3%95/">
+										定位cpu 100_p的方法
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										03 开发
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 算法与数据结构
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/03%20%E5%BC%80%E5%8F%91/02%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/hello-world/">
+										hello-world
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										03 开发语言
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 C&C++
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/26/03%20%E5%BC%80%E5%8F%91/03%20%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80/00%20C&C++/%E5%A4%A7%E7%AB%AF-%E5%B0%8F%E7%AB%AF%E5%AF%B9%E9%BD%90%E5%88%A4%E5%AE%9A%E5%87%BD%E6%95%B0/">
+										大端-小端对齐判定函数
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 Rust
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/25/03%20%E5%BC%80%E5%8F%91/03%20%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80/02%20Rust/rust-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%B0%86u32%E8%BD%AC%E6%8D%A2%E4%B8%BAchar%EF%BC%9F/">
+										rust-为什么不能将u32转换为char？
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file active">
+									<a href="/2020/07/27/03%20%E5%BC%80%E5%8F%91/03%20%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80/02%20Rust/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E6%8F%90%E7%A4%BA%E3%80%8Aremove%20this%20mut%E3%80%8B/">
+										为什么函数参数提示《remove this mut》
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										04 网络
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/04%20%E7%BD%91%E7%BB%9C/hello-world/">
+										hello-world
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										05 分布式及数据库
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 传统数据库
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										sqlite
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/26/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/00%20%E4%BC%A0%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93/sqlite/sqlite3%20%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/">
+										sqlite3 客户端操作命令
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+		</div>
+	</div>
+</div>
+
+	<!-- 引入正文 -->
+	<div id="content">
+		<h1 id="article-title">
+
+	为什么函数参数提示《remove this mut》
+</h1>
+<div class="article-meta">
+	
+	<span>Fly542</span>
+	<span>2020-07-27 10:26:00</span>
+    
+		<div id="article-categories">
+            
+		</div>
+    
+</div>
+
+<div id="article-content">
+	<p>翻译自《<a href="https://www.snoyman.com/blog/2020/05/no-mutable-parameters-in-rust》" target="_blank" rel="noopener">https://www.snoyman.com/blog/2020/05/no-mutable-parameters-in-rust》</a></p>
+<p>在回顾Begin Rust书中的倒数第二章时，出现了一个稍微高级的话题。这个话题引起了我一段时间的兴趣，特别是因为它展示了Rust和Haskell如何处理可变性的一些根本差异。该主题对于本书而言太高了，但是我想提供一个外部资源，以供有好奇心的人参考。就是这里！</p>
+<p>让我们逐步构建它。以下程序可以编译吗？</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">fn main() &#123;</span><br><span class="line">    let x &#x3D; 5;</span><br><span class="line">    x +&#x3D; 1;</span><br><span class="line">    println!(&quot;x &#x3D;&#x3D; &#123;&#125;&quot;, x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>答：不！x是一个不可变的变量，因此不能+= 1在其上使用。解决这个问题很容易：add mut：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">fn main() &#123;</span><br><span class="line">    let mut x &#x3D; 5;</span><br><span class="line">    x +&#x3D; 1;</span><br><span class="line">    println!(&quot;x &#x3D;&#x3D; &#123;&#125;&quot;, x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是由于加1和打印在我的应用程序中是如此重要（是的，这很讽刺），所以我决定将其提取为自己的函数。告诉我，这段代码可以编译吗？</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">fn add_and_print(x: i32) &#123;</span><br><span class="line">    x +&#x3D; 1;</span><br><span class="line">    println!(&quot;x &#x3D;&#x3D; &#123;&#125;&quot;, x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不，并且出于与第一个示例相同的原因：x是不可变的。修复也很容易：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">fn add_and_print(mut x: i32) &#123;</span><br><span class="line">    x +&#x3D; 1;</span><br><span class="line">    println!(&quot;x &#x3D;&#x3D; &#123;&#125;&quot;, x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在，我们的函数<code>add_and_print</code>拥有唯一的参数x,它的类型是i32，并且是可变的。嗯不错。最后，我们可以在  <code>main</code>中调用此函数。告诉我，该程序可以编译并运行吗？是否和预想的一样没有任何警告吗？</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">fn main() &#123;</span><br><span class="line">    let mut x &#x3D; 5;</span><br><span class="line">    add_and_print(x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fn add_and_print(mut x: i32) &#123;</span><br><span class="line">    x +&#x3D; 1;</span><br><span class="line">    println!(&quot;x &#x3D;&#x3D; &#123;&#125;&quot;, x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>答：它会编译，运行并生成输出x == 6。但是，它确实有一个警告：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">warning: variable does not need to be mutable</span><br><span class="line"> --&gt; src&#x2F;main.rs:2:9</span><br><span class="line">  |</span><br><span class="line">2 |     let mut x &#x3D; 5;</span><br><span class="line">  |         ----^</span><br><span class="line">  |         |</span><br><span class="line">  |         help: remove this &#96;mut&#96;</span><br><span class="line">  |</span><br></pre></td></tr></table></figure>
+<p>最初，至少对于我来说，这确实令人惊讶。<code>add_and_prin</code>t需要接收一个可变变量i32作为其第一个参数。我们为其提供了可变的i32。然后编译器说<code>mut</code>在 <code>main</code>中是不必要的。这是什么情况？</p>
+<p>我上面的解释有一个错误。函数<code>add_and_print</code>，可能非常令人困惑，不用将可变变量i32作为参数。“但是前面说需要mut的！！！”，而现在又说mut是不必要的。 确实如此。mut详细信息位于函数内部，而不是其类型签名的一部分。这听起来令人困惑，所以让我解释一下。</p>
+<p>在Rust中有一个模式，我称之为rust的3条规则。这涵盖了以下事实：在许多情况下，我们最终会得到三个“版本”的事物：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">An immutable borrow   # 不可变借用</span><br><span class="line">A mutable borrow  # 可变借用</span><br><span class="line">A move  # 移动</span><br></pre></td></tr></table></figure>
+<p>这可以应用于函数参数，例如：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">fn immutable_borrow(x: &amp;String)</span><br><span class="line">fn mutable_borrow(x: &amp;mut String)</span><br><span class="line">fn move(x: String)</span><br></pre></td></tr></table></figure>
+<p>请注意，差异完全在冒号之后。冒号后的内容是3个不同的<code>类型</code>，而<code>类型</code>构成了<code>函数签名</code>。</p>
+<p>但是，示例中的<code>x</code>冒号前的内容对<code>函数签名</code>没有影响。<code>变量名称</code>与函数的签名无关。一旦冒号右边传递一个<code>值</code>函数即可决定要调用的内容。</p>
+<p>此规则不仅适用于变量名称。也适用于<code>可变变量</code>。<code>mutable</code>是rust中<code>变量</code>的一个feature而不是<code>值</code>的feature。当使用let mut x = 5时，表示的是 “创建一个叫x的<code>变量</code>，它指向一个<code>值</code>5，并且允许用x来对该<code>值</code>进行改变。” 如果没有mut，将不再被允许通过<code>变量</code>x对该<code>值</code>进行改变。</p>
+<p>您可能会有一个直觉的反应，如果您无法修改<code>变量</code>，那你就只能只读它了。一般直觉应该就是这样。但Rust中并非如此。您还可以做另一件事：将<code>值</code>移到另一个作用域。<code>add_and_print</code>通过<code>move</code>接受<code>值</code>，即使x是一个不可变的<code>变量</code>，我仍然可以移动它所指向的<code>值</code>。</p>
+<p>一旦移动了<code>值</code>，那就完全取决于<code>add_and_print</code>如何处理它。即使原始<code>变量</code>是不可变的，也可以将其变为可变的。这是因为在函数调用中<code>值</code>本身被传递过来，而不是变量。而值可以根据需要来变为可变的。</p>
+<p>因此，该程序的无警告版本为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">fn main() &#123;</span><br><span class="line">    let x &#x3D; 5;</span><br><span class="line">    add_and_print(x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fn add_and_print(mut x: i32) &#123;</span><br><span class="line">    x +&#x3D; 1;</span><br><span class="line">    println!(&quot;x &#x3D;&#x3D; &#123;&#125;&quot;, x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实际上，即使没有函数调用，move后为可变的也是可能发生的。例如，您可以在单个函数中将不可变变量“升级”为可变变量：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">fn main() &#123;</span><br><span class="line">    let x &#x3D; 5;</span><br><span class="line">    let mut y &#x3D; x;</span><br><span class="line">    y +&#x3D; 1;</span><br><span class="line">    println!(&quot;y &#x3D;&#x3D; &#123;&#125;&quot;, y);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>“等一下” 您抱怨道，“你不能将不可变的引用“升级”为可变的引用！” ，对于我的解释或许还有其他类似的关于抱怨。我在这里稍加修饰的是: 当涉及到引用时，可变性被转化为值的可变性。那是因为对于类似x: &amp;i32这种形式的引用，x自身并没有任何数值，它<code>引用</code>了一个数字。对于可变或不可变是对<code>引用</code>本身来说的，因为<code>引用</code>自身是一种类型。因此，您不能简单地将不可变引用升级为可变引用。此代码已损坏：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">fn main() &#123;</span><br><span class="line">    let mut x: i32 &#x3D; 5;</span><br><span class="line">    let y: &amp;i32 &#x3D; &amp;x;</span><br><span class="line">    let z: &amp;mut i32 &#x3D; y; &#x2F;&#x2F; 不能简单的将y升级为可变的</span><br><span class="line"></span><br><span class="line">    *z +&#x3D; 1;</span><br><span class="line"></span><br><span class="line">    println!(&quot;x &#x3D;&#x3D; &#123;&#125;&quot;, x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因此，总结一下：</p>
+<ul>
+<li>您可以拥有<code>值</code>，或<code>值</code>的<code>不变引用</code>或<code>值</code>的<code>可变引用</code></li>
+<li><code>值</code>只有2种状态，要么可变的，要么不可变</li>
+<li>相似的<code>变量</code>也只有2种状态，要么可变的，要么不可变</li>
+<li>当将<code>值</code>移动到新<code>变量</code>中（通过 let或函数调用）时，可以更改<code>变量</code>的可变性</li>
+<li>函数签名中<code>变量</code>的可变性和名称并不影响函数签名</li>
+<li>引用的可变性内置在类型本身中，因此您不能将不可变的引用“升级”为可变的引用</li>
+</ul>
+
+</div>
+
+
+    <div class="post-guide">
+        <div class="item left">
+            
+              <a href="/2020/07/27/04%20%E7%BD%91%E7%BB%9C/hello-world/">
+                  <i class="fa fa-angle-left" aria-hidden="true"></i>
+                  
+              </a>
+            
+        </div>
+        <div class="item right">
+            
+              <a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/hello-world/">
+                
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+              </a>
+            
+        </div>
+    </div>
+
+
+
+	<div id="vcomments"></div>
+
+
+<script>
+	
+		// 评论
+		new Valine({
+			av: AV,
+			el: '#vcomments',
+			notify: false,
+			verify: false,
+			path: window.location.pathname,
+			appId: '',
+			appKey: '',
+			placeholder: '请输入评论',
+			avatar: 'retro',
+			recordIP: false
+		})
+	
+	
+</script>
+	</div>
+	<div id="footer">
+	<p>
+	©2019-<span id="footerYear"></span> 
+	<a href="/">Fly542</a> 
+	
+	
+		|
+		<span id="busuanzi_container_site_pv">
+			pv
+			<span id="busuanzi_value_site_pv"></span>
+		</span>
+		|
+		<span id="busuanzi_container_site_uv"> 
+			uv
+			<span id="busuanzi_value_site_uv"></span>
+		</span>
+	
+	<br>
+	Powered by <a href="//fly542.cn" target="_blank">fly542</a>
+	</p>
+</div>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?a630d6a8f1929d069d0a6c8ade4e9add";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+	<button id="totop-toggle" class="toggle"><i class="fa fa-angle-double-up" aria-hidden="true"></i></button>
+</body>
+</html>

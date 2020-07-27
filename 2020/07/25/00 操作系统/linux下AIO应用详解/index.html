@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+	
+	<!-- title -->
+	
+	<title>
+	
+		linux下AIO应用详解 | 
+	 
+	Fly542
+	</title>
+	
+	<!-- keywords,description -->
+	 
+
+	<!-- favicon -->
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+	
+  
+
+	
+<link rel="stylesheet" href="/css/main.css">
+
+	
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/styles/darcula.min.css">
+
+
+	
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/highlight.min.js"></script>
+
+	
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+
+	
+<script src="https://cdn.jsdelivr.net/npm/jquery-pjax@2.0.1/jquery.pjax.min.js"></script>
+
+	
+<script src="/js/main.js"></script>
+
+	
+		
+<script src="https://cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js"></script>
+
+		
+<script src="https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+
+	
+	
+		<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+	
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+	<header id="header">
+    <a id="title" href="/" class="logo">Fly542</a>
+
+	<ul id="menu">
+		<li class="menu-item">
+			<a href="/about" class="menu-item-link">关于我</a>
+		</li>
+		
+		<li class="menu-item">
+			<a href="https://fly542.cn" class="menu-item-link" target="_blank">
+				<i class="fa fa-github fa-2x"></i>
+			</a>
+		</li>
+	</ul>
+</header>
+
+
+	
+<div id="sidebar">
+	<button id="sidebar-toggle" class="toggle" ><i class="fa fa-arrow-right " aria-hidden="true"></i></button>
+	
+	<div id="site-toc">
+		<input id="search-input" class="search-input" type="text" placeholder="search...">
+		<div id="tree">
+			
+
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 操作系统
+									</a>
+									
+							<ul>
+								<li class="file active">
+									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+										linux下AIO应用详解
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 架构设计与软件工程
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 架构设计
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/25/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/00%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/%E5%B8%B8%E8%A7%81%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F/">
+										常见架构模式
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 软件工程
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/01%20%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/UML%E7%B1%BB%E5%9B%BE%E5%9B%BE%E7%A4%BA%E6%A0%B7%E4%BE%8B/">
+										UML类图图示样例
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/01%20%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/">
+										时序图、活动图、状态图、协作图的区别
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 设计模式
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/hello-world/">
+										hello-world
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 DevOps
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 程序运维
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/26/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/%E5%AE%9A%E4%BD%8Dcpu%20100_p%E7%9A%84%E6%96%B9%E6%B3%95/">
+										定位cpu 100_p的方法
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										03 开发
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 算法与数据结构
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/03%20%E5%BC%80%E5%8F%91/02%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/hello-world/">
+										hello-world
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										03 开发语言
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 C&C++
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/26/03%20%E5%BC%80%E5%8F%91/03%20%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80/00%20C&C++/%E5%A4%A7%E7%AB%AF-%E5%B0%8F%E7%AB%AF%E5%AF%B9%E9%BD%90%E5%88%A4%E5%AE%9A%E5%87%BD%E6%95%B0/">
+										大端-小端对齐判定函数
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 Rust
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/25/03%20%E5%BC%80%E5%8F%91/03%20%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80/02%20Rust/rust-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%B0%86u32%E8%BD%AC%E6%8D%A2%E4%B8%BAchar%EF%BC%9F/">
+										rust-为什么不能将u32转换为char？
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/03%20%E5%BC%80%E5%8F%91/03%20%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80/02%20Rust/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E6%8F%90%E7%A4%BA%E3%80%8Aremove%20this%20mut%E3%80%8B/">
+										为什么函数参数提示《remove this mut》
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										04 网络
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/04%20%E7%BD%91%E7%BB%9C/hello-world/">
+										hello-world
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										05 分布式及数据库
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 传统数据库
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										sqlite
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/26/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/00%20%E4%BC%A0%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93/sqlite/sqlite3%20%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/">
+										sqlite3 客户端操作命令
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+		</div>
+	</div>
+</div>
+
+	<!-- 引入正文 -->
+	<div id="content">
+		<h1 id="article-title">
+
+	linux下AIO应用详解
+</h1>
+<div class="article-meta">
+	
+	<span>Fly542</span>
+	<span>2020-07-25 17:44:11</span>
+    
+		<div id="article-categories">
+            
+		</div>
+    
+</div>
+
+<div id="article-content">
+	<h2 id="一-对于异步I-O的概述"><a href="#一-对于异步I-O的概述" class="headerlink" title="一. 对于异步I/O的概述"></a>一. 对于异步I/O的概述</h2><p>aio异步读写是在Linux内核2.6之后才正式纳入其标准。之所以会增加此模块，是因为众所周知我们计算机CPU的执行速度远大于I/O读写的执行速度，如果我们用传统的阻塞式或非阻塞式来操作I/O的话，那么我们在同一个程序中(不用多线程或多进程)就不能同时操作俩个以上的文件I/O，每次只能对一个文件进行I/O操作，很明显这样效率很低下(因为CPU速度远大于I/O操作的速度，所以当执行I/O时，CPU其实还可以做更多的事)。因此就诞生了相对高效的异步I/O。</p>
+<h2 id="二-与其他I-O模型的类比"><a href="#二-与其他I-O模型的类比" class="headerlink" title="二.与其他I/O模型的类比"></a>二.与其他I/O模型的类比</h2><p>在介绍AIO之前，先来概括一下Linux下其他的I/O模型。</p>
+<img src="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio1.gif" class="" title="图 1. 基本 Linux I&#x2F;O 模型的简单矩阵">
+<p>如图每个 I/O 模型都有自己的使用模式，它们对于特定的应用程序都有自己的优点。下面一一来介绍：</p>
+<h3 id="2-1-同步阻塞-I-O-模型"><a href="#2-1-同步阻塞-I-O-模型" class="headerlink" title="2.1 同步阻塞 I/O 模型"></a>2.1 同步阻塞 I/O 模型</h3><img src="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif" class="" title="图 2. 同步阻塞 I&#x2F;O 模型的典型流程">
+<p>在这个模型中，用户空间的应用程序执行一个系统调用，这会导致应用程序阻塞。这意味着应用程序会一直阻塞，直到系统调用完成为止（数据传输完成或发生错误）。调用应用程序处于一种不再消费 CPU 而只是简单等待响应的状态，因此从处理的角度来看，这是非常有效的。</p>
+<h3 id="2-2-同步非阻塞-I-O"><a href="#2-2-同步非阻塞-I-O" class="headerlink" title="2.2 同步非阻塞 I/O"></a>2.2 同步非阻塞 I/O</h3><img src="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif" class="" title="图 3. 同步非阻塞 I&#x2F;O 模型的典型流程">
+<p>同步阻塞 I/O 的一种效率稍低的变种是同步非阻塞 I/O。在这种模型中，设备是以非阻塞的形式打开的。这意味着 I/O 操作不会立即完成，read操作可能会返回一个错误代码，说明这个命令不能立即满足（EAGAIN 或 EWOULDBLOCK）</p>
+<h3 id="2-3-异步阻塞-I-O"><a href="#2-3-异步阻塞-I-O" class="headerlink" title="2.3 异步阻塞 I/O"></a>2.3 异步阻塞 I/O</h3><img src="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif" class="" title="图 4. 异步阻塞 I&#x2F;O 模型的典型流程 (select)">
+<p>IO多路复用(复用的select线程)。I/O复用模型会用到select、poll、epoll函数，这几个函数也会使进程阻塞，但是和阻塞I/O所不同的的，这两个函数可以同时阻塞多个I/O操作。而且可以同时对多个读操作，多个写操作的I/O函数进行检测，直到有数据可读或可写时，才真正调用I/O操作函数。对于每个提示符来说，我们可以获取这个描述符可以写数据、有读数据可用以及是否发生错误的通知。</p>
+<h4 id="epoll总结："><a href="#epoll总结：" class="headerlink" title="epoll总结："></a>epoll总结：</h4><p>epoll支持水平触发和边缘触发，最大的特点在于边缘触发，它只告诉进程哪些fd刚刚变为就需态，并且只会通知一次。还有一个特点是，epoll使用“事件”的就绪通知方式，通过epoll_ctl注册fd，一旦该fd就绪，内核就会采用类似callback的回调机制来激活该fd，epoll_wait便可以收到通知.</p>
+<h4 id="epoll的优点"><a href="#epoll的优点" class="headerlink" title="epoll的优点:"></a>epoll的优点:</h4><ul>
+<li><p>没有最大并发连接的限制，能打开的FD的上限远大于1024（1G的内存上能监听约10万个端口）。</p>
+</li>
+<li><p>效率提升，不是轮询的方式,只管你“活跃”的连接，不会随着FD数目的增加效率下降。只有活跃可用的FD才会调用callback函数。</p>
+</li>
+<li><p>内存拷贝，利用mmap()文件映射内存加速与内核空间的消息传递；即epoll使用mmap减少复制开销。</p>
+</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>表面上看epoll的性能最好，但是在连接数少并且连接都十分活跃的情况下，select和poll的性能可能比epoll好，毕竟epoll的通知机制需要很多函数回调。</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<h3 id="2-4-异步非阻塞-I-O（AIO）"><a href="#2-4-异步非阻塞-I-O（AIO）" class="headerlink" title="2.4 异步非阻塞 I/O（AIO）"></a>2.4 异步非阻塞 I/O（AIO）</h3><img src="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif" class="" title="图 5. 异步非阻塞 I&#x2F;O 模型的典型流程">
+<p>异步非阻塞 I/O 模型是一种CPU处理与 I/O 重叠进行的模型。读请求会立即返回，说明 read 请求已经成功发起了。在后台完成读操作时，应用程序然后会执行其他处理操作。当 read 的响应到达时，就会产生一个信号或执行一个基于线程的回调函数来完成这次 I/O 处理过程。</p>
+<h2 id="三-AIO编程介绍："><a href="#三-AIO编程介绍：" class="headerlink" title="三. AIO编程介绍："></a>三. AIO编程介绍：</h2><p>在 Linux 系统上有三种方式来实现 AIO：</p>
+<ul>
+<li>内核系统调用</li>
+<li>对内核系统调用进行封装进而在用户空间提供服务，例如 libaio</li>
+<li>完全在用户空间实现 AIO，并且不使用内核支持，例如librt和部分libc </li>
+</ul>
+<h3 id="3-1-内核系统调用"><a href="#3-1-内核系统调用" class="headerlink" title="3.1 内核系统调用"></a>3.1 内核系统调用</h3><h3 id="3-2-libaio"><a href="#3-2-libaio" class="headerlink" title="3.2 libaio"></a>3.2 libaio</h3><h3 id="3-3-POSIX-AIO"><a href="#3-3-POSIX-AIO" class="headerlink" title="3.3 POSIX AIO"></a>3.3 POSIX AIO</h3><p>当前的Linux POSIX AIO由glibc在用户空间中实现。POSIX AIO 有许多限制，最值得注意的是，维护多个线程来执行I/O操作是昂贵的，并且可扩展性很差。在基于内核状态机的 AIO 实现上已经进行了一段时间的工作，但是这个实现还没有成熟到可以使用内核系统调用完全重新实现POSIX AIO实现的程度。</p>
+<h4 id="3-3-1-函数说明"><a href="#3-3-1-函数说明" class="headerlink" title="3.3.1 函数说明"></a>3.3.1 函数说明</h4><table>
+<thead>
+<tr>
+<th>API函数</th>
+<th>函数说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>aio_read</td>
+<td>异步读操作</td>
+</tr>
+<tr>
+<td>aio_write</td>
+<td>异步写操作</td>
+</tr>
+<tr>
+<td>aio_error</td>
+<td>检查异步请求的状态</td>
+</tr>
+<tr>
+<td>aio_return</td>
+<td>获得异步请求完成时的返回值</td>
+</tr>
+<tr>
+<td>aio_suspend</td>
+<td>挂起调用进程，直到一个或多个异步请求已完成</td>
+</tr>
+<tr>
+<td>aio_cancel</td>
+<td>取消异步请求</td>
+</tr>
+<tr>
+<td>lio_list</td>
+<td>发起一系列异步I/O请求</td>
+</tr>
+<tr>
+<td>#### 3.3.2 库</td>
+<td></td>
+</tr>
+<tr>
+<td><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">librt libc</span><br></pre></td></tr></table></figure></td>
+<td></td>
+</tr>
+<tr>
+<td>linux内核中aiocd结构体原型：</td>
+<td></td>
+</tr>
+<tr>
+<td><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include &lt;aiocb.h&gt;</span><br><span class="line"></span><br><span class="line">struct aiocb &#123;</span><br><span class="line">    &#x2F;* The order of these fields is implementation-dependent *&#x2F;</span><br><span class="line"></span><br><span class="line">    int             aio_fildes;     &#x2F;* File descriptor *&#x2F;</span><br><span class="line">    off_t           aio_offset;     &#x2F;* File offset *&#x2F;</span><br><span class="line">    volatile void  *aio_buf;        &#x2F;* Location of buffer *&#x2F;</span><br><span class="line">    size_t          aio_nbytes;     &#x2F;* Length of transfer *&#x2F;</span><br><span class="line">    int             aio_reqprio;    &#x2F;* Request priority *&#x2F;</span><br><span class="line">    struct sigevent aio_sigevent;   &#x2F;* Notification method *&#x2F;</span><br><span class="line">    int             aio_lio_opcode; &#x2F;* Operation to be performed;</span><br><span class="line">                                       lio_listio() only *&#x2F;</span><br><span class="line"></span><br><span class="line">    &#x2F;* Various implementation-internal fields not shown *&#x2F;</span><br><span class="line">&#125;;</span><br><span class="line">&#x2F;* Operation codes for &#39;aio_lio_opcode&#39;: *&#x2F;</span><br><span class="line">     enum &#123; LIO_READ, LIO_WRITE, LIO_NOP &#125;;</span><br></pre></td></tr></table></figure></td>
+<td></td>
+</tr>
+</tbody></table>
+<ul>
+<li>aio_filedes  要执行io操作的文件描述符</li>
+<li>aio_offset  要执行io操作的文件的偏移量</li>
+<li>aio_buf 读写传输数据的缓冲区空间</li>
+<li>aio_nbytes 指定的aio_buf缓冲区的大小</li>
+<li>aio_reqprio   该字段指定从调用线程的实时优先级中减去的值，以确定执行此I / O请求的优先级（请参阅pthread_setschedparam（3））。 指定的值必须在0到sysconf（_SC_AIO_PRIO_DELTA_MAX）返回的值之间。 对于文件同步操作，将忽略此字段。</li>
+<li>aio_sigevent 指定异步io操作完成时的通知方式， aio_sigevent.sigev_notify 的值可能是SIGEV_NONE, SIGEV_SIGNAL和 SIGEV_THREAD，相信信息可参考 sigevent(7)</li>
+<li>aio_lio_opcode 要执行的操作类型； 仅用于lio_listio</li>
+</ul>
+<h4 id="3-3-3-API详细介绍及实例："><a href="#3-3-3-API详细介绍及实例：" class="headerlink" title="3.3.3 API详细介绍及实例："></a>3.3.3 API详细介绍及实例：</h4><h5 id="1-aio-read"><a href="#1-aio-read" class="headerlink" title="1. aio_read()"></a>1. aio_read()</h5><p><code>aio_read</code> 函数请求对一个有效的文件描述符进行异步读操作。这个文件描述符可以表示一个文件、套接字甚至管道。<code>aio_read</code> 函数的原型如下:</p>
+<p><code>int aio_read(struct aiocb *aiocbp);</code></p>
+<p> <code>aio_read</code> 函数在请求进行排队之后会立即返回。如果执行成功，返回值就为 0；如果出现错误，返回值就为 -1，并设置 errno 的值。</p>
+<h5 id="2-aio-error"><a href="#2-aio-error" class="headerlink" title="2. aio_error()"></a>2. aio_error()</h5><p><code>aio_error</code> 函数被用来确定请求的状态。</p>
+<p><code>int aio_error( struct aiocb *aiocbp );</code></p>
+<p>返回值：<br>EINPROGRESS，说明请求尚未完成</p>
+<p>ECANCELLED，说明请求被应用程序取消了<br>-1，说明发生了错误，具体错误原因可以查阅 errno<br>0 ,说明完成当前请求</p>
+<h5 id="3-aio-return"><a href="#3-aio-return" class="headerlink" title="3. aio_return()"></a>3. aio_return()</h5><p>异步 I/O 和标准块 I/O 之间的另外一个区别是我们不能立即访问这个函数的返回状态，因为我们并没有阻塞在 <code>read</code> 调用上。在标准的 <code>read</code> 调用中，返回状态是在该函数返回时提供的。但是在异步 I/O 中，我们要使用     <code>aio_return</code> 函数。这个函数的原型如下：</p>
+<p><code>ssize_t aio_return( struct aiocb *aiocbp );</code></p>
+<p>对以上三个API的源码实例：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;sys&#x2F;socket.h&gt;</span><br><span class="line">#include&lt;netinet&#x2F;in.h&gt;</span><br><span class="line">#include&lt;arpa&#x2F;inet.h&gt;</span><br><span class="line">#include&lt;assert.h&gt;</span><br><span class="line">#include&lt;unistd.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">#include&lt;errno.h&gt;</span><br><span class="line">#include&lt;string.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;types.h&gt;</span><br><span class="line">#include&lt;fcntl.h&gt;</span><br><span class="line">#include&lt;aio.h&gt;</span><br><span class="line"> </span><br><span class="line">#define BUFFER_SIZE 1024</span><br><span class="line">int MAX_LIST &#x3D; 2;</span><br><span class="line">int main(int argc,char **argv)</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F;aio操作所需结构体</span><br><span class="line">    struct aiocb rd;</span><br><span class="line"> </span><br><span class="line">    int fd,ret,couter;</span><br><span class="line"> </span><br><span class="line">    fd &#x3D; open(&quot;test.txt&quot;,O_RDONLY);</span><br><span class="line">    if(fd &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;test.txt&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;将rd结构体清空</span><br><span class="line">    bzero(&amp;rd,sizeof(rd));</span><br><span class="line">    &#x2F;&#x2F;为rd.aio_buf分配空间</span><br><span class="line">    rd.aio_buf &#x3D; malloc(BUFFER_SIZE + 1);</span><br><span class="line">    &#x2F;&#x2F;填充rd结构体</span><br><span class="line">    rd.aio_fildes &#x3D; fd;</span><br><span class="line">    rd.aio_nbytes &#x3D; BUFFER_SIZE;</span><br><span class="line">    rd.aio_offset &#x3D; 0;</span><br><span class="line">    &#x2F;&#x2F;进行异步读操作</span><br><span class="line">    ret &#x3D; aio_read(&amp;rd);</span><br><span class="line">    if(ret &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;aio_read&quot;);</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line">	&#x2F;&#x2F;do other things</span><br><span class="line">	</span><br><span class="line">    couter &#x3D; 0;</span><br><span class="line">&#x2F;&#x2F;  循环等待异步读操作结束</span><br><span class="line">    while(aio_error(&amp;rd) &#x3D;&#x3D; EINPROGRESS)</span><br><span class="line">    &#123;</span><br><span class="line">       &#x2F;&#x2F; printf(&quot;第%d次\n&quot;,++couter);</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    &#x2F;&#x2F;获取异步读返回值</span><br><span class="line">    ret &#x3D; aio_return(&amp;rd);</span><br><span class="line">    printf(&quot;\n\n返回值为:%d\n&quot;,ret);</span><br><span class="line">	printf(&quot;%s\n&quot;,rd.aio_buf);</span><br><span class="line">	free(rd.aio_buf);</span><br><span class="line">	close(fd);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="4-aio-write"><a href="#4-aio-write" class="headerlink" title="4. aio_write()"></a>4. aio_write()</h5><p><code>aio_write</code> 函数用来请求一个异步写操作。其函数原型如下：</p>
+<p><code>intaio_write( struct aiocb *aiocbp );</code></p>
+<p> <code>aio_write</code> 函数会立即返回，说明请求已经进行排队（成功时返回值为 0，失败时返回值为 -1，并相应地设置 errno）。</p>
+<p> 这与 read 系统调用类似，但是有一点不一样的行为需要注意。回想一下对于 read 调用来说，要使用的偏移量是非常重要的。然而，对于 write 来说，这个偏移量只有在没有设置 O_APPEND 选项的文件上下文中才会非常重要。如果设置了 O_APPEND，那么这个偏移量就会被忽略，数据都会被附加到文件的末尾。否则，aio_offset 域就确定了数据在要写入的文件中的偏移量.<br> <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"> #include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;socket.h&gt;</span><br><span class="line">#include&lt;netinet&#x2F;in.h&gt;</span><br><span class="line">#include&lt;arpa&#x2F;inet.h&gt;</span><br><span class="line">#include&lt;assert.h&gt;</span><br><span class="line">#include&lt;unistd.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">#include&lt;errno.h&gt;</span><br><span class="line">#include&lt;string.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;types.h&gt;</span><br><span class="line">#include&lt;fcntl.h&gt;</span><br><span class="line">#include&lt;aio.h&gt;</span><br><span class="line"> </span><br><span class="line">#define BUFFER_SIZE 1024</span><br><span class="line"> </span><br><span class="line">int main(int argc,char **argv)</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F;定义aio控制块结构体</span><br><span class="line">    struct aiocb wr;</span><br><span class="line"> </span><br><span class="line">    int ret,fd;</span><br><span class="line"> </span><br><span class="line">    char str[20] &#x3D; &#123;&quot;hello,world&quot;&#125;;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;置零wr结构体</span><br><span class="line">    bzero(&amp;wr,sizeof(wr));</span><br><span class="line"> </span><br><span class="line">    fd &#x3D; open(&quot;test.txt&quot;,O_WRONLY | O_APPEND);</span><br><span class="line">    if(fd &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;test.txt&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;为aio.buf申请空间</span><br><span class="line">    wr.aio_buf &#x3D; (char *)malloc(BUFFER_SIZE);</span><br><span class="line">    if(wr.aio_buf &#x3D;&#x3D; NULL)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;buf&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    wr.aio_buf &#x3D; str;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;填充aiocb结构</span><br><span class="line">    wr.aio_fildes &#x3D; fd;</span><br><span class="line">    wr.aio_nbytes &#x3D; 1024;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;异步写操作</span><br><span class="line">    ret &#x3D; aio_write(&amp;wr);</span><br><span class="line">    if(ret &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;aio_write&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;等待异步写完成</span><br><span class="line">    while(aio_error(&amp;wr) &#x3D;&#x3D; EINPROGRESS)</span><br><span class="line">    &#123;</span><br><span class="line">        printf(&quot;hello,world\n&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;获得异步写的返回值</span><br><span class="line">    ret &#x3D; aio_return(&amp;wr);</span><br><span class="line">    printf(&quot;\n\n\n返回值为:%d\n&quot;,ret);</span><br><span class="line"> </span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="5-aio-suspend"><a href="#5-aio-suspend" class="headerlink" title="5. aio_suspend()"></a>5. aio_suspend()</h5><ul>
+<li>aio_suspend函数可以时当前进程挂起，直到有向其注册的异步事件完成为止 </li>
+<li>阻塞</li>
+<li>当有AIO请求返程后，该函数返回</li>
+</ul>
+<p><code>int aio_suspend(const struct aiocb *const cblist[],int n,const struct timespec *timeout);</code></p>
+<p> 第一个参数是个保存了<code>aiocb</code>块地址的数组，我们可以向其内添加想要等待阻塞的异步事件，第二个参数为向<code>cblist</code>注册的<code>aiocb</code>个数,第三个参数为等待阻塞的超时时间，NULL为无限等待.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;socket.h&gt;</span><br><span class="line">#include&lt;netinet&#x2F;in.h&gt;</span><br><span class="line">#include&lt;arpa&#x2F;inet.h&gt;</span><br><span class="line">#include&lt;assert.h&gt;</span><br><span class="line">#include&lt;unistd.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">#include&lt;errno.h&gt;</span><br><span class="line">#include&lt;string.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;types.h&gt;</span><br><span class="line">#include&lt;fcntl.h&gt;</span><br><span class="line">#include&lt;aio.h&gt;</span><br><span class="line"> </span><br><span class="line">#define BUFFER_SIZE 1024</span><br><span class="line"> </span><br><span class="line">int MAX_LIST &#x3D; 2;</span><br><span class="line"> </span><br><span class="line">int main(int argc,char **argv)</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F;aio操作所需结构体</span><br><span class="line">    struct aiocb rd;</span><br><span class="line">	struct aiocb wd;</span><br><span class="line">    int fd,ret,couter;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;cblist链表</span><br><span class="line">    struct aiocb *aiocb_list[2];</span><br><span class="line"> </span><br><span class="line">    fd &#x3D; open(&quot;test.txt&quot;,O_RDONLY);</span><br><span class="line">    if(fd &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;test.txt&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;将rd结构体清空</span><br><span class="line">    bzero(&amp;rd,sizeof(rd));</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;为rd.aio_buf分配空间</span><br><span class="line">    rd.aio_buf &#x3D; malloc(BUFFER_SIZE + 1);</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;填充rd结构体</span><br><span class="line">    rd.aio_fildes &#x3D; fd;</span><br><span class="line">    rd.aio_nbytes &#x3D;  BUFFER_SIZE;</span><br><span class="line">    rd.aio_offset &#x3D; 0;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;将读fd的事件注册</span><br><span class="line">    aiocb_list[0] &#x3D; &amp;rd;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;进行异步读操作</span><br><span class="line">    ret &#x3D; aio_read(&amp;rd);</span><br><span class="line">    if(ret &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;aio_read&quot;);</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    printf(&quot;我要开始等待异步读事件完成\n&quot;);</span><br><span class="line">    &#x2F;&#x2F;阻塞等待异步读事件完成</span><br><span class="line">    ret &#x3D; aio_suspend(aiocb_list,MAX_LIST,NULL);		</span><br><span class="line">    &#x2F;&#x2F;获取异步读返回值</span><br><span class="line">    ret &#x3D; aio_return(&amp;rd);</span><br><span class="line">    printf(&quot;\n\n返回值为:%d\n&quot;,ret);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="6-lio-listio"><a href="#6-lio-listio" class="headerlink" title="6.lio_listio()"></a>6.lio_listio()</h5><p> aio同时还为我们提供了一个可以发起多个或多种I/O请求的接口lio_listio </p>
+<p>这个函数效率很高，因为我们只需一次系统调用(一次内核上下位切换)就可以完成大量的I/O操作</p>
+<p><code>int lio_listio(int mode,struct aiocb *list[],int nent,struct sigevent *sig);</code></p>
+<p> 第一个参数<code>mode</code>可以有两个实参，<code>LIO_WAIT</code>和<code>LIO_NOWAIT</code>，前一个会阻塞该调用直到所有I/O都完成为止，后一个则会挂入队列就返回</p>
+<ul>
+<li>LIO_WAIT 阻塞发起</li>
+<li>LIO_NOWAIT  非阻塞发起<blockquote>
+<p>批量发起AIO的两种方法</p>
+</blockquote>
+</li>
+<li>阻塞等到所有发起的AIO全部完成后，才会返回</li>
+<li>发起后立即返回，通过绑定的信号来通知</li>
+</ul>
+<p>LIO_WAIT  demo::</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;socket.h&gt;</span><br><span class="line">#include&lt;netinet&#x2F;in.h&gt;</span><br><span class="line">#include&lt;arpa&#x2F;inet.h&gt;</span><br><span class="line">#include&lt;assert.h&gt;</span><br><span class="line">#include&lt;unistd.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">#include&lt;errno.h&gt;</span><br><span class="line">#include&lt;string.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;types.h&gt;</span><br><span class="line">#include&lt;fcntl.h&gt;</span><br><span class="line">#include&lt;aio.h&gt;</span><br><span class="line"> </span><br><span class="line">#define BUFFER_SIZE 1025</span><br><span class="line"> </span><br><span class="line">int MAX_LIST &#x3D; 2;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">int main(int argc,char **argv)</span><br><span class="line">&#123;</span><br><span class="line">    struct aiocb *listio[2];</span><br><span class="line">    struct aiocb rd,wr;</span><br><span class="line">    int fd,ret;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;异步读事件</span><br><span class="line">    fd &#x3D; open(&quot;test1.txt&quot;,O_RDONLY);</span><br><span class="line">    if(fd &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;test1.txt&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    bzero(&amp;rd,sizeof(rd));</span><br><span class="line"> </span><br><span class="line">    rd.aio_buf &#x3D; (char *)malloc(BUFFER_SIZE);</span><br><span class="line">    if(rd.aio_buf &#x3D;&#x3D; NULL)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;aio_buf&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    rd.aio_fildes &#x3D; fd;</span><br><span class="line">    rd.aio_nbytes &#x3D; 1024;</span><br><span class="line">    rd.aio_offset &#x3D; 0;</span><br><span class="line">    rd.aio_lio_opcode &#x3D; LIO_READ;   &#x2F;&#x2F;&#x2F;lio操作类型为异步读</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;将异步读事件添加到list中</span><br><span class="line">    listio[0] &#x3D; &amp;rd;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;异步些事件</span><br><span class="line">    fd &#x3D; open(&quot;test2.txt&quot;,O_WRONLY | O_APPEND);</span><br><span class="line">    if(fd &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;test2.txt&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    bzero(&amp;wr,sizeof(wr));</span><br><span class="line"> </span><br><span class="line">    wr.aio_buf &#x3D; (char *)malloc(BUFFER_SIZE);</span><br><span class="line">    if(wr.aio_buf &#x3D;&#x3D; NULL)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;aio_buf&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    wr.aio_fildes &#x3D; fd;</span><br><span class="line">    wr.aio_nbytes &#x3D; 1024;</span><br><span class="line"> </span><br><span class="line">    wr.aio_lio_opcode &#x3D; LIO_WRITE;   &#x2F;&#x2F;&#x2F;lio操作类型为异步写</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;将异步写事件添加到list中</span><br><span class="line">    listio[1] &#x3D; ≀</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;使用lio_listio发起一系列请求</span><br><span class="line">    ret &#x3D; lio_listio(LIO_WAIT,listio,MAX_LIST,NULL);</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;当异步读写都完成时获取他们的返回值</span><br><span class="line"> </span><br><span class="line">    ret &#x3D; aio_return(&amp;rd);</span><br><span class="line">    printf(&quot;\n读返回值:%d&quot;,ret);</span><br><span class="line"> </span><br><span class="line">    ret &#x3D; aio_return(&amp;wr);</span><br><span class="line">    printf(&quot;\n写返回值:%d&quot;,ret);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>LIO_NOWAIT demo::</p>
+<p>当我们的异步IO操作完成之时，我们可以通过信号通知我们的进程也可用回调函数来进行异步通知，接下来我会为大家主要介绍以下回调函数来进行异步通知</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">struct sigevent &#123;</span><br><span class="line">int           sigev_notify;            &#x2F;&#x2F;Notification type. </span><br><span class="line">int           sigev_signo;            &#x2F;&#x2F;Signal number. </span><br><span class="line">union sigval  sigev_value;             &#x2F;&#x2F;Signal value. </span><br><span class="line">void         (*sigev_notify_function)(union sigval); &#x2F;&#x2F;Notification function. </span><br><span class="line">pthread_attr_t *sigev_notify_attributes;  &#x2F;&#x2F;Notification attributes. </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;socket.h&gt;</span><br><span class="line">#include&lt;netinet&#x2F;in.h&gt;</span><br><span class="line">#include&lt;arpa&#x2F;inet.h&gt;</span><br><span class="line">#include&lt;assert.h&gt;</span><br><span class="line">#include&lt;unistd.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">#include&lt;errno.h&gt;</span><br><span class="line">#include&lt;string.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;types.h&gt;</span><br><span class="line">#include&lt;fcntl.h&gt;</span><br><span class="line">#include&lt;aio.h&gt;</span><br><span class="line">#include&lt;unistd.h&gt;</span><br><span class="line"> </span><br><span class="line">#define BUFFER_SIZE 1025</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">void aio_completion_handler(sigval_t sigval)</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F;用来获取读aiocb结构的指针</span><br><span class="line">    struct aiocb *prd;</span><br><span class="line">    int ret;</span><br><span class="line"> </span><br><span class="line">    prd &#x3D; (struct aiocb *)sigval.sival_ptr;</span><br><span class="line"> </span><br><span class="line">    printf(&quot;hello\n&quot;);</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;获取返回值</span><br><span class="line">    ret &#x3D; aio_return(prd);</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">int main(int argc,char **argv)</span><br><span class="line">&#123;</span><br><span class="line">    int fd,ret;</span><br><span class="line">    struct aiocb rd;</span><br><span class="line"> </span><br><span class="line">    fd &#x3D; open(&quot;test.txt&quot;,O_RDONLY);</span><br><span class="line">    if(fd &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;test.txt&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;填充aiocb的基本内容</span><br><span class="line">    bzero(&amp;rd,sizeof(rd));</span><br><span class="line"> </span><br><span class="line">    rd.aio_fildes &#x3D; fd;</span><br><span class="line">    rd.aio_buf &#x3D; (char *)malloc(sizeof(BUFFER_SIZE + 1));</span><br><span class="line">    rd.aio_nbytes &#x3D; BUFFER_SIZE;</span><br><span class="line">    rd.aio_offset &#x3D; 0;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;填充aiocb中有关回调通知的结构体sigevent</span><br><span class="line">    rd.aio_sigevent.sigev_notify &#x3D; SIGEV_THREAD;&#x2F;&#x2F;使用线程回调通知</span><br><span class="line">    rd.aio_sigevent.sigev_notify_function &#x3D; aio_completion_handler;&#x2F;&#x2F;设置回调函数</span><br><span class="line">    rd.aio_sigevent.sigev_notify_attributes &#x3D; NULL;&#x2F;&#x2F;使用默认属性</span><br><span class="line">    rd.aio_sigevent.sigev_value.sival_ptr &#x3D; &amp;rd;&#x2F;&#x2F;在aiocb控制块中加入自己的引用</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;异步读取文件</span><br><span class="line">    ret &#x3D; aio_read(&amp;rd);</span><br><span class="line">    if(ret &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;aio_read&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    printf(&quot;异步读以开始\n&quot;);</span><br><span class="line">    sleep(1);</span><br><span class="line">    printf(&quot;异步读结束\n&quot;);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</div>
+
+
+    <div class="post-guide">
+        <div class="item left">
+            
+              <a href="/2020/07/26/03%20%E5%BC%80%E5%8F%91/03%20%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80/00%20C&C++/%E5%A4%A7%E7%AB%AF-%E5%B0%8F%E7%AB%AF%E5%AF%B9%E9%BD%90%E5%88%A4%E5%AE%9A%E5%87%BD%E6%95%B0/">
+                  <i class="fa fa-angle-left" aria-hidden="true"></i>
+                  03 开发语言
+              </a>
+            
+        </div>
+        <div class="item right">
+            
+              <a href="/2020/07/25/03%20%E5%BC%80%E5%8F%91/03%20%E5%BC%80%E5%8F%91%E8%AF%AD%E8%A8%80/02%20Rust/rust-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%B0%86u32%E8%BD%AC%E6%8D%A2%E4%B8%BAchar%EF%BC%9F/">
+                03 开发语言
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+              </a>
+            
+        </div>
+    </div>
+
+
+
+	<div id="vcomments"></div>
+
+
+<script>
+	
+		// 评论
+		new Valine({
+			av: AV,
+			el: '#vcomments',
+			notify: false,
+			verify: false,
+			path: window.location.pathname,
+			appId: '',
+			appKey: '',
+			placeholder: '请输入评论',
+			avatar: 'retro',
+			recordIP: false
+		})
+	
+	
+</script>
+	</div>
+	<div id="footer">
+	<p>
+	©2019-<span id="footerYear"></span> 
+	<a href="/">Fly542</a> 
+	
+	
+		|
+		<span id="busuanzi_container_site_pv">
+			pv
+			<span id="busuanzi_value_site_pv"></span>
+		</span>
+		|
+		<span id="busuanzi_container_site_uv"> 
+			uv
+			<span id="busuanzi_value_site_uv"></span>
+		</span>
+	
+	<br>
+	Powered by <a href="//fly542.cn" target="_blank">fly542</a>
+	</p>
+</div>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?a630d6a8f1929d069d0a6c8ade4e9add";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+	<button id="totop-toggle" class="toggle"><i class="fa fa-angle-double-up" aria-hidden="true"></i></button>
+</body>
+</html>
