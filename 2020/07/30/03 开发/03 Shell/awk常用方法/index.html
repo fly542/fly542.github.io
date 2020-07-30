@@ -8,6 +8,8 @@
 	<!-- title -->
 	
 	<title>
+	
+		awk常用方法 | 
 	 
 	Fly542
 	</title>
@@ -346,7 +348,7 @@
 									</a>
 									
 							<ul>
-								<li class="file">
+								<li class="file active">
 									<a href="/2020/07/30/03%20%E5%BC%80%E5%8F%91/03%20Shell/awk%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/">
 										awk常用方法
 									</a>
@@ -488,36 +490,85 @@
 
 	<!-- 引入正文 -->
 	<div id="content">
-		<div id="index">
-	
-		<div class="index-li">
-			<a href="/2020/07/29/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/02%20Pika/pika%20%E8%BF%90%E7%BB%B4%E5%91%BD%E4%BB%A4/">
-				<h2 class="index-title">
-					pika 运维命令
-				</h2>
-				<div class="index-brief">
-					一、运维经验1、可能的话将整个pika目录放到ssd磁盘2、从节点全量同步数据的时候会将主节点所有数据同步到var&#x2F;dbsync目录下，所以此空间一定足够3、
+		<h1 id="article-title">
 
-二、命令pika 停止命令.&#x2F;redis-cli -h 127.0.0.1 -p 9221 shutdown
-
-启动命
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-29</span>
-                    
-                            
-                    
-                </div>
-		</div>	
+	awk常用方法
+</h1>
+<div class="article-meta">
 	
-	
-	<div id="index-paginator">
-		
-	</div>
+	<span>Fly542</span>
+	<span>2020-07-30 15:09:10</span>
+    
+		<div id="article-categories">
+            
+		</div>
+    
 </div>
 
+<div id="article-content">
+	<h2 id="awk内建变量"><a href="#awk内建变量" class="headerlink" title="awk内建变量"></a>awk内建变量</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$0 当前记录（这个变量中存放着整个行的内容）</span><br><span class="line">$1~$n 当前记录的第n个字段，字段间由FS分隔</span><br><span class="line">FS 输入字段分隔符 默认是空格或Tab</span><br><span class="line">NF 当前记录中的字段个数，就是有多少列 ,$(NF-n)为倒数第n个字段</span><br><span class="line">NR 已经读出的记录数，就是行号，从1开始，如果有多个文件话，这个值也是不断累加中。</span><br><span class="line">FNR 当前记录数，与NR不同的是，这个值会是各个文件自己的行号</span><br><span class="line">RS 输入的记录分隔符， 默认为换行符</span><br><span class="line">OFS 输出字段分隔符， 默认也是空格</span><br><span class="line">ORS 输出的记录分隔符，默认为换行符</span><br><span class="line">FILENAME 当前输入文件的名字</span><br></pre></td></tr></table></figure>
+
+<h2 id="BEGIN-EDN语法"><a href="#BEGIN-EDN语法" class="headerlink" title="BEGIN EDN语法"></a>BEGIN EDN语法</h2><ul>
+<li>BEGIN{ 这里面放的是执行前的语句 }</li>
+<li>{这里面放的是处理每一行时要执行的语句}</li>
+<li>END {这里面放的是处理完所有的行后要执行的语句 }<br>示例如下:<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#运行前</span><br><span class="line">BEGIN &#123;</span><br><span class="line">	math &#x3D; 0</span><br><span class="line">	english &#x3D; 0</span><br><span class="line">	computer &#x3D; 0</span><br><span class="line">	printf&quot;NAME    NO.   MATH  ENGLISH  COMPUTER   TOTAL\n&quot;    printf&quot;---------------------------------------------\n&quot;</span><br><span class="line">&#125;</span><br><span class="line">#运行中</span><br><span class="line">&#123;</span><br><span class="line">	math+&#x3D;$3</span><br><span class="line">	english+&#x3D;$4</span><br><span class="line">	computer+&#x3D;$5</span><br><span class="line">	printf&quot;%-6s %-6s %4d %8d %8d %8d\n&quot;, $1, $2, $3,$4,$5, $3+$4+$5</span><br><span class="line">&#125;</span><br><span class="line">#运行后</span><br><span class="line">END &#123;</span><br><span class="line">	printf&quot;---------------------------------------------\n&quot;</span><br><span class="line">	printf&quot;  TOTAL:%10d %8d %8d \n&quot;, math, english, computer</span><br><span class="line">	printf&quot;AVERAGE:%10.2f %8.2f %8.2f\n&quot;, math&#x2F;NR, english&#x2F;NR, computer&#x2F;NR</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="常用功能"><a href="#常用功能" class="headerlink" title="常用功能"></a>常用功能</h2><h4 id="求和"><a href="#求和" class="headerlink" title="求和"></a>求和</h4><p><code>cat data|awk &#39;{sum+=$1} END {print &quot;Sum = &quot;, sum}&#39;</code></p>
+<h4 id="求平均"><a href="#求平均" class="headerlink" title="求平均"></a>求平均</h4><p><code>cat data|awk &#39;{sum+=$1} END {print &quot;Average = &quot;, sum/NR}&#39;</code></p>
+<h4 id="求最大值"><a href="#求最大值" class="headerlink" title="求最大值"></a>求最大值</h4><p><code>cat data|awk &#39;BEGIN {max = 0} {if ($1&gt;max) max=$1 fi} END {print &quot;Max=&quot;, max}&#39;</code></p>
+<h4 id="求最小值（min的初始值设置一个超大数即可）"><a href="#求最小值（min的初始值设置一个超大数即可）" class="headerlink" title="求最小值（min的初始值设置一个超大数即可）"></a>求最小值（min的初始值设置一个超大数即可）</h4><p><code>awk &#39;BEGIN {min = 1999999} {if ($1&lt;min) min=$1 fi} END {print &quot;Min=&quot;, min}&#39;</code></p>
+<h4 id="求访问次数的Top-10-Resource，可以根据此进行优化"><a href="#求访问次数的Top-10-Resource，可以根据此进行优化" class="headerlink" title="求访问次数的Top 10 Resource，可以根据此进行优化"></a>求访问次数的Top 10 Resource，可以根据此进行优化</h4><p><code>cat output/logs/cookie_logs/</code>date +%u<code>/cookie_log|grep -v &#39;172.16&#39;|grep -v &#39;127.0.0.1&#39; |awk -F&#39; &#39;  &#39;{ if(index($1,&quot;219.141.246&quot;)!=0) print $2; else print $1  } &#39;|sort|uniq -c|sort -n |tail -n 10</code></p>
+<h4 id="求最大最小值"><a href="#求最大最小值" class="headerlink" title="求最大最小值"></a>求最大最小值</h4><p><code>cat 1.log | awk &#39;BEGIN {max=0; min=1000} {sum +=$9; num +=1; if($9&gt;max) max=$9 fi; if($9&lt;min) min=$9 fi;} END {print &quot;avg=&quot;,sum/num, &quot;\nmax=&quot;,max, &quot;\nmin=&quot;, min}&#39;</code></p>
+<h4 id="awk中执行shell命令"><a href="#awk中执行shell命令" class="headerlink" title="awk中执行shell命令"></a>awk中执行shell命令</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">awk &#39;&#123;cmd&#x3D;&quot;rm &quot;$0;system(cmd)&#125;&#39; filename ----OK</span><br><span class="line">下面的也ok</span><br><span class="line">awk &#39;&#123;cmd&#x3D;&quot;rm &quot;$0;cmd|getline &#125;&#39; filename ---- OK</span><br><span class="line">man awk里面关于getline的说明，大意是说 运行command，同时会把输出存在$0 里面，或参数var中。</span><br><span class="line"></span><br><span class="line">command | getline [var]</span><br><span class="line">Run command piping the output either into $0 or var, as above.</span><br><span class="line">command |&amp; getline [var]</span><br><span class="line">Run command as a co-process piping the output either into $0 or var, as above.</span><br><span class="line">Co-processes are a gawk extension.</span><br><span class="line">ps -ef |grep CipRouter | grep -v &quot;grep&quot; | awk -F&#39; &#39; &#39;&#123;cmd&#x3D;&quot;ls &#x2F;proc&#x2F;&quot;$2&quot;&#x2F;fd&#x2F; | wc -l &quot;;system(cmd); &#125;&#39;|awk &#39;&#123;num+&#x3D;$1&#125; END &#123;print &quot;sum&#x3D; &quot;,num&#125;&#39;</span><br><span class="line">或者</span><br><span class="line">ps -ef |grep CipRouter | grep -v &quot;grep&quot; | awk -F&#39; &#39; &#39;&#123;cmd&#x3D;&quot;ls &#x2F;proc&#x2F;&quot;$2&quot;&#x2F;fd&#x2F; | wc -l &quot;;cmd|getline; sum+&#x3D;$0;&#125; END &#123;print sum&#125;&#39;</span><br></pre></td></tr></table></figure>
+
+<h4 id="awk-多个进程号转为数组"><a href="#awk-多个进程号转为数组" class="headerlink" title="awk 多个进程号转为数组"></a>awk 多个进程号转为数组</h4><p><code>aaa=(</code>ps -ef |grep xxx |grep -v grep |awk ‘{print $2}’<code>)
+echo &quot;${aaa[@]}&quot;</code></p>
+<h4 id="awk-F-特殊字符"><a href="#awk-F-特殊字符" class="headerlink" title="awk -F 特殊字符"></a>awk -F 特殊字符</h4><p><code>,\&quot;dn\&quot;:\&quot;baiducdnct.inter.iqiyi.com\&quot;   以&quot;dn\&quot;:\来分割，因为\为特殊字符，所以需要转义，每4个\为一个过滤\
+awk -F&#39;dn\\\\&quot;:\\\\&#39; &#39;{print $2}&#39;</code></p>
+<h4 id="awk-打印从某一列到最后一列的内容"><a href="#awk-打印从某一列到最后一列的内容" class="headerlink" title="awk 打印从某一列到最后一列的内容"></a>awk 打印从某一列到最后一列的内容</h4><p><code>awk -F &quot; &quot; &#39;{for (i=2;i&lt;=NF;i++)printf(&quot;%s &quot;, $i);print &quot;&quot;}&#39;</code></p>
+
+</div>
+
+
+    <div class="post-guide">
+        <div class="item left">
+            
+        </div>
+        <div class="item right">
+            
+              <a href="/2020/07/30/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/03%20vimrc%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
+                03 vimrc配置文件
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+              </a>
+            
+        </div>
+    </div>
+
+
+
+	<div id="vcomments"></div>
+
+
+<script>
+	
+		// 评论
+		new Valine({
+			av: AV,
+			el: '#vcomments',
+			notify: false,
+			verify: false,
+			path: window.location.pathname,
+			appId: 'kqRG1YI357MX0zgAERzjbptL-gzGzoHsz',
+			appKey: '2PLYnaLv42a7NAbLhpOadDfj',
+			placeholder: '请输入评论',
+			avatar: 'retro',
+			recordIP: false
+		})
+	
+	
+</script>
 	</div>
 	<div id="footer">
 	<p>
