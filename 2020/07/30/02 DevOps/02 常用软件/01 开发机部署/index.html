@@ -8,6 +8,8 @@
 	<!-- title -->
 	
 	<title>
+	
+		01 开发机部署 | 
 	 
 	Fly542
 	</title>
@@ -228,7 +230,7 @@
 							</ul>
 			
 							<ul>
-								<li class="file">
+								<li class="file active">
 									<a href="/2020/07/30/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/01%20%E5%BC%80%E5%8F%91%E6%9C%BA%E9%83%A8%E7%BD%B2/">
 										01 开发机部署
 									</a>
@@ -470,32 +472,116 @@
 
 	<!-- 引入正文 -->
 	<div id="content">
-		<div id="index">
+		<h1 id="article-title">
+
+	01 开发机部署
+</h1>
+<div class="article-meta">
 	
-		<div class="index-li">
-			<a href="/2020/07/27/03%20%E5%BC%80%E5%8F%91/00%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/MD5%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/">
-				<h2 class="index-title">
-					MD5算法原理
-				</h2>
-				<div class="index-brief">
-					1. IntroductionMD5算法是一种消息摘要算法(Message Digest Algorithm)，此算法以任意长度的信息(message)作为输入进行计算，产生一个128-bit(16-byte)的指纹或报文摘要(fingerprint or message digest)。两个不同的
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-27</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-	
-	<div id="index-paginator">
-		
-	</div>
+	<span>Fly542</span>
+	<span>2020-07-30 14:48:30</span>
+    
+		<div id="article-categories">
+            
+		</div>
+    
 </div>
 
+<div id="article-content">
+	<h1 id="开发机部署"><a href="#开发机部署" class="headerlink" title="开发机部署"></a>开发机部署</h1><h3 id="修改服务器名"><a href="#修改服务器名" class="headerlink" title="修改服务器名"></a>修改服务器名</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hostnamectl set-hostname xxxx</span><br></pre></td></tr></table></figure>
+<p>实际修改的是/proc/sys/kernel/hostname的内容</p>
+<h3 id="安装开发包"><a href="#安装开发包" class="headerlink" title="安装开发包"></a>安装开发包</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install gcc-c++ cmake</span><br></pre></td></tr></table></figure>
+
+<h3 id="系统更新"><a href="#系统更新" class="headerlink" title="系统更新"></a>系统更新</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum update</span><br></pre></td></tr></table></figure>
+<h3 id="安装python2-7"><a href="#安装python2-7" class="headerlink" title="安装python2.7"></a>安装python2.7</h3><p>安装python2.7的时候使用以下选项编译</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.&#x2F;configure  --enable-shared CFLAGS&#x3D;-fPIC --enable-unicode&#x3D;ucs4</span><br></pre></td></tr></table></figure>
+<p>然后再安装python</p>
+<h3 id="安装git"><a href="#安装git" class="headerlink" title="安装git"></a>安装git</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install git</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装vim8"><a href="#安装vim8" class="headerlink" title="安装vim8"></a>安装vim8</h3><h5 id="先安装依赖包"><a href="#先安装依赖包" class="headerlink" title="先安装依赖包"></a>先安装依赖包</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install ncurses-devel</span><br><span class="line">yum install python-devel</span><br><span class="line">yum install perl-ExtUtils-Embed</span><br><span class="line">yum install ruby</span><br><span class="line">yum install ruby-devel</span><br><span class="line">yum install clang-devel</span><br></pre></td></tr></table></figure>
+
+<h5 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.&#x2F;configure --with-features&#x3D;huge --enable-multibyte  --enable-pythoninterp --enable-rubyinterp  --enable-luainterp --enable-cscope</span><br><span class="line"></span><br><span class="line">make VIMRUNTIMEDIR&#x3D;&#x2F;usr&#x2F;local&#x2F;share&#x2F;vim&#x2F;vim80</span><br><span class="line">make install</span><br><span class="line"></span><br><span class="line">ubuntu 使用如下语法</span><br><span class="line">.&#x2F;configure --with-features&#x3D;huge --enable-multibyte --enable-rubyinterp&#x3D;yes --enable-python3interp&#x3D;yes --with-python3-config-dir&#x3D;$(python3-config --configdir) --enable-perlinterp&#x3D;yes --enable-luainterp&#x3D;yes --enable-gui&#x3D;gtk2 --enable-cscope</span><br></pre></td></tr></table></figure>
+
+<h5 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h5><p>mkdir ~/.vim/bundle</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;gmarik&#x2F;vundle.git ~&#x2F;.vim&#x2F;bundle&#x2F;Vundle.vim</span><br></pre></td></tr></table></figure>
+
+<h6 id="安装commond-t"><a href="#安装commond-t" class="headerlink" title="安装commond-t"></a>安装commond-t</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd ~&#x2F;.vim&#x2F;bundle&#x2F;command-t&#x2F;ruby&#x2F;command-t&#x2F;ext&#x2F;command-t&#x2F;</span><br><span class="line"></span><br><span class="line">ruby extconf.rb</span><br><span class="line"></span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<h6 id="安装YouCompleteMe"><a href="#安装YouCompleteMe" class="headerlink" title="安装YouCompleteMe"></a>安装YouCompleteMe</h6><p>上传clang+llvm-5.0.0-linux-x86_64-ubuntu14.04.tar.xz到.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/../clang_archives/ 目录下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd ~&#x2F;.vim&#x2F;bundle&#x2F;YouCompleteMe</span><br><span class="line">.&#x2F;install.py --clang-completer</span><br></pre></td></tr></table></figure>
+<h3 id="安装gcc的debug调试信息"><a href="#安装gcc的debug调试信息" class="headerlink" title="安装gcc的debug调试信息"></a>安装gcc的debug调试信息</h3><ul>
+<li><p>修改配置文件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;yum.repos.d&#x2F;CentOS-Debuginfo.repo</span><br></pre></td></tr></table></figure>
+<p>将其中的==enabled=0==修改为==enabled=1==</p>
+</li>
+<li><p>执行如下命令安装：</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">debuginfo-install libgcc  libstdc++  nss-softokn-freebl  zlib</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>gdb7.0多线程non-stop模式开启</li>
+</ul>
+<p>此模式可以保证只调试某个线程，在~/.gdbinit中添加以下内容</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">set target-async 1</span><br><span class="line">set pagination off</span><br><span class="line">set non-stop on</span><br></pre></td></tr></table></figure>
+
+<h3 id="部署c-的man帮助文档"><a href="#部署c-的man帮助文档" class="headerlink" title="部署c++的man帮助文档"></a>部署c++的man帮助文档</h3><ul>
+<li>从站点下载libstdc++-api-4.5.2.man.tar压缩</li>
+</ul>
+<p><a href="">ftp://gcc.gnu.org/pub/gcc/libstdc++/doxygen/</a></p>
+<ul>
+<li>解压文件并拷贝内容到man3目录下<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tar -jxvf libstdc++-api-4.5.2.man.tar</span><br><span class="line">cd libstdc++-api-4.5.2&#x2F;man3&#x2F;</span><br><span class="line">cp * &#x2F;usr&#x2F;share&#x2F;man&#x2F;man3&#x2F;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<h1 id="ubuntu"><a href="#ubuntu" class="headerlink" title="ubuntu"></a>ubuntu</h1><pre><code>- 先更新系统，sudo apt-get update
+- 再按照centos部署方式进行部署</code></pre><h2 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h2><pre><code>sudo apt-get install libncurses5-dev libgnome2-dev libgnomeui-dev libgtk2.0-dev libatk1.0-dev libbonoboui2-dev libcairo2-dev libx11-dev libxpm-dev libxt-dev python-dev  python3-dev ruby-dev lua5.1 liblua5.1-dev libperl-dev git  python-requests</code></pre><h2 id="ruby-安装"><a href="#ruby-安装" class="headerlink" title="ruby 安装"></a>ruby 安装</h2><pre><code>apt-get install ruby
+apt-get install ruby-dev</code></pre>
+</div>
+
+
+    <div class="post-guide">
+        <div class="item left">
+            
+              <a href="/2020/07/30/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/02%20%E5%A4%9A%E7%89%88%E6%9C%ACgcc%E9%83%A8%E7%BD%B2/">
+                  <i class="fa fa-angle-left" aria-hidden="true"></i>
+                  02 多版本gcc部署
+              </a>
+            
+        </div>
+        <div class="item right">
+            
+              <a href="/2020/07/29/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/02%20Pika/pika%20%E8%BF%90%E7%BB%B4%E5%91%BD%E4%BB%A4/">
+                pika 运维命令
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+              </a>
+            
+        </div>
+    </div>
+
+
+
+	<div id="vcomments"></div>
+
+
+<script>
+	
+		// 评论
+		new Valine({
+			av: AV,
+			el: '#vcomments',
+			notify: false,
+			verify: false,
+			path: window.location.pathname,
+			appId: 'kqRG1YI357MX0zgAERzjbptL-gzGzoHsz',
+			appKey: '2PLYnaLv42a7NAbLhpOadDfj',
+			placeholder: '请输入评论',
+			avatar: 'retro',
+			recordIP: false
+		})
+	
+	
+</script>
 	</div>
 	<div id="footer">
 	<p>
