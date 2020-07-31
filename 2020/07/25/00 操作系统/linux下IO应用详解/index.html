@@ -641,11 +641,40 @@
 <li>对内核系统调用进行封装进而在用户空间提供服务，例如 libaio</li>
 <li>完全在用户空间实现 AIO，并且不使用内核支持，例如librt和部分libc </li>
 </ul>
-<h3 id="3-1-内核系统调用"><a href="#3-1-内核系统调用" class="headerlink" title="3.1 内核系统调用"></a>3.1 内核系统调用</h3><p>一般不采用此方式直接调用，一般使用的是libaio库进行调用。</p>
+<h3 id="3-1-内核系统调用"><a href="#3-1-内核系统调用" class="headerlink" title="3.1 内核系统调用"></a>3.1 内核系统调用</h3><p>内核提供的API有io_setup, io_submit, io_getevents, io_destroy，<br>所使用的参数是 aio_context_t 而非libaio中的 io_context_t<br>一般不采用此方式直接调用，一般使用的是libaio库进行调用。</p>
 <h3 id="3-2-libaio"><a href="#3-2-libaio" class="headerlink" title="3.2 libaio"></a>3.2 libaio</h3><p>libaio提供的API有：io_setup, io_submit, io_getevents, io_destroy</p>
 <p>使用时需要独立安装相关的 libaio-devel 开发库<br><code>yum install libaio-devel</code></p>
-<h4 id="3-2-1-应用步骤"><a href="#3-2-1-应用步骤" class="headerlink" title="3.2.1 应用步骤"></a>3.2.1 应用步骤</h4><h5 id="3-2-1-1-建立IO任务"><a href="#3-2-1-1-建立IO任务" class="headerlink" title="3.2.1.1 建立IO任务"></a>3.2.1.1 建立IO任务</h5><pre><code>int io_setup (int maxevents, io_context_t *ctxp);</code></pre><p>io_context_t对应内核中一个结构，为异步IO请求提供上下文环境。注意在setup前必须将io_context_t初始化为0。<br>也需要open打开文件的时候设置<code>O_DIRECT</code>标志。</p>
-<h5 id="3-2-1-2-提交IO任务"><a href="#3-2-1-2-提交IO任务" class="headerlink" title="3.2.1.2 提交IO任务"></a>3.2.1.2 提交IO任务</h5><pre><code>long io_submit (aio_context_t ctx_id, long nr, struct iocb **iocbpp);</code></pre><p>提交任务之前必须先填充iocb结构体，libaio提供的包装函数说明了需要完成的工作：</p>
+<h4 id="3-2-1-相关结构体"><a href="#3-2-1-相关结构体" class="headerlink" title="3.2.1 相关结构体"></a>3.2.1 相关结构体</h4><pre><code class="c++">struct iocb {　　　　　　　　// 描述IO请求
+
+        void     *data;  /* Return in the io completion event */
+        unsigned key;   /*r use in identifying io requests */
+        short           aio_lio_opcode;　　// 操作的类型：IO_CMD_PWRITE | IO_CMD_PREAD
+        short           aio_reqprio;
+        int             aio_fildes;　　　　// 操作的文件fd
+        union {
+                struct io_iocb_common           c;
+                struct io_iocb_vector           v;
+                struct io_iocb_poll             poll;
+                struct io_iocb_sockaddr saddr;
+        } u;
+};
+
+struct io_iocb_common {　　
+        void            *buf;　　
+        unsigned long   nbytes;
+        long long       offset;
+        unsigned        flags;
+        unsigned        resfd;
+};
+
+　　struct io_event {　　　　// 描述返回结果
+　　　　void *data;
+　　　　struct iocb *obj;　　// 提交的任务
+　　　　unsigned long res;　　// IO任务完成的状态
+　　　unsigned long res2;　　// 同上
+};</code></pre>
+<h4 id="3-2-2-应用步骤"><a href="#3-2-2-应用步骤" class="headerlink" title="3.2.2 应用步骤"></a>3.2.2 应用步骤</h4><h5 id="3-2-2-1-建立IO任务"><a href="#3-2-2-1-建立IO任务" class="headerlink" title="3.2.2.1 建立IO任务"></a>3.2.2.1 建立IO任务</h5><pre><code>int io_setup (int maxevents, io_context_t *ctxp);</code></pre><p>io_context_t对应内核中一个结构，为异步IO请求提供上下文环境。注意在setup前必须将io_context_t初始化为0。<br>也需要open打开文件的时候设置 <strong><em>O_DIRECT</em></strong> 标志。</p>
+<h5 id="3-2-2-2-提交IO任务"><a href="#3-2-2-2-提交IO任务" class="headerlink" title="3.2.2.2 提交IO任务"></a>3.2.2.2 提交IO任务</h5><pre><code>long io_submit (io_context_t ctx_id, long nr, struct iocb **iocbpp);</code></pre><p>提交任务之前必须先填充iocb结构体，libaio提供的包装函数说明了需要完成的工作：</p>
 <pre><code>void io_prep_pread(struct iocb *iocb, int fd, void *buf, size_t count, long long offset)
 {
 　　memset(iocb, 0, sizeof(*iocb));
@@ -667,17 +696,20 @@ void io_prep_pwrite(struct iocb *iocb, int fd, void *buf, size_t count, long lon
 　　iocb-&gt;u.c.nbytes = count;
 　　iocb-&gt;u.c.offset = offset;
 }</code></pre><p>这里注意读写的buf都必须是按扇区对齐的，可以用posix_memalign来分配。</p>
-<h5 id="3-2-1-3-获取完成的IO"><a href="#3-2-1-3-获取完成的IO" class="headerlink" title="3.2.1.3 获取完成的IO"></a>3.2.1.3 获取完成的IO</h5><pre><code>long io_getevents (aio_context_t ctx_id, long min_nr, long nr, struct io_event *events, struct timespec *timeout);</code></pre><p>这里最重要的就是提供一个io_event数组给内核来copy完成的IO请求到这里，数组的大小是io_setup时指定的maxevents。<br>timeout是指等待IO完成的超时时间，设置为NULL表示一直等待所有到IO的完成。</p>
-<h5 id="3-2-1-4-销毁IO任务"><a href="#3-2-1-4-销毁IO任务" class="headerlink" title="3.2.1.4 销毁IO任务"></a>3.2.1.4 销毁IO任务</h5><pre><code>int io_destroy (io_context_t ctx);</code></pre><h4 id="3-2-2-libaio和epoll的结合"><a href="#3-2-2-libaio和epoll的结合" class="headerlink" title="3.2.2 libaio和epoll的结合"></a>3.2.2 libaio和epoll的结合</h4><p>在异步编程中，任何一个环节的阻塞都会导致整个程序的阻塞，所以一定要避免在 io_getevents 调用时阻塞式的等待。还记得 io_iocb_common 中的 flags 和 resfd 吗？看看libaio是如何提供io_getevents和事件循环的结合：</p>
+<p>详细代码内容可参考 <em><a href="https://pagure.io/libaio/blob/master/f/src/libaio.h" target="_blank" rel="noopener">https://pagure.io/libaio/blob/master/f/src/libaio.h</a></em></p>
+<h5 id="3-2-2-3-获取完成的IO"><a href="#3-2-2-3-获取完成的IO" class="headerlink" title="3.2.2.3 获取完成的IO"></a>3.2.2.3 获取完成的IO</h5><p>io_getevents 系统调用尝试从 ctx_id 指定的AIO上下文的完成队列中读取至少min_nr, 最多nr个事件,<br>timeout指定等待IO完成的超时时间，为NULL时一直等待到至少看到min_nr个事件为止;</p>
+<pre><code class="c++">long io_getevents (io_context_t ctx_id, long min_nr, long nr, struct io_event *events, struct timespec *timeout);</code></pre>
+<p>这里最重要的就是提供一个io_event数组给内核来copy完成的IO请求到这里，数组的大小是io_setup时指定的maxevents。</p>
+<h5 id="3-2-2-4-销毁IO任务"><a href="#3-2-2-4-销毁IO任务" class="headerlink" title="3.2.2.4 销毁IO任务"></a>3.2.2.4 销毁IO任务</h5><pre><code>int io_destroy (io_context_t ctx);</code></pre><h4 id="3-2-3-libaio和epoll的结合"><a href="#3-2-3-libaio和epoll的结合" class="headerlink" title="3.2.3 libaio和epoll的结合"></a>3.2.3 libaio和epoll的结合</h4><p>在异步编程中，任何一个环节的阻塞都会导致整个程序的阻塞，所以一定要避免在 io_getevents 调用时阻塞式的等待。还记得 io_iocb_common 中的 flags 和 resfd 吗？看看libaio是如何提供io_getevents和事件循环的结合：</p>
 <pre><code>void io_set_eventfd(struct iocb *iocb, int eventfd) {
     iocb-&gt;u.c.flags |= (1 &lt;&lt; 0) /* IOCB_FLAG_RESFD */;
     iocb-&gt;u.c.resfd = eventfd;
-}</code></pre><p>这里的resfd是通过系统调用eventfd生成的。<br><code>int eventfd(unsigned int initval, int flags);</code><br>eventfd是linux 2.6.22内核之后加进来的syscall，作用是内核用来通知应用程序发生的事件的数量，从而使应用程序不用频繁地去轮询内核是否有时间发生，而是有内核将发生事件的数量写入到该fd，应用程序发现fd可读后，从fd读取该数值，并马上去内核读取。</p>
+}</code></pre><p>这里的resfd是通过系统调用eventfd生成的。<br><code>int eventfd(unsigned int initval, int flags);</code><br>eventfd 函数是linux 2.6.22内核之后加进来的syscall，作用是内核用来通知应用程序发生的事件的数量，从而使应用程序不用频繁地去轮询内核是否有时间发生，而是有内核将发生事件的数量写入到该fd，应用程序发现fd可读后，从fd读取该数值，并马上去内核读取。</p>
 <p>有了eventfd，就可以很好地将libaio和epoll事件循环结合起来：</p>
 <pre><code>1. 创建一个eventfd
     efd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
 
-2. 将eventfd设置到iocb中
+2. 将eventfd设置到iocb中, 将eventfd和iocb进行关联
     io_set_eventfd(iocb, efd);
 
 3. 交接AIO请求
@@ -688,9 +720,9 @@ void io_prep_pwrite(struct iocb *iocb, int fd, void *buf, size_t count, long lon
     epoll_ctl(epfd, EPOLL_CTL_ADD, efd, &amp;epevent);
     epoll_wait(epfd, &amp;epevent, 1, -1);
 
-5. 当eventfd可读时，从eventfd读出完成IO请求的数量，并调用io_getevents获取这些IO
+5. 当 `eventfd` 可读时，从 `eventfd` 读出完成IO请求的数量，并调用 `io_getevents` 获取这些IO
     read(efd, &amp;finished_aio, sizeof(finished_aio);
-    r = io_getevents(ctx, 1, NUM_EVENTS, events, &amp;tms);</code></pre><h4 id="3-2-3-epoll-aio-eventfd结合使用的简单例子"><a href="#3-2-3-epoll-aio-eventfd结合使用的简单例子" class="headerlink" title="3.2.3 epoll/aio/eventfd结合使用的简单例子"></a>3.2.3 epoll/aio/eventfd结合使用的简单例子</h4><p>make时需要增加-laio 库引用<br><code>g++ main.cpp -o aiolib -laio</code></p>
+    r = io_getevents(ctx, 1, NUM_EVENTS, events, &amp;tms);</code></pre><h4 id="3-2-4-epoll-aio-eventfd结合使用的简单例子"><a href="#3-2-4-epoll-aio-eventfd结合使用的简单例子" class="headerlink" title="3.2.4 epoll/aio/eventfd结合使用的简单例子"></a>3.2.4 epoll/aio/eventfd结合使用的简单例子</h4><p>make时需要增加-laio 库引用<br><code>g++ main.cpp -o aiolib -laio</code></p>
 <p>main.cpp内容如下</p>
 <pre><code>#include &lt;stdio.h&gt;
 #include &lt;errno.h&gt;
@@ -711,7 +743,7 @@ void io_prep_pwrite(struct iocb *iocb, int fd, void *buf, size_t count, long lon
 #define ALIGN_SIZE  512
 #define RD_WR_SIZE  1024
 
-struct custom_iocb{
+struct custom_iocb {
     struct iocb iocb;
     int nth_request;
 };
@@ -723,8 +755,9 @@ void aio_callback(io_context_t ctx, struct iocb *iocb, long res, long res2) {
             iocb-&gt;u.c.offset, iocb-&gt;u.c.nbytes, res, res2);
 }
 
-int main(int argc, char *argv[]) {
-    int efd, fd, epfd;
+int main(int argc, char *argv[])
+{
+    int efd=-1, fd=-1, epfd=-1;
     io_context_t ctx;
     struct timespec tms;
     struct io_event events[NUM_EVENTS];
@@ -735,14 +768,12 @@ int main(int argc, char *argv[]) {
     void *buf;
     struct epoll_event epevent;
 
-    efd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
-    if (efd == -1) {
+    if ( 0&gt;(efd=eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC)) ) {
         perror(&quot;eventfd&quot;);
         return 2;
     }
 
-    fd = open(TEST_FILE, O_RDWR | O_CREAT | O_DIRECT, 0644);
-    if (fd == -1) {
+    if (0&gt;(fd = open(TEST_FILE, O_RDWR | O_CREAT | O_DIRECT, 0644))) {
         perror(&quot;open&quot;);
         return 3;
     }
@@ -754,7 +785,7 @@ int main(int argc, char *argv[]) {
         return 4;
     }
 
-    if (posix_memalign(&amp;buf, ALIGN_SIZE, RD_WR_SIZE)) {
+    if (posix_memalign(&amp;buf, ALIGN_SIZE, RD_WR_SIZE)) { // 申请内存对齐的空间,类似malloc 需调用free释放空间
         perror(&quot;posix_memalign&quot;);
         return 5;
     }
@@ -773,8 +804,7 @@ int main(int argc, char *argv[]) {
         return 6;
     }
 
-    epfd = epoll_create(1);
-    if (epfd == -1) {
+    if (0&gt;(epfd = epoll_create(1))) {
         perror(&quot;epoll_create&quot;);
         return 7;
     }
@@ -790,7 +820,7 @@ int main(int argc, char *argv[]) {
     while (i &lt; NUM_EVENTS) {
         uint64_t finished_aio;
 
-        if (epoll_wait(epfd, &amp;epevent, 1, -1) != 1) {
+        if (1 != epoll_wait(epfd, &amp;epevent, 1, -1)) {
             perror(&quot;epoll_wait&quot;);
             return 9;
         }
@@ -1226,7 +1256,7 @@ int main(int argc,char **argv)
     sleep(1);
     printf(&quot;异步读结束\n&quot;);
     return 0;
-}</code></pre><h2 id="四-参考"><a href="#四-参考" class="headerlink" title="四. 参考"></a>四. 参考</h2><p><a href="https://www.ibm.com/developerworks/cn/linux/l-async/index.html" target="_blank" rel="noopener">https://www.ibm.com/developerworks/cn/linux/l-async/index.html</a><br><a href="https://blog.csdn.net/abraham_1/article/details/79824350" target="_blank" rel="noopener">https://blog.csdn.net/abraham_1/article/details/79824350</a><br><a href="https://man7.org/linux/man-pages/man7/aio.7.html" target="_blank" rel="noopener">https://man7.org/linux/man-pages/man7/aio.7.html</a><br><a href="http://guleilab.com/2019/01/30/linux-aio/" target="_blank" rel="noopener">http://guleilab.com/2019/01/30/linux-aio/</a><br><a href="https://www.cnblogs.com/chenny7/p/4362910.html" target="_blank" rel="noopener">https://www.cnblogs.com/chenny7/p/4362910.html</a></p>
+}</code></pre><h2 id="四-参考"><a href="#四-参考" class="headerlink" title="四. 参考"></a>四. 参考</h2><p><a href="https://www.ibm.com/developerworks/cn/linux/l-async/index.html" target="_blank" rel="noopener">https://www.ibm.com/developerworks/cn/linux/l-async/index.html</a><br><a href="https://blog.csdn.net/abraham_1/article/details/79824350" target="_blank" rel="noopener">https://blog.csdn.net/abraham_1/article/details/79824350</a><br><a href="https://man7.org/linux/man-pages/man7/aio.7.html" target="_blank" rel="noopener">https://man7.org/linux/man-pages/man7/aio.7.html</a><br><a href="http://guleilab.com/2019/01/30/linux-aio/" target="_blank" rel="noopener">http://guleilab.com/2019/01/30/linux-aio/</a><br><a href="https://www.cnblogs.com/chenny7/p/4362910.html" target="_blank" rel="noopener">https://www.cnblogs.com/chenny7/p/4362910.html</a><br><a href="https://pagure.io/libaio/blob/master/f/src" target="_blank" rel="noopener">https://pagure.io/libaio/blob/master/f/src</a></p>
 
 </div>
 
