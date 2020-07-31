@@ -4,7 +4,7 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-	
+	<link rel="stylesheet" href="/css/highlight/styles/vs2015.css">
 	<!-- title -->
 	
 	<title>
@@ -93,8 +93,8 @@
 									
 							<ul>
 								<li class="file">
-									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
-										linux下AIO应用详解
+									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+										linux下IO应用详解
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -642,7 +642,8 @@
 					定位cpu 100_p的方法
 				</h2>
 				<div class="index-brief">
-					使用perf 定位# -g开启调用关系分析，-p指定php-fpm的进程号94806$ perf top -g -p 94806
+					使用perf 定位# -g开启调用关系分析，-p指定php-fpm的进程号94806
+$ perf top -g -p 94806
 					...
 				</div>
 			</a>
@@ -661,9 +662,10 @@
 				</h2>
 				<div class="index-brief">
 					导出查询内容到文件中
-sqlite3 www_cache.db;sqlite&gt; .output 1.txtsqlite&gt; select path,size from file_info;sqlite&gt; .output stdout
-
-直接执行后面的sql语句sqlite3 data
+sqlite3 www_cache.db;
+sqlite&gt; .output 1.txt
+sqlite&gt; select path,size from file_info;
+sqlite&gt; .output stdout直接执行后面的sql语句sqlite3 dat
 					...
 				</div>
 			</a>
@@ -682,7 +684,14 @@ sqlite3 www_cache.db;sqlite&gt; .output 1.txtsqlite&gt; select path,size from fi
 				</h2>
 				<div class="index-brief">
 					大端-小端对齐判定方法
-int main(int argc, char** argv) &#123;	(void)argc;	(void)argv;	union &#123;		short s;		char c[sizeof(short)];	&#125;un;	un.s &#x3D; 0x0102
+int main(int argc, char** argv) {
+    (void)argc;
+    (void)argv;
+    union {
+        short s;
+        char c[sizeof(short)];
+    }un;
+   
 					...
 				</div>
 			</a>
@@ -695,12 +704,13 @@ int main(int argc, char** argv) &#123;	(void)argc;	(void)argv;	union &#123;		sho
 		</div>	
 	
 		<div class="index-li">
-			<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+			<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
 				<h2 class="index-title">
-					linux下AIO应用详解
+					linux下IO应用详解
 				</h2>
 				<div class="index-brief">
-					一. 对于异步I/O的概述aio异步读写是在Linux内核2.6之后才正式纳入其标准。之所以会增加此模块，是因为众所周知我们计算机CPU的执行速度远大于I/O读写的执行速度，如果我们用传统的阻塞式或非阻塞式来操作I/O的话，那么我们在同一个程序中(不用多线程或多进程)就不能同时操作俩个以上的文件I/
+					一. 对于I/O的概述Linux磁盘I/O分为Buffered IO和Direct IO，这两者有何区别？
+Buffered IO：当应用程序尝试读取某块数据的时候，如果这块数据已经存放在了页缓存（page cache）中，那么这块数据就可以立即返回给应用程序，而不需要经过实际的物理读盘操作。当然，
 					...
 				</div>
 			</a>
@@ -789,6 +799,8 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 	<button id="totop-toggle" class="toggle"><i class="fa fa-angle-double-up" aria-hidden="true"></i></button>
 </body>

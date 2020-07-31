@@ -4,7 +4,7 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-	
+	<link rel="stylesheet" href="/css/highlight/styles/vs2015.css">
 	<!-- title -->
 	
 	<title>
@@ -93,8 +93,8 @@
 									
 							<ul>
 								<li class="file">
-									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
-										linux下AIO应用详解
+									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+										linux下IO应用详解
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -588,7 +588,11 @@
 					awk常用方法
 				</h2>
 				<div class="index-brief">
-					awk内建变量$0 当前记录（这个变量中存放着整个行的内容）$1~$n 当前记录的第n个字段，字段间由FS分隔FS 输入字段分隔符 默认是空格或TabNF 当前记录中的字段个数，就是有多少列 ,$(NF-n)为倒数第n个字段NR 已经读出的记录数，就是行号，从1开始，如果有多个文件话，这个值也是不断
+					awk内建变量$0 当前记录（这个变量中存放着整个行的内容）
+$1~$n 当前记录的第n个字段，字段间由FS分隔
+FS 输入字段分隔符 默认是空格或Tab
+NF 当前记录中的字段个数，就是有多少列 ,$(NF-n)为倒数第n个字段
+NR 已经读出的记录数，就是行号，从1开始，如果有多个文件话，这个值
 					...
 				</div>
 			</a>
@@ -607,7 +611,14 @@
 				</h2>
 				<div class="index-brief">
 					用户根目录下~/.vimrc 配置文件内容
-set nuset tabstop&#x3D;4set softtabstop&#x3D;4set shiftwidth&#x3D;4set expandtabset cinoptions&#x3D;g0set colorcolumn&#x3D;81set
+set nu
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set expandtab
+set cinoptions=g0
+set colorcolumn=81
+set fileencodings=ucs
 					...
 				</div>
 			</a>
@@ -625,12 +636,8 @@ set nuset tabstop&#x3D;4set softtabstop&#x3D;4set shiftwidth&#x3D;4set expandtab
 					01 开发机部署
 				</h2>
 				<div class="index-brief">
-					开发机部署修改服务器名hostnamectl set-hostname xxxx
-实际修改的是/proc/sys/kernel/hostname的内容
-安装开发包yum install gcc-c++ cmake
-
-系统更新yum update
-安装python2.7安装python2.7的时候使用
+					开发机部署修改服务器名hostnamectl set-hostname xxxx实际修改的是/proc/sys/kernel/hostname的内容
+安装开发包yum install gcc-c++ cmake 系统更新   yum update  安装python2.7安装python2.7的时候
 					...
 				</div>
 			</a>
@@ -669,11 +676,9 @@ set nuset tabstop&#x3D;4set softtabstop&#x3D;4set shiftwidth&#x3D;4set expandtab
 					pika 运维命令
 				</h2>
 				<div class="index-brief">
-					一、运维经验1、可能的话将整个pika目录放到ssd磁盘2、从节点全量同步数据的时候会将主节点所有数据同步到var&#x2F;dbsync目录下，所以此空间一定足够3、
-
-二、命令pika 停止命令.&#x2F;redis-cli -h 127.0.0.1 -p 9221 shutdown
-
-启动命
+					一、运维经验1、可能的话将整个pika目录放到ssd磁盘
+2、从节点全量同步数据的时候会将主节点所有数据同步到var/dbsync目录下，所以此空间一定足够
+3、二、命令pika 停止命令./redis-cli -h 127.0.0.1 -p 9221 shutdown启动命令/opt/soft/w
 					...
 				</div>
 			</a>
@@ -831,6 +836,8 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 	<button id="totop-toggle" class="toggle"><i class="fa fa-angle-double-up" aria-hidden="true"></i></button>
 </body>

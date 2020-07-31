@@ -4,7 +4,7 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-	
+	<link rel="stylesheet" href="/css/highlight/styles/vs2015.css">
 	<!-- title -->
 	
 	<title>
@@ -95,8 +95,8 @@
 									
 							<ul>
 								<li class="file">
-									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
-										linux下AIO应用详解
+									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+										linux下IO应用详解
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -598,51 +598,49 @@
 </div>
 
 <div id="article-content">
-	<h1 id="开发机部署"><a href="#开发机部署" class="headerlink" title="开发机部署"></a>开发机部署</h1><h3 id="修改服务器名"><a href="#修改服务器名" class="headerlink" title="修改服务器名"></a>修改服务器名</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hostnamectl set-hostname xxxx</span><br></pre></td></tr></table></figure>
-<p>实际修改的是/proc/sys/kernel/hostname的内容</p>
-<h3 id="安装开发包"><a href="#安装开发包" class="headerlink" title="安装开发包"></a>安装开发包</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install gcc-c++ cmake</span><br></pre></td></tr></table></figure>
+	<h1 id="开发机部署"><a href="#开发机部署" class="headerlink" title="开发机部署"></a>开发机部署</h1><h3 id="修改服务器名"><a href="#修改服务器名" class="headerlink" title="修改服务器名"></a>修改服务器名</h3><pre><code>hostnamectl set-hostname xxxx</code></pre><p>实际修改的是/proc/sys/kernel/hostname的内容</p>
+<h3 id="安装开发包"><a href="#安装开发包" class="headerlink" title="安装开发包"></a>安装开发包</h3><pre><code>yum install gcc-c++ cmake </code></pre><h3 id="系统更新"><a href="#系统更新" class="headerlink" title="系统更新"></a>系统更新</h3><pre><code>   yum update  </code></pre><h3 id="安装python2-7"><a href="#安装python2-7" class="headerlink" title="安装python2.7"></a>安装python2.7</h3><p>安装python2.7的时候使用以下选项编译</p>
+<pre><code>./configure  --enable-shared CFLAGS=-fPIC --enable-unicode=ucs4</code></pre><p>然后再安装python</p>
+<h3 id="安装git"><a href="#安装git" class="headerlink" title="安装git"></a>安装git</h3><pre><code>yum install git</code></pre><h3 id="安装vim8"><a href="#安装vim8" class="headerlink" title="安装vim8"></a>安装vim8</h3><h5 id="先安装依赖包"><a href="#先安装依赖包" class="headerlink" title="先安装依赖包"></a>先安装依赖包</h5><pre><code>yum install ncurses-devel
+yum install python-devel
+yum install perl-ExtUtils-Embed
+yum install ruby
+yum install ruby-devel
+yum install clang-devel</code></pre><h5 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h5><pre><code>./configure --with-features=huge --enable-multibyte  --enable-pythoninterp --enable-rubyinterp  --enable-luainterp --enable-cscope
 
-<h3 id="系统更新"><a href="#系统更新" class="headerlink" title="系统更新"></a>系统更新</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum update</span><br></pre></td></tr></table></figure>
-<h3 id="安装python2-7"><a href="#安装python2-7" class="headerlink" title="安装python2.7"></a>安装python2.7</h3><p>安装python2.7的时候使用以下选项编译</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.&#x2F;configure  --enable-shared CFLAGS&#x3D;-fPIC --enable-unicode&#x3D;ucs4</span><br></pre></td></tr></table></figure>
-<p>然后再安装python</p>
-<h3 id="安装git"><a href="#安装git" class="headerlink" title="安装git"></a>安装git</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install git</span><br></pre></td></tr></table></figure>
+make VIMRUNTIMEDIR=/usr/local/share/vim/vim80
+make install
 
-<h3 id="安装vim8"><a href="#安装vim8" class="headerlink" title="安装vim8"></a>安装vim8</h3><h5 id="先安装依赖包"><a href="#先安装依赖包" class="headerlink" title="先安装依赖包"></a>先安装依赖包</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install ncurses-devel</span><br><span class="line">yum install python-devel</span><br><span class="line">yum install perl-ExtUtils-Embed</span><br><span class="line">yum install ruby</span><br><span class="line">yum install ruby-devel</span><br><span class="line">yum install clang-devel</span><br></pre></td></tr></table></figure>
+ubuntu 使用如下语法
+./configure --with-features=huge --enable-multibyte --enable-rubyinterp=yes --enable-python3interp=yes --with-python3-config-dir=$(python3-config --configdir) --enable-perlinterp=yes --enable-luainterp=yes --enable-gui=gtk2 --enable-cscope
+</code></pre><h5 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h5><p>mkdir ~/.vim/bundle</p>
+<pre><code>git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/Vundle.vim</code></pre><h6 id="安装commond-t"><a href="#安装commond-t" class="headerlink" title="安装commond-t"></a>安装commond-t</h6><pre><code>cd ~/.vim/bundle/command-t/ruby/command-t/ext/command-t/
 
-<h5 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.&#x2F;configure --with-features&#x3D;huge --enable-multibyte  --enable-pythoninterp --enable-rubyinterp  --enable-luainterp --enable-cscope</span><br><span class="line"></span><br><span class="line">make VIMRUNTIMEDIR&#x3D;&#x2F;usr&#x2F;local&#x2F;share&#x2F;vim&#x2F;vim80</span><br><span class="line">make install</span><br><span class="line"></span><br><span class="line">ubuntu 使用如下语法</span><br><span class="line">.&#x2F;configure --with-features&#x3D;huge --enable-multibyte --enable-rubyinterp&#x3D;yes --enable-python3interp&#x3D;yes --with-python3-config-dir&#x3D;$(python3-config --configdir) --enable-perlinterp&#x3D;yes --enable-luainterp&#x3D;yes --enable-gui&#x3D;gtk2 --enable-cscope</span><br></pre></td></tr></table></figure>
+ruby extconf.rb
 
-<h5 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h5><p>mkdir ~/.vim/bundle</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;gmarik&#x2F;vundle.git ~&#x2F;.vim&#x2F;bundle&#x2F;Vundle.vim</span><br></pre></td></tr></table></figure>
-
-<h6 id="安装commond-t"><a href="#安装commond-t" class="headerlink" title="安装commond-t"></a>安装commond-t</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd ~&#x2F;.vim&#x2F;bundle&#x2F;command-t&#x2F;ruby&#x2F;command-t&#x2F;ext&#x2F;command-t&#x2F;</span><br><span class="line"></span><br><span class="line">ruby extconf.rb</span><br><span class="line"></span><br><span class="line">make</span><br></pre></td></tr></table></figure>
-<h6 id="安装YouCompleteMe"><a href="#安装YouCompleteMe" class="headerlink" title="安装YouCompleteMe"></a>安装YouCompleteMe</h6><p>上传clang+llvm-5.0.0-linux-x86_64-ubuntu14.04.tar.xz到.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/../clang_archives/ 目录下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd ~&#x2F;.vim&#x2F;bundle&#x2F;YouCompleteMe</span><br><span class="line">.&#x2F;install.py --clang-completer</span><br></pre></td></tr></table></figure>
-<h3 id="安装gcc的debug调试信息"><a href="#安装gcc的debug调试信息" class="headerlink" title="安装gcc的debug调试信息"></a>安装gcc的debug调试信息</h3><ul>
+make</code></pre><h6 id="安装YouCompleteMe"><a href="#安装YouCompleteMe" class="headerlink" title="安装YouCompleteMe"></a>安装YouCompleteMe</h6><p>上传clang+llvm-5.0.0-linux-x86_64-ubuntu14.04.tar.xz到.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/../clang_archives/ 目录下</p>
+<pre><code>cd ~/.vim/bundle/YouCompleteMe
+./install.py --clang-completer</code></pre><h3 id="安装gcc的debug调试信息"><a href="#安装gcc的debug调试信息" class="headerlink" title="安装gcc的debug调试信息"></a>安装gcc的debug调试信息</h3><ul>
 <li><p>修改配置文件</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;yum.repos.d&#x2F;CentOS-Debuginfo.repo</span><br></pre></td></tr></table></figure>
-<p>将其中的==enabled=0==修改为==enabled=1==</p>
+<pre><code>vim /etc/yum.repos.d/CentOS-Debuginfo.repo</code></pre><p>将其中的==enabled=0==修改为==enabled=1==</p>
 </li>
 <li><p>执行如下命令安装：</p>
 </li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">debuginfo-install libgcc  libstdc++  nss-softokn-freebl  zlib</span><br></pre></td></tr></table></figure>
-
-<ul>
+<pre><code>    debuginfo-install libgcc  libstdc++  nss-softokn-freebl  zlib </code></pre><ul>
 <li>gdb7.0多线程non-stop模式开启</li>
 </ul>
 <p>此模式可以保证只调试某个线程，在~/.gdbinit中添加以下内容</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">set target-async 1</span><br><span class="line">set pagination off</span><br><span class="line">set non-stop on</span><br></pre></td></tr></table></figure>
-
-<h3 id="部署c-的man帮助文档"><a href="#部署c-的man帮助文档" class="headerlink" title="部署c++的man帮助文档"></a>部署c++的man帮助文档</h3><ul>
+<pre><code>set target-async 1
+set pagination off
+set non-stop on</code></pre><h3 id="部署c-的man帮助文档"><a href="#部署c-的man帮助文档" class="headerlink" title="部署c++的man帮助文档"></a>部署c++的man帮助文档</h3><ul>
 <li>从站点下载libstdc++-api-4.5.2.man.tar压缩</li>
 </ul>
 <p><a href="">ftp://gcc.gnu.org/pub/gcc/libstdc++/doxygen/</a></p>
 <ul>
-<li>解压文件并拷贝内容到man3目录下<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tar -jxvf libstdc++-api-4.5.2.man.tar</span><br><span class="line">cd libstdc++-api-4.5.2&#x2F;man3&#x2F;</span><br><span class="line">cp * &#x2F;usr&#x2F;share&#x2F;man&#x2F;man3&#x2F;</span><br></pre></td></tr></table></figure>
-
-
-</li>
+<li>解压文件并拷贝内容到man3目录下<pre><code>tar -jxvf libstdc++-api-4.5.2.man.tar
+cd libstdc++-api-4.5.2/man3/
+cp * /usr/share/man/man3/</code></pre></li>
 </ul>
 <h1 id="ubuntu"><a href="#ubuntu" class="headerlink" title="ubuntu"></a>ubuntu</h1><pre><code>- 先更新系统，sudo apt-get update
 - 再按照centos部署方式进行部署</code></pre><h2 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h2><pre><code>sudo apt-get install libncurses5-dev libgnome2-dev libgnomeui-dev libgtk2.0-dev libatk1.0-dev libbonoboui2-dev libcairo2-dev libx11-dev libxpm-dev libxt-dev python-dev  python3-dev ruby-dev lua5.1 liblua5.1-dev libperl-dev git  python-requests</code></pre><h2 id="ruby-安装"><a href="#ruby-安装" class="headerlink" title="ruby 安装"></a>ruby 安装</h2><pre><code>apt-get install ruby
@@ -723,6 +721,8 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 	<button id="totop-toggle" class="toggle"><i class="fa fa-angle-double-up" aria-hidden="true"></i></button>
 </body>

@@ -4,12 +4,12 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-	
+	<link rel="stylesheet" href="/css/highlight/styles/vs2015.css">
 	<!-- title -->
 	
 	<title>
 	
-		linux下AIO应用详解 | 
+		linux下IO应用详解 | 
 	 
 	Fly542
 	</title>
@@ -95,8 +95,8 @@
 									
 							<ul>
 								<li class="file active">
-									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
-										linux下AIO应用详解
+									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+										linux下IO应用详解
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -584,7 +584,7 @@
 	<div id="content">
 		<h1 id="article-title">
 
-	linux下AIO应用详解
+	linux下IO应用详解
 </h1>
 <div class="article-meta">
 	
@@ -598,15 +598,24 @@
 </div>
 
 <div id="article-content">
-	<h2 id="一-对于异步I-O的概述"><a href="#一-对于异步I-O的概述" class="headerlink" title="一. 对于异步I/O的概述"></a>一. 对于异步I/O的概述</h2><p>aio异步读写是在Linux内核2.6之后才正式纳入其标准。之所以会增加此模块，是因为众所周知我们计算机CPU的执行速度远大于I/O读写的执行速度，如果我们用传统的阻塞式或非阻塞式来操作I/O的话，那么我们在同一个程序中(不用多线程或多进程)就不能同时操作俩个以上的文件I/O，每次只能对一个文件进行I/O操作，很明显这样效率很低下(因为CPU速度远大于I/O操作的速度，所以当执行I/O时，CPU其实还可以做更多的事)。因此就诞生了相对高效的异步I/O。</p>
-<h2 id="二-与其他I-O模型的类比"><a href="#二-与其他I-O模型的类比" class="headerlink" title="二.与其他I/O模型的类比"></a>二.与其他I/O模型的类比</h2><p>在介绍AIO之前，先来概括一下Linux下其他的I/O模型。</p>
-<img src="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio1.gif" class="" title="图 1. 基本 Linux I&#x2F;O 模型的简单矩阵">
+	<h2 id="一-对于I-O的概述"><a href="#一-对于I-O的概述" class="headerlink" title="一. 对于I/O的概述"></a>一. 对于I/O的概述</h2><p>Linux磁盘I/O分为Buffered IO和Direct IO，这两者有何区别？</p>
+<p>Buffered IO：<br>当应用程序尝试读取某块数据的时候，如果这块数据已经存放在了页缓存（page cache）中，那么这块数据就可以立即返回给应用程序，而不需要经过实际的物理读盘操作。当然，如果数据在应用程序读取之前并未被存放在页缓存中，那么就需要先将数据从磁盘读到页缓存中去。对于写操作来说，应用程序也会将数据先写到页缓存中去，数据是否被立即写到磁盘上去取决于应用程序所采用的写操作机制：如果用户采用的是同步写机制（ synchronous writes ），那么数据会立即被写回到磁盘上，应用程序会一直等到数据被写完为止；如果用户采用的是延迟写机制（ deferred writes ），那么应用程序就完全不需要等到数据全部被写回到磁盘，数据只要被写到页缓存中去就可以了。在延迟写机制的情况下，操作系统会定期地将放在页缓存中的数据刷到磁盘上。与异步写机制（ asynchronous writes ）不同的是，<font color="#ff0000"><code>延迟写机制在数据完全写到磁盘上的时候不会通知应用程序，而异步写机制在数据完全写到磁盘上的时候是会返回给应用程序的。所以延迟写机制本身是存在数据丢失的风险的</code></font>，而异步写机制则不会有这方面的担心。</p>
+<p>总结下，Buffered IO的特点是使用了内存缓存，如：</p>
+<ul>
+<li>读操作：硬盘-&gt;内核页缓存-&gt;用户缓冲区</li>
+<li>写操作：用户缓冲区-&gt;内核页缓存-&gt;硬盘</li>
+</ul>
+<p>对Buffered IO，数据在传输过程中需要在应用程序地址空间和页缓存之间进行多次数据拷贝操作，这些数据拷贝操作所带来的 CPU 以及内存开销是非常大的。</p>
+<p>对于某些特殊的应用程序（如数据库）来说，避开操作系统内核缓冲区而直接在应用程序地址空间和磁盘之间传输数据会比使用操作系统内核缓冲区获取更好的性能。</p>
+<p>Direct IO:<br>Direct-io的目的在于绕过文件系统（ext）的cache，直接对block设备上的文件进行读写。但不经内核缓冲区，直接写磁盘，必然会引起阻塞。所以通常DIRECT-io与AIO（异步IO）会一起出现。</p>
+<h2 id="二-I-O模型的类比"><a href="#二-I-O模型的类比" class="headerlink" title="二. I/O模型的类比"></a>二. I/O模型的类比</h2><p>Linux下的I/O模型。</p>
+<img src="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio1.gif" class="" title="图 1. 基本 Linux I&#x2F;O 模型的简单矩阵">
 <p>如图每个 I/O 模型都有自己的使用模式，它们对于特定的应用程序都有自己的优点。下面一一来介绍：</p>
-<h3 id="2-1-同步阻塞-I-O-模型"><a href="#2-1-同步阻塞-I-O-模型" class="headerlink" title="2.1 同步阻塞 I/O 模型"></a>2.1 同步阻塞 I/O 模型</h3><img src="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif" class="" title="图 2. 同步阻塞 I&#x2F;O 模型的典型流程">
+<h3 id="2-1-同步阻塞-I-O-模型"><a href="#2-1-同步阻塞-I-O-模型" class="headerlink" title="2.1 同步阻塞 I/O 模型"></a>2.1 同步阻塞 I/O 模型</h3><img src="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif" class="" title="图 2. 同步阻塞 I&#x2F;O 模型的典型流程">
 <p>在这个模型中，用户空间的应用程序执行一个系统调用，这会导致应用程序阻塞。这意味着应用程序会一直阻塞，直到系统调用完成为止（数据传输完成或发生错误）。调用应用程序处于一种不再消费 CPU 而只是简单等待响应的状态，因此从处理的角度来看，这是非常有效的。</p>
-<h3 id="2-2-同步非阻塞-I-O"><a href="#2-2-同步非阻塞-I-O" class="headerlink" title="2.2 同步非阻塞 I/O"></a>2.2 同步非阻塞 I/O</h3><img src="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif" class="" title="图 3. 同步非阻塞 I&#x2F;O 模型的典型流程">
+<h3 id="2-2-同步非阻塞-I-O"><a href="#2-2-同步非阻塞-I-O" class="headerlink" title="2.2 同步非阻塞 I/O"></a>2.2 同步非阻塞 I/O</h3><img src="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif" class="" title="图 3. 同步非阻塞 I&#x2F;O 模型的典型流程">
 <p>同步阻塞 I/O 的一种效率稍低的变种是同步非阻塞 I/O。在这种模型中，设备是以非阻塞的形式打开的。这意味着 I/O 操作不会立即完成，read操作可能会返回一个错误代码，说明这个命令不能立即满足（EAGAIN 或 EWOULDBLOCK）</p>
-<h3 id="2-3-异步阻塞-I-O"><a href="#2-3-异步阻塞-I-O" class="headerlink" title="2.3 异步阻塞 I/O"></a>2.3 异步阻塞 I/O</h3><img src="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif" class="" title="图 4. 异步阻塞 I&#x2F;O 模型的典型流程 (select)">
+<h3 id="2-3-异步阻塞-I-O"><a href="#2-3-异步阻塞-I-O" class="headerlink" title="2.3 异步阻塞 I/O"></a>2.3 异步阻塞 I/O</h3><img src="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif" class="" title="图 4. 异步阻塞 I&#x2F;O 模型的典型流程 (select)">
 <p>IO多路复用(复用的select线程)。I/O复用模型会用到select、poll、epoll函数，这几个函数也会使进程阻塞，但是和阻塞I/O所不同的的，这两个函数可以同时阻塞多个I/O操作。而且可以同时对多个读操作，多个写操作的I/O函数进行检测，直到有数据可读或可写时，才真正调用I/O操作函数。对于每个提示符来说，我们可以获取这个描述符可以写数据、有读数据可用以及是否发生错误的通知。</p>
 <h4 id="epoll总结："><a href="#epoll总结：" class="headerlink" title="epoll总结："></a>epoll总结：</h4><p>epoll支持水平触发和边缘触发，最大的特点在于边缘触发，它只告诉进程哪些fd刚刚变为就需态，并且只会通知一次。还有一个特点是，epoll使用“事件”的就绪通知方式，通过epoll_ctl注册fd，一旦该fd就绪，内核就会采用类似callback的回调机制来激活该fd，epoll_wait便可以收到通知.</p>
 <h4 id="epoll的优点"><a href="#epoll的优点" class="headerlink" title="epoll的优点:"></a>epoll的优点:</h4><ul>
@@ -624,15 +633,199 @@
 </blockquote>
 </blockquote>
 </blockquote>
-<h3 id="2-4-异步非阻塞-I-O（AIO）"><a href="#2-4-异步非阻塞-I-O（AIO）" class="headerlink" title="2.4 异步非阻塞 I/O（AIO）"></a>2.4 异步非阻塞 I/O（AIO）</h3><img src="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif" class="" title="图 5. 异步非阻塞 I&#x2F;O 模型的典型流程">
+<h3 id="2-4-异步非阻塞-I-O（AIO）"><a href="#2-4-异步非阻塞-I-O（AIO）" class="headerlink" title="2.4 异步非阻塞 I/O（AIO）"></a>2.4 异步非阻塞 I/O（AIO）</h3><img src="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif" class="" title="图 5. 异步非阻塞 I&#x2F;O 模型的典型流程">
 <p>异步非阻塞 I/O 模型是一种CPU处理与 I/O 重叠进行的模型。读请求会立即返回，说明 read 请求已经成功发起了。在后台完成读操作时，应用程序然后会执行其他处理操作。当 read 的响应到达时，就会产生一个信号或执行一个基于线程的回调函数来完成这次 I/O 处理过程。</p>
-<h2 id="三-AIO编程介绍："><a href="#三-AIO编程介绍：" class="headerlink" title="三. AIO编程介绍："></a>三. AIO编程介绍：</h2><p>在 Linux 系统上有三种方式来实现 AIO：</p>
+<h2 id="三-AIO编程介绍："><a href="#三-AIO编程介绍：" class="headerlink" title="三. AIO编程介绍："></a>三. AIO编程介绍：</h2><p>aio异步读写是在Linux内核2.6之后才正式纳入其标准。之所以会增加此模块，是因为众所周知我们计算机CPU的执行速度远大于I/O读写的执行速度，如果我们用传统的阻塞式或非阻塞式来操作I/O的话，那么我们在同一个程序中(不用多线程或多进程)就不能同时操作俩个以上的文件I/O，每次只能对一个文件进行I/O操作，很明显这样效率很低下(因为CPU速度远大于I/O操作的速度，所以当执行I/O时，CPU其实还可以做更多的事)。因此就诞生了相对高效的异步I/O。<br>在 Linux 系统上有三种方式来实现 AIO：</p>
 <ul>
 <li>内核系统调用</li>
 <li>对内核系统调用进行封装进而在用户空间提供服务，例如 libaio</li>
 <li>完全在用户空间实现 AIO，并且不使用内核支持，例如librt和部分libc </li>
 </ul>
-<h3 id="3-1-内核系统调用"><a href="#3-1-内核系统调用" class="headerlink" title="3.1 内核系统调用"></a>3.1 内核系统调用</h3><h3 id="3-2-libaio"><a href="#3-2-libaio" class="headerlink" title="3.2 libaio"></a>3.2 libaio</h3><h3 id="3-3-POSIX-AIO"><a href="#3-3-POSIX-AIO" class="headerlink" title="3.3 POSIX AIO"></a>3.3 POSIX AIO</h3><p>当前的Linux POSIX AIO由glibc在用户空间中实现。POSIX AIO 有许多限制，最值得注意的是，维护多个线程来执行I/O操作是昂贵的，并且可扩展性很差。在基于内核状态机的 AIO 实现上已经进行了一段时间的工作，但是这个实现还没有成熟到可以使用内核系统调用完全重新实现POSIX AIO实现的程度。</p>
+<h3 id="3-1-内核系统调用"><a href="#3-1-内核系统调用" class="headerlink" title="3.1 内核系统调用"></a>3.1 内核系统调用</h3><h3 id="3-2-libaio"><a href="#3-2-libaio" class="headerlink" title="3.2 libaio"></a>3.2 libaio</h3><p>libaio提供的API有：io_setup, io_submit, io_getevents, io_destroy</p>
+<h4 id="3-2-1-建立IO任务"><a href="#3-2-1-建立IO任务" class="headerlink" title="3.2.1 建立IO任务"></a>3.2.1 建立IO任务</h4><pre><code>int io_setup (int maxevents, io_context_t *ctxp);</code></pre><p>io_context_t对应内核中一个结构，为异步IO请求提供上下文环境。注意在setup前必须将io_context_t初始化为0。<br>也需要open打开文件的时候设置<code>O_DIRECT</code>标志。</p>
+<h4 id="3-2-2-提交IO任务"><a href="#3-2-2-提交IO任务" class="headerlink" title="3.2.2 提交IO任务"></a>3.2.2 提交IO任务</h4><pre><code>long io_submit (aio_context_t ctx_id, long nr, struct iocb **iocbpp);</code></pre><p>提交任务之前必须先填充iocb结构体，libaio提供的包装函数说明了需要完成的工作：</p>
+<pre><code>void io_prep_pread(struct iocb *iocb, int fd, void *buf, size_t count, long long offset)
+{
+　　memset(iocb, 0, sizeof(*iocb));
+　　iocb-&gt;aio_fildes = fd;
+　　iocb-&gt;aio_lio_opcode = IO_CMD_PREAD;
+　　iocb-&gt;aio_reqprio = 0;
+　　iocb-&gt;u.c.buf = buf;
+　　iocb-&gt;u.c.nbytes = count;
+　　iocb-&gt;u.c.offset = offset;
+}
+
+void io_prep_pwrite(struct iocb *iocb, int fd, void *buf, size_t count, long long offset)
+{
+　　memset(iocb, 0, sizeof(*iocb));
+　　iocb-&gt;aio_fildes = fd;
+　　iocb-&gt;aio_lio_opcode = IO_CMD_PWRITE;
+　　iocb-&gt;aio_reqprio = 0;
+　　iocb-&gt;u.c.buf = buf;
+　　iocb-&gt;u.c.nbytes = count;
+　　iocb-&gt;u.c.offset = offset;
+}</code></pre><p>这里注意读写的buf都必须是按扇区对齐的，可以用posix_memalign来分配。</p>
+<h4 id="3-2-3-获取完成的IO"><a href="#3-2-3-获取完成的IO" class="headerlink" title="3.2.3 获取完成的IO"></a>3.2.3 获取完成的IO</h4><pre><code>long io_getevents (aio_context_t ctx_id, long min_nr, long nr, struct io_event *events, struct timespec *timeout);</code></pre><p>这里最重要的就是提供一个io_event数组给内核来copy完成的IO请求到这里，数组的大小是io_setup时指定的maxevents。<br>timeout是指等待IO完成的超时时间，设置为NULL表示一直等待所有到IO的完成。</p>
+<h4 id="3-2-4-销毁IO任务"><a href="#3-2-4-销毁IO任务" class="headerlink" title="3.2.4 销毁IO任务"></a>3.2.4 销毁IO任务</h4><pre><code>int io_destroy (io_context_t ctx);</code></pre><h4 id="3-2-5-libaio和epoll的结合"><a href="#3-2-5-libaio和epoll的结合" class="headerlink" title="3.2.5 libaio和epoll的结合"></a>3.2.5 libaio和epoll的结合</h4><p>在异步编程中，任何一个环节的阻塞都会导致整个程序的阻塞，所以一定要避免在 io_getevents 调用时阻塞式的等待。还记得 io_iocb_common 中的 flags 和 resfd 吗？看看libaio是如何提供io_getevents和事件循环的结合：</p>
+<pre><code>void io_set_eventfd(struct iocb *iocb, int eventfd) {
+    iocb-&gt;u.c.flags |= (1 &lt;&lt; 0) /* IOCB_FLAG_RESFD */;
+    iocb-&gt;u.c.resfd = eventfd;
+}</code></pre><p>这里的resfd是通过系统调用eventfd生成的。<br><code>int eventfd(unsigned int initval, int flags);</code><br>eventfd是linux 2.6.22内核之后加进来的syscall，作用是内核用来通知应用程序发生的事件的数量，从而使应用程序不用频繁地去轮询内核是否有时间发生，而是有内核将发生事件的数量写入到该fd，应用程序发现fd可读后，从fd读取该数值，并马上去内核读取。</p>
+<p>有了eventfd，就可以很好地将libaio和epoll事件循环结合起来：</p>
+<pre><code>1. 创建一个eventfd
+    efd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
+
+2. 将eventfd设置到iocb中
+    io_set_eventfd(iocb, efd);
+
+3. 交接AIO请求
+    io_submit(ctx, NUM_EVENTS, iocb);
+
+4. 创建一个epollfd，并将eventfd加到epoll中
+    epfd = epoll_create(1);
+    epoll_ctl(epfd, EPOLL_CTL_ADD, efd, &amp;epevent);
+    epoll_wait(epfd, &amp;epevent, 1, -1);
+
+5. 当eventfd可读时，从eventfd读出完成IO请求的数量，并调用io_getevents获取这些IO
+    read(efd, &amp;finished_aio, sizeof(finished_aio);
+    r = io_getevents(ctx, 1, NUM_EVENTS, events, &amp;tms);</code></pre><h4 id="3-2-6-epoll-aio-eventfd结合使用的简单例子"><a href="#3-2-6-epoll-aio-eventfd结合使用的简单例子" class="headerlink" title="3.2.6 epoll/aio/eventfd结合使用的简单例子"></a>3.2.6 epoll/aio/eventfd结合使用的简单例子</h4><pre><code>#define _GNU_SOURCE
+#define __STDC_FORMAT_MACROS
+
+#include &lt;stdio.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;libaio.h&gt;
+#include &lt;sys/eventfd.h&gt;
+#include &lt;sys/epoll.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;inttypes.h&gt;
+
+#define TEST_FILE   &quot;aio_test_file&quot;
+#define TEST_FILE_SIZE  (127 * 1024)
+#define NUM_EVENTS  128
+#define ALIGN_SIZE  512
+#define RD_WR_SIZE  1024
+
+struct custom_iocb
+{
+    struct iocb iocb;
+    int nth_request;
+};
+
+void aio_callback(io_context_t ctx, struct iocb *iocb, long res, long res2)
+{
+    struct custom_iocb *iocbp = (struct custom_iocb *)iocb;
+    printf(&quot;nth_request: %d, request_type: %s, offset: %lld, length: %lu, res: %ld, res2: %ld\n&quot;, 
+            iocbp-&gt;nth_request, (iocb-&gt;aio_lio_opcode == IO_CMD_PREAD) ? &quot;READ&quot; : &quot;WRITE&quot;,
+            iocb-&gt;u.c.offset, iocb-&gt;u.c.nbytes, res, res2);
+}
+
+int main(int argc, char *argv[])
+{
+    int efd, fd, epfd;
+    io_context_t ctx;
+    struct timespec tms;
+    struct io_event events[NUM_EVENTS];
+    struct custom_iocb iocbs[NUM_EVENTS];
+    struct iocb *iocbps[NUM_EVENTS];
+    struct custom_iocb *iocbp;
+    int i, j, r;
+    void *buf;
+    struct epoll_event epevent;
+
+    efd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
+    if (efd == -1) {
+        perror(&quot;eventfd&quot;);
+        return 2;
+    }
+
+    fd = open(TEST_FILE, O_RDWR | O_CREAT | O_DIRECT, 0644);
+    if (fd == -1) {
+        perror(&quot;open&quot;);
+        return 3;
+    }
+    ftruncate(fd, TEST_FILE_SIZE);
+
+    ctx = 0;
+    if (io_setup(8192, &amp;ctx)) {
+        perror(&quot;io_setup&quot;);
+        return 4;
+    }
+
+    if (posix_memalign(&amp;buf, ALIGN_SIZE, RD_WR_SIZE)) {
+        perror(&quot;posix_memalign&quot;);
+        return 5;
+    }
+    printf(&quot;buf: %p\n&quot;, buf);
+
+    for (i = 0, iocbp = iocbs; i &lt; NUM_EVENTS; ++i, ++iocbp) {
+        iocbps[i] = &amp;iocbp-&gt;iocb;
+        io_prep_pread(&amp;iocbp-&gt;iocb, fd, buf, RD_WR_SIZE, i * RD_WR_SIZE);
+        io_set_eventfd(&amp;iocbp-&gt;iocb, efd);
+        io_set_callback(&amp;iocbp-&gt;iocb, aio_callback);
+        iocbp-&gt;nth_request = i + 1;
+    }
+
+    if (io_submit(ctx, NUM_EVENTS, iocbps) != NUM_EVENTS) {
+        perror(&quot;io_submit&quot;);
+        return 6;
+    }
+
+    epfd = epoll_create(1);
+    if (epfd == -1) {
+        perror(&quot;epoll_create&quot;);
+        return 7;
+    }
+
+    epevent.events = EPOLLIN | EPOLLET;
+    epevent.data.ptr = NULL;
+    if (epoll_ctl(epfd, EPOLL_CTL_ADD, efd, &amp;epevent)) {
+        perror(&quot;epoll_ctl&quot;);
+        return 8;
+    }
+
+    i = 0;
+    while (i &lt; NUM_EVENTS) {
+        uint64_t finished_aio;
+
+        if (epoll_wait(epfd, &amp;epevent, 1, -1) != 1) {
+            perror(&quot;epoll_wait&quot;);
+            return 9;
+        }
+
+        if (read(efd, &amp;finished_aio, sizeof(finished_aio)) != sizeof(finished_aio)) {
+            perror(&quot;read&quot;);
+            return 10;
+        }
+
+        printf(&quot;finished io number: %&quot;PRIu64&quot;\n&quot;, finished_aio);
+
+        while (finished_aio &gt; 0) {
+            tms.tv_sec = 0;
+            tms.tv_nsec = 0;
+            r = io_getevents(ctx, 1, NUM_EVENTS, events, &amp;tms);
+            if (r &gt; 0) {
+                for (j = 0; j &lt; r; ++j) {
+                    ((io_callback_t)(events[j].data))(ctx, events[j].obj, events[j].res, events[j].res2);
+                }
+                i += r;
+                finished_aio -= r;
+            }
+        }
+    }
+
+    close(epfd);
+    free(buf);
+    io_destroy(ctx);
+    close(fd);
+    close(efd);
+    remove(TEST_FILE);
+    return 0;
+}</code></pre><h3 id="3-3-POSIX-AIO"><a href="#3-3-POSIX-AIO" class="headerlink" title="3.3 POSIX AIO"></a>3.3 POSIX AIO</h3><p>当前的Linux POSIX AIO由glibc在用户空间中实现。POSIX AIO 有许多限制，最值得注意的是，维护多个线程来执行I/O操作是昂贵的，并且可扩展性很差。在基于内核状态机的 AIO 实现上已经进行了一段时间的工作，但是这个实现还没有成熟到可以使用内核系统调用完全重新实现POSIX AIO实现的程度。</p>
 <h4 id="3-3-1-函数说明"><a href="#3-3-1-函数说明" class="headerlink" title="3.3.1 函数说明"></a>3.3.1 函数说明</h4><table>
 <thead>
 <tr>
@@ -668,24 +861,26 @@
 <td>lio_list</td>
 <td>发起一系列异步I/O请求</td>
 </tr>
-<tr>
-<td>#### 3.3.2 库</td>
-<td></td>
-</tr>
-<tr>
-<td><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">librt libc</span><br></pre></td></tr></table></figure></td>
-<td></td>
-</tr>
-<tr>
-<td>linux内核中aiocd结构体原型：</td>
-<td></td>
-</tr>
-<tr>
-<td><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include &lt;aiocb.h&gt;</span><br><span class="line"></span><br><span class="line">struct aiocb &#123;</span><br><span class="line">    &#x2F;* The order of these fields is implementation-dependent *&#x2F;</span><br><span class="line"></span><br><span class="line">    int             aio_fildes;     &#x2F;* File descriptor *&#x2F;</span><br><span class="line">    off_t           aio_offset;     &#x2F;* File offset *&#x2F;</span><br><span class="line">    volatile void  *aio_buf;        &#x2F;* Location of buffer *&#x2F;</span><br><span class="line">    size_t          aio_nbytes;     &#x2F;* Length of transfer *&#x2F;</span><br><span class="line">    int             aio_reqprio;    &#x2F;* Request priority *&#x2F;</span><br><span class="line">    struct sigevent aio_sigevent;   &#x2F;* Notification method *&#x2F;</span><br><span class="line">    int             aio_lio_opcode; &#x2F;* Operation to be performed;</span><br><span class="line">                                       lio_listio() only *&#x2F;</span><br><span class="line"></span><br><span class="line">    &#x2F;* Various implementation-internal fields not shown *&#x2F;</span><br><span class="line">&#125;;</span><br><span class="line">&#x2F;* Operation codes for &#39;aio_lio_opcode&#39;: *&#x2F;</span><br><span class="line">     enum &#123; LIO_READ, LIO_WRITE, LIO_NOP &#125;;</span><br></pre></td></tr></table></figure></td>
-<td></td>
-</tr>
 </tbody></table>
-<ul>
+<h4 id="3-3-2-库"><a href="#3-3-2-库" class="headerlink" title="3.3.2 库"></a>3.3.2 库</h4><pre><code>librt libc </code></pre><p>linux内核中aiocd结构体原型：</p>
+<pre><code>#include &lt;aiocb.h&gt;
+
+struct aiocb {
+    /* The order of these fields is implementation-dependent */
+
+    int             aio_fildes;     /* File descriptor */
+    off_t           aio_offset;     /* File offset */
+    volatile void  *aio_buf;        /* Location of buffer */
+    size_t          aio_nbytes;     /* Length of transfer */
+    int             aio_reqprio;    /* Request priority */
+    struct sigevent aio_sigevent;   /* Notification method */
+    int             aio_lio_opcode; /* Operation to be performed;
+                                       lio_listio() only */
+
+    /* Various implementation-internal fields not shown */
+};
+/* Operation codes for &#39;aio_lio_opcode&#39;: */
+     enum { LIO_READ, LIO_WRITE, LIO_NOP };</code></pre><ul>
 <li>aio_filedes  要执行io操作的文件描述符</li>
 <li>aio_offset  要执行io操作的文件的偏移量</li>
 <li>aio_buf 读写传输数据的缓冲区空间</li>
@@ -704,20 +899,180 @@
 <h5 id="3-aio-return"><a href="#3-aio-return" class="headerlink" title="3. aio_return()"></a>3. aio_return()</h5><p>异步 I/O 和标准块 I/O 之间的另外一个区别是我们不能立即访问这个函数的返回状态，因为我们并没有阻塞在 <code>read</code> 调用上。在标准的 <code>read</code> 调用中，返回状态是在该函数返回时提供的。但是在异步 I/O 中，我们要使用     <code>aio_return</code> 函数。这个函数的原型如下：</p>
 <p><code>ssize_t aio_return( struct aiocb *aiocbp );</code></p>
 <p>对以上三个API的源码实例：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;sys&#x2F;socket.h&gt;</span><br><span class="line">#include&lt;netinet&#x2F;in.h&gt;</span><br><span class="line">#include&lt;arpa&#x2F;inet.h&gt;</span><br><span class="line">#include&lt;assert.h&gt;</span><br><span class="line">#include&lt;unistd.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">#include&lt;errno.h&gt;</span><br><span class="line">#include&lt;string.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;types.h&gt;</span><br><span class="line">#include&lt;fcntl.h&gt;</span><br><span class="line">#include&lt;aio.h&gt;</span><br><span class="line"> </span><br><span class="line">#define BUFFER_SIZE 1024</span><br><span class="line">int MAX_LIST &#x3D; 2;</span><br><span class="line">int main(int argc,char **argv)</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F;aio操作所需结构体</span><br><span class="line">    struct aiocb rd;</span><br><span class="line"> </span><br><span class="line">    int fd,ret,couter;</span><br><span class="line"> </span><br><span class="line">    fd &#x3D; open(&quot;test.txt&quot;,O_RDONLY);</span><br><span class="line">    if(fd &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;test.txt&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;将rd结构体清空</span><br><span class="line">    bzero(&amp;rd,sizeof(rd));</span><br><span class="line">    &#x2F;&#x2F;为rd.aio_buf分配空间</span><br><span class="line">    rd.aio_buf &#x3D; malloc(BUFFER_SIZE + 1);</span><br><span class="line">    &#x2F;&#x2F;填充rd结构体</span><br><span class="line">    rd.aio_fildes &#x3D; fd;</span><br><span class="line">    rd.aio_nbytes &#x3D; BUFFER_SIZE;</span><br><span class="line">    rd.aio_offset &#x3D; 0;</span><br><span class="line">    &#x2F;&#x2F;进行异步读操作</span><br><span class="line">    ret &#x3D; aio_read(&amp;rd);</span><br><span class="line">    if(ret &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;aio_read&quot;);</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line">	&#x2F;&#x2F;do other things</span><br><span class="line">	</span><br><span class="line">    couter &#x3D; 0;</span><br><span class="line">&#x2F;&#x2F;  循环等待异步读操作结束</span><br><span class="line">    while(aio_error(&amp;rd) &#x3D;&#x3D; EINPROGRESS)</span><br><span class="line">    &#123;</span><br><span class="line">       &#x2F;&#x2F; printf(&quot;第%d次\n&quot;,++couter);</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    &#x2F;&#x2F;获取异步读返回值</span><br><span class="line">    ret &#x3D; aio_return(&amp;rd);</span><br><span class="line">    printf(&quot;\n\n返回值为:%d\n&quot;,ret);</span><br><span class="line">	printf(&quot;%s\n&quot;,rd.aio_buf);</span><br><span class="line">	free(rd.aio_buf);</span><br><span class="line">	close(fd);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="4-aio-write"><a href="#4-aio-write" class="headerlink" title="4. aio_write()"></a>4. aio_write()</h5><p><code>aio_write</code> 函数用来请求一个异步写操作。其函数原型如下：</p>
+<pre><code>#include&lt;sys/socket.h&gt;
+#include&lt;netinet/in.h&gt;
+#include&lt;arpa/inet.h&gt;
+#include&lt;assert.h&gt;
+#include&lt;unistd.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;errno.h&gt;
+#include&lt;string.h&gt;
+#include&lt;sys/types.h&gt;
+#include&lt;fcntl.h&gt;
+#include&lt;aio.h&gt;
+
+#define BUFFER_SIZE 1024
+int MAX_LIST = 2;
+int main(int argc,char **argv){
+    struct aiocb rd; //aio操作所需结构体
+    int fd,ret,couter;
+
+    fd = open(&quot;test.txt&quot;,O_RDONLY, 0644);
+    if(fd &lt; 0) {
+        perror(&quot;test.txt&quot;);
+    }
+    //将rd结构体清空
+    bzero(&amp;rd,sizeof(rd));
+
+    rd.aio_buf = malloc(BUFFER_SIZE + 1); //为rd.aio_buf分配空间
+    //填充rd结构体
+    rd.aio_fildes = fd;
+    rd.aio_nbytes = BUFFER_SIZE;
+    rd.aio_offset = 0;
+
+    ret = aio_read(&amp;rd); //进行异步读操作
+    if(ret &lt; 0) {
+        perror(&quot;aio_read&quot;);
+        exit(1);
+    }
+    //do other things
+
+    couter = 0;
+    //  循环等待异步读操作结束
+    while(aio_error(&amp;rd) == EINPROGRESS) { //一直不停的查询(消耗cpu)
+         printf(&quot;第%d次\n&quot;,++couter);
+    }
+
+    //获取异步读返回值
+    ret = aio_return(&amp;rd);
+    printf(&quot;\n\n返回值为:%d\n&quot;,ret);
+    printf(&quot;%s\n&quot;,rd.aio_buf);
+    free((char*)rd.aio_buf);
+    close(fd);
+    return 0;
+}</code></pre><h5 id="4-aio-write"><a href="#4-aio-write" class="headerlink" title="4. aio_write()"></a>4. aio_write()</h5><p><code>aio_write</code> 函数用来请求一个异步写操作。其函数原型如下：</p>
 <p><code>intaio_write( struct aiocb *aiocbp );</code></p>
 <p> <code>aio_write</code> 函数会立即返回，说明请求已经进行排队（成功时返回值为 0，失败时返回值为 -1，并相应地设置 errno）。</p>
-<p> 这与 read 系统调用类似，但是有一点不一样的行为需要注意。回想一下对于 read 调用来说，要使用的偏移量是非常重要的。然而，对于 write 来说，这个偏移量只有在没有设置 O_APPEND 选项的文件上下文中才会非常重要。如果设置了 O_APPEND，那么这个偏移量就会被忽略，数据都会被附加到文件的末尾。否则，aio_offset 域就确定了数据在要写入的文件中的偏移量.<br> <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"> #include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;socket.h&gt;</span><br><span class="line">#include&lt;netinet&#x2F;in.h&gt;</span><br><span class="line">#include&lt;arpa&#x2F;inet.h&gt;</span><br><span class="line">#include&lt;assert.h&gt;</span><br><span class="line">#include&lt;unistd.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">#include&lt;errno.h&gt;</span><br><span class="line">#include&lt;string.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;types.h&gt;</span><br><span class="line">#include&lt;fcntl.h&gt;</span><br><span class="line">#include&lt;aio.h&gt;</span><br><span class="line"> </span><br><span class="line">#define BUFFER_SIZE 1024</span><br><span class="line"> </span><br><span class="line">int main(int argc,char **argv)</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F;定义aio控制块结构体</span><br><span class="line">    struct aiocb wr;</span><br><span class="line"> </span><br><span class="line">    int ret,fd;</span><br><span class="line"> </span><br><span class="line">    char str[20] &#x3D; &#123;&quot;hello,world&quot;&#125;;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;置零wr结构体</span><br><span class="line">    bzero(&amp;wr,sizeof(wr));</span><br><span class="line"> </span><br><span class="line">    fd &#x3D; open(&quot;test.txt&quot;,O_WRONLY | O_APPEND);</span><br><span class="line">    if(fd &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;test.txt&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;为aio.buf申请空间</span><br><span class="line">    wr.aio_buf &#x3D; (char *)malloc(BUFFER_SIZE);</span><br><span class="line">    if(wr.aio_buf &#x3D;&#x3D; NULL)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;buf&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    wr.aio_buf &#x3D; str;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;填充aiocb结构</span><br><span class="line">    wr.aio_fildes &#x3D; fd;</span><br><span class="line">    wr.aio_nbytes &#x3D; 1024;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;异步写操作</span><br><span class="line">    ret &#x3D; aio_write(&amp;wr);</span><br><span class="line">    if(ret &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;aio_write&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;等待异步写完成</span><br><span class="line">    while(aio_error(&amp;wr) &#x3D;&#x3D; EINPROGRESS)</span><br><span class="line">    &#123;</span><br><span class="line">        printf(&quot;hello,world\n&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;获得异步写的返回值</span><br><span class="line">    ret &#x3D; aio_return(&amp;wr);</span><br><span class="line">    printf(&quot;\n\n\n返回值为:%d\n&quot;,ret);</span><br><span class="line"> </span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h5 id="5-aio-suspend"><a href="#5-aio-suspend" class="headerlink" title="5. aio_suspend()"></a>5. aio_suspend()</h5><ul>
+<p> 这与 read 系统调用类似，但是有一点不一样的行为需要注意。回想一下对于 read 调用来说，要使用的偏移量是非常重要的。然而，对于 write 来说，这个偏移量只有在没有设置 O_APPEND 选项的文件上下文中才会非常重要。如果设置了 O_APPEND，那么这个偏移量就会被忽略，数据都会被附加到文件的末尾。否则，aio_offset 域就确定了数据在要写入的文件中的偏移量.</p>
+<pre><code>#include&lt;stdio.h&gt;
+#include&lt;sys/socket.h&gt;
+#include&lt;netinet/in.h&gt;
+#include&lt;arpa/inet.h&gt;
+#include&lt;assert.h&gt;
+#include&lt;unistd.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;errno.h&gt;
+#include&lt;string.h&gt;
+#include&lt;sys/types.h&gt;
+#include&lt;fcntl.h&gt;
+#include&lt;aio.h&gt;
+
+#define BUFFER_SIZE 1024
+
+int main(int argc,char **argv) {
+    //定义aio控制块结构体
+    struct aiocb wr; 
+    int ret,fd; 
+    char str[20] = {&quot;hello,world&quot;};    
+    bzero(&amp;wr,sizeof(wr));//置零wr结构体
+
+    fd = open(&quot;test.txt&quot;,O_WRONLY | O_APPEND, 0644);
+    if(fd &lt; 0) {
+        perror(&quot;test.txt&quot;);
+    }
+
+    //为aio.buf申请空间
+    wr.aio_buf = (char *)malloc(BUFFER_SIZE);
+    if(wr.aio_buf == NULL) {
+        perror(&quot;buf&quot;);
+    }
+
+    wr.aio_buf = str;
+
+    //填充aiocb结构
+    wr.aio_fildes = fd;
+    wr.aio_nbytes = 1024;
+
+    ret = aio_write(&amp;wr); //异步写操作
+    if(ret &lt; 0) {
+        perror(&quot;aio_write&quot;);
+    }
+
+    //等待异步写完成
+    while(aio_error(&amp;wr) == EINPROGRESS){
+        printf(&quot;hello,world\n&quot;);
+    }
+
+    //获得异步写的返回值
+    ret = aio_return(&amp;wr);
+    printf(&quot;\n\n\n返回值为:%d\n&quot;,ret);
+    free((char*)wr.aio_buf);
+    close(fd);
+    return 0;
+}</code></pre><h5 id="5-aio-suspend"><a href="#5-aio-suspend" class="headerlink" title="5. aio_suspend()"></a>5. aio_suspend()</h5><ul>
 <li>aio_suspend函数可以时当前进程挂起，直到有向其注册的异步事件完成为止 </li>
 <li>阻塞</li>
 <li>当有AIO请求返程后，该函数返回</li>
 </ul>
 <p><code>int aio_suspend(const struct aiocb *const cblist[],int n,const struct timespec *timeout);</code></p>
 <p> 第一个参数是个保存了<code>aiocb</code>块地址的数组，我们可以向其内添加想要等待阻塞的异步事件，第二个参数为向<code>cblist</code>注册的<code>aiocb</code>个数,第三个参数为等待阻塞的超时时间，NULL为无限等待.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;socket.h&gt;</span><br><span class="line">#include&lt;netinet&#x2F;in.h&gt;</span><br><span class="line">#include&lt;arpa&#x2F;inet.h&gt;</span><br><span class="line">#include&lt;assert.h&gt;</span><br><span class="line">#include&lt;unistd.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">#include&lt;errno.h&gt;</span><br><span class="line">#include&lt;string.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;types.h&gt;</span><br><span class="line">#include&lt;fcntl.h&gt;</span><br><span class="line">#include&lt;aio.h&gt;</span><br><span class="line"> </span><br><span class="line">#define BUFFER_SIZE 1024</span><br><span class="line"> </span><br><span class="line">int MAX_LIST &#x3D; 2;</span><br><span class="line"> </span><br><span class="line">int main(int argc,char **argv)</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F;aio操作所需结构体</span><br><span class="line">    struct aiocb rd;</span><br><span class="line">	struct aiocb wd;</span><br><span class="line">    int fd,ret,couter;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;cblist链表</span><br><span class="line">    struct aiocb *aiocb_list[2];</span><br><span class="line"> </span><br><span class="line">    fd &#x3D; open(&quot;test.txt&quot;,O_RDONLY);</span><br><span class="line">    if(fd &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;test.txt&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;将rd结构体清空</span><br><span class="line">    bzero(&amp;rd,sizeof(rd));</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;为rd.aio_buf分配空间</span><br><span class="line">    rd.aio_buf &#x3D; malloc(BUFFER_SIZE + 1);</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;填充rd结构体</span><br><span class="line">    rd.aio_fildes &#x3D; fd;</span><br><span class="line">    rd.aio_nbytes &#x3D;  BUFFER_SIZE;</span><br><span class="line">    rd.aio_offset &#x3D; 0;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;将读fd的事件注册</span><br><span class="line">    aiocb_list[0] &#x3D; &amp;rd;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;进行异步读操作</span><br><span class="line">    ret &#x3D; aio_read(&amp;rd);</span><br><span class="line">    if(ret &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;aio_read&quot;);</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    printf(&quot;我要开始等待异步读事件完成\n&quot;);</span><br><span class="line">    &#x2F;&#x2F;阻塞等待异步读事件完成</span><br><span class="line">    ret &#x3D; aio_suspend(aiocb_list,MAX_LIST,NULL);		</span><br><span class="line">    &#x2F;&#x2F;获取异步读返回值</span><br><span class="line">    ret &#x3D; aio_return(&amp;rd);</span><br><span class="line">    printf(&quot;\n\n返回值为:%d\n&quot;,ret);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="6-lio-listio"><a href="#6-lio-listio" class="headerlink" title="6.lio_listio()"></a>6.lio_listio()</h5><p> aio同时还为我们提供了一个可以发起多个或多种I/O请求的接口lio_listio </p>
+<pre><code>#include&lt;stdio.h&gt;
+#include&lt;sys/socket.h&gt;
+#include&lt;netinet/in.h&gt;
+#include&lt;arpa/inet.h&gt;
+#include&lt;assert.h&gt;
+#include&lt;unistd.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;errno.h&gt;
+#include&lt;string.h&gt;
+#include&lt;sys/types.h&gt;
+#include&lt;fcntl.h&gt;
+#include&lt;aio.h&gt;
+
+#define BUFFER_SIZE 1024
+
+int MAX_LIST = 2;
+
+int main(int argc,char **argv) {
+    //aio操作所需结构体
+    struct aiocb rd;
+    struct aiocb wd;
+    int fd,ret,couter;
+
+    struct aiocb *aiocb_list[2];//cblist链表
+
+    fd = open(&quot;test.txt&quot;,O_RDONLY, 0644);
+    if(fd &lt; 0) {
+        perror(&quot;test.txt&quot;);
+    }
+
+    bzero(&amp;rd,sizeof(rd));//将rd结构体清空
+
+    rd.aio_buf = malloc(BUFFER_SIZE + 1);//为rd.aio_buf分配空间
+
+    //填充rd结构体
+    rd.aio_fildes = fd;
+    rd.aio_nbytes =  BUFFER_SIZE;
+    rd.aio_offset = 0;
+
+    //将读fd的事件注册
+    aiocb_list[0] = &amp;rd;
+
+    //进行异步读操作
+    ret = aio_read(&amp;rd);
+    if(ret &lt; 0) {
+        perror(&quot;aio_read&quot;);
+        exit(1);
+    }
+
+    printf(&quot;我要开始等待异步读事件完成\n&quot;);
+    ret = aio_suspend(aiocb_list,MAX_LIST,NULL); //阻塞等待异步读事件完成
+    ret = aio_return(&amp;rd);//获取异步读返回值
+    printf(&quot;\n\n返回值为:%d\n&quot;,ret);
+    free((char*)rd.aio_buf);
+    close(fd);
+    return 0;
+}</code></pre><h5 id="6-lio-listio"><a href="#6-lio-listio" class="headerlink" title="6.lio_listio()"></a>6.lio_listio()</h5><p>aio同时还为我们提供了一个可以发起多个或多种I/O请求的接口lio_listio </p>
 <p>这个函数效率很高，因为我们只需一次系统调用(一次内核上下位切换)就可以完成大量的I/O操作</p>
 <p><code>int lio_listio(int mode,struct aiocb *list[],int nent,struct sigevent *sig);</code></p>
 <p> 第一个参数<code>mode</code>可以有两个实参，<code>LIO_WAIT</code>和<code>LIO_NOWAIT</code>，前一个会阻塞该调用直到所有I/O都完成为止，后一个则会挂入队列就返回</p>
@@ -731,14 +1086,149 @@
 <li>发起后立即返回，通过绑定的信号来通知</li>
 </ul>
 <p>LIO_WAIT  demo::</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;socket.h&gt;</span><br><span class="line">#include&lt;netinet&#x2F;in.h&gt;</span><br><span class="line">#include&lt;arpa&#x2F;inet.h&gt;</span><br><span class="line">#include&lt;assert.h&gt;</span><br><span class="line">#include&lt;unistd.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">#include&lt;errno.h&gt;</span><br><span class="line">#include&lt;string.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;types.h&gt;</span><br><span class="line">#include&lt;fcntl.h&gt;</span><br><span class="line">#include&lt;aio.h&gt;</span><br><span class="line"> </span><br><span class="line">#define BUFFER_SIZE 1025</span><br><span class="line"> </span><br><span class="line">int MAX_LIST &#x3D; 2;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">int main(int argc,char **argv)</span><br><span class="line">&#123;</span><br><span class="line">    struct aiocb *listio[2];</span><br><span class="line">    struct aiocb rd,wr;</span><br><span class="line">    int fd,ret;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;异步读事件</span><br><span class="line">    fd &#x3D; open(&quot;test1.txt&quot;,O_RDONLY);</span><br><span class="line">    if(fd &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;test1.txt&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    bzero(&amp;rd,sizeof(rd));</span><br><span class="line"> </span><br><span class="line">    rd.aio_buf &#x3D; (char *)malloc(BUFFER_SIZE);</span><br><span class="line">    if(rd.aio_buf &#x3D;&#x3D; NULL)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;aio_buf&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    rd.aio_fildes &#x3D; fd;</span><br><span class="line">    rd.aio_nbytes &#x3D; 1024;</span><br><span class="line">    rd.aio_offset &#x3D; 0;</span><br><span class="line">    rd.aio_lio_opcode &#x3D; LIO_READ;   &#x2F;&#x2F;&#x2F;lio操作类型为异步读</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;将异步读事件添加到list中</span><br><span class="line">    listio[0] &#x3D; &amp;rd;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;异步些事件</span><br><span class="line">    fd &#x3D; open(&quot;test2.txt&quot;,O_WRONLY | O_APPEND);</span><br><span class="line">    if(fd &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;test2.txt&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    bzero(&amp;wr,sizeof(wr));</span><br><span class="line"> </span><br><span class="line">    wr.aio_buf &#x3D; (char *)malloc(BUFFER_SIZE);</span><br><span class="line">    if(wr.aio_buf &#x3D;&#x3D; NULL)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;aio_buf&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    wr.aio_fildes &#x3D; fd;</span><br><span class="line">    wr.aio_nbytes &#x3D; 1024;</span><br><span class="line"> </span><br><span class="line">    wr.aio_lio_opcode &#x3D; LIO_WRITE;   &#x2F;&#x2F;&#x2F;lio操作类型为异步写</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;将异步写事件添加到list中</span><br><span class="line">    listio[1] &#x3D; ≀</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;使用lio_listio发起一系列请求</span><br><span class="line">    ret &#x3D; lio_listio(LIO_WAIT,listio,MAX_LIST,NULL);</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;当异步读写都完成时获取他们的返回值</span><br><span class="line"> </span><br><span class="line">    ret &#x3D; aio_return(&amp;rd);</span><br><span class="line">    printf(&quot;\n读返回值:%d&quot;,ret);</span><br><span class="line"> </span><br><span class="line">    ret &#x3D; aio_return(&amp;wr);</span><br><span class="line">    printf(&quot;\n写返回值:%d&quot;,ret);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>#include&lt;stdio.h&gt;
+#include&lt;sys/socket.h&gt;
+#include&lt;netinet/in.h&gt;
+#include&lt;arpa/inet.h&gt;
+#include&lt;assert.h&gt;
+#include&lt;unistd.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;errno.h&gt;
+#include&lt;string.h&gt;
+#include&lt;sys/types.h&gt;
+#include&lt;fcntl.h&gt;
+#include&lt;aio.h&gt;
 
-<p>LIO_NOWAIT demo::</p>
+#define BUFFER_SIZE 1025
+int MAX_LIST = 2;
+int main(int argc,char **argv)
+{
+    struct aiocb *listio[2];
+    struct aiocb rd,wr;
+    int fd,ret;
+
+    //异步读事件
+    fd = open(&quot;test1.txt&quot;,O_RDONLY, 0644);
+    if(fd &lt; 0) {
+        perror(&quot;test1.txt&quot;);
+    }
+
+    bzero(&amp;rd,sizeof(rd));
+
+    rd.aio_buf = (char *)malloc(BUFFER_SIZE);
+    if(rd.aio_buf == NULL) {
+        perror(&quot;aio_buf&quot;);
+    }
+
+    rd.aio_fildes = fd;
+    rd.aio_nbytes = 1024;
+    rd.aio_offset = 0;
+    rd.aio_lio_opcode = LIO_READ;   ///lio操作类型为异步读
+
+    listio[0] = &amp;rd;//将异步读事件添加到list中
+
+    fd = open(&quot;test2.txt&quot;,O_WRONLY | O_APPEND, 0644); //异步些事件
+    if(fd &lt; 0) {
+        perror(&quot;test2.txt&quot;);
+    }
+
+    bzero(&amp;wr,sizeof(wr));
+
+    wr.aio_buf = (char *)malloc(BUFFER_SIZE);
+    if(wr.aio_buf == NULL) {
+        perror(&quot;aio_buf&quot;);
+    }
+
+    wr.aio_fildes = fd;
+    wr.aio_nbytes = 1024;
+    wr.aio_lio_opcode = LIO_WRITE;   ///lio操作类型为异步写
+
+    //将异步写事件添加到list中
+    listio[1] = &amp;wr;
+
+    ret = lio_listio(LIO_WAIT,listio,MAX_LIST,NULL);  //使用lio_listio发起一系列请求
+    ret = aio_return(&amp;rd);  //当异步读写都完成时获取他们的返回值
+    printf(&quot;\n读返回值:%d&quot;,ret);
+
+    ret = aio_return(&amp;wr);
+    printf(&quot;\n写返回值:%d&quot;,ret);
+    free((char*)wr.aio_buf);
+    free((char*)rd.aio_buf);
+    close(rd.aio_fildes);
+    close(wr.aio_fildes);
+    return 0;
+}</code></pre><p>LIO_NOWAIT demo::</p>
 <p>当我们的异步IO操作完成之时，我们可以通过信号通知我们的进程也可用回调函数来进行异步通知，接下来我会为大家主要介绍以下回调函数来进行异步通知</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">struct sigevent &#123;</span><br><span class="line">int           sigev_notify;            &#x2F;&#x2F;Notification type. </span><br><span class="line">int           sigev_signo;            &#x2F;&#x2F;Signal number. </span><br><span class="line">union sigval  sigev_value;             &#x2F;&#x2F;Signal value. </span><br><span class="line">void         (*sigev_notify_function)(union sigval); &#x2F;&#x2F;Notification function. </span><br><span class="line">pthread_attr_t *sigev_notify_attributes;  &#x2F;&#x2F;Notification attributes. </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<pre><code>struct sigevent {
+int           sigev_notify;            //Notification type. 
+int           sigev_signo;            //Signal number. 
+union sigval  sigev_value;             //Signal value. 
+void         (*sigev_notify_function)(union sigval); //Notification function. 
+pthread_attr_t *sigev_notify_attributes;  //Notification attributes. 
+}; </code></pre><pre><code>#include&lt;stdio.h&gt;
+#include&lt;sys/socket.h&gt;
+#include&lt;netinet/in.h&gt;
+#include&lt;arpa/inet.h&gt;
+#include&lt;assert.h&gt;
+#include&lt;unistd.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;errno.h&gt;
+#include&lt;string.h&gt;
+#include&lt;sys/types.h&gt;
+#include&lt;fcntl.h&gt;
+#include&lt;aio.h&gt;
+#include&lt;unistd.h&gt;
 
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;socket.h&gt;</span><br><span class="line">#include&lt;netinet&#x2F;in.h&gt;</span><br><span class="line">#include&lt;arpa&#x2F;inet.h&gt;</span><br><span class="line">#include&lt;assert.h&gt;</span><br><span class="line">#include&lt;unistd.h&gt;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line">#include&lt;errno.h&gt;</span><br><span class="line">#include&lt;string.h&gt;</span><br><span class="line">#include&lt;sys&#x2F;types.h&gt;</span><br><span class="line">#include&lt;fcntl.h&gt;</span><br><span class="line">#include&lt;aio.h&gt;</span><br><span class="line">#include&lt;unistd.h&gt;</span><br><span class="line"> </span><br><span class="line">#define BUFFER_SIZE 1025</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">void aio_completion_handler(sigval_t sigval)</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F;用来获取读aiocb结构的指针</span><br><span class="line">    struct aiocb *prd;</span><br><span class="line">    int ret;</span><br><span class="line"> </span><br><span class="line">    prd &#x3D; (struct aiocb *)sigval.sival_ptr;</span><br><span class="line"> </span><br><span class="line">    printf(&quot;hello\n&quot;);</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;获取返回值</span><br><span class="line">    ret &#x3D; aio_return(prd);</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">int main(int argc,char **argv)</span><br><span class="line">&#123;</span><br><span class="line">    int fd,ret;</span><br><span class="line">    struct aiocb rd;</span><br><span class="line"> </span><br><span class="line">    fd &#x3D; open(&quot;test.txt&quot;,O_RDONLY);</span><br><span class="line">    if(fd &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;test.txt&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;填充aiocb的基本内容</span><br><span class="line">    bzero(&amp;rd,sizeof(rd));</span><br><span class="line"> </span><br><span class="line">    rd.aio_fildes &#x3D; fd;</span><br><span class="line">    rd.aio_buf &#x3D; (char *)malloc(sizeof(BUFFER_SIZE + 1));</span><br><span class="line">    rd.aio_nbytes &#x3D; BUFFER_SIZE;</span><br><span class="line">    rd.aio_offset &#x3D; 0;</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;填充aiocb中有关回调通知的结构体sigevent</span><br><span class="line">    rd.aio_sigevent.sigev_notify &#x3D; SIGEV_THREAD;&#x2F;&#x2F;使用线程回调通知</span><br><span class="line">    rd.aio_sigevent.sigev_notify_function &#x3D; aio_completion_handler;&#x2F;&#x2F;设置回调函数</span><br><span class="line">    rd.aio_sigevent.sigev_notify_attributes &#x3D; NULL;&#x2F;&#x2F;使用默认属性</span><br><span class="line">    rd.aio_sigevent.sigev_value.sival_ptr &#x3D; &amp;rd;&#x2F;&#x2F;在aiocb控制块中加入自己的引用</span><br><span class="line"> </span><br><span class="line">    &#x2F;&#x2F;异步读取文件</span><br><span class="line">    ret &#x3D; aio_read(&amp;rd);</span><br><span class="line">    if(ret &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;aio_read&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    printf(&quot;异步读以开始\n&quot;);</span><br><span class="line">    sleep(1);</span><br><span class="line">    printf(&quot;异步读结束\n&quot;);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+#define BUFFER_SIZE 1025
 
+void aio_completion_handler(sigval_t sigval)
+{
+    //用来获取读aiocb结构的指针
+    struct aiocb *prd;
+    int ret;
+
+    prd = (struct aiocb *)sigval.sival_ptr;
+    printf(&quot;hello\n&quot;);
+    //获取返回值
+    ret = aio_return(prd);
+    free(prd-&gt;aio_buf);
+    close(prd-&gt;aio_fildes);
+}
+
+int main(int argc,char **argv)
+{
+    int fd,ret;
+    struct aiocb rd;
+
+    fd = open(&quot;test.txt&quot;,O_RDONLY);
+    if(fd &lt; 0) {
+        perror(&quot;test.txt&quot;);
+    }
+
+    bzero(&amp;rd,sizeof(rd));//填充aiocb的基本内容
+
+    rd.aio_fildes = fd;
+    rd.aio_buf = (char *)malloc(sizeof(BUFFER_SIZE + 1));
+    rd.aio_nbytes = BUFFER_SIZE;
+    rd.aio_offset = 0;
+
+    //填充aiocb中有关回调通知的结构体sigevent
+    rd.aio_sigevent.sigev_notify = SIGEV_THREAD;//使用线程回调通知
+    rd.aio_sigevent.sigev_notify_function = aio_completion_handler;//设置回调函数
+    rd.aio_sigevent.sigev_notify_attributes = NULL;//使用默认属性
+    rd.aio_sigevent.sigev_value.sival_ptr = &amp;rd;//在aiocb控制块中加入自己的引用
+
+    //异步读取文件
+    ret = aio_read(&amp;rd);
+    if(ret &lt; 0) {
+        perror(&quot;aio_read&quot;);
+    }
+
+    printf(&quot;异步读以开始\n&quot;);
+    sleep(1);
+    printf(&quot;异步读结束\n&quot;);
+    return 0;
+}</code></pre>
 </div>
 
 
@@ -815,6 +1305,8 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 	<button id="totop-toggle" class="toggle"><i class="fa fa-angle-double-up" aria-hidden="true"></i></button>
 </body>

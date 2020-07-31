@@ -4,7 +4,7 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-	
+	<link rel="stylesheet" href="/css/highlight/styles/vs2015.css">
 	<!-- title -->
 	
 	<title>
@@ -93,8 +93,8 @@
 									
 							<ul>
 								<li class="file">
-									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
-										linux下AIO应用详解
+									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+										linux下IO应用详解
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -588,7 +588,12 @@
 					打印参数类型
 				</h2>
 				<div class="index-brief">
-					&#x2F;&#x2F;&#x2F;  打印变量T的类型fn print_type_of&lt;T&gt;(_: &amp;T) &#123;    println!(&quot;&#123;&#125;&quot;, std::any::type_name::&lt;T&gt;())&#125;f
+					///  打印变量T的类型
+fn print_type_of&lt;T&gt;(_: &amp;T) {
+    println!(&quot;{}&quot;, std::any::type_name::&lt;T&gt;())
+}
+fn main() {
+    let s = String::
 					...
 				</div>
 			</a>
@@ -637,6 +642,8 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 	<button id="totop-toggle" class="toggle"><i class="fa fa-angle-double-up" aria-hidden="true"></i></button>
 </body>

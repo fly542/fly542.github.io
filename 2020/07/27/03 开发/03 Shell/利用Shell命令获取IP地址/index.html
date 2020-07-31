@@ -4,7 +4,7 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-	
+	<link rel="stylesheet" href="/css/highlight/styles/vs2015.css">
 	<!-- title -->
 	
 	<title>
@@ -95,8 +95,8 @@
 									
 							<ul>
 								<li class="file">
-									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
-										linux下AIO应用详解
+									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+										linux下IO应用详解
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -607,7 +607,7 @@
 </li>
 </ul>
 <p>把ethX中的X替换为需要查看网卡的序号，如eth0,eth1…</p>
-<h1 id="获得本机所有网卡的IPv4地址，方法如下："><a href="#获得本机所有网卡的IPv4地址，方法如下：" class="headerlink" title="获得本机所有网卡的IPv4地址，方法如下："></a>获得本机所有网卡的IPv4地址，方法如下：</h1><pre><code>`$/sbin/ifconfig | awk &apos;{if ( $1 == &quot;inet&quot; &amp;&amp; $3 ~ /^Bcast/) print $2}&apos; | cut -f2 -d &quot;:&quot;`</code></pre><p>如果是IPv6网络，把上面的命令做简单修改即可，如：</p>
+<h1 id="获得本机所有网卡的IPv4地址，方法如下："><a href="#获得本机所有网卡的IPv4地址，方法如下：" class="headerlink" title="获得本机所有网卡的IPv4地址，方法如下："></a>获得本机所有网卡的IPv4地址，方法如下：</h1><pre><code>`$/sbin/ifconfig | awk &#39;{if ( $1 == &quot;inet&quot; &amp;&amp; $3 ~ /^Bcast/) print $2}&#39; | cut -f2 -d &quot;:&quot;`</code></pre><p>如果是IPv6网络，把上面的命令做简单修改即可，如：</p>
 <p>$/sbin/ifconfig | awk ‘/inet6/ {print $3}’ —-全部<br>$/sbin/ifconfig ethX | awk ‘/inet6/ {print $3}’ —-单个</p>
 
 </div>
@@ -686,6 +686,8 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 	<button id="totop-toggle" class="toggle"><i class="fa fa-angle-double-up" aria-hidden="true"></i></button>
 </body>

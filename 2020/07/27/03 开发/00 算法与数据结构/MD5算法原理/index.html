@@ -4,7 +4,7 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-	
+	<link rel="stylesheet" href="/css/highlight/styles/vs2015.css">
 	<!-- title -->
 	
 	<title>
@@ -95,8 +95,8 @@
 									
 							<ul>
 								<li class="file">
-									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
-										linux下AIO应用详解
+									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+										linux下IO应用详解
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -612,30 +612,147 @@
 <p>F(X,Y,Z) = XY v not(X) Z<br>G(X,Y,Z) = XZ v Y not(Z)<br>H(X,Y,Z) = X xor Y xor Z<br>I(X,Y,Z) = Y xor (X v not(Z))</p>
 <p>NOTE：not(X)代表X的按位补运算，X v Y 表示X和Y的按位或运算，X xor Y代表X和Y的按位异或运算，XY代表X和Y的按位与运算。</p>
 <p>具体过程如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;* Process each 16-word block. *&#x2F;</span><br><span class="line">For i &#x3D; 0 to N&#x2F;16-1 do</span><br><span class="line"></span><br><span class="line">&#x2F;* Copy block i into X. *&#x2F;</span><br><span class="line">For j &#x3D; 0 to 15 do</span><br><span class="line">Set X[j] to M[i*16+j].</span><br><span class="line">end &#x2F;* of loop on j *&#x2F;</span><br><span class="line"></span><br><span class="line">&#x2F;* Save A as AA, B as BB, C as CC, and D as DD. *&#x2F;</span><br><span class="line">AA &#x3D; A</span><br><span class="line">BB &#x3D; B</span><br><span class="line">CC &#x3D; C</span><br><span class="line">DD &#x3D; D</span><br><span class="line"></span><br><span class="line">&#x2F;* Round 1. *&#x2F;</span><br><span class="line">&#x2F;* Let [abcd k s i] denote the operation</span><br><span class="line">a &#x3D; b + ((a + F(b,c,d) + X[k] + T[i]) &lt;&lt;&lt; s). *&#x2F;</span><br><span class="line">&#x2F;* Do the following 16 operations. *&#x2F;</span><br><span class="line">[ABCD 0 7 1] [DABC 1 12 2] [CDAB 2 17 3] [BCDA 3 22 4]</span><br><span class="line">[ABCD 4 7 5] [DABC 5 12 6] [CDAB 6 17 7] [BCDA 7 22 8]</span><br><span class="line">[ABCD 8 7 9] [DABC 9 12 10] [CDAB 10 17 11] [BCDA 11 22 12]</span><br><span class="line">[ABCD 12 7 13] [DABC 13 12 14] [CDAB 14 17 15] [BCDA 15 22 16]</span><br><span class="line"></span><br><span class="line">&#x2F;* Round 2. *&#x2F;</span><br><span class="line">&#x2F;* Let [abcd k s i] denote the operation</span><br><span class="line">a &#x3D; b + ((a + G(b,c,d) + X[k] + T[i]) &lt;&lt;&lt; s). *&#x2F;</span><br><span class="line">&#x2F;* Do the following 16 operations. *&#x2F;</span><br><span class="line">[ABCD 1 5 17] [DABC 6 9 18] [CDAB 11 14 19] [BCDA 0 20 20]</span><br><span class="line">[ABCD 5 5 21] [DABC 10 9 22] [CDAB 15 14 23] [BCDA 4 20 24]</span><br><span class="line">[ABCD 9 5 25] [DABC 14 9 26] [CDAB 3 14 27] [BCDA 8 20 28]</span><br><span class="line">[ABCD 13 5 29] [DABC 2 9 30] [CDAB 7 14 31] [BCDA 12 20 32]</span><br><span class="line"></span><br><span class="line">&#x2F;* Round 3. *&#x2F;</span><br><span class="line">&#x2F;* Let [abcd k s t] denote the operation</span><br><span class="line">a &#x3D; b + ((a + H(b,c,d) + X[k] + T[i]) &lt;&lt;&lt; s). *&#x2F;</span><br><span class="line">&#x2F;* Do the following 16 operations. *&#x2F;</span><br><span class="line">[ABCD 5 4 33] [DABC 8 11 34] [CDAB 11 16 35] [BCDA 14 23 36]</span><br><span class="line">[ABCD 1 4 37] [DABC 4 11 38] [CDAB 7 16 39] [BCDA 10 23 40]</span><br><span class="line">[ABCD 13 4 41] [DABC 0 11 42] [CDAB 3 16 43] [BCDA 6 23 44]</span><br><span class="line">[ABCD 9 4 45] [DABC 12 11 46] [CDAB 15 16 47] [BCDA 2 23 48]</span><br><span class="line"></span><br><span class="line">&#x2F;* Round 4. *&#x2F;</span><br><span class="line">&#x2F;* Let [abcd k s t] denote the operation</span><br><span class="line">a &#x3D; b + ((a + I(b,c,d) + X[k] + T[i]) &lt;&lt;&lt; s). *&#x2F;</span><br><span class="line">&#x2F;* Do the following 16 operations. *&#x2F;</span><br><span class="line">[ABCD 0 6 49] [DABC 7 10 50] [CDAB 14 15 51] [BCDA 5 21 52]</span><br><span class="line">[ABCD 12 6 53] [DABC 3 10 54] [CDAB 10 15 55] [BCDA 1 21 56]</span><br><span class="line">[ABCD 8 6 57] [DABC 15 10 58] [CDAB 6 15 59] [BCDA 13 21 60]</span><br><span class="line">[ABCD 4 6 61] [DABC 11 10 62] [CDAB 2 15 63] [BCDA 9 21 64]</span><br><span class="line"></span><br><span class="line">&#x2F;* Then perform the following additions. (That is increment each</span><br><span class="line">of the four registers by the value it had before this block</span><br><span class="line">was started.) *&#x2F;</span><br><span class="line">A &#x3D; A + AA</span><br><span class="line">B &#x3D; B + BB</span><br><span class="line">C &#x3D; C + CC</span><br><span class="line">D &#x3D; D + DD</span><br><span class="line"></span><br><span class="line">end &#x2F;* of loop on i *&#x2F;</span><br></pre></td></tr></table></figure>
+<pre><code>/* Process each 16-word block. */
+For i = 0 to N/16-1 do
 
-<h2 id="2-5-Output"><a href="#2-5-Output" class="headerlink" title="2.5 Output"></a>2.5 Output</h2><p>报文摘要的产生后的形式为：A，B，C，D。也就是低位字节A开始，高位字节D结束。</p>
+/* Copy block i into X. */
+For j = 0 to 15 do
+Set X[j] to M[i*16+j].
+end /* of loop on j */
+
+/* Save A as AA, B as BB, C as CC, and D as DD. */
+AA = A
+BB = B
+CC = C
+DD = D
+
+/* Round 1. */
+/* Let [abcd k s i] denote the operation
+a = b + ((a + F(b,c,d) + X[k] + T[i]) &lt;&lt;&lt; s). */
+/* Do the following 16 operations. */
+[ABCD 0 7 1] [DABC 1 12 2] [CDAB 2 17 3] [BCDA 3 22 4]
+[ABCD 4 7 5] [DABC 5 12 6] [CDAB 6 17 7] [BCDA 7 22 8]
+[ABCD 8 7 9] [DABC 9 12 10] [CDAB 10 17 11] [BCDA 11 22 12]
+[ABCD 12 7 13] [DABC 13 12 14] [CDAB 14 17 15] [BCDA 15 22 16]
+
+/* Round 2. */
+/* Let [abcd k s i] denote the operation
+a = b + ((a + G(b,c,d) + X[k] + T[i]) &lt;&lt;&lt; s). */
+/* Do the following 16 operations. */
+[ABCD 1 5 17] [DABC 6 9 18] [CDAB 11 14 19] [BCDA 0 20 20]
+[ABCD 5 5 21] [DABC 10 9 22] [CDAB 15 14 23] [BCDA 4 20 24]
+[ABCD 9 5 25] [DABC 14 9 26] [CDAB 3 14 27] [BCDA 8 20 28]
+[ABCD 13 5 29] [DABC 2 9 30] [CDAB 7 14 31] [BCDA 12 20 32]
+
+/* Round 3. */
+/* Let [abcd k s t] denote the operation
+a = b + ((a + H(b,c,d) + X[k] + T[i]) &lt;&lt;&lt; s). */
+/* Do the following 16 operations. */
+[ABCD 5 4 33] [DABC 8 11 34] [CDAB 11 16 35] [BCDA 14 23 36]
+[ABCD 1 4 37] [DABC 4 11 38] [CDAB 7 16 39] [BCDA 10 23 40]
+[ABCD 13 4 41] [DABC 0 11 42] [CDAB 3 16 43] [BCDA 6 23 44]
+[ABCD 9 4 45] [DABC 12 11 46] [CDAB 15 16 47] [BCDA 2 23 48]
+
+/* Round 4. */
+/* Let [abcd k s t] denote the operation
+a = b + ((a + I(b,c,d) + X[k] + T[i]) &lt;&lt;&lt; s). */
+/* Do the following 16 operations. */
+[ABCD 0 6 49] [DABC 7 10 50] [CDAB 14 15 51] [BCDA 5 21 52]
+[ABCD 12 6 53] [DABC 3 10 54] [CDAB 10 15 55] [BCDA 1 21 56]
+[ABCD 8 6 57] [DABC 15 10 58] [CDAB 6 15 59] [BCDA 13 21 60]
+[ABCD 4 6 61] [DABC 11 10 62] [CDAB 2 15 63] [BCDA 9 21 64]
+
+/* Then perform the following additions. (That is increment each
+of the four registers by the value it had before this block
+was started.) */
+A = A + AA
+B = B + BB
+C = C + CC
+D = D + DD
+
+end /* of loop on i */</code></pre><h2 id="2-5-Output"><a href="#2-5-Output" class="headerlink" title="2.5 Output"></a>2.5 Output</h2><p>报文摘要的产生后的形式为：A，B，C，D。也就是低位字节A开始，高位字节D结束。</p>
 <h1 id="3-C-Implementation"><a href="#3-C-Implementation" class="headerlink" title="3. C++ Implementation"></a>3. C++ Implementation</h1><p>有了上面5个步骤的算法描述，用C++实现起来就很直接了。需要注意的是在具体实现的时候上述5个步骤的顺序会有所变动，因为在大多数情况下我们都无法或很难提前计算出输入信息的长度b(如输入信息来自文件或网络)。因此在具体实现时Append Padding Bits和Append Length这两步会放在最后面。</p>
 <h1 id="4-Test-Suite"><a href="#4-Test-Suite" class="headerlink" title="4. Test Suite"></a>4. Test Suite</h1><p>由于实现代码比较长，在这里就不贴出来了，在本文后面会提供下载。MD5类的public接口如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">md5.h</span><br><span class="line">class MD5 &#123;</span><br><span class="line">public:</span><br><span class="line">	MD5();</span><br><span class="line">	MD5(const void* input, size_t length);</span><br><span class="line">	MD5(const string&amp; str);</span><br><span class="line">	MD5(ifstream &amp;in);</span><br><span class="line">	void update(const void* input, size_t length);</span><br><span class="line">	void update(const string&amp; str);</span><br><span class="line">	void update(ifstream&amp; in);</span><br><span class="line">	const byte* digest();</span><br><span class="line">	string toString();</span><br><span class="line">	void reset();</span><br><span class="line"> ...</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
-
-<p>下面简单介绍一下具体用法：</p>
+<pre><code>md5.h
+class MD5 {
+public:
+    MD5();
+    MD5(const void* input, size_t length);
+    MD5(const string&amp; str);
+    MD5(ifstream &amp;in);
+    void update(const void* input, size_t length);
+    void update(const string&amp; str);
+    void update(ifstream&amp; in);
+    const byte* digest();
+    string toString();
+    void reset();
+ ...
+ };</code></pre><p>下面简单介绍一下具体用法：</p>
 <h2 id="4-1-计算字符串的MD5值"><a href="#4-1-计算字符串的MD5值" class="headerlink" title="4.1 计算字符串的MD5值"></a>4.1 计算字符串的MD5值</h2><p>下面的代码计算字符串”abc”的MD5值并用cout输出：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MD5 md5;</span><br><span class="line">md5.update(&quot;abc&quot;);</span><br><span class="line">cout &lt;&lt; md5.toString() &lt;&lt; endl;</span><br><span class="line">&#x2F;&#x2F;或者更简单点</span><br><span class="line">cout &lt;&lt; MD5(&quot;abc&quot;).toString() &lt;&lt; endl;</span><br></pre></td></tr></table></figure>
+<pre><code>MD5 md5;
+md5.update(&quot;abc&quot;);
+cout &lt;&lt; md5.toString() &lt;&lt; endl;
+//或者更简单点
+cout &lt;&lt; MD5(&quot;abc&quot;).toString() &lt;&lt; endl;</code></pre><h2 id="4-2-计算文件的MD5值"><a href="#4-2-计算文件的MD5值" class="headerlink" title="4.2 计算文件的MD5值"></a>4.2 计算文件的MD5值</h2><p>下面的代码计算文本文件”D:\test.txt”的MD5值并用cout输出，如果是二进制文件打开的时候记得要指定ios::binary模式。另外需要注意的是用来计算的文件必须存在，所以最好在计算前先判断下ifstream的状态。<br>(本来判断ifstream是否有效不该是客户的责任，原本想在ifstream无效时用文件名做参数抛出FileNotFoundException之类的异常，后来却发现从ifstream中居然无法得到文件名…)</p>
+<pre><code>MD5 md5;
+md5.update(ifstream(&quot;D:\\test.txt&quot;));
+cout &lt;&lt; md5.toString() &lt;&lt; endl;
+//或者更简单点
+cout &lt;&lt; MD5(ifstream(&quot;D:\\test.txt&quot;)).toString() &lt;&lt; endl;</code></pre><h2 id="4-3-最基本的用法"><a href="#4-3-最基本的用法" class="headerlink" title="4.3 最基本的用法"></a>4.3 最基本的用法</h2><p>上面的用来计算字符串和文件MD5值的接口都是为了方便才提供的，其实最基本的接口是：<br>void update(const void *input, size_t length);<br>update的另外两个重载都是基于它来实现的，下面的代码用上述接口来实现FileDigest函数，该函数用来计算文件的MD5值：</p>
+<pre><code>string FileDigest(const string&amp; file) {
+    ifstream in(file.c_str(), ios::binary);
+    if (!in) return &quot;&quot;;
 
-<h2 id="4-2-计算文件的MD5值"><a href="#4-2-计算文件的MD5值" class="headerlink" title="4.2 计算文件的MD5值"></a>4.2 计算文件的MD5值</h2><p>下面的代码计算文本文件”D:\test.txt”的MD5值并用cout输出，如果是二进制文件打开的时候记得要指定ios::binary模式。另外需要注意的是用来计算的文件必须存在，所以最好在计算前先判断下ifstream的状态。<br>(本来判断ifstream是否有效不该是客户的责任，原本想在ifstream无效时用文件名做参数抛出FileNotFoundException之类的异常，后来却发现从ifstream中居然无法得到文件名…)</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MD5 md5;</span><br><span class="line">md5.update(ifstream(&quot;D:\\test.txt&quot;));</span><br><span class="line">cout &lt;&lt; md5.toString() &lt;&lt; endl;</span><br><span class="line">&#x2F;&#x2F;或者更简单点</span><br><span class="line">cout &lt;&lt; MD5(ifstream(&quot;D:\\test.txt&quot;)).toString() &lt;&lt; endl;</span><br></pre></td></tr></table></figure>
+    MD5 md5;
+    std::streamsize length;
+    char buffer[1024];
+    while (!in.eof()) {
+        in.read(buffer, 1024);
+        length = in.gcount();
+        if (length &gt; 0)
+        md5.update(buffer, length);
+    }
+    in.close();
+    return md5.toString();
+ }</code></pre><h2 id="4-4-下面看看测试代码："><a href="#4-4-下面看看测试代码：" class="headerlink" title="4.4 下面看看测试代码："></a>4.4 下面看看测试代码：</h2><p>test.cpp</p>
+<pre><code>#include &quot;md5.h&quot;
+#include &lt;iostream&gt;
 
-<h2 id="4-3-最基本的用法"><a href="#4-3-最基本的用法" class="headerlink" title="4.3 最基本的用法"></a>4.3 最基本的用法</h2><p>上面的用来计算字符串和文件MD5值的接口都是为了方便才提供的，其实最基本的接口是：<br>void update(const void *input, size_t length);<br>update的另外两个重载都是基于它来实现的，下面的代码用上述接口来实现FileDigest函数，该函数用来计算文件的MD5值：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">string FileDigest(const string&amp; file) &#123;</span><br><span class="line">	ifstream in(file.c_str(), ios::binary);</span><br><span class="line">	if (!in) return &quot;&quot;;</span><br><span class="line"></span><br><span class="line">	MD5 md5;</span><br><span class="line">	std::streamsize length;</span><br><span class="line">	char buffer[1024];</span><br><span class="line">	while (!in.eof()) &#123;</span><br><span class="line">		in.read(buffer, 1024);</span><br><span class="line">		length &#x3D; in.gcount();</span><br><span class="line">		if (length &gt; 0)</span><br><span class="line">		md5.update(buffer, length);</span><br><span class="line">	&#125;</span><br><span class="line">	in.close();</span><br><span class="line">	return md5.toString();</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+using namespace std;
+void PrintMD5(const string&amp; str, MD5&amp; md5) {
+    cout &lt;&lt; &quot;MD5(\&quot;&quot; &lt;&lt; str &lt;&lt; &quot;\&quot;) = &quot; &lt;&lt; md5.toString() &lt;&lt; endl;
+}
 
-<h2 id="4-4-下面看看测试代码："><a href="#4-4-下面看看测试代码：" class="headerlink" title="4.4 下面看看测试代码："></a>4.4 下面看看测试代码：</h2><p>test.cpp</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#include &quot;md5.h&quot;</span><br><span class="line">#include &lt;iostream&gt;</span><br><span class="line"></span><br><span class="line">using namespace std;</span><br><span class="line">void PrintMD5(const string&amp; str, MD5&amp; md5) &#123;</span><br><span class="line">	cout &lt;&lt; &quot;MD5(\&quot;&quot; &lt;&lt; str &lt;&lt; &quot;\&quot;) &#x3D; &quot; &lt;&lt; md5.toString() &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">	MD5 md5;</span><br><span class="line">	md5.update(&quot;&quot;);</span><br><span class="line">	PrintMD5(&quot;&quot;, md5);</span><br><span class="line">	</span><br><span class="line">	md5.update(&quot;a&quot;);</span><br><span class="line">	PrintMD5(&quot;a&quot;, md5);</span><br><span class="line">	</span><br><span class="line">	md5.update(&quot;bc&quot;);</span><br><span class="line">	PrintMD5(&quot;abc&quot;, md5);</span><br><span class="line">	</span><br><span class="line">	md5.update(&quot;defghijklmnopqrstuvwxyz&quot;);</span><br><span class="line">	PrintMD5(&quot;abcdefghijklmnopqrstuvwxyz&quot;, md5);</span><br><span class="line">	</span><br><span class="line">	md5.reset();</span><br><span class="line">	md5.update(&quot;message digest&quot;);</span><br><span class="line">	PrintMD5(&quot;message digest&quot;, md5);</span><br><span class="line">	</span><br><span class="line">	md5.reset();</span><br><span class="line">	md5.update(ifstream(&quot;D:\\test.txt&quot;));</span><br><span class="line">	PrintMD5(&quot;D:\\test.txt&quot;, md5);</span><br><span class="line">	</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+int main() {
+    MD5 md5;
+    md5.update(&quot;&quot;);
+    PrintMD5(&quot;&quot;, md5);
 
-<p>测试结果：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">MD5(&quot;&quot;) &#x3D; d41d8cd98f00b204e9800998ecf8427e</span><br><span class="line">MD5(&quot;a&quot;) &#x3D; 0cc175b9c0f1b6a831c399e269772661</span><br><span class="line">MD5(&quot;abc&quot;) &#x3D; 900150983cd24fb0d6963f7d28e17f72</span><br><span class="line">MD5(&quot;abcdefghijklmnopqrstuvwxyz&quot;) &#x3D; c3fcd3d76192e4007dfb496cca67e13b</span><br><span class="line">MD5(&quot;message digest&quot;) &#x3D; f96b697d7cb7938d525a2f31aaf161d0</span><br><span class="line">MD5(&quot;D:\test.txt&quot;) &#x3D; 7ac66c0f148de9519b8bd264312c4d64</span><br></pre></td></tr></table></figure>
+    md5.update(&quot;a&quot;);
+    PrintMD5(&quot;a&quot;, md5);
 
-<h1 id="5-测试程序"><a href="#5-测试程序" class="headerlink" title="5 测试程序"></a>5 测试程序</h1><a href="/2020/07/27/03%20%E5%BC%80%E5%8F%91/00%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/MD5%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/md5_test.rar" title="md5_test">md5_test</a>
+    md5.update(&quot;bc&quot;);
+    PrintMD5(&quot;abc&quot;, md5);
+
+    md5.update(&quot;defghijklmnopqrstuvwxyz&quot;);
+    PrintMD5(&quot;abcdefghijklmnopqrstuvwxyz&quot;, md5);
+
+    md5.reset();
+    md5.update(&quot;message digest&quot;);
+    PrintMD5(&quot;message digest&quot;, md5);
+
+    md5.reset();
+    md5.update(ifstream(&quot;D:\\test.txt&quot;));
+    PrintMD5(&quot;D:\\test.txt&quot;, md5);
+
+    return 0;
+}</code></pre><p>测试结果：</p>
+<pre><code>MD5(&quot;&quot;) = d41d8cd98f00b204e9800998ecf8427e
+MD5(&quot;a&quot;) = 0cc175b9c0f1b6a831c399e269772661
+MD5(&quot;abc&quot;) = 900150983cd24fb0d6963f7d28e17f72
+MD5(&quot;abcdefghijklmnopqrstuvwxyz&quot;) = c3fcd3d76192e4007dfb496cca67e13b
+MD5(&quot;message digest&quot;) = f96b697d7cb7938d525a2f31aaf161d0
+MD5(&quot;D:\test.txt&quot;) = 7ac66c0f148de9519b8bd264312c4d64</code></pre><h1 id="5-测试程序"><a href="#5-测试程序" class="headerlink" title="5 测试程序"></a>5 测试程序</h1><a href="/2020/07/27/03%20%E5%BC%80%E5%8F%91/00%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/MD5%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/md5_test.rar" title="md5_test">md5_test</a>
 </div>
 
 
@@ -712,6 +829,8 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 	<button id="totop-toggle" class="toggle"><i class="fa fa-angle-double-up" aria-hidden="true"></i></button>
 </body>

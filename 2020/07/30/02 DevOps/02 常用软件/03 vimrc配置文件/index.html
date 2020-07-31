@@ -4,7 +4,7 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-	
+	<link rel="stylesheet" href="/css/highlight/styles/vs2015.css">
 	<!-- title -->
 	
 	<title>
@@ -95,8 +95,8 @@
 									
 							<ul>
 								<li class="file">
-									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
-										linux下AIO应用详解
+									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+										linux下IO应用详解
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -599,7 +599,238 @@
 
 <div id="article-content">
 	<p>用户根目录下~/.vimrc 配置文件内容</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">set nu</span><br><span class="line">set tabstop&#x3D;4</span><br><span class="line">set softtabstop&#x3D;4</span><br><span class="line">set shiftwidth&#x3D;4</span><br><span class="line">set expandtab</span><br><span class="line">set cinoptions&#x3D;g0</span><br><span class="line">set colorcolumn&#x3D;81</span><br><span class="line">set fileencodings&#x3D;ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1</span><br><span class="line">set nocompatible            &quot; 关闭 vi 兼容模式</span><br><span class="line">syntax on                   &quot; 自动语法高亮</span><br><span class="line">&quot;set paste                   &quot; 取消粘贴自动注释</span><br><span class="line">set number                  &quot; 显示行号</span><br><span class="line">set cursorline              &quot; 突出显示当前行</span><br><span class="line">set ruler                   &quot; 打开状态栏标尺</span><br><span class="line">set nobackup                &quot; 覆盖文件时不备份</span><br><span class="line">set autochdir               &quot; 自动切换当前目录为当前文件所在的目录</span><br><span class="line">filetype plugin indent on   &quot; 开启插件</span><br><span class="line">set backupcopy&#x3D;yes          &quot; 设置备份时的行为为覆盖</span><br><span class="line">set hlsearch                &quot; 搜索时高亮显示被找到的文本</span><br><span class="line">set noerrorbells            &quot; 关闭错误信息响铃</span><br><span class="line">set novisualbell            &quot; 关闭使用可视响铃代替呼叫</span><br><span class="line">set t_vb&#x3D;                   &quot; 置空错误铃声的终端代码</span><br><span class="line">set showmatch               &quot; 插入括号时，短暂地跳转到匹配的对应括号</span><br><span class="line">set matchtime&#x3D;1             &quot; 短暂跳转到匹配括号的时间</span><br><span class="line">set magic                   &quot; 设置魔术</span><br><span class="line">set guioptions-&#x3D;T           &quot; 隐藏工具栏</span><br><span class="line">set guioptions-&#x3D;m           &quot; 隐藏菜单栏</span><br><span class="line">set completeopt&#x3D;menu        &quot; 关闭scratch 预览窗口</span><br><span class="line">set backspace&#x3D;indent,eol,start</span><br><span class="line">set cmdheight&#x3D;1             &quot; 设定命令行的行数为</span><br><span class="line">set t_Co&#x3D;256                &quot; 让xshell 也支持vim的256色配色方案</span><br><span class="line">set nomodeline              &quot; 关闭 model</span><br><span class="line">set tags&#x3D;.&#x2F;.tags;,.tags</span><br><span class="line">&quot; set tags+&#x3D;..&#x2F;.tag</span><br><span class="line">&quot; set tags+&#x3D;..&#x2F;..&#x2F;.tag</span><br><span class="line">&quot; set tags+&#x3D;..&#x2F;..&#x2F;..&#x2F;.tag</span><br><span class="line">&quot; set tags+&#x3D;..&#x2F;*&#x2F;.tag</span><br><span class="line">&quot; set tags+&#x3D;..&#x2F;*&#x2F;*&#x2F;.tag</span><br><span class="line">&quot; set tags+&#x3D;..&#x2F;..&#x2F;*&#x2F;*&#x2F;.tag</span><br><span class="line">set foldcolumn&#x3D;0</span><br><span class="line">setlocal foldlevel&#x3D;2</span><br><span class="line">set foldclose&#x3D;all &quot; 设置为折叠</span><br><span class="line">set nofoldenable  &quot; 设置为自动关闭折叠</span><br><span class="line">set laststatus&#x3D;2      &quot; 总是显示状态栏</span><br><span class="line">nnoremap &lt;space&gt; @&#x3D;((foldclosed(line(&#39;.&#39;)) &lt; 0) ? &#39;zc&#39; : &#39;zo&#39;)&lt;CR&gt;</span><br><span class="line">&quot; 用空格键来开关折叠</span><br><span class="line">&quot;让vim记忆上次编辑的位置</span><br><span class="line">autocmd BufReadPost *</span><br><span class="line">            \ if line(&quot;&#39;\&quot;&quot;)&gt;0&amp;&amp;line(&quot;&#39;\&quot;&quot;)&lt;&#x3D;line(&quot;$&quot;) |</span><br><span class="line">            \ exe &quot;normal g&#39;\&quot;&quot; |</span><br><span class="line">            \ endif</span><br><span class="line">&quot;让vim记忆上次编辑的位置</span><br><span class="line">&quot; 警戒线颜色设置</span><br><span class="line">highlight ColorColumn ctermfg&#x3D;green ctermbg&#x3D;red</span><br><span class="line">highlight LineNr cterm&#x3D;none ctermfg&#x3D;green ctermbg&#x3D;darkblue</span><br><span class="line">highlight SpellBad ctermfg&#x3D;15 ctermbg&#x3D;1 guifg&#x3D;White guibg&#x3D;Red</span><br><span class="line">&quot; 搜索背景色设置</span><br><span class="line">highlight Search cterm&#x3D;none ctermfg&#x3D;yellow ctermbg&#x3D;red</span><br><span class="line">&quot; 下拉菜单背景色设置</span><br><span class="line">highlight Pmenu ctermbg&#x3D;green</span><br><span class="line">&quot; 下拉菜单选择行的背景色设置</span><br><span class="line">highlight PmenuSel ctermbg&#x3D;red ctermfg&#x3D;yellow</span><br><span class="line">&quot; vimdiff 背景色设置</span><br><span class="line">highlight DiffAdd     term&#x3D;bold ctermfg&#x3D;232 ctermbg&#x3D;214</span><br><span class="line">highlight DiffChange  term&#x3D;bold ctermbg&#x3D;248</span><br><span class="line">highlight DiffDelete  term&#x3D;reverse ctermfg&#x3D;15 ctermbg&#x3D;2</span><br><span class="line">highlight DiffText    term&#x3D;reverse ctermfg&#x3D;15 ctermbg&#x3D;1 gui&#x3D;undercurl guifg&#x3D;White guibg&#x3D;Red guisp&#x3D;Red</span><br><span class="line">&quot;highlight DiffText    term&#x3D;reverse cterm&#x3D;bold ctermbg&#x3D;9</span><br><span class="line"></span><br><span class="line">&quot; set the runtime path to include Vundle and initialize</span><br><span class="line">set rtp+&#x3D;~&#x2F;.vim&#x2F;bundle&#x2F;Vundle.vim</span><br><span class="line">call vundle#begin()</span><br><span class="line"></span><br><span class="line">&quot; 让vundle管理插件版本,必须</span><br><span class="line">Plugin &#39;VundleVim&#x2F;Vundle.vim&#39;</span><br><span class="line">&quot; 自动生成ctags索引</span><br><span class="line">Plugin &#39;ludovicchabant&#x2F;vim-gutentags&#39;</span><br><span class="line">&quot; 提供ctags数据库无缝切换</span><br><span class="line">Plugin &#39;skywind3000&#x2F;gutentags_plus&#39;</span><br><span class="line">&quot; vim支持markdown</span><br><span class="line">&quot;Plugin &#39;plasticboy&#x2F;vim-markdown&#39;</span><br><span class="line">&quot; vim markdown 生成表格</span><br><span class="line">Plugin &#39;dhruvasagar&#x2F;vim-table-mode&#39;</span><br><span class="line">&quot; 配合snippets自动补全, 没有的话snippets不生效</span><br><span class="line">Plugin &#39;SirVer&#x2F;ultisnips&#39;</span><br><span class="line">&quot; 支持代码片段</span><br><span class="line">Plugin &#39;honza&#x2F;vim-snippets&#39;</span><br><span class="line">&quot; 状态栏显示不同颜色</span><br><span class="line">Plugin &#39;Lokaltog&#x2F;vim-powerline&#39;</span><br><span class="line">&quot; 记录历史变量名或路径或符号，使用tab即可循环选择</span><br><span class="line">Plugin &#39;ervandew&#x2F;supertab&#39;</span><br><span class="line">&quot; 支持语法检测和编码风格检测</span><br><span class="line">Plugin &#39;scrooloose&#x2F;syntastic&#39;</span><br><span class="line">&quot; 设置对齐线</span><br><span class="line">Plugin &#39;Yggdroot&#x2F;indentLine&#39;</span><br><span class="line">&quot; git项目编辑后在行前显示状态~ + - 等</span><br><span class="line">Plugin &#39;airblade&#x2F;vim-gitgutter&#39;</span><br><span class="line">&quot; 代码对齐</span><br><span class="line">Plugin &#39;godlygeek&#x2F;tabular&#39;</span><br><span class="line">&quot; nerdtree</span><br><span class="line">Plugin &#39;scrooloose&#x2F;nerdtree&#39;</span><br><span class="line">&quot; git管理的项目在项目窗口中的状态标识</span><br><span class="line">Plugin &#39;git:&#x2F;&#x2F;github.com&#x2F;Xuyuanp&#x2F;nerdtree-git-plugin.git&#39;</span><br><span class="line">&quot; 文件查找工具，使用\ t查找文件</span><br><span class="line">Plugin &#39;wincent&#x2F;command-t&#39;</span><br><span class="line">&quot; vim 状态栏插件</span><br><span class="line">Plugin &#39;bling&#x2F;vim-airline&#39;</span><br><span class="line">&quot; 代码格式化插件</span><br><span class="line">Plugin &#39;Chiel92&#x2F;vim-autoformat&#39;</span><br><span class="line">Plugin &#39;rdnetto&#x2F;YCM-Generator&#39;</span><br><span class="line">&quot; 代码补全</span><br><span class="line">Plugin &#39;Valloric&#x2F;YouCompleteMe&#39;</span><br><span class="line">&quot; rust</span><br><span class="line">Plugin &#39;rust-lang&#x2F;rust.vim&#39;</span><br><span class="line">&quot; toml文件语法</span><br><span class="line">Plugin &#39;cespare&#x2F;vim-toml&#39;</span><br><span class="line"></span><br><span class="line">call vundle#end()            &quot; 必须</span><br><span class="line">filetype plugin indent on    &quot; 必须 加载vim自带和插件相应的语法和文件类型相关脚本</span><br><span class="line"></span><br><span class="line">autocmd BufNewFile  *.c,*.cpp  0r ~&#x2F;.vim&#x2F;skeleton&#x2F;c.ske</span><br><span class="line">autocmd BufNewFile  *.h,*.hpp  0r ~&#x2F;.vim&#x2F;skeleton&#x2F;h.ske</span><br><span class="line">autocmd BufNewFile  *.sh       0r ~&#x2F;.vim&#x2F;skeleton&#x2F;sh.ske</span><br><span class="line">autocmd BufNewFile * normal G</span><br><span class="line">autocmd BufNewFile *.[ch],*.sh,*.hpp,*.cpp ks|call CreatedTime()|&#39;</span><br><span class="line">fun CreatedTime()</span><br><span class="line">    if line(&quot;$&quot;) &gt; 20</span><br><span class="line">        let l &#x3D; 20</span><br><span class="line">    else</span><br><span class="line">        let l &#x3D; line(&quot;$&quot;)</span><br><span class="line">    endif</span><br><span class="line">    exe &quot;1,&quot; . l . &quot;g&#x2F;Date       :.*&#x2F;s&#x2F;&#x2F;Date       : &quot; .strftime(&quot;%c&quot;)</span><br><span class="line">endfun</span><br><span class="line"></span><br><span class="line">&quot; 保存时自动删除行尾空白字符</span><br><span class="line">function! StripTrailingWhitespace()</span><br><span class="line">    normal mZ</span><br><span class="line">    %s&#x2F;\s\+$&#x2F;&#x2F;e</span><br><span class="line">    if line(&quot;&#39;Z&quot;) !&#x3D; line(&quot;.&quot;)</span><br><span class="line">        echo &quot;Stripped whitespace\n&quot;</span><br><span class="line">    endif</span><br><span class="line">    normal &#96;Z</span><br><span class="line">endfunction</span><br><span class="line">autocmd BufWritePre *.cpp,*.cxx,*.hpp,*.h,*.rs,*.toml :call StripTrailingWhitespace()</span><br><span class="line"></span><br><span class="line">&quot; 设置nerd窗口中git文件状态</span><br><span class="line">let g:NERDTreeIndicatorMapCustom &#x3D; &#123;</span><br><span class="line">    \ &quot;Modified&quot;  : &quot;✹&quot;,</span><br><span class="line">    \ &quot;Staged&quot;    : &quot;✚&quot;,</span><br><span class="line">    \ &quot;Untracked&quot; : &quot;✭&quot;,</span><br><span class="line">    \ &quot;Renamed&quot;   : &quot;➜&quot;,</span><br><span class="line">    \ &quot;Unmerged&quot;  : &quot;═&quot;,</span><br><span class="line">    \ &quot;Deleted&quot;   : &quot;✖&quot;,</span><br><span class="line">    \ &quot;Dirty&quot;     : &quot;✗&quot;,</span><br><span class="line">    \ &quot;Clean&quot;     : &quot;✔︎&quot;,</span><br><span class="line">    \ &quot;Unknown&quot;   : &quot;?&quot;</span><br><span class="line">    \ &#125;</span><br><span class="line"></span><br><span class="line">&quot; 自动关闭选项预览窗口</span><br><span class="line">autocmd InsertLeave * if pumvisible() &#x3D;&#x3D; 0|pclose|endif</span><br><span class="line">autocmd CursorMovedI * if pumvisible() &#x3D;&#x3D; 0|pclose|endif</span><br><span class="line"></span><br><span class="line">&quot;YouCompleteMe相关设置</span><br><span class="line">&quot;let g:ycm_global_ycm_extra_conf&#x3D;&#39;~&#x2F;.vim&#x2F;bundle&#x2F;YouCompleteMe&#x2F;third_party&#x2F;ycmd&#x2F;cpp&#x2F;ycm&#x2F;.ycm_extra_conf.py&#39;</span><br><span class="line">let g:ycm_global_ycm_extra_conf&#x3D;&#39;~&#x2F;.ycm_extra_conf.py&#39;</span><br><span class="line">&quot;开启语义补全</span><br><span class="line">let g:ycm_seed_identifiers_with_syntax&#x3D;1</span><br><span class="line">&quot;不显示开启vim时检查ycm_extra_conf文件的信息</span><br><span class="line">let g:ycm_confirm_extra_conf&#x3D;0</span><br><span class="line">&quot;每次重新生成匹配项，禁止缓存匹配项</span><br><span class="line">let g:ycm_cache_omnifunc&#x3D;0</span><br><span class="line">&quot; 从第2个键入字符就开始罗列匹配项</span><br><span class="line">let g:ycm_min_num_of_chars_for_completion&#x3D;2                 &quot;</span><br><span class="line">&quot;不查询ultisnips提供的代码模板补全，如果需要，设置成1即可</span><br><span class="line">let g:ycm_use_ultisnips_completer&#x3D;0</span><br><span class="line">let g:ycm_key_list_select_completion &#x3D; [&#39;&lt;c-n&gt;&#39;, &#39;&lt;Down&gt;&#39;]</span><br><span class="line">let g:ycm_enable_diagnostic_signs &#x3D; 0</span><br><span class="line">let g:ycm_enable_diagnostic_highlighting &#x3D; 0</span><br><span class="line"></span><br><span class="line">&quot;设置对齐线的颜色</span><br><span class="line">let g:indentLine_color_term &#x3D; 239</span><br><span class="line">&quot; 设置</span><br><span class="line">let g:airline#extensions#tabline#enabled &#x3D; 1</span><br><span class="line">let NERDTreeWinPos&#x3D;1   &quot; 右侧显示</span><br><span class="line"></span><br><span class="line">&quot; 设置markdown的table模式下使用|进行表格制作</span><br><span class="line">let g:table_mode_corner&#x3D;&#39;|&#39;</span><br><span class="line"></span><br><span class="line">&quot; gutentags 搜索工程目录的标志，碰到这些文件&#x2F;目录名就停止向上一级目录递归</span><br><span class="line">let g:gutentags_project_root &#x3D; [&#39;.root&#39;, &#39;.svn&#39;, &#39;.git&#39;, &#39;.hg&#39;, &#39;.project&#39;]</span><br><span class="line"></span><br><span class="line">&quot; 所生成的数据文件的名称</span><br><span class="line">let g:gutentags_ctags_tagfile &#x3D; &#39;.tags&#39;</span><br><span class="line"></span><br><span class="line">&quot; 将自动生成的 tags 文件全部放入 ~&#x2F;.cache&#x2F;tags 目录中，避免污染工程目录</span><br><span class="line">let s:vim_tags &#x3D; expand(&#39;~&#x2F;.cache&#x2F;tags&#39;)</span><br><span class="line">let g:gutentags_cache_dir &#x3D; s:vim_tags</span><br><span class="line">&quot; 检测 ~&#x2F;.cache&#x2F;tags 不存在就新建 &quot;</span><br><span class="line">if !isdirectory(s:vim_tags)</span><br><span class="line">    silent! call mkdir(s:vim_tags, &#39;p&#39;)</span><br><span class="line">endif</span><br><span class="line"></span><br><span class="line">&quot; 配置 ctags 的参数</span><br><span class="line">let g:gutentags_ctags_extra_args &#x3D; [&#39;--fields&#x3D;+niazS&#39;, &#39;--extra&#x3D;+q&#39;]</span><br><span class="line">let g:gutentags_ctags_extra_args +&#x3D; [&#39;--c++-kinds&#x3D;+px&#39;]</span><br><span class="line">let g:gutentags_ctags_extra_args +&#x3D; [&#39;--c-kinds&#x3D;+px&#39;]</span><br><span class="line"></span><br><span class="line">&quot; 设置NerdTree F3调出</span><br><span class="line">map &lt;F3&gt; :NERDTreeMirror&lt;CR&gt;</span><br><span class="line">map &lt;F3&gt; :NERDTreeToggle&lt;CR&gt;</span><br><span class="line">&quot; 设置f4为代码自动格式化，配合插件vim-autoformat使用</span><br><span class="line">noremap &lt;F4&gt; :Autoformat&lt;CR&gt;</span><br><span class="line">&quot; 设置f9打开或关闭对齐线</span><br><span class="line">map &lt;F9&gt; :IndentLinesToggle&lt;CR&gt;</span><br><span class="line">&quot; 设置,2 ,3 ,4 分别为vimdiff的获取2 3 4 窗口内容, 并更新vimdiff</span><br><span class="line">map &lt;silent&gt; ,2 :diffget 2&lt;CR&gt; :diffupdate&lt;CR&gt;</span><br><span class="line">map &lt;silent&gt; ,3 :diffget 3&lt;CR&gt; :diffupdate&lt;CR&gt;</span><br><span class="line">map &lt;silent&gt; ,4 :diffget 4&lt;CR&gt; :diffupdate&lt;CR&gt;</span><br><span class="line"></span><br><span class="line">autocmd BufEnter * if &amp;filetype &#x3D;&#x3D; &quot;&quot; | setlocal ft&#x3D;cpp | endif</span><br><span class="line">nnoremap &lt;leader&gt;jd :YcmCompleter GoToDeclaration&lt;CR&gt;</span><br><span class="line"></span><br><span class="line">&quot; 在输入模式下ctrl+hjkl  来移动光标, 一般需要修改xshell中属性终端里 127 把&lt;BS&gt;设置成 127，而 &lt;DEL&gt;设置成 VT220 Del</span><br><span class="line">inoremap &lt;c-h&gt; &lt;left&gt;</span><br><span class="line">inoremap &lt;c-j&gt; &lt;down&gt;</span><br><span class="line">inoremap &lt;c-k&gt; &lt;up&gt;</span><br><span class="line">inoremap &lt;c-l&gt; &lt;right&gt;</span><br><span class="line">&quot;inoremap &#39; &#39;&#39;&lt;ESC&gt;i</span><br><span class="line">&quot;inoremap &quot; &quot;&quot;&lt;ESC&gt;i</span><br><span class="line">&quot; inoremap ( ()&lt;ESC&gt;i</span><br><span class="line">&quot; inoremap [ []&lt;ESC&gt;i</span><br><span class="line">&quot; inoremap &#123; &#123;&lt;CR&gt;&#125;&lt;ESC&gt;O</span><br></pre></td></tr></table></figure>
+<pre><code>set nu
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set expandtab
+set cinoptions=g0
+set colorcolumn=81
+set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+set nocompatible            &quot; 关闭 vi 兼容模式
+syntax on                   &quot; 自动语法高亮
+&quot;set paste                   &quot; 取消粘贴自动注释
+set number                  &quot; 显示行号
+set cursorline              &quot; 突出显示当前行
+set ruler                   &quot; 打开状态栏标尺
+set nobackup                &quot; 覆盖文件时不备份
+set autochdir               &quot; 自动切换当前目录为当前文件所在的目录
+filetype plugin indent on   &quot; 开启插件
+set backupcopy=yes          &quot; 设置备份时的行为为覆盖
+set hlsearch                &quot; 搜索时高亮显示被找到的文本
+set noerrorbells            &quot; 关闭错误信息响铃
+set novisualbell            &quot; 关闭使用可视响铃代替呼叫
+set t_vb=                   &quot; 置空错误铃声的终端代码
+set showmatch               &quot; 插入括号时，短暂地跳转到匹配的对应括号
+set matchtime=1             &quot; 短暂跳转到匹配括号的时间
+set magic                   &quot; 设置魔术
+set guioptions-=T           &quot; 隐藏工具栏
+set guioptions-=m           &quot; 隐藏菜单栏
+set completeopt=menu        &quot; 关闭scratch 预览窗口
+set backspace=indent,eol,start
+set cmdheight=1             &quot; 设定命令行的行数为
+set t_Co=256                &quot; 让xshell 也支持vim的256色配色方案
+set nomodeline              &quot; 关闭 model
+set tags=./.tags;,.tags
+&quot; set tags+=../.tag
+&quot; set tags+=../../.tag
+&quot; set tags+=../../../.tag
+&quot; set tags+=../*/.tag
+&quot; set tags+=../*/*/.tag
+&quot; set tags+=../../*/*/.tag
+set foldcolumn=0
+setlocal foldlevel=2
+set foldclose=all &quot; 设置为折叠
+set nofoldenable  &quot; 设置为自动关闭折叠
+set laststatus=2      &quot; 总是显示状态栏
+nnoremap &lt;space&gt; @=((foldclosed(line(&#39;.&#39;)) &lt; 0) ? &#39;zc&#39; : &#39;zo&#39;)&lt;CR&gt;
+&quot; 用空格键来开关折叠
+&quot;让vim记忆上次编辑的位置
+autocmd BufReadPost *
+            \ if line(&quot;&#39;\&quot;&quot;)&gt;0&amp;&amp;line(&quot;&#39;\&quot;&quot;)&lt;=line(&quot;$&quot;) |
+            \ exe &quot;normal g&#39;\&quot;&quot; |
+            \ endif
+&quot;让vim记忆上次编辑的位置
+&quot; 警戒线颜色设置
+highlight ColorColumn ctermfg=green ctermbg=red
+highlight LineNr cterm=none ctermfg=green ctermbg=darkblue
+highlight SpellBad ctermfg=15 ctermbg=1 guifg=White guibg=Red
+&quot; 搜索背景色设置
+highlight Search cterm=none ctermfg=yellow ctermbg=red
+&quot; 下拉菜单背景色设置
+highlight Pmenu ctermbg=green
+&quot; 下拉菜单选择行的背景色设置
+highlight PmenuSel ctermbg=red ctermfg=yellow
+&quot; vimdiff 背景色设置
+highlight DiffAdd     term=bold ctermfg=232 ctermbg=214
+highlight DiffChange  term=bold ctermbg=248
+highlight DiffDelete  term=reverse ctermfg=15 ctermbg=2
+highlight DiffText    term=reverse ctermfg=15 ctermbg=1 gui=undercurl guifg=White guibg=Red guisp=Red
+&quot;highlight DiffText    term=reverse cterm=bold ctermbg=9
+
+&quot; set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+&quot; 让vundle管理插件版本,必须
+Plugin &#39;VundleVim/Vundle.vim&#39;
+&quot; 自动生成ctags索引
+Plugin &#39;ludovicchabant/vim-gutentags&#39;
+&quot; 提供ctags数据库无缝切换
+Plugin &#39;skywind3000/gutentags_plus&#39;
+&quot; vim支持markdown
+&quot;Plugin &#39;plasticboy/vim-markdown&#39;
+&quot; vim markdown 生成表格
+Plugin &#39;dhruvasagar/vim-table-mode&#39;
+&quot; 配合snippets自动补全, 没有的话snippets不生效
+Plugin &#39;SirVer/ultisnips&#39;
+&quot; 支持代码片段
+Plugin &#39;honza/vim-snippets&#39;
+&quot; 状态栏显示不同颜色
+Plugin &#39;Lokaltog/vim-powerline&#39;
+&quot; 记录历史变量名或路径或符号，使用tab即可循环选择
+Plugin &#39;ervandew/supertab&#39;
+&quot; 支持语法检测和编码风格检测
+Plugin &#39;scrooloose/syntastic&#39;
+&quot; 设置对齐线
+Plugin &#39;Yggdroot/indentLine&#39;
+&quot; git项目编辑后在行前显示状态~ + - 等
+Plugin &#39;airblade/vim-gitgutter&#39;
+&quot; 代码对齐
+Plugin &#39;godlygeek/tabular&#39;
+&quot; nerdtree
+Plugin &#39;scrooloose/nerdtree&#39;
+&quot; git管理的项目在项目窗口中的状态标识
+Plugin &#39;git://github.com/Xuyuanp/nerdtree-git-plugin.git&#39;
+&quot; 文件查找工具，使用\ t查找文件
+Plugin &#39;wincent/command-t&#39;
+&quot; vim 状态栏插件
+Plugin &#39;bling/vim-airline&#39;
+&quot; 代码格式化插件
+Plugin &#39;Chiel92/vim-autoformat&#39;
+Plugin &#39;rdnetto/YCM-Generator&#39;
+&quot; 代码补全
+Plugin &#39;Valloric/YouCompleteMe&#39;
+&quot; rust
+Plugin &#39;rust-lang/rust.vim&#39;
+&quot; toml文件语法
+Plugin &#39;cespare/vim-toml&#39;
+
+call vundle#end()            &quot; 必须
+filetype plugin indent on    &quot; 必须 加载vim自带和插件相应的语法和文件类型相关脚本
+
+autocmd BufNewFile  *.c,*.cpp  0r ~/.vim/skeleton/c.ske
+autocmd BufNewFile  *.h,*.hpp  0r ~/.vim/skeleton/h.ske
+autocmd BufNewFile  *.sh       0r ~/.vim/skeleton/sh.ske
+autocmd BufNewFile * normal G
+autocmd BufNewFile *.[ch],*.sh,*.hpp,*.cpp ks|call CreatedTime()|&#39;
+fun CreatedTime()
+    if line(&quot;$&quot;) &gt; 20
+        let l = 20
+    else
+        let l = line(&quot;$&quot;)
+    endif
+    exe &quot;1,&quot; . l . &quot;g/Date       :.*/s//Date       : &quot; .strftime(&quot;%c&quot;)
+endfun
+
+&quot; 保存时自动删除行尾空白字符
+function! StripTrailingWhitespace()
+    normal mZ
+    %s/\s\+$//e
+    if line(&quot;&#39;Z&quot;) != line(&quot;.&quot;)
+        echo &quot;Stripped whitespace\n&quot;
+    endif
+    normal `Z
+endfunction
+autocmd BufWritePre *.cpp,*.cxx,*.hpp,*.h,*.rs,*.toml :call StripTrailingWhitespace()
+
+&quot; 设置nerd窗口中git文件状态
+let g:NERDTreeIndicatorMapCustom = {
+    \ &quot;Modified&quot;  : &quot;✹&quot;,
+    \ &quot;Staged&quot;    : &quot;✚&quot;,
+    \ &quot;Untracked&quot; : &quot;✭&quot;,
+    \ &quot;Renamed&quot;   : &quot;➜&quot;,
+    \ &quot;Unmerged&quot;  : &quot;═&quot;,
+    \ &quot;Deleted&quot;   : &quot;✖&quot;,
+    \ &quot;Dirty&quot;     : &quot;✗&quot;,
+    \ &quot;Clean&quot;     : &quot;✔︎&quot;,
+    \ &quot;Unknown&quot;   : &quot;?&quot;
+    \ }
+
+&quot; 自动关闭选项预览窗口
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
+
+&quot;YouCompleteMe相关设置
+&quot;let g:ycm_global_ycm_extra_conf=&#39;~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py&#39;
+let g:ycm_global_ycm_extra_conf=&#39;~/.ycm_extra_conf.py&#39;
+&quot;开启语义补全
+let g:ycm_seed_identifiers_with_syntax=1
+&quot;不显示开启vim时检查ycm_extra_conf文件的信息
+let g:ycm_confirm_extra_conf=0
+&quot;每次重新生成匹配项，禁止缓存匹配项
+let g:ycm_cache_omnifunc=0
+&quot; 从第2个键入字符就开始罗列匹配项
+let g:ycm_min_num_of_chars_for_completion=2                 &quot;
+&quot;不查询ultisnips提供的代码模板补全，如果需要，设置成1即可
+let g:ycm_use_ultisnips_completer=0
+let g:ycm_key_list_select_completion = [&#39;&lt;c-n&gt;&#39;, &#39;&lt;Down&gt;&#39;]
+let g:ycm_enable_diagnostic_signs = 0
+let g:ycm_enable_diagnostic_highlighting = 0
+
+&quot;设置对齐线的颜色
+let g:indentLine_color_term = 239
+&quot; 设置
+let g:airline#extensions#tabline#enabled = 1
+let NERDTreeWinPos=1   &quot; 右侧显示
+
+&quot; 设置markdown的table模式下使用|进行表格制作
+let g:table_mode_corner=&#39;|&#39;
+
+&quot; gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
+let g:gutentags_project_root = [&#39;.root&#39;, &#39;.svn&#39;, &#39;.git&#39;, &#39;.hg&#39;, &#39;.project&#39;]
+
+&quot; 所生成的数据文件的名称
+let g:gutentags_ctags_tagfile = &#39;.tags&#39;
+
+&quot; 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+let s:vim_tags = expand(&#39;~/.cache/tags&#39;)
+let g:gutentags_cache_dir = s:vim_tags
+&quot; 检测 ~/.cache/tags 不存在就新建 &quot;
+if !isdirectory(s:vim_tags)
+    silent! call mkdir(s:vim_tags, &#39;p&#39;)
+endif
+
+&quot; 配置 ctags 的参数
+let g:gutentags_ctags_extra_args = [&#39;--fields=+niazS&#39;, &#39;--extra=+q&#39;]
+let g:gutentags_ctags_extra_args += [&#39;--c++-kinds=+px&#39;]
+let g:gutentags_ctags_extra_args += [&#39;--c-kinds=+px&#39;]
+
+&quot; 设置NerdTree F3调出
+map &lt;F3&gt; :NERDTreeMirror&lt;CR&gt;
+map &lt;F3&gt; :NERDTreeToggle&lt;CR&gt;
+&quot; 设置f4为代码自动格式化，配合插件vim-autoformat使用
+noremap &lt;F4&gt; :Autoformat&lt;CR&gt;
+&quot; 设置f9打开或关闭对齐线
+map &lt;F9&gt; :IndentLinesToggle&lt;CR&gt;
+&quot; 设置,2 ,3 ,4 分别为vimdiff的获取2 3 4 窗口内容, 并更新vimdiff
+map &lt;silent&gt; ,2 :diffget 2&lt;CR&gt; :diffupdate&lt;CR&gt;
+map &lt;silent&gt; ,3 :diffget 3&lt;CR&gt; :diffupdate&lt;CR&gt;
+map &lt;silent&gt; ,4 :diffget 4&lt;CR&gt; :diffupdate&lt;CR&gt;
+
+autocmd BufEnter * if &amp;filetype == &quot;&quot; | setlocal ft=cpp | endif
+nnoremap &lt;leader&gt;jd :YcmCompleter GoToDeclaration&lt;CR&gt;
+
+&quot; 在输入模式下ctrl+hjkl  来移动光标, 一般需要修改xshell中属性终端里 127 把&lt;BS&gt;设置成 127，而 &lt;DEL&gt;设置成 VT220 Del
+inoremap &lt;c-h&gt; &lt;left&gt;
+inoremap &lt;c-j&gt; &lt;down&gt;
+inoremap &lt;c-k&gt; &lt;up&gt;
+inoremap &lt;c-l&gt; &lt;right&gt;
+&quot;inoremap &#39; &#39;&#39;&lt;ESC&gt;i
+&quot;inoremap &quot; &quot;&quot;&lt;ESC&gt;i
+&quot; inoremap ( ()&lt;ESC&gt;i
+&quot; inoremap [ []&lt;ESC&gt;i
+&quot; inoremap { {&lt;CR&gt;}&lt;ESC&gt;O</code></pre>
 </div>
 
 
@@ -676,6 +907,8 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 	<button id="totop-toggle" class="toggle"><i class="fa fa-angle-double-up" aria-hidden="true"></i></button>
 </body>

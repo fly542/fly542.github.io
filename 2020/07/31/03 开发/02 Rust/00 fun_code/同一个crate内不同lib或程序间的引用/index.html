@@ -4,7 +4,7 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-	
+	<link rel="stylesheet" href="/css/highlight/styles/vs2015.css">
 	<!-- title -->
 	
 	<title>
@@ -95,8 +95,8 @@
 									
 							<ul>
 								<li class="file">
-									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
-										linux下AIO应用详解
+									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+										linux下IO应用详解
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -600,10 +600,26 @@
 <div id="article-content">
 	<p>在同一个大型项目中，可能会建立多个lib，有时候想要以外部调用库的方式测试其中的某个lib的某项功能，这时怎么修改Cargo.toml文件引用工程内的某个lib？<br>答案是修改Cargo.toml 文件中的[dependencies]</p>
 <p>参考arnl/test_simple/test_redis/Cargo.toml</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[package]</span><br><span class="line">name &#x3D; &quot;test_redis&quot;</span><br><span class="line">version &#x3D; &quot;0.1.0&quot;</span><br><span class="line">authors &#x3D; [&quot;wanghaibin &lt;wanghaibin@qiyi.com&gt;&quot;]</span><br><span class="line">edition &#x3D; &quot;2018&quot;</span><br><span class="line"></span><br><span class="line"># See more keys and their definitions at https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;cargo&#x2F;reference&#x2F;manifest.html</span><br><span class="line"></span><br><span class="line">[dependencies]</span><br><span class="line">redis &#x3D; &#123; path &#x3D; &quot;..&#x2F;..&#x2F;src&#x2F;libredis&#x2F;&quot; &#125;</span><br></pre></td></tr></table></figure>
+<pre><code>[package]
+name = &quot;test_redis&quot;
+version = &quot;0.1.0&quot;
+authors = [&quot;wanghaibin &lt;wanghaibin@qiyi.com&gt;&quot;]
+edition = &quot;2018&quot;
 
-<p>在非tests目录下的测试程序arnl/test_simple/test_redis/src内容如下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">use redis::&#123;redis_string, redis_client&#125;;</span><br><span class="line"></span><br><span class="line">fn main() &#123;</span><br><span class="line">    println!(&quot;Hello, world!&quot;);</span><br><span class="line">    let mut stream &#x3D; redis_client::RedisClient::new(&quot;127.0.0.1:6379&quot;, &amp;0, &amp;3).unwrap();</span><br><span class="line">    let mut rstr &#x3D; redis_string::RedisString::new(&amp;mut stream);</span><br><span class="line">    let key &#x3D; &quot;incrbyfloat_test&quot;;</span><br><span class="line">    println!(&quot;xxxx&#x3D;&#123;:#?&#125;&quot;,rstr.incrbyfloat(key, 2.1));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+redis = { path = &quot;../../src/libredis/&quot; }
+</code></pre><p>在非tests目录下的测试程序arnl/test_simple/test_redis/src内容如下</p>
+<pre><code>use redis::{redis_string, redis_client};
+
+fn main() {
+    println!(&quot;Hello, world!&quot;);
+    let mut stream = redis_client::RedisClient::new(&quot;127.0.0.1:6379&quot;, &amp;0, &amp;3).unwrap();
+    let mut rstr = redis_string::RedisString::new(&amp;mut stream);
+    let key = &quot;incrbyfloat_test&quot;;
+    println!(&quot;xxxx={:#?}&quot;,rstr.incrbyfloat(key, 2.1));
+}</code></pre>
 </div>
 
 
@@ -680,6 +696,8 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 	<button id="totop-toggle" class="toggle"><i class="fa fa-angle-double-up" aria-hidden="true"></i></button>
 </body>

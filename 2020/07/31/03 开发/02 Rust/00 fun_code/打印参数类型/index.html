@@ -4,7 +4,7 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-	
+	<link rel="stylesheet" href="/css/highlight/styles/vs2015.css">
 	<!-- title -->
 	
 	<title>
@@ -95,8 +95,8 @@
 									
 							<ul>
 								<li class="file">
-									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BAIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
-										linux下AIO应用详解
+									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+										linux下IO应用详解
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -598,7 +598,23 @@
 </div>
 
 <div id="article-content">
-	<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;&#x2F;  打印变量T的类型</span><br><span class="line">fn print_type_of&lt;T&gt;(_: &amp;T) &#123;</span><br><span class="line">    println!(&quot;&#123;&#125;&quot;, std::any::type_name::&lt;T&gt;())</span><br><span class="line">&#125;</span><br><span class="line">fn main() &#123;</span><br><span class="line">    let s &#x3D; String::from(&quot;hello&quot;);</span><br><span class="line">    let bytes &#x3D; s.into_bytes();</span><br><span class="line">    assert_eq!(&amp;[104, 101, 108, 108, 111][..], &amp;bytes[..]);</span><br><span class="line">    print_type_of(&amp;bytes);</span><br><span class="line">    let mut mb &#x3D; bytes;</span><br><span class="line">    print_type_of(&amp;mb);</span><br><span class="line">    print_type_of(&amp;mut mb);</span><br><span class="line">    let mut x &#x3D; &amp;mut mb;</span><br><span class="line">    print_type_of(&amp;x);</span><br><span class="line">    let y &#x3D; &amp;mut x;</span><br><span class="line">    print_type_of(&amp;y);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+	<pre><code>///  打印变量T的类型
+fn print_type_of&lt;T&gt;(_: &amp;T) {
+    println!(&quot;{}&quot;, std::any::type_name::&lt;T&gt;())
+}
+fn main() {
+    let s = String::from(&quot;hello&quot;);
+    let bytes = s.into_bytes();
+    assert_eq!(&amp;[104, 101, 108, 108, 111][..], &amp;bytes[..]);
+    print_type_of(&amp;bytes);
+    let mut mb = bytes;
+    print_type_of(&amp;mb);
+    print_type_of(&amp;mut mb);
+    let mut x = &amp;mut mb;
+    print_type_of(&amp;x);
+    let y = &amp;mut x;
+    print_type_of(&amp;y);
+}</code></pre>
 </div>
 
 
@@ -675,6 +691,8 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 	<button id="totop-toggle" class="toggle"><i class="fa fa-angle-double-up" aria-hidden="true"></i></button>
 </body>
