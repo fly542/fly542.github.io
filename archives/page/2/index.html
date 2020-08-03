@@ -169,11 +169,80 @@
 									
 							<ul>
 								<li class="file">
-									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20Adapter---%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
+									<a href="/2020/08/02/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/00%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%85%AD%E5%A4%A7%E5%8E%9F%E5%88%99/">
+										00 设计模式的六大原则
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 创建型
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/08/01/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20%E5%88%9B%E5%BB%BA%E5%9E%8B/01%20Abstract%20Factory(%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82)/">
+										01 Abstract Factory(抽象工厂)
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/02/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20%E5%88%9B%E5%BB%BA%E5%9E%8B/02%20Builder%20(%E7%94%9F%E6%88%90%E5%99%A8)/">
+										02 Builder (生成器)
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 结构型
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/02%20%E7%BB%93%E6%9E%84%E5%9E%8B/01%20Adapter---%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
 										01 Adapter---适配器模式
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										03 行为型
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/08/01/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/03%20%E8%A1%8C%E4%B8%BA%E5%9E%8B/09%20Strategy%20(%E7%AD%96%E7%95%A5)/">
+										09 Strategy (策略)
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
 							</ul>
 			
 								</li>
@@ -583,6 +652,98 @@
 		<div id="index">
 	
 		<div class="index-li">
+			<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/%E6%9C%89%E8%B6%A3%E7%9A%84%E6%89%80%E6%9C%89%E6%9D%83%E9%97%AE%E9%A2%98%E9%97%AE%E9%A2%98/">
+				<h2 class="index-title">
+					有趣的所有权问题问题
+				</h2>
+				<div class="index-brief">
+					代码1
+fn main() {
+    let mut v = vec![1,2,3];
+    let first = &amp;v[0];
+    v.push(5);
+    println!(&quot;Hello, world!, first={}&quot;, first);
+}代码2
+
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-31</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
+			<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/vec%E5%90%88%E5%B9%B6%E6%95%B0%E6%8D%AE%E6%97%B6%E9%98%B2%E6%AD%A2%E5%87%BA%E7%8E%B0%E6%8B%B7%E8%B4%9D%E7%9A%84%E6%96%B9%E6%B3%95/">
+				<h2 class="index-title">
+					vec合并数据时防止出现拷贝的方法
+				</h2>
+				<div class="index-brief">
+					当结构体中使用Vec在头部插入一个新的Vec数据时可以通过mem::replace方法来减少数据的拷贝。
+use std::mem;
+struct Myvec {
+    data: Vec&lt;u8&gt;,
+    count: usize,
+}
+
+impl Myvec {
+    fn ne
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-31</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
+			<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/%E5%90%8C%E4%B8%80%E4%B8%AAcrate%E5%86%85%E4%B8%8D%E5%90%8Clib%E6%88%96%E7%A8%8B%E5%BA%8F%E9%97%B4%E7%9A%84%E5%BC%95%E7%94%A8/">
+				<h2 class="index-title">
+					同一个crate内不同lib或程序间的引用
+				</h2>
+				<div class="index-brief">
+					在同一个大型项目中，可能会建立多个lib，有时候想要以外部调用库的方式测试其中的某个lib的某项功能，这时怎么修改Cargo.toml文件引用工程内的某个lib？答案是修改Cargo.toml 文件中的[dependencies]
+参考arnl/test_simple/test_redis/Carg
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-31</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
+			<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/rust%20%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%9A%84%E6%97%B6%E9%97%B4%E6%88%B3/">
+				<h2 class="index-title">
+					rust 获取当前的时间戳
+				</h2>
+				<div class="index-brief">
+					示例代码如下：
+use std::time::{SystemTime};
+fn get_timestamp() -&gt; u64 {
+    match SystemTime::now().duration_since(SystemTime::UNIX_EPOCH) {
+        Ok(no
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-31</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
 			<a href="/2020/07/30/03%20%E5%BC%80%E5%8F%91/03%20Shell/awk%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/">
 				<h2 class="index-title">
 					awk常用方法
@@ -711,96 +872,10 @@ set fileencodings=ucs
                 </div>
 		</div>	
 	
-		<div class="index-li">
-			<a href="/2020/07/27/03%20%E5%BC%80%E5%8F%91/00%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/MD5%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/">
-				<h2 class="index-title">
-					MD5算法原理
-				</h2>
-				<div class="index-brief">
-					1. IntroductionMD5算法是一种消息摘要算法(Message Digest Algorithm)，此算法以任意长度的信息(message)作为输入进行计算，产生一个128-bit(16-byte)的指纹或报文摘要(fingerprint or message digest)。两个不同的
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-27</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/07/27/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/00%20%E5%B8%B8%E7%94%A8git%E5%91%BD%E4%BB%A4/">
-				<h2 class="index-title">
-					00 常用git命令
-				</h2>
-				<div class="index-brief">
-					1. 远程主机操作//查看该主机的详细信息
-git remote show &lt;主机名&gt;
-//添加远程主机，添加后通过《 8.取回远程主机某个分支的更新》来建立本地新的分支
-git remote add &lt;主机名&gt; &lt;网址&gt;
-//删除远程主机
-git remote 
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-27</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/07/27/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/00%20%E4%BC%A0%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93/00%20mysql/mysql%20%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
-				<h2 class="index-title">
-					mysql 常用命令
-				</h2>
-				<div class="index-brief">
-					
-显示当前的缓存状态show variables like &#39;%query_cache%&#39;;
-
-显示当前的存储类型show engines;
-
-删除数据库test_db下所有表select concat(&#39;drop table &#39;,table_name,&#39;;&
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-27</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20Adapter---%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
-				<h2 class="index-title">
-					01 Adapter---适配器模式
-				</h2>
-				<div class="index-brief">
-					1. 意图：将一个类的接口转换为客户希望的另外一个接口。此模式是的原本由于接口不兼容而不能一起工作的那些类可以一起工作
-2. 适用性：
-想使用一个已经存在的类，而它的接口不符合你的需求。
-想创建一个可以复用的类，该类可以与其他不相关的类或不可预见的类协同工作
-想使用一些已经存在的类，但是不可能对每一
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-27</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
 	
 	<div id="index-paginator">
 		
-			<a class="extend prev" rel="prev" href="/archives/">&lt;</a><a class="page-number" href="/archives/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/page/3/">3</a><a class="extend next" rel="next" href="/archives/page/3/">&gt;</a>
+			<a class="extend prev" rel="prev" href="/archives/">&lt;</a><a class="page-number" href="/archives/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/page/3/">3</a><a class="page-number" href="/archives/page/4/">4</a><a class="extend next" rel="next" href="/archives/page/3/">&gt;</a>
 		
 	</div>
 </div>

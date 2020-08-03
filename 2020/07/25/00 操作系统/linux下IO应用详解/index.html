@@ -171,11 +171,80 @@
 									
 							<ul>
 								<li class="file">
-									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20Adapter---%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
+									<a href="/2020/08/02/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/00%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%85%AD%E5%A4%A7%E5%8E%9F%E5%88%99/">
+										00 设计模式的六大原则
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 创建型
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/08/01/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20%E5%88%9B%E5%BB%BA%E5%9E%8B/01%20Abstract%20Factory(%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82)/">
+										01 Abstract Factory(抽象工厂)
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/02/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20%E5%88%9B%E5%BB%BA%E5%9E%8B/02%20Builder%20(%E7%94%9F%E6%88%90%E5%99%A8)/">
+										02 Builder (生成器)
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 结构型
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/02%20%E7%BB%93%E6%9E%84%E5%9E%8B/01%20Adapter---%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
 										01 Adapter---适配器模式
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										03 行为型
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/08/01/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/03%20%E8%A1%8C%E4%B8%BA%E5%9E%8B/09%20Strategy%20(%E7%AD%96%E7%95%A5)/">
+										09 Strategy (策略)
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
 							</ul>
 			
 								</li>
@@ -673,7 +742,9 @@ struct io_iocb_common {　　
 　　　　unsigned long res;　　// IO任务完成的状态
 　　　unsigned long res2;　　// 同上
 };</code></pre>
-<h4 id="3-2-2-应用步骤"><a href="#3-2-2-应用步骤" class="headerlink" title="3.2.2 应用步骤"></a>3.2.2 应用步骤</h4><h5 id="3-2-2-1-建立IO任务"><a href="#3-2-2-1-建立IO任务" class="headerlink" title="3.2.2.1 建立IO任务"></a>3.2.2.1 建立IO任务</h5><pre><code>int io_setup (int maxevents, io_context_t *ctxp);</code></pre><p>io_context_t对应内核中一个结构，为异步IO请求提供上下文环境。注意在setup前必须将io_context_t初始化为0。<br>也需要open打开文件的时候设置 <strong><em>O_DIRECT</em></strong> 标志。</p>
+<h4 id="3-2-2-应用步骤"><a href="#3-2-2-应用步骤" class="headerlink" title="3.2.2 应用步骤"></a>3.2.2 应用步骤</h4><h5 id="3-2-2-1-建立IO任务"><a href="#3-2-2-1-建立IO任务" class="headerlink" title="3.2.2.1 建立IO任务"></a>3.2.2.1 建立IO任务</h5><pre><code>int io_setup (int maxevents, io_context_t *ctxp);</code></pre><blockquote>
+<p>io_context_t对应内核中一个结构，为异步IO请求提供上下文环境。<br>注意: 在调用 io_setup 前必须将 io_context_t 初始化为0。<br>也需要open打开文件的时候设置 <strong><em>O_DIRECT</em></strong> 标志。</p>
+</blockquote>
 <h5 id="3-2-2-2-提交IO任务"><a href="#3-2-2-2-提交IO任务" class="headerlink" title="3.2.2.2 提交IO任务"></a>3.2.2.2 提交IO任务</h5><pre><code>long io_submit (io_context_t ctx_id, long nr, struct iocb **iocbpp);</code></pre><p>提交任务之前必须先填充iocb结构体，libaio提供的包装函数说明了需要完成的工作：</p>
 <pre><code>void io_prep_pread(struct iocb *iocb, int fd, void *buf, size_t count, long long offset)
 {
@@ -724,7 +795,7 @@ void io_prep_pwrite(struct iocb *iocb, int fd, void *buf, size_t count, long lon
     read(efd, &amp;finished_aio, sizeof(finished_aio);
     r = io_getevents(ctx, 1, NUM_EVENTS, events, &amp;tms);</code></pre><h4 id="3-2-4-epoll-aio-eventfd结合使用的简单例子"><a href="#3-2-4-epoll-aio-eventfd结合使用的简单例子" class="headerlink" title="3.2.4 epoll/aio/eventfd结合使用的简单例子"></a>3.2.4 epoll/aio/eventfd结合使用的简单例子</h4><p>make时需要增加-laio 库引用<br><code>g++ main.cpp -o aiolib -laio</code></p>
 <p>main.cpp内容如下</p>
-<pre><code>#include &lt;stdio.h&gt;
+<pre><code class="c++">#include &lt;stdio.h&gt;
 #include &lt;errno.h&gt;
 #include &lt;libaio.h&gt;
 #include &lt;sys/eventfd.h&gt;
@@ -748,6 +819,7 @@ struct custom_iocb {
     int nth_request;
 };
 
+// aio 完成后的回调函数
 void aio_callback(io_context_t ctx, struct iocb *iocb, long res, long res2) {
     struct custom_iocb *iocbp = (struct custom_iocb *)iocb;
     printf(&quot;nth_request: %d, request_type: %s, offset: %lld, length: %lu, res: %ld, res2: %ld\n&quot;,
@@ -755,16 +827,45 @@ void aio_callback(io_context_t ctx, struct iocb *iocb, long res, long res2) {
             iocb-&gt;u.c.offset, iocb-&gt;u.c.nbytes, res, res2);
 }
 
-int main(int argc, char *argv[])
-{
+/**
+ *  eventfd 被epoll触发后的事件处理
+ *  @param ctx io操作上下文
+ *  @param efd 被epoll触发的eventfd
+ *  @return &gt;0 返回完成的事件个数 &lt;0 失败
+ */
+static int epoll_eventfd_hanlder(io_context_t ctx, int efd) {
+    struct io_event events[64]; //事件列表, 每次最多处理64个
+    struct timespec tms;
+    uint64_t finished_aio = 0;
+    if (read(efd, &amp;finished_aio, sizeof(finished_aio)) != sizeof(finished_aio)) { // 读取当前完成的aio读取事件个数
+        perror(&quot;read&quot;);
+        return -1;
+    }
+    int iret = (int)finished_aio;
+
+    printf(&quot;finished io number: %ld\n&quot;, finished_aio);
+    while (finished_aio &gt; 0) { // 循环处理所有已完成aio事件
+        tms.tv_sec = 0;
+        tms.tv_nsec = 0;
+        int r = io_getevents(ctx, 1, 64, events, &amp;tms); // 每次最多处理64个任务
+        if (r &gt; 0) {
+            printf(&quot;@@@ get io_event num=%d,\n&quot;, r);
+            for (int j=0; j&lt;r; ++j) {
+                ((io_callback_t)(events[j].data))(ctx, events[j].obj, events[j].res, events[j].res2);
+            }
+            finished_aio -= r;
+        }
+    }
+    return iret;
+}
+
+int main(int argc, char *argv[]) {
     int efd=-1, fd=-1, epfd=-1;
     io_context_t ctx;
-    struct timespec tms;
-    struct io_event events[NUM_EVENTS];
     struct custom_iocb iocbs[NUM_EVENTS];
     struct iocb *iocbps[NUM_EVENTS];
     struct custom_iocb *iocbp;
-    int i, j, r;
+    int i, j;
     void *buf;
     struct epoll_event epevent;
 
@@ -773,13 +874,14 @@ int main(int argc, char *argv[])
         return 2;
     }
 
-    if (0&gt;(fd = open(TEST_FILE, O_RDWR | O_CREAT | O_DIRECT, 0644))) {
+    if (0&gt;(fd = open(TEST_FILE, O_RDWR | O_CREAT | O_DIRECT, 0644))) { //注意添加O_DIRECT
         perror(&quot;open&quot;);
         return 3;
     }
     ftruncate(fd, TEST_FILE_SIZE);
 
-    ctx = 0;
+    memset(&amp;ctx, 0, sizeof(ctx)); // 注意必须初始化为0
+
     if (io_setup(8192, &amp;ctx)) {
         perror(&quot;io_setup&quot;);
         return 4;
@@ -817,32 +919,16 @@ int main(int argc, char *argv[])
     }
 
     i = 0;
-    while (i &lt; NUM_EVENTS) {
-        uint64_t finished_aio;
-
+    while (i &lt; NUM_EVENTS) { //如果是服务端，此处应该一直循环
         if (1 != epoll_wait(epfd, &amp;epevent, 1, -1)) {
             perror(&quot;epoll_wait&quot;);
             return 9;
         }
-
-        if (read(efd, &amp;finished_aio, sizeof(finished_aio)) != sizeof(finished_aio)) {
-            perror(&quot;read&quot;);
+        int iok = 0;
+        if(0&lt;(iok=epoll_eventfd_hanlder(ctx, efd))) {
+            i += iok;
+        } else {
             return 10;
-        }
-
-        printf(&quot;finished io number: %ld\n&quot;, finished_aio);
-
-        while (finished_aio &gt; 0) {
-            tms.tv_sec = 0;
-            tms.tv_nsec = 0;
-            r = io_getevents(ctx, 1, NUM_EVENTS, events, &amp;tms);
-            if (r &gt; 0) {
-                for (j = 0; j &lt; r; ++j) {
-                    ((io_callback_t)(events[j].data))(ctx, events[j].obj, events[j].res, events[j].res2);
-                }
-                i += r;
-                finished_aio -= r;
-            }
         }
     }
 
@@ -853,7 +939,8 @@ int main(int argc, char *argv[])
     close(efd);
     remove(TEST_FILE);
     return 0;
-}</code></pre><h3 id="3-3-POSIX-AIO"><a href="#3-3-POSIX-AIO" class="headerlink" title="3.3 POSIX AIO"></a>3.3 POSIX AIO</h3><p>当前的Linux POSIX AIO由glibc在用户空间中实现。POSIX AIO 有许多限制，最值得注意的是，维护多个线程来执行I/O操作是昂贵的，并且可扩展性很差。在基于内核状态机的 AIO 实现上已经进行了一段时间的工作，但是这个实现还没有成熟到可以使用内核系统调用完全重新实现POSIX AIO实现的程度。</p>
+}</code></pre>
+<h3 id="3-3-POSIX-AIO"><a href="#3-3-POSIX-AIO" class="headerlink" title="3.3 POSIX AIO"></a>3.3 POSIX AIO</h3><p>当前的Linux POSIX AIO由glibc在用户空间中实现。POSIX AIO 有许多限制，最值得注意的是，维护多个线程来执行I/O操作是昂贵的，并且可扩展性很差。在基于内核状态机的 AIO 实现上已经进行了一段时间的工作，但是这个实现还没有成熟到可以使用内核系统调用完全重新实现POSIX AIO实现的程度。</p>
 <h4 id="3-3-1-函数说明"><a href="#3-3-1-函数说明" class="headerlink" title="3.3.1 函数说明"></a>3.3.1 函数说明</h4><table>
 <thead>
 <tr>
