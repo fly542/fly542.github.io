@@ -403,6 +403,15 @@
 									
 							<ul>
 								<li class="file">
+									<a href="/2020/08/03/03%20%E5%BC%80%E5%8F%91/01%20C&C++/getopt%E4%B8%8Egetopt_long%E4%BD%BF%E7%94%A8/">
+										getopt与getopt_long使用
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
 									<a href="/2020/07/26/03%20%E5%BC%80%E5%8F%91/01%20C&C++/%E5%A4%A7%E7%AB%AF-%E5%B0%8F%E7%AB%AF%E5%AF%B9%E9%BD%90%E5%88%A4%E5%AE%9A%E5%87%BD%E6%95%B0/">
 										大端-小端对齐判定函数
 									</a>
@@ -679,6 +688,32 @@
 		<div id="index">
 	
 		<div class="index-li">
+			<a href="/2020/07/26/03%20%E5%BC%80%E5%8F%91/01%20C&C++/%E5%A4%A7%E7%AB%AF-%E5%B0%8F%E7%AB%AF%E5%AF%B9%E9%BD%90%E5%88%A4%E5%AE%9A%E5%87%BD%E6%95%B0/">
+				<h2 class="index-title">
+					大端-小端对齐判定函数
+				</h2>
+				<div class="index-brief">
+					大端-小端对齐判定方法
+int main(int argc, char** argv) {
+    (void)argc;
+    (void)argv;
+    union {
+        short s;
+        char c[sizeof(short)];
+    }un;
+   
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-26</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
 			<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
 				<h2 class="index-title">
 					linux下IO应用详解
@@ -781,8 +816,8 @@ fn main
 					(转载)一致性hash算法(consistent hashing)
 				</h2>
 				<div class="index-brief">
-					一致性hash算法（consistent hashing）consistent hashing算法早在1997年就在论文Consistent hashing and random trees中被提出，目前在cache系统中应用越来越广泛；
-1 基本场景比如你有N个cache服务器（后面简称cache
+					一致性hash算法 consistent hashing算法早在1997年就在论文Consistent hashing and random trees中被提出，目前在cache系统中应用越来越广泛；
+1 基本场景比如你有N个cache服务器（后面简称cache），那么如何将一个对象object映射
 					...
 				</div>
 			</a>

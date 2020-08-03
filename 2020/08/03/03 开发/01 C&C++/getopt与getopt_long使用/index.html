@@ -8,6 +8,8 @@
 	<!-- title -->
 	
 	<title>
+	
+		getopt与getopt_long使用 | 
 	 
 	Fly542 技术积累
 	</title>
@@ -402,7 +404,7 @@
 									</a>
 									
 							<ul>
-								<li class="file">
+								<li class="file active">
 									<a href="/2020/08/03/03%20%E5%BC%80%E5%8F%91/01%20C&C++/getopt%E4%B8%8Egetopt_long%E4%BD%BF%E7%94%A8/">
 										getopt与getopt_long使用
 									</a>
@@ -685,37 +687,263 @@
 
 	<!-- 引入正文 -->
 	<div id="content">
-		<div id="index">
+		<h1 id="article-title">
+
+	getopt与getopt_long使用
+</h1>
+<div class="article-meta">
 	
-		<div class="index-li">
-			<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/%E6%89%93%E5%8D%B0%E5%8F%98%E9%87%8F%E5%9C%B0%E5%9D%80/">
-				<h2 class="index-title">
-					打印变量地址
-				</h2>
-				<div class="index-brief">
-					打印变量地址
-fn main(){
-    let a:i32 = 5;
-    //&amp;a先转成raw指针，然后再把指针转成usize，这个可以print的
-    let addr = &amp;a as *const i32 as usize;
-    println!(&quot;ad
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-31</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-	
-	<div id="index-paginator">
-		
-	</div>
+	<span>Fly542</span>
+	<span>2020-08-03 15:00:25</span>
+    
+		<div id="article-categories">
+            
+		</div>
+    
 </div>
 
+<div id="article-content">
+	<h1 id="解析命令行参数getopt和getopt-long"><a href="#解析命令行参数getopt和getopt-long" class="headerlink" title="解析命令行参数getopt和getopt_long"></a>解析命令行参数getopt和getopt_long</h1><p>在程序中一般都会用到命令行选项, 我们可以使用<strong>getopt 和getopt_long</strong>函数来解析命令行参数</p>
+<h2 id="getopt"><a href="#getopt" class="headerlink" title="getopt"></a>getopt</h2><p>getopt主要用来处理短命令行选项, 例如<code>./test -v</code>中 -v 就是一个短选项. 使用该函数需要引入头文件&lt;unistd.h&gt;, 下面是该函数的定义<br><code>int getopt(int argc, char * const argv[], const char * optstring);</code></p>
+<p>其中 <code>argc</code> 和 <code>argv</code> 是 <code>main</code> 函数中的传递的参数个数和内容, <code>optstring</code> 用来指定可以处理哪些选项, 下面是 <code>optstring</code> 的一个示例:<br><code>&quot;a:bc&quot;</code></p>
+<p>该示例表明程序可以接受3个选项: -a -b -c, 其中 a 后面的 :表示该选项后面要跟一个参数, 即如 -a text的形式, 选项后面跟的参数会被保存到 optarg 变量中. 下面是一个使用示例:</p>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+
+int main(int argc, char **argv) {
+    int ch;
+    while((ch = getopt(argc, argv, &quot;a:b&quot;)) != -1) {
+        switch(ch) {
+            case &#39;a&#39;:
+                printf(&quot;option a: %s\n&quot;, optarg);
+                break;
+            case &#39;b&#39;:
+                printf(&quot;option b \n&quot;);
+                break;
+            case &#39;?&#39;: // 输入未定义的选项, 都会将该选项的值变为 ?
+                printf(&quot;unknown option \n&quot;);
+                break;
+            default:
+                printf(&quot;default \n&quot;);
+        }
+    }
+}</code></pre><p>执行 <code>./test -a aa -b -c</code> 输出结果如下:</p>
+<pre><code>option a: aa
+option b 
+unknown option</code></pre><h2 id="getopt-long"><a href="#getopt-long" class="headerlink" title="getopt_long"></a>getopt_long</h2><p><code>getopt_long</code>支持长选项的命令行解析, 所为长选项就是诸如–help的形式, 使用该函数, 需要引入&lt;getopt.h&gt;下面是函数原型:</p>
+<pre><code>#include &lt;getopt.h&gt;
+
+int getopt_long(int argc, 
+                char * const argv[],
+                const char *optstring,
+                const struct option *longopts,
+                int *longindex);
+
+int getopt_long_only(int argc,
+                    char * const argv[],
+                    const char *optstring,
+                    const struct option *longopts,
+                    int *longindex);</code></pre><p>其中 argc , argv , optstring 和getopt中的含义一样, 下面解释一下longopts 和longindex</p>
+<h3 id="longopts"><a href="#longopts" class="headerlink" title="longopts"></a>longopts</h3><p><code>longopts</code> 指向一个 <code>struct option</code> 的数组, 下面是<code>option</code>的定义:</p>
+<pre><code>struct option {
+    const char *name;
+    int         has_arg;
+    int        *flag;
+    int         val;
+};</code></pre><p>下面是各字段的含义<br>    name - 长选项的名称, 例如 help<br>    has_arg - 是否带参数, 0 不带参数, 1 必须带参数, 2 参数可选<br>    flag - 指定长选项如何返回结果, 如果flag为NULL, getopt_long() 会返回val. 如果flag不为NULL, getopt_long会返回0, 并且将val的值存储到flag中<br>    val - 将要被getopt_long返回或者存储到flag指向的变量中的值</p>
+<p>下面是 <code>longopts</code> 的一个示例</p>
+<pre><code>struct option opts[] = {
+    {&quot;version&quot;, 0, NULL, &#39;v&#39;},
+    {&quot;name&quot;, 1, NULL, &#39;n&#39;},
+    {&quot;help&quot;, 0, NULL, &#39;h&#39;}
+};</code></pre><p>我们来看<code>{&quot;version&quot;, 0, NULL, &#39;v&#39;}</code>, <code>version</code> 即为长选项的名称, 即按如下形式<code>--version</code>, 0 表示该选项后面不带参数, NULL 表示直接将v返回(字符v在ascii码中对应的数值), 即在使用getopt_long遍历到该条选项时, getopt_long 返回值为字符v对应的ascii码值.</p>
+<h3 id="longindex"><a href="#longindex" class="headerlink" title="longindex"></a>longindex</h3><p><code>longindex</code> 表示长选项在<code>longopts</code> 中的位置, 例如在上面的示例中, <code>version</code> 对应的 <code>longindex</code> 为0, <code>name</code>对应的 <code>longindex</code> 为1, <code>help</code> 对应的 <code>longindex</code> 为2, 该项主要用于调试, 一般设为 NULL 即可.</p>
+<p>下面是一个使用示例:</p>
+<pre><code>void use_getpot_long(int argc, char *argv[]) {
+    const char *optstring = &quot;vn:h&quot;;
+    int c;
+    struct option opts[] = {
+        {&quot;version&quot;, 0, NULL, &#39;v&#39;},
+        {&quot;name&quot;, 1, NULL, &#39;n&#39;},
+        {&quot;help&quot;, 0, NULL, &#39;h&#39;}
+    };
+
+    while((c = getopt_long(argc, argv, optstring, opts, NULL)) != -1) {
+        switch(c) {
+            case &#39;n&#39;:
+                printf(&quot;username is %s\n&quot;, optarg);
+                break;
+            case &#39;v&#39;:
+                printf(&quot;version is 0.0.1\n&quot;);
+                break;
+            case &#39;h&#39;:
+                printf(&quot;this is help\n&quot;);
+                break;
+            case &#39;?&#39;:
+                printf(&quot;unknown option\n&quot;);
+                break;
+            case 0 :
+                printf(&quot;the return val is 0\n&quot;);
+                break;
+            default:
+                printf(&quot;------\n&quot;);
+
+        }
+    }
+}</code></pre><p>然后我们运行程序 ./test –name aaaa –version –help –haha, 下面是运行结果:</p>
+<pre><code>username is aaaa
+version is 0.0.1
+this is help
+./test: unrecognized option &#39;--haha&#39;
+unknown option</code></pre><p>当然我们也可以使用短选项 ./test -n aaaa -v -h<br>下面我们对程序做一下修改, 这一次将 struct option 中的 flag 和 longindex 设为具体的值</p>
+<pre><code>void use_getpot_long2(int argc, char *argv[]) {
+    const char *optstring = &quot;vn:h&quot;;
+    int c;
+
+    int f_v = -1, f_n = -1, f_h = -1, opt_index = -1; 
+    struct option opts[] = {
+        {&quot;version&quot;, 0, &amp;f_v, &#39;v&#39;},
+        {&quot;name&quot;, 1, &amp;f_n, &#39;n&#39;},
+        {&quot;help&quot;, 0, &amp;f_h, &#39;h&#39;}
+    };
+
+    while((c = getopt_long(argc, argv, optstring, opts, &amp;opt_index)) != -1) {
+        switch(c) {
+            case &#39;n&#39;:
+                printf(&quot;username is %s\n&quot;, optarg);
+                break;
+            case &#39;v&#39;:
+                printf(&quot;version is 0.0.1\n&quot;);
+                break;
+            case &#39;h&#39;:
+                printf(&quot;this is help\n&quot;);
+                break;
+            case &#39;?&#39;:
+                printf(&quot;unknown option\n&quot;);
+                break;
+            case 0 :
+                printf(&quot;f_v is %d \n&quot;, f_v);
+                printf(&quot;f_n is %d \n&quot;, f_n);
+                printf(&quot;f_h is %d \n&quot;, f_h);
+                break;
+            default:
+                printf(&quot;------\n&quot;);
+        }
+        printf(&quot;opt_index is %d\n\n&quot;, opt_index);
+    }
+}</code></pre><p>运行程序: ./test –name bbbb –version –help , 下面是运行结果:</p>
+<pre><code>f_v is -1 
+f_n is 110 
+f_h is -1 
+opt_index is 1
+
+f_v is 118 
+f_n is 110 
+f_h is -1 
+opt_index is 0
+
+f_v is 118 
+f_n is 110 
+f_h is 104 
+opt_index is 2</code></pre><p>我们可以看到当给 flag 指定具体的指针之后, getopt_long 会返回0, 因此会去执行case 0, 并且 val 的值赋给了 flag 指向的变量. 下面我们用短选项执行一下程序 ./test -n bbbb -v -h, 下面是运行结果</p>
+<pre><code>username is bbbb
+opt_index is -1
+
+version is 0.0.1
+opt_index is -1
+
+this is help
+opt_index is -1</code></pre><p>我们看到使用短选项的时候 getopt_long 就相当于 getopt , flag 和 longindex都不起作用了.</p>
+<p>getopt_long 和 getopt_long_only<br>下面解释一下 getopt_long 和 getopt_long_only的区别, 首先用下列选项运行一下 use_getopt_long ./test -name zhangjkai -version -help , 下面是输出结果:</p>
+<pre><code>username is ame
+version is 0.0.1
+./test: invalid option -- &#39;e&#39;
+unknown option
+./test: invalid option -- &#39;r&#39;
+unknown option
+./test: invalid option -- &#39;s&#39;
+unknown option
+./test: invalid option -- &#39;i&#39;
+unknown option
+./test: invalid option -- &#39;o&#39;
+unknown option
+username is -help</code></pre><p>我们看到使用短选项标识符 - 指向长选项时, 程序还是会按短选项来处理, 即一个字符一个字符的解析. 下面我们将 use_getopt_long 做一下更改, 即将 getopt_long 改为 getopt_long_only , 如下所示:</p>
+<pre><code>void use_getpot_long3(int argc, char *argv[]) {
+    const char *optstring = &quot;vn:h&quot;;
+    int c;
+    struct option opts[] = {
+        {&quot;version&quot;, 0, NULL, &#39;v&#39;},
+        {&quot;name&quot;, 1, NULL, &#39;n&#39;},
+        {&quot;help&quot;, 0, NULL, &#39;h&#39;}
+    };
+
+    while((c = getopt_long_only(argc, argv, optstring, opts, NULL)) != -1) {
+        switch(c) {
+            case &#39;n&#39;:
+                printf(&quot;username is %s\n&quot;, optarg);
+                break;
+            case &#39;v&#39;:
+                printf(&quot;version is 0.0.1\n&quot;);
+                break;
+            case &#39;h&#39;:
+                printf(&quot;this is help\n&quot;);
+                break;
+            case &#39;?&#39;:
+                printf(&quot;unknown option\n&quot;);
+                break;
+            case 0 :
+                printf(&quot;the return val is 0\n&quot;);
+                break;
+            default:
+                printf(&quot;------\n&quot;);
+
+        }
+    }
+}</code></pre><p>下面再运行程序 <code>./test -name cccc -version -help</code>, 下面是运行结果:</p>
+<pre><code>username is cccc
+version is 0.0.1
+this is help</code></pre><p>即使用 <code>getopt_long_only</code> 时, - 和 –都可以作用于长选项, 而使用 <code>getopt_only</code> 时, 只有 –可以作用于长选项.</p>
+
+</div>
+
+
+    <div class="post-guide">
+        <div class="item left">
+            
+        </div>
+        <div class="item right">
+            
+              <a href="/2020/08/02/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/00%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%85%AD%E5%A4%A7%E5%8E%9F%E5%88%99/">
+                00 设计模式的六大原则
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+              </a>
+            
+        </div>
+    </div>
+
+
+
+	<div id="vcomments"></div>
+
+
+<script>
+	
+		// 评论
+		new Valine({
+			av: AV,
+			el: '#vcomments',
+			notify: false,
+			verify: false,
+			path: window.location.pathname,
+			appId: 'kqRG1YI357MX0zgAERzjbptL-gzGzoHsz',
+			appKey: '2PLYnaLv42a7NAbLhpOadDfj',
+			placeholder: '请输入评论',
+			avatar: 'retro',
+			recordIP: false
+		})
+	
+	
+</script>
 	</div>
 	<div id="footer">
 	<p>
