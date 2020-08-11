@@ -697,97 +697,26 @@
 		<div id="index">
 	
 		<div class="index-li">
-			<a href="/2020/08/02/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20%E5%88%9B%E5%BB%BA%E5%9E%8B/02%20Builder%20(%E7%94%9F%E6%88%90%E5%99%A8)/">
+			<a href="/2018/05/03/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/07%20%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6%E6%98%A0%E5%B0%84%E4%B8%BA%E7%A3%81%E7%9B%98/">
 				<h2 class="index-title">
-					02 Builder (生成器)
+					07 本地文件映射为磁盘
 				</h2>
 				<div class="index-brief">
-					目的将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。
-适用性
-当创建复杂对象的算法应该独立于该对象的组成部分以及他们的装配方式时
-当构造过程必须允许被构造的对象有不同的表示时
+					#!/bin/bash
+# pur @ 创建文件映射挂载点
+# date @ 2018.05.03
 
-结构图
+#映射文件
+diskFile=$1
+#挂载路径
+mountDir=$2
 
-示例代码class Builder
-{
-public:
-    virtual voi
+if [ -z &quot;${diskFile}&quot; -o -z &quot;${mountDir}&quot; 
 					...
 				</div>
 			</a>
                 <div class="article-meta">
-				    <span>2020-08-02</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/08/01/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/03%20%E8%A1%8C%E4%B8%BA%E5%9E%8B/09%20Strategy%20(%E7%AD%96%E7%95%A5)/">
-				<h2 class="index-title">
-					09 Strategy (策略)
-				</h2>
-				<div class="index-brief">
-					目的定义一系列的算法,把每一个算法封装起来, 并且使它们可相互替换。本模式使得算法可独立于使用它的客户而变化。也称为政策模式(Policy)。
-适用性当存在以下情况时使用Strategy模式
-
-许多相关的类仅仅是行为有异。 “策略”提供了一种用多个行为中的一个行为来配置一个类的方法。即一个系统需要动
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-08-01</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/08/01/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20%E5%88%9B%E5%BB%BA%E5%9E%8B/01%20Abstract%20Factory(%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82)/">
-				<h2 class="index-title">
-					01 Abstract Factory(抽象工厂)
-				</h2>
-				<div class="index-brief">
-					目的提供一个创建一系列相关或相互依赖对象的接口，而无需指定他们具体的类。
-适用性
-一个系统要独立于它的产品的创建、组合和表示时
-一个系统要由多个产品系列中的一个来配置时
-当你要强调一系列相关的产品对象的设计以便进行联合使用时
-当你提供一个产品类库，而只想显示他们的接口而不是实现时
-
-结构图
-
-示例代
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-08-01</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/02%20%E7%BB%93%E6%9E%84%E5%9E%8B/01%20Adapter---%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
-				<h2 class="index-title">
-					01 Adapter---适配器模式
-				</h2>
-				<div class="index-brief">
-					1. 意图：将一个类的接口转换为客户希望的另外一个接口。此模式是的原本由于接口不兼容而不能一起工作的那些类可以一起工作
-2. 适用性：
-想使用一个已经存在的类，而它的接口不符合你的需求。
-想创建一个可以复用的类，该类可以与其他不相关的类或不可预见的类协同工作
-想使用一些已经存在的类，但是不可能对每一
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-27</span>
+				    <span>2018-05-03</span>
                     
                             
                     
