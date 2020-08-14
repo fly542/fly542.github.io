@@ -269,8 +269,26 @@
 									
 							<ul>
 								<li class="file">
-									<a href="/2020/07/26/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/%E5%AE%9A%E4%BD%8Dcpu%20100_p%E7%9A%84%E6%96%B9%E6%B3%95/">
-										定位cpu 100_p的方法
+									<a href="/2020/07/26/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/00%20%E5%AE%9A%E4%BD%8Dcpu%20100_p%E7%9A%84%E6%96%B9%E6%B3%95/">
+										00 定位cpu 100_p的方法
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/13/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/01%20VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/">
+										01 VIRT与RES占用分析
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/14/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/02%20%5B%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB%5D%E9%A2%91%E7%B9%81%E5%88%86%E9%85%8D%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/">
+										02 [百度分享]频繁分配释放内存导致的性能问题分析
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -697,6 +715,47 @@
 		<div id="index">
 	
 		<div class="index-li">
+			<a href="/2020/07/26/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/00%20%E5%AE%9A%E4%BD%8Dcpu%20100_p%E7%9A%84%E6%96%B9%E6%B3%95/">
+				<h2 class="index-title">
+					00 定位cpu 100_p的方法
+				</h2>
+				<div class="index-brief">
+					使用perf 定位# -g开启调用关系分析，-p指定php-fpm的进程号94806
+$ perf top -g -p 94806
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-26</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
+			<a href="/2020/07/26/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/00%20%E4%BC%A0%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93/01%20sqlite/sqlite3%20%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/">
+				<h2 class="index-title">
+					sqlite3 客户端操作命令
+				</h2>
+				<div class="index-brief">
+					导出查询内容到文件中
+sqlite3 www_cache.db;
+sqlite&gt; .output 1.txt
+sqlite&gt; select path,size from file_info;
+sqlite&gt; .output stdout直接执行后面的sql语句sqlite3 dat
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-26</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
 			<a href="/2020/07/26/03%20%E5%BC%80%E5%8F%91/01%20C&C++/%E5%A4%A7%E7%AB%AF-%E5%B0%8F%E7%AB%AF%E5%AF%B9%E9%BD%90%E5%88%A4%E5%AE%9A%E5%87%BD%E6%95%B0/">
 				<h2 class="index-title">
 					大端-小端对齐判定函数
@@ -865,29 +924,10 @@ if [ -z &quot;${diskFile}&quot; -o -z &quot;${mountDir}&quot;
                 </div>
 		</div>	
 	
-		<div class="index-li">
-			<a href="/2012/03/20/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/06%20ssh%E8%B7%B3%E8%BD%AC%E6%97%A0%E5%AF%86%E7%A0%81%E7%99%BB%E5%BD%95%E6%88%96%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4/">
-				<h2 class="index-title">
-					06 ssh跳转无密码登录或执行命令
-				</h2>
-				<div class="index-brief">
-					我们在使用linux开发过程中，经常需要在不同服务器间进行跳转，通过ssh，每次都需要输入密码，比较繁琐，今天从网上找了相关的方法，但是实验过程中发现还是有些问题，特将一些细节整理如下：
-比如我有机器192.168.1.100 和192.168.1.200两台服务器，我想从100登录到200中利用s
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2012-03-20</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
 	
 	<div id="index-paginator">
 		
-			<a class="extend prev" rel="prev" href="/page/3/">&lt;</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
+			<a class="extend prev" rel="prev" href="/page/3/">&lt;</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/">&gt;</a>
 		
 	</div>
 </div>

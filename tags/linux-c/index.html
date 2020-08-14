@@ -8,8 +8,6 @@
 	<!-- title -->
 	
 	<title>
-	
-		定位程序cpu 100%方法 | 
 	 
 	Fly542 技术积累
 	</title>
@@ -270,9 +268,27 @@
 									</a>
 									
 							<ul>
-								<li class="file active">
-									<a href="/2020/07/26/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/%E5%AE%9A%E4%BD%8Dcpu%20100_p%E7%9A%84%E6%96%B9%E6%B3%95/">
-										定位cpu 100_p的方法
+								<li class="file">
+									<a href="/2020/07/26/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/00%20%E5%AE%9A%E4%BD%8Dcpu%20100_p%E7%9A%84%E6%96%B9%E6%B3%95/">
+										00 定位cpu 100_p的方法
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/13/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/01%20VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/">
+										01 VIRT与RES占用分析
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/14/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/02%20%5B%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB%5D%E9%A2%91%E7%B9%81%E5%88%86%E9%85%8D%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/">
+										02 [百度分享]频繁分配释放内存导致的性能问题分析
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -696,69 +712,33 @@
 
 	<!-- 引入正文 -->
 	<div id="content">
-		<h1 id="article-title">
-
-	定位cpu 100_p的方法
-</h1>
-<div class="article-meta">
+		<div id="index">
 	
-	<span>Fly542</span>
-	<span>2020-07-26 22:33:47</span>
-    
-		<div id="article-categories">
-            
-		</div>
-    
+		<div class="index-li">
+			<a href="/2020/08/13/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/01%20VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/">
+				<h2 class="index-title">
+					01 VIRT与RES占用分析
+				</h2>
+				<div class="index-brief">
+					1、概述在Linux命令行中执行top命令，可以查询到所有进程使用的VIRT虚拟内存、RES常驻内存和共享内存SHR。那么，什么是VIRT虚拟内存、RES常驻内存和共享内存SHR？我们编写的Linux C++程序如何影响它们呢？
+VIRT：- 进程“需要的”虚拟内存大小，包括进程使用的库、代码、数据
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-08-13</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+	
+	<div id="index-paginator">
+		
+	</div>
 </div>
 
-<div id="article-content">
-	<h1 id="使用perf-定位"><a href="#使用perf-定位" class="headerlink" title="使用perf 定位"></a>使用perf 定位</h1><pre><code># -g开启调用关系分析，-p指定php-fpm的进程号94806
-$ perf top -g -p 94806</code></pre>
-</div>
-
-
-    <div class="post-guide">
-        <div class="item left">
-            
-              <a href="/2020/07/27/04%20%E7%BD%91%E7%BB%9C/hello-world/">
-                  <i class="fa fa-angle-left" aria-hidden="true"></i>
-                  
-              </a>
-            
-        </div>
-        <div class="item right">
-            
-              <a href="/2020/07/26/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/00%20%E4%BC%A0%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93/01%20sqlite/sqlite3%20%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/">
-                01 sqlite
-                <i class="fa fa-angle-right" aria-hidden="true"></i>
-              </a>
-            
-        </div>
-    </div>
-
-
-
-	<div id="vcomments"></div>
-
-
-<script>
-	
-		// 评论
-		new Valine({
-			av: AV,
-			el: '#vcomments',
-			notify: false,
-			verify: false,
-			path: window.location.pathname,
-			appId: 'kqRG1YI357MX0zgAERzjbptL-gzGzoHsz',
-			appKey: '2PLYnaLv42a7NAbLhpOadDfj',
-			placeholder: '请输入评论',
-			avatar: 'retro',
-			recordIP: false
-		})
-	
-	
-</script>
 	</div>
 	<div id="footer">
 	<p>
