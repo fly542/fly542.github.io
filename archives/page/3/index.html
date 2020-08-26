@@ -692,6 +692,15 @@
 								<div class="article-toc" style="display: none;"></div>
 							</ul>
 			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/26/04%20%E7%BD%91%E7%BB%9C/00%20DNS/01%20DNS%E4%B8%ADRR%E4%BB%8B%E7%BB%8D/">
+										01 DNS中RR介绍
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
 								</li>
 								
 							</ul>
@@ -867,6 +876,29 @@
 	<!-- 引入正文 -->
 	<div id="content">
 		<div id="index">
+	
+		<div class="index-li">
+			<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/%E6%89%93%E5%8D%B0%E5%8F%98%E9%87%8F%E5%9C%B0%E5%9D%80/">
+				<h2 class="index-title">
+					打印变量地址
+				</h2>
+				<div class="index-brief">
+					打印变量地址
+fn main(){
+    let a:i32 = 5;
+    //&amp;a先转成raw指针，然后再把指针转成usize，这个可以print的
+    let addr = &amp;a as *const i32 as usize;
+    println!(&quot;ad
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-31</span>
+                    
+                            
+                    
+                </div>
+		</div>	
 	
 		<div class="index-li">
 			<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/rust%20%E5%AE%8F/">
@@ -1061,32 +1093,6 @@ $1~$n 当前记录的第n个字段，字段间由FS分隔
 FS 输入字段分隔符 默认是空格或Tab
 NF 当前记录中的字段个数，就是有多少列 ,$(NF-n)为倒数第n个字段
 NR 已经读出的记录数，就是行号，从1开始，如果有多个文件话，这个值
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-30</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/07/30/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/03%20vimrc%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
-				<h2 class="index-title">
-					03 vimrc配置文件
-				</h2>
-				<div class="index-brief">
-					用户根目录下~/.vimrc 配置文件内容
-set nu
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-set expandtab
-set cinoptions=g0
-set colorcolumn=81
-set fileencodings=ucs
 					...
 				</div>
 			</a>

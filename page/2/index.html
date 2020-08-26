@@ -692,6 +692,15 @@
 								<div class="article-toc" style="display: none;"></div>
 							</ul>
 			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/26/04%20%E7%BD%91%E7%BB%9C/00%20DNS/01%20DNS%E4%B8%ADRR%E4%BB%8B%E7%BB%8D/">
+										01 DNS中RR介绍
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
 								</li>
 								
 							</ul>
@@ -867,6 +876,25 @@
 	<!-- 引入正文 -->
 	<div id="content">
 		<div id="index">
+	
+		<div class="index-li">
+			<a href="/2020/08/16/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/00%20squid%20%E5%86%85%E5%AD%98%E6%B1%A0%E7%A0%94%E7%A9%B6/">
+				<h2 class="index-title">
+					00 squid 内存池研究
+				</h2>
+				<div class="index-brief">
+					1. 概述本文的squid原理及代码基于squid 4.12版的源码，主要阐述及分析了squid的内存池原理及响应的代码实现。squid的内存池有两种模式，一种是poolmalloc模式，另外一种是poolchunked模式
+2. 原理分析从总体上来看，squid的内存池是通过按照不同大小的固定尺寸
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-08-16</span>
+                    
+                            
+                    
+                </div>
+		</div>	
 	
 		<div class="index-li">
 			<a href="/2020/08/15/03%20%E5%BC%80%E5%8F%91/00%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%20%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/">
@@ -1050,29 +1078,6 @@ public:
 				<div class="index-brief">
 					下载地址https://github.com/buger/goreplay使用方法./goreplay  --input-raw :7001 --output-http http://ip:port
 
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-31</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/%E6%89%93%E5%8D%B0%E5%8F%98%E9%87%8F%E5%9C%B0%E5%9D%80/">
-				<h2 class="index-title">
-					打印变量地址
-				</h2>
-				<div class="index-brief">
-					打印变量地址
-fn main(){
-    let a:i32 = 5;
-    //&amp;a先转成raw指针，然后再把指针转成usize，这个可以print的
-    let addr = &amp;a as *const i32 as usize;
-    println!(&quot;ad
 					...
 				</div>
 			</a>
