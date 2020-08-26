@@ -884,8 +884,7 @@
 </div>
 
 <div id="article-content">
-	<p>本文转载自《<a href="https://www.jianshu.com/p/915de89d070e》" target="_blank" rel="noopener">https://www.jianshu.com/p/915de89d070e》</a></p>
-<h2 id="什么是-DNS？"><a href="#什么是-DNS？" class="headerlink" title="什么是 DNS？"></a>什么是 DNS？</h2><p>DNS 是一个应用层协议,域名系统 (DNS) 的作用是将人类可读的域名 (如，<a href="http://www.example.com" target="_blank" rel="noopener">www.example.com</a>) 转换为机器可读的 IP 地址 (如，192.0.2.44)。DNS 协议建立在 UDP 或 TCP 协议之上，默认使用 53 号端口。客户端默认通过 UDP 协议进行通讯，但是由于广域网中不适合传输过大的 UDP 数据包，因此规定当报文长度超过了 512 字节时，应转换为使用 TCP 协议进行数据传输。<br>可能会出现如下的两种情况：</p>
+	<h1 id="1-DNS-基础内容"><a href="#1-DNS-基础内容" class="headerlink" title="1. DNS 基础内容"></a>1. DNS 基础内容</h1><h2 id="什么是-DNS？"><a href="#什么是-DNS？" class="headerlink" title="什么是 DNS？"></a>什么是 DNS？</h2><p>DNS 是一个应用层协议,域名系统 (DNS) 的作用是将人类可读的域名 (如，<a href="http://www.example.com" target="_blank" rel="noopener">www.example.com</a>) 转换为机器可读的 IP 地址 (如，192.0.2.44)。DNS 协议建立在 UDP 或 TCP 协议之上，默认使用 53 号端口。客户端默认通过 UDP 协议进行通讯，但是由于广域网中不适合传输过大的 UDP 数据包，因此规定当报文长度超过了 512 字节时，应转换为使用 TCP 协议进行数据传输。<br>可能会出现如下的两种情况：</p>
 <ul>
 <li>客户端认为 UDP 响应包长度可能超过 512 字节，主动使用 TCP 协议；</li>
 <li>客户端使用 UDP 协议发送 DNS 请求，服务端发现响应报文超过了 512 字节，在截断的 UDP 响应报文中将 TC 设置为 1 ，以通知客户端该报文已经被截断，客户端收到之后再发起一次 TCP 请求。</li>
@@ -930,23 +929,23 @@
 
 <p>上图展示了一个动态域名解析的流程，步骤如下：</p>
 <ol>
-<li><p>用户打开 Web 浏览器，在地址栏中输入 <a href="https://links.jianshu.com/go?to=http%3A%2F%2Fwww.example.xn--com%2C-3k1gn70f0vw%2F" target="_blank" rel="noopener">www.example.com，然后按</a> Enter 键。</p>
+<li><p>用户打开 Web 浏览器，在地址栏中输入 <a href="http://www.example.com" target="_blank" rel="noopener">www.example.com</a> ，然后按 Enter 键。</p>
 </li>
-<li><p><a href="https://links.jianshu.com/go?to=http%3A%2F%2Fwww.example.com%2F" target="_blank" rel="noopener">www.example.com</a> 的请求被路由到 DNS 解析程序，这一般由用户的 Internet 服务提供商 (ISP) 进行管理，例如有线 Internet 服<br> 务提供商、DSL 宽带提供商或公司网络。</p>
+<li><p><a href="http://www.example.com" target="_blank" rel="noopener">www.example.com</a> 的请求被路由到 DNS 解析程序，这一般由用户的 Internet 服务提供商 (ISP) 进行管理，例如有线 Internet 服<br> 务提供商、DSL 宽带提供商或公司网络。</p>
 </li>
-<li><p>ISP 的 DNS 解析程序将 <a href="https://links.jianshu.com/go?to=http%3A%2F%2Fwww.example.com%2F" target="_blank" rel="noopener">www.example.com</a> 的请求转发到 DNS 根名称服务器。</p>
+<li><p>ISP 的 DNS 解析程序将 <a href="http://www.example.com" target="_blank" rel="noopener">www.example.com</a> 的请求转发到 DNS 根名称服务器。</p>
 </li>
-<li><p>ISP 的 DNS 解析程序再次转发 <a href="https://links.jianshu.com/go?to=http%3A%2F%2Fwww.example.com%2F" target="_blank" rel="noopener">www.example.com</a> 的请求，这次转发到 .com 域的一个 TLD 名称服务器。.com 域的名称服务器使用与 example.com 域相关的四个 Amazon Route 53 名称服务器的名称来响应该请求。</p>
+<li><p>ISP 的 DNS 解析程序再次转发 <a href="http://www.example.com" target="_blank" rel="noopener">www.example.com</a>  的请求，这次转发到 .com 域的一个 TLD 名称服务器。.com 域的名称服务器使用与 example.com 域相关的四个 Amazon Route 53 名称服务器的名称来响应该请求。</p>
 </li>
-<li><p>ISP 的 DNS 解析程序选择一个 Amazon Route 53 名称服务器，并将 <a href="https://links.jianshu.com/go?to=http%3A%2F%2Fwww.example.com%2F" target="_blank" rel="noopener">www.example.com</a> 的请求转发到该名称服务器。</p>
+<li><p>ISP 的 DNS 解析程序选择一个 Amazon Route 53 名称服务器，并将  <a href="http://www.example.com" target="_blank" rel="noopener">www.example.com</a>  的请求转发到该名称服务器。</p>
 </li>
-<li><p>Amazon Route 53 名称服务器在 example.com 托管区域中查找 <a href="https://links.jianshu.com/go?to=http%3A%2F%2Fwww.example.com%2F" target="_blank" rel="noopener">www.example.com</a> 记录，获得相关值，例如，Web 服务器的 IP 地址 (192.0.2.44)，并将 IP 地址返回至 DNS 解析程序。</p>
+<li><p>Amazon Route 53 名称服务器在 example.com 托管区域中查找 <a href="http://www.example.com" target="_blank" rel="noopener">www.example.com</a> 记录，获得相关值，例如，Web 服务器的 IP 地址 (192.0.2.44)，并将 IP 地址返回至 DNS 解析程序。</p>
 </li>
 <li><p>ISP 的 DNS 解析程序最终获得用户需要的 IP 地址。解析程序将此值返回至 Web 浏览器。DNS 解析程序还会将 example.com 的 IP 地址缓存 (存储) 您指定的时长，以便它能够在下次有人浏览 example.com 时更快地作出响应。有关更多信息，请参阅存活期 (TTL)。</p>
 </li>
-<li><p>Web 浏览器将 <a href="https://links.jianshu.com/go?to=http%3A%2F%2Fwww.example.com%2F" target="_blank" rel="noopener">www.example.com</a> 的请求发送到从 DNS 解析程序中获得的 IP 地址。这是您的内容所处位置，例如，在 Amazon EC2 实例中或配置为网站终端节点的 Amazon S3 存储桶中运行的 Web 服务器。</p>
+<li><p>Web 浏览器将 <a href="http://www.example.com" target="_blank" rel="noopener">www.example.com</a> 的请求发送到从 DNS 解析程序中获得的 IP 地址。这是您的内容所处位置，例如，在 Amazon EC2 实例中或配置为网站终端节点的 Amazon S3 存储桶中运行的 Web 服务器。</p>
 </li>
-<li><p>192.0.2.44 上的 Web 服务器或其他资源将 <a href="https://links.jianshu.com/go?to=http%3A%2F%2Fwww.example.com%2F" target="_blank" rel="noopener">www.example.com</a> 的 Web 页面返回到 Web 浏览器，且 Web 浏览器会显示该页面。<br> 注意：只有配置了域名服务器，才能执行域名解析。<br> 例如，在 Linux 中执行 vim /etc/resolv.conf 命令，在其中添加下面的内容来配置域名服务器地址：</p>
+<li><p>192.0.2.44 上的 Web 服务器或其他资源将 <a href="http://www.example.com" target="_blank" rel="noopener">www.example.com</a>  的 Web 页面返回到 Web 浏览器，且 Web 浏览器会显示该页面。<br> 注意：只有配置了域名服务器，才能执行域名解析。<br> 例如，在 Linux 中执行 vim /etc/resolv.conf 命令，在其中添加下面的内容来配置域名服务器地址：</p>
 <pre><code>nameserver 218.2.135.1</code></pre></li>
 </ol>
 <h2 id="Linux-上的域名相关命令"><a href="#Linux-上的域名相关命令" class="headerlink" title="Linux 上的域名相关命令"></a>Linux 上的域名相关命令</h2><p><strong>hostname</strong></p>
@@ -966,6 +965,81 @@ Name:   www.a.shifen.com
 Address: 14.215.177.38
 Name:   www.a.shifen.com
 Address: 14.215.177.39</code></pre>
+<h2 id="递归查询-VS-迭代查询"><a href="#递归查询-VS-迭代查询" class="headerlink" title="递归查询 VS. 迭代查询"></a>递归查询 VS. 迭代查询</h2><p>在递归查询模式下，DNS 服务器在接收到客户机请求时，必须使用一个准确的查询结果回复客户机。也就意味着，如果 DNS 服务器本地没有缓存所查询的 DNS 信息，那么该服务器会询问其它服务器，并将返回的查询结果提交给客户机。</p>
+<p>而在使用迭代查询时，DNS 服务器会向客户机提供其它能够解析查询请求的 DNS 服务器地址。也就是说，当客户机发送查询请求时，DNS 服务器并不直接回复查询结果，而是告诉客户机另一台 DNS 服务器地址，客户机需要再向这台 DNS 服务器提交请求，依次循环直到返回查询的结果为止。</p>
+<p>也就是说，关键的区别是由谁去查询最终的结果。</p>
+<h2 id="DDoS"><a href="#DDoS" class="headerlink" title="DDoS"></a>DDoS</h2><p>发送大量的 DNS 递归查询会消耗服务端的一定资源，所以，只需要将发送的报文设置一个 RD 标志位即可。<br>当发送垃圾查询时，例如 <code>www.baidu.com</code> 这类必然不存在的域名，必然会导致查询很慢。</p>
+<h2 id="ECS"><a href="#ECS" class="headerlink" title="ECS"></a>ECS</h2><p>ECS（EDNS-Client-Subnet）是DNS服务支持的新协议。该协议会在DNS请求包中附加请求域名解析的用户IP地址。这样，DNS服务器就可以根据该地址返回用户更容易访问的服务器IP地址。该技术广泛应用于CDN应用中。Nmap的dns-client-subnet-scan脚本利用该协议，通过提交不同的IP地址，获取指定域名所有的IP地址。</p>
+<h1 id="2-报文格式"><a href="#2-报文格式" class="headerlink" title="2. 报文格式"></a>2. 报文格式</h1><p>整个报文的格式如下，包括了五部分组成。</p>
+<pre><code>    +---------------------+
+    |        Header       | 报文头
+    +---------------------+
+    |       Question      | 查询请求
+    +---------------------+
+    |        Answer       | 应答
+    +---------------------+
+    |      Authority      | 授权应答
+    +---------------------+
+    |      Additional     | 附加信息
+    +---------------------+</code></pre><p>详细介绍如下。</p>
+<ul>
+<li>Header 必选，定义了报文是请求还是应答、错误码以及其它的一些标志位；</li>
+<li>Question 描述了查询的请求报文，包括查询类型(QTYPE)、查询类(QCLASS) 以及查询的域名(QNAME)；</li>
+</ul>
+<p>剩下的3个段包含相同的格式:一系列可能为空的资源记录(RRs)。 Answer段包含回答问题的RRs；授权段包含授权域名服务器的RRs； 附加段包含和请求相关的，但是不是必须回答的RRs。</p>
+<h2 id="报文头"><a href="#报文头" class="headerlink" title="报文头"></a>报文头</h2><pre><code>    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+    |                      ID                       |
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+    |QR|  Opcode  |AA|TC|RD|RA|   Z    |   RCODE    |
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+    |                    QDCOUNT                    |
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+    |                    ANCOUNT                    |
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+    |                    NSCOUNT                    |
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+    |                    ARCOUNT                    |
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</code></pre><p>字段介绍如下。</p>
+<ul>
+<li>ID 16Bits 客户端设置，响应报文会原样带回，用于客户端区分不同的请求应答；</li>
+<li>QR 1Bits 区分是请求 (0 Question) 还是应答 (1 Response)；</li>
+<li>Opcode 4Bits 设置查询的种类，响应报文会原样带回，可以为：0 标准查询 QUERY；1 反向查询 IQUERY；2 服务器状态查询 STATUS；3~15 保留；</li>
+<li>AA 1Bits 授权应答 AuthoritativeAnswer，响应报文生效，用于标示服务器响应报文是否为授权服务器返回的结果，可能是在本地 Cache 的缓存；</li>
+<li>TC 1Bits 截断 TrunCation，报文因为超过了允许的长度，导致被截断；</li>
+<li>RD 1Bits 用于请求中，期望使用递归查询；</li>
+<li>RA 1Bits 用于响应中，如果服务器支持递归查询则设置为 1 ，否则设置为 0 ；</li>
+<li>RCODE 4Bits 应答码 ResponseCode，会在响应报文中设置，其代表的含义如下：<ul>
+<li>0 没有错误；</li>
+<li>1 报文格式错误(Format Error)，服务器解析请求报文时报错；</li>
+<li>2 服务器失败(Server Failure)，因为服务器的原因导致没办法处理这个请求；</li>
+<li>3 名字错误(Name Error)，只对授权域名解析服务器有意义，解析的域名不存在；</li>
+<li>4 没有实现(Not Implemented)，域名服务器不支持查询类型；</li>
+<li>5 拒绝(Refused)，由于服务器设置的策略拒绝给出应答，通常是安全的配置；</li>
+<li>6-15 保留值，暂未使用。</li>
+</ul>
+</li>
+<li>QDCOUNT 无符号16位整数表示报文请求段中的问题记录数；</li>
+<li>ANCOUNT 无符号16位整数表示报文回答段中的回答记录数；</li>
+<li>NSCOUNT 无符号16位整数表示报文授权段中的授权记录数；</li>
+<li>ARCOUNT 无符号16位整数表示报文附加段中的附加记录数。</li>
+</ul>
+<h2 id="查询请求"><a href="#查询请求" class="headerlink" title="查询请求"></a>查询请求</h2><p>用来标识，查询的请求参数，同时需要在头中设置 <code>QDCOUNT</code> 这个字段。</p>
+<pre><code>    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+    |                                               |
+    /                     QNAME                     /
+    /                                               /
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+    |                     QTYPE                     |
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+    |                     QCLASS                    |
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</code></pre><p>字段含义如下:</p>
+<ul>
+<li>QNAME 域名被编码为一些labels序列，每个labels包含一个字节表示后续字符串长度，以及这个字符串，以0长度和空字符串来表示域名结束。注意这个字段可能为奇数字节，不需要进行边界填充对齐。</li>
+<li>QTYPE 2个字节表示查询类型，.取值可以为任何可用的类型值，以及通配码来表示所有的资源记录。</li>
+<li>QCLASS 2个字节表示查询的协议类，比如，IN代表Internet</li>
+</ul>
+<h1 id="3-其他"><a href="#3-其他" class="headerlink" title="3. 其他"></a>3. 其他</h1><h2 id="Non-authoritative-answer"><a href="#Non-authoritative-answer" class="headerlink" title="Non-authoritative answer"></a>Non-authoritative answer</h2><p>为加快 DNS 的查询速度，一般会在服务端缓存一段时间，所以有可能 DNS 会返回缓存在 Cache 中的内容，那么此时就会将 AA 响应设置为 0 ，也就是是这里显示的 Non-authoritative answer 。</p>
+<h1 id="4-参考"><a href="#4-参考" class="headerlink" title="4. 参考"></a>4. 参考</h1><p><a href="https://www.jianshu.com/p/915de89d070e" target="_blank" rel="noopener">https://www.jianshu.com/p/915de89d070e</a><br><a href="https://jin-yang.github.io/post/network-dns-protocol-details-introduce.html" target="_blank" rel="noopener">https://jin-yang.github.io/post/network-dns-protocol-details-introduce.html</a><br>DNS 协议 <a href="https://www.ietf.org/rfc/rfc1035.txt" target="_blank" rel="noopener">RFC1035</a> 详细规定了 DNS 报文的格式，详见 <code>4. MESSAGES</code> 中的部分。</p>
 
 </div>
 
