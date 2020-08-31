@@ -963,9 +963,9 @@
 </ul>
 <p><strong>发布/订阅模式</strong></p>
 <p>一对多，生产者将消息发布到 Topic 中，有多个消费者订阅该主题，发布到 Topic 的消息会被所有订阅者消费，被消费的数据不会立即从 Topic 清除。</p>
+<img src="/2020/08/31/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/05%20kafka/00%20kafka%E5%9F%BA%E7%A1%80/1.jpg" class="">
 
-
-<h1 id="2-架构"><a href="#2-架构" class="headerlink" title="2. 架构"></a>2. 架构</h1>
+<h1 id="2-架构"><a href="#2-架构" class="headerlink" title="2. 架构"></a>2. 架构</h1><img src="/2020/08/31/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/05%20kafka/00%20kafka%E5%9F%BA%E7%A1%80/2.jpg" class="">
 
 <p>Kafka 存储的消息来自任意多被称为 Producer 生产者的进程。数据从而可以被发布到不同的 Topic 主题下的不同 Partition 分区。</p>
 <p>在一个分区内，这些消息被索引并连同时间戳存储在一起。其它被称为 Consumer 消费者的进程可以从分区订阅消息。</p>
@@ -985,7 +985,7 @@
 <li><strong>Zookeeper</strong>：Kafka 集群能够正常工作，需要依赖于 Zookeeper，Zookeeper 帮助 Kafka 存储和管理集群信息。</li>
 </ul>
 <h1 id="3-工作流程"><a href="#3-工作流程" class="headerlink" title="3. 工作流程"></a>3. 工作流程</h1><p>Kafka集群将 Record 流存储在称为 Topic 的类别中，每个记录由一个键、一个值和一个时间戳组成。</p>
-
+<img src="/2020/08/31/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/05%20kafka/00%20kafka%E5%9F%BA%E7%A1%80/3.jpg" class="">
 
 <p>Kafka 是一个分布式流平台，这到底是什么意思?</p>
 <ul>
@@ -997,7 +997,7 @@
 <p>Topic 是逻辑上的概念，而 Partition 是物理上的概念，每个 Partition 对应于一个 log 文件，该 log 文件中存储的就是 Producer 生产的数据。</p>
 <p>Producer 生产的数据会不断追加到该 log 文件末端，且每条数据都有自己的 Offset。</p>
 <p>消费者组中的每个消费者，都会实时记录自己消费到了哪个 Offset，以便出错恢复时，从上次的位置继续消费。</p>
-<h1 id="4-存储机制"><a href="#4-存储机制" class="headerlink" title="4. 存储机制"></a>4. 存储机制</h1>
+<h1 id="4-存储机制"><a href="#4-存储机制" class="headerlink" title="4. 存储机制"></a>4. 存储机制</h1><img src="/2020/08/31/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/05%20kafka/00%20kafka%E5%9F%BA%E7%A1%80/4.jpg" class="">
 
 <p>由于生产者生产的消息会不断追加到 log 文件末尾，为防止 log 文件过大导致数据定位效率低下，Kafka 采取了分片和索引机制。</p>
 <p>它将每个 Partition 分为多个 Segment，每个 Segment 对应两个文件：“.index” 索引文件和 “.log” 数据文件。</p>
@@ -1008,7 +1008,7 @@
 00000000000000009014.timeindex
 00000000000000009014.snapshot
 leader-epoch-checkpoint </code></pre><p>index 和 log 文件以当前 Segment 的第一条消息的 Offset 命名。下图为 index 文件和 log 文件的结构示意图：</p>
-
+<img src="/2020/08/31/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/05%20kafka/00%20kafka%E5%9F%BA%E7%A1%80/5.jpg" class="">
 
 <p>“.index” 文件存储大量的索引信息，“.log” 文件存储大量的数据，索引文件中的元数据指向对应数据文件中 Message 的物理偏移量。</p>
 <h1 id="5-生产者"><a href="#5-生产者" class="headerlink" title="5. 生产者"></a>5. 生产者</h1><p><strong>分区策略</strong></p>
@@ -1038,7 +1038,7 @@ leader-epoch-checkpoint </code></pre><p>index 和 log 文件以当前 Segment �
 <p><strong>①副本数据同步策略</strong></p>
 <p>何时发送 ACK?确保有 Follower 与 Leader 同步完成，Leader 再发送 ACK，这样才能保证 Leader 挂掉之后，能在 Follower 中选举出新的 Leader 而不丢数据。</p>
 <p>多少个 Follower 同步完成后发送 ACK?全部 Follower 同步完成，再发送 ACK。</p>
-
+<img src="/2020/08/31/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/05%20kafka/00%20kafka%E5%9F%BA%E7%A1%80/7.jpg" class="">
 
 <p><strong>②ISR</strong></p>
 <p>采用第二种方案，所有 Follower 完成同步，Producer 才能继续发送数据，设想有一个 Follower 因为某种原因出现故障，那 Leader 就要一直等到它完成同步。</p>
@@ -1048,7 +1048,7 @@ leader-epoch-checkpoint </code></pre><p>index 和 log 文件以当前 Segment �
 <p><strong>③ACK 应答机制</strong></p>
 <p>对于某些不太重要的数据，对数据的可靠性要求不是很高，能够容忍数据的少量丢失，所以没必要等 ISR 中的 Follower 全部接受成功。</p>
 <p>所以 Kafka 为用户提供了三种可靠性级别，用户根据可靠性和延迟的要求进行权衡，选择以下的配置。</p>
-
+<img src="/2020/08/31/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/05%20kafka/00%20kafka%E5%9F%BA%E7%A1%80/8.jpg" class="">
 
 <p>Ack 参数配置：</p>
 <ul>
@@ -1057,7 +1057,7 @@ leader-epoch-checkpoint </code></pre><p>index 和 log 文件以当前 Segment �
 <li>-1(all)：Producer 等待 Broker 的 ACK，Partition 的 Leader 和 Follower 全部落盘成功后才返回 ACK。但是在 Broker 发送 ACK 时，Leader 发生故障，则会造成数据重复。</li>
 </ul>
 <p><strong>④故障处理细节</strong></p>
-
+<img src="/2020/08/31/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/05%20kafka/00%20kafka%E5%9F%BA%E7%A1%80/9.jpg" class="">
 
 <p>LEO：每个副本最大的 Offset。HW：消费者能见到的最大的 Offset，ISR 队列中最小的 LEO。</p>
 <p><strong>Follower 故障</strong>：Follower 发生故障后会被临时踢出 ISR 集合，待该 Follower 恢复后，Follower 会 读取本地磁盘记录的上次的 HW，并将 log 文件高于 HW 的部分截取掉，从 HW 开始向 Leader 进行同步数据操作。</p>
@@ -1086,20 +1086,20 @@ leader-epoch-checkpoint </code></pre><p>index 和 log 文件以当前 Segment �
 <p>一个 Consumer Group 中有多个 Consumer，一个 Topic 有多个 Partition，所以必然会涉及到 Partition 的分配问题，即确定哪个 Partition 由哪个 Consumer 来消费。</p>
 <p>Kafka 有两种分配策略，一个是 RoundRobin，一个是 Range，默认为Range，当消费者组内消费者发生变化时，会触发分区分配策略(方法重新分配)。</p>
 <p><strong>①RoundRobin</strong></p>
-
+<img src="/2020/08/31/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/05%20kafka/00%20kafka%E5%9F%BA%E7%A1%80/10.jpg" class="">
 
 <p>RoundRobin 轮询方式将分区所有作为一个整体进行 Hash 排序，消费者组内分配分区个数最大差别为 1，是按照组来分的，可以解决多个消费者消费数据不均衡的问题。</p>
 <p>但是，当消费者组内订阅不同主题时，可能造成消费混乱，如下图所示，Consumer0 订阅主题 A，Consumer1 订阅主题 B。</p>
-
+<img src="/2020/08/31/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/05%20kafka/00%20kafka%E5%9F%BA%E7%A1%80/11.jpg" class="">
 
 
 <p>将 A、B 主题的分区排序后分配给消费者组，TopicB 分区中的数据可能分配到 Consumer0 中。</p>
 <p><strong>②Range</strong></p>
-
+<img src="/2020/08/31/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/05%20kafka/00%20kafka%E5%9F%BA%E7%A1%80/12.jpg" class="">
 
 <p>Range 方式是按照主题来分的，不会产生轮询方式的消费混乱问题。</p>
 <p>但是，如下图所示，Consumer0、Consumer1 同时订阅了主题 A 和 B，可能造成消息分配不对等问题，当消费者组内订阅的主题越多，分区分配可能越不均衡。</p>
-
+<img src="/2020/08/31/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/05%20kafka/00%20kafka%E5%9F%BA%E7%A1%80/13.jpg" class="">
 
 <p><strong>Offset 的维护</strong></p>
 <p>由于 Consumer 在消费过程中可能会出现断电宕机等故障，Consumer 恢复后，需要从故障前的位置继续消费。</p>
