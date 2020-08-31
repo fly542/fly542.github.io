@@ -529,6 +529,15 @@
 								<div class="article-toc" style="display: none;"></div>
 							</ul>
 			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/29/03%20%E5%BC%80%E5%8F%91/01%20C&C++/04%20typedef%20%E7%B2%BE%E9%AB%93/">
+										04 typedef 精髓
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
 								</li>
 								
 							</ul>
@@ -859,6 +868,15 @@
 								<div class="article-toc" style="display: none;"></div>
 							</ul>
 			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/31/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&&cassandra/01%20scylladb%20%E9%A9%B1%E5%8A%A8%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/">
+										01 scylladb 驱动使用方法
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
 								</li>
 								
 							</ul>
@@ -894,6 +912,55 @@
 	<!-- 引入正文 -->
 	<div id="content">
 		<div id="index">
+	
+		<div class="index-li">
+			<a href="/2020/08/02/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20%E5%88%9B%E5%BB%BA%E5%9E%8B/02%20Builder%20(%E7%94%9F%E6%88%90%E5%99%A8)/">
+				<h2 class="index-title">
+					02 Builder (生成器)
+				</h2>
+				<div class="index-brief">
+					目的将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。
+适用性
+当创建复杂对象的算法应该独立于该对象的组成部分以及他们的装配方式时
+当构造过程必须允许被构造的对象有不同的表示时
+
+结构图
+
+示例代码class Builder
+{
+public:
+    virtual voi
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-08-02</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
+			<a href="/2020/08/01/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/03%20%E8%A1%8C%E4%B8%BA%E5%9E%8B/09%20Strategy%20(%E7%AD%96%E7%95%A5)/">
+				<h2 class="index-title">
+					09 Strategy (策略)
+				</h2>
+				<div class="index-brief">
+					目的定义一系列的算法,把每一个算法封装起来, 并且使它们可相互替换。本模式使得算法可独立于使用它的客户而变化。也称为政策模式(Policy)。
+适用性当存在以下情况时使用Strategy模式
+
+许多相关的类仅仅是行为有异。 “策略”提供了一种用多个行为中的一个行为来配置一个类的方法。即一个系统需要动
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-08-01</span>
+                    
+                            
+                    
+                </div>
+		</div>	
 	
 		<div class="index-li">
 			<a href="/2020/08/01/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20%E5%88%9B%E5%BB%BA%E5%9E%8B/01%20Abstract%20Factory(%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82)/">
@@ -1068,51 +1135,6 @@ fn main() {
     println!(&quot;Hello, world!, first={}&quot;, first);
 }代码2
 
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-31</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/vec%E5%90%88%E5%B9%B6%E6%95%B0%E6%8D%AE%E6%97%B6%E9%98%B2%E6%AD%A2%E5%87%BA%E7%8E%B0%E6%8B%B7%E8%B4%9D%E7%9A%84%E6%96%B9%E6%B3%95/">
-				<h2 class="index-title">
-					vec合并数据时防止出现拷贝的方法
-				</h2>
-				<div class="index-brief">
-					当结构体中使用Vec在头部插入一个新的Vec数据时可以通过mem::replace方法来减少数据的拷贝。
-use std::mem;
-struct Myvec {
-    data: Vec&lt;u8&gt;,
-    count: usize,
-}
-
-impl Myvec {
-    fn ne
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-31</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/%E5%90%8C%E4%B8%80%E4%B8%AAcrate%E5%86%85%E4%B8%8D%E5%90%8Clib%E6%88%96%E7%A8%8B%E5%BA%8F%E9%97%B4%E7%9A%84%E5%BC%95%E7%94%A8/">
-				<h2 class="index-title">
-					同一个crate内不同lib或程序间的引用
-				</h2>
-				<div class="index-brief">
-					在同一个大型项目中，可能会建立多个lib，有时候想要以外部调用库的方式测试其中的某个lib的某项功能，这时怎么修改Cargo.toml文件引用工程内的某个lib？答案是修改Cargo.toml 文件中的[dependencies]
-参考arnl/test_simple/test_redis/Carg
 					...
 				</div>
 			</a>
