@@ -395,6 +395,15 @@
 								<div class="article-toc" style="display: none;"></div>
 							</ul>
 			
+							<ul>
+								<li class="file">
+									<a href="/2020/12/04/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/10%20vim%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%8F%8A%E5%BF%AB%E6%8D%B7%E9%94%AE/">
+										10 vim常用命令及快捷键
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
 								</li>
 								
 							</ul>
@@ -551,6 +560,15 @@
 								<li class="file">
 									<a href="/2020/11/17/03%20%E5%BC%80%E5%8F%91/01%20C&C++/05%20%E6%97%B6%E9%97%B4/">
 										05 时间
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/11/20/03%20%E5%BC%80%E5%8F%91/01%20C&C++/06%20%E8%99%9A%E7%BB%A7%E6%89%BF/">
+										06 虚继承
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -981,6 +999,48 @@
 		<div id="index">
 	
 		<div class="index-li">
+			<a href="/2020/07/31/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/04%20goreplay%20%E5%BC%95%E6%B5%81%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7/">
+				<h2 class="index-title">
+					04 goreplay 引流测试工具
+				</h2>
+				<div class="index-brief">
+					下载地址https://github.com/buger/goreplay使用方法./goreplay  --input-raw :7001 --output-http http://ip:port
+
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-31</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
+			<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/%E6%89%93%E5%8D%B0%E5%8F%98%E9%87%8F%E5%9C%B0%E5%9D%80/">
+				<h2 class="index-title">
+					打印变量地址
+				</h2>
+				<div class="index-brief">
+					打印变量地址
+fn main(){
+    let a:i32 = 5;
+    //&amp;a先转成raw指针，然后再把指针转成usize，这个可以print的
+    let addr = &amp;a as *const i32 as usize;
+    println!(&quot;ad
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-31</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
 			<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/rust%20%E5%AE%8F/">
 				<h2 class="index-title">
 					rust 宏
@@ -1156,54 +1216,6 @@ fn get_timestamp() -&gt; u64 {
 			</a>
                 <div class="article-meta">
 				    <span>2020-07-31</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/07/30/03%20%E5%BC%80%E5%8F%91/03%20Shell/awk%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/">
-				<h2 class="index-title">
-					awk常用方法
-				</h2>
-				<div class="index-brief">
-					awk内建变量$0 当前记录（这个变量中存放着整个行的内容）
-$1~$n 当前记录的第n个字段，字段间由FS分隔
-FS 输入字段分隔符 默认是空格或Tab
-NF 当前记录中的字段个数，就是有多少列 ,$(NF-n)为倒数第n个字段
-NR 已经读出的记录数，就是行号，从1开始，如果有多个文件话，这个值
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-30</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/07/30/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/03%20vimrc%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
-				<h2 class="index-title">
-					03 vimrc配置文件
-				</h2>
-				<div class="index-brief">
-					用户根目录下~/.vimrc 配置文件内容
-set nu
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-set expandtab
-set cinoptions=g0
-set colorcolumn=81
-set fileencodings=ucs
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-30</span>
                     
                             
                     
