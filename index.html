@@ -574,6 +574,24 @@
 								<div class="article-toc" style="display: none;"></div>
 							</ul>
 			
+							<ul>
+								<li class="file">
+									<a href="/2020/12/08/03%20%E5%BC%80%E5%8F%91/01%20C&C++/07%20%E5%AE%8F%E5%AE%9A%E4%B9%89define%E7%9A%84%E5%A5%87%E6%8A%80%E6%B7%AB%E5%B7%A7/">
+										07 宏定义define的奇技淫巧
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2021/01/13/03%20%E5%BC%80%E5%8F%91/01%20C&C++/08%20%E5%90%84%E7%B1%BBconst%20%E6%8C%87%E9%92%88%E7%9A%84%E5%8C%BA%E5%88%AB/">
+										08 各类const 指针的区别
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
 								</li>
 								
 							</ul>
@@ -999,6 +1017,51 @@
 		<div id="index">
 	
 		<div class="index-li">
+			<a href="/2021/01/13/03%20%E5%BC%80%E5%8F%91/01%20C&C++/08%20%E5%90%84%E7%B1%BBconst%20%E6%8C%87%E9%92%88%E7%9A%84%E5%8C%BA%E5%88%AB/">
+				<h2 class="index-title">
+					08 各类const 指针的区别
+				</h2>
+				<div class="index-brief">
+					Bjarne在他的The C++ Programming Language里面给出过一个助记的方法：把一个声明从右向左读。
+char * const cp; ( * 读成 pointer to ) 
+cp is a const pointer to char 
+
+const char * p; 
+p
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2021-01-13</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
+			<a href="/2020/12/08/03%20%E5%BC%80%E5%8F%91/01%20C&C++/07%20%E5%AE%8F%E5%AE%9A%E4%B9%89define%E7%9A%84%E5%A5%87%E6%8A%80%E6%B7%AB%E5%B7%A7/">
+				<h2 class="index-title">
+					07 宏定义define的奇技淫巧
+				</h2>
+				<div class="index-brief">
+					define中的三个特殊符号：#，##，#@#define Conn(x,y) x##y
+#define ToChar(x)#@x
+#define ToString(x)#x对应解释如下：
+(1)x##y 表示x连接y，如下：
+    int n = Conn(123,456);/* 结果就是n=1
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-12-08</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
 			<a href="/2020/12/04/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/10%20vim%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%8F%8A%E5%BF%AB%E6%8D%B7%E9%94%AE/">
 				<h2 class="index-title">
 					10 vim常用命令及快捷键
@@ -1157,45 +1220,6 @@ github: https://github.com/edenhill/librdkafka
 			</a>
                 <div class="article-meta">
 				    <span>2020-08-31</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/08/29/03%20%E5%BC%80%E5%8F%91/01%20C&C++/04%20typedef%20%E7%B2%BE%E9%AB%93/">
-				<h2 class="index-title">
-					04 typedef 精髓
-				</h2>
-				<div class="index-brief">
-					本文转载自《https://tonybai.com/2008/05/02/also-talk-about-typedef/》
-核心阐述C语言语法简单，但内涵却博大精深；如果在学习时只是止步于表面，那么往往后期会遇到很多困难。typedef是C语言中一个很好用的工具，大量存在于已有代码中，特别值得一提
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-08-29</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/08/28/03%20%E5%BC%80%E5%8F%91/01%20C&C++/03%20Linux%E4%B8%AD%E7%BA%BF%E7%A8%8B%E4%B8%8ECPU%E6%A0%B8%E7%9A%84%E7%BB%91%E5%AE%9A/">
-				<h2 class="index-title">
-					03 Linux中线程与CPU核的绑定
-				</h2>
-				<div class="index-brief">
-					不管是线程还是进程，都是通过设置亲和性(affinity)来达到目的。对于进程一般是使用 sched_setaffinity 这个函数来实现.
-与进程的情况相似，线程亲和性的设置和获取主要通过下面两个函数来实现：
-int pthread_setaffinity_np(pthread_t thread
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-08-28</span>
                     
                             
                     
