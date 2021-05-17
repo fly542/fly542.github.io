@@ -1110,15 +1110,13 @@ set fileencodings=ucs
 		</div>	
 	
 		<div class="index-li">
-			<a href="/2020/07/30/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/02%20%E5%A4%9A%E7%89%88%E6%9C%ACgcc%E9%83%A8%E7%BD%B2/">
+			<a href="/2020/07/30/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/01%20%E5%BC%80%E5%8F%91%E6%9C%BA%E9%83%A8%E7%BD%B2/">
 				<h2 class="index-title">
-					02 多版本gcc部署
+					01 开发机部署
 				</h2>
 				<div class="index-brief">
-					安装scl源：yum install centos-release-SCL scl-utils-build
-查看从 SCL 中安装的包的列表：scl –list
-列出scl源有哪些包可以用：yum list all –enablerepo=’centos-sclo-rh’
-查看从 SCL 中安装的包
+					开发机部署修改服务器名hostnamectl set-hostname xxxx实际修改的是/proc/sys/kernel/hostname的内容
+安装开发包yum install gcc-c++ cmake 系统更新   yum update  安装python2.7安装python2.7的时候
 					...
 				</div>
 			</a>
@@ -1131,13 +1129,15 @@ set fileencodings=ucs
 		</div>	
 	
 		<div class="index-li">
-			<a href="/2020/07/30/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/01%20%E5%BC%80%E5%8F%91%E6%9C%BA%E9%83%A8%E7%BD%B2/">
+			<a href="/2020/07/30/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/02%20%E5%A4%9A%E7%89%88%E6%9C%ACgcc%E9%83%A8%E7%BD%B2/">
 				<h2 class="index-title">
-					01 开发机部署
+					02 多版本gcc部署
 				</h2>
 				<div class="index-brief">
-					开发机部署修改服务器名hostnamectl set-hostname xxxx实际修改的是/proc/sys/kernel/hostname的内容
-安装开发包yum install gcc-c++ cmake 系统更新   yum update  安装python2.7安装python2.7的时候
+					安装scl源：yum install centos-release-SCL scl-utils-build
+查看从 SCL 中安装的包的列表：scl –list
+列出scl源有哪些包可以用：yum list all –enablerepo=’centos-sclo-rh’
+查看从 SCL 中安装的包
 					...
 				</div>
 			</a>
