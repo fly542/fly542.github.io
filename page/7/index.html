@@ -404,6 +404,24 @@
 								<div class="article-toc" style="display: none;"></div>
 							</ul>
 			
+							<ul>
+								<li class="file">
+									<a href="/2021/02/24/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/11%20makefile%E5%8F%8A%E7%BC%96%E8%AF%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%B1%87%E6%80%BB/">
+										11 makefile及编译相关知识汇总
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2021/03/24/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/12%20doxygen%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/">
+										12 doxygen使用说明
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
 								</li>
 								
 							</ul>
@@ -495,6 +513,15 @@
 								<li class="file">
 									<a href="/2020/08/15/03%20%E5%BC%80%E5%8F%91/00%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%20%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/">
 										03 伸展树(splay)
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2021/05/10/03%20%E5%BC%80%E5%8F%91/00%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/04%20%E4%BA%8C%E5%8F%89%E6%A0%91%20AVL%E6%A0%91%20B%E6%A0%91%E7%AD%89%E7%AE%97%E6%B3%95%E6%A0%91%E4%BB%8B%E7%BB%8D/">
+										04 二叉树 AVL树 B树等算法树介绍
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -596,6 +623,15 @@
 								<li class="file">
 									<a href="/2021/02/22/03%20%E5%BC%80%E5%8F%91/01%20C&C++/09%20Linux%E4%B8%ADerrno%E8%AF%B4%E6%98%8E/">
 										09 Linux中errno说明
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2021/05/17/03%20%E5%BC%80%E5%8F%91/01%20C&C++/10%20%E6%8C%87%E9%92%88%E7%B2%BE%E9%AB%93/">
+										10 指针精髓
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -1026,6 +1062,92 @@
 		<div id="index">
 	
 		<div class="index-li">
+			<a href="/2020/07/26/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/00%20%E5%AE%9A%E4%BD%8Dcpu%20100_p%E7%9A%84%E6%96%B9%E6%B3%95/">
+				<h2 class="index-title">
+					00 定位cpu 100_p的方法
+				</h2>
+				<div class="index-brief">
+					使用perf 定位# -g开启调用关系分析，-p指定php-fpm的进程号94806
+$ perf top -g -p 94806
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-26</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
+			<a href="/2020/07/26/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/00%20%E4%BC%A0%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93/01%20sqlite/sqlite3%20%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/">
+				<h2 class="index-title">
+					sqlite3 客户端操作命令
+				</h2>
+				<div class="index-brief">
+					导出查询内容到文件中
+sqlite3 www_cache.db;
+sqlite&gt; .output 1.txt
+sqlite&gt; select path,size from file_info;
+sqlite&gt; .output stdout直接执行后面的sql语句sqlite3 dat
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-26</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
+			<a href="/2020/07/26/03%20%E5%BC%80%E5%8F%91/01%20C&C++/02%20%E5%A4%A7%E7%AB%AF-%E5%B0%8F%E7%AB%AF%E5%AF%B9%E9%BD%90%E5%88%A4%E5%AE%9A%E5%87%BD%E6%95%B0/">
+				<h2 class="index-title">
+					02 大端-小端对齐判定函数
+				</h2>
+				<div class="index-brief">
+					大端-小端对齐判定方法
+int main(int argc, char** argv) {
+    (void)argc;
+    (void)argv;
+    union {
+        short s;
+        char c[sizeof(short)];
+    }un;
+   
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-26</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
+			<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+				<h2 class="index-title">
+					linux下IO应用详解
+				</h2>
+				<div class="index-brief">
+					一. 对于I/O的概述Linux磁盘I/O分为Buffered IO和Direct IO，这两者有何区别？
+Buffered IO：当应用程序尝试读取某块数据的时候，如果这块数据已经存放在了页缓存（page cache）中，那么这块数据就可以立即返回给应用程序，而不需要经过实际的物理读盘操作。当然，
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-25</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
 			<a href="/2020/07/25/03%20%E5%BC%80%E5%8F%91/02%20Rust/rust-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%B0%86u32%E8%BD%AC%E6%8D%A2%E4%B8%BAchar%EF%BC%9F/">
 				<h2 class="index-title">
 					rust-为什么不能将u32转换为char？
@@ -1149,29 +1271,10 @@ if [ -z &quot;${diskFile}&quot; -o -z &quot;${mountDir}&quot;
                 </div>
 		</div>	
 	
-		<div class="index-li">
-			<a href="/2012/03/20/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/06%20ssh%E8%B7%B3%E8%BD%AC%E6%97%A0%E5%AF%86%E7%A0%81%E7%99%BB%E5%BD%95%E6%88%96%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4/">
-				<h2 class="index-title">
-					06 ssh跳转无密码登录或执行命令
-				</h2>
-				<div class="index-brief">
-					我们在使用linux开发过程中，经常需要在不同服务器间进行跳转，通过ssh，每次都需要输入密码，比较繁琐，今天从网上找了相关的方法，但是实验过程中发现还是有些问题，特将一些细节整理如下：
-比如我有机器192.168.1.100 和192.168.1.200两台服务器，我想从100登录到200中利用s
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2012-03-20</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
 	
 	<div id="index-paginator">
 		
-			<a class="extend prev" rel="prev" href="/page/6/">&lt;</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span>
+			<a class="extend prev" rel="prev" href="/page/6/">&lt;</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/8/">&gt;</a>
 		
 	</div>
 </div>
