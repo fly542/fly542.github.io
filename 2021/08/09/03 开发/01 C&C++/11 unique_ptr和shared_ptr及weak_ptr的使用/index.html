@@ -1,0 +1,2004 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+	<link rel="stylesheet" href="/css/highlight/styles/vs2015.css">
+	<!-- title -->
+	
+	<title>
+	
+		11 unique_ptr和shared_ptr及weak_ptr的使用 | 
+	 
+	Fly542 技术积累
+	</title>
+	
+	<!-- keywords,description -->
+	 
+
+	<!-- favicon -->
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+	
+  
+
+	
+<link rel="stylesheet" href="/css/main.css">
+
+	
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/styles/darcula.min.css">
+
+
+	
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/highlight.min.js"></script>
+
+	
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+
+	
+<script src="https://cdn.jsdelivr.net/npm/jquery-pjax@2.0.1/jquery.pjax.min.js"></script>
+
+	
+<script src="/js/main.js"></script>
+
+	
+		
+<script src="https://cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js"></script>
+
+		
+<script src="https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+
+	
+	
+		<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+	
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+	<header id="header">
+    <a id="title" href="/" class="logo">Fly542 技术积累</a>
+
+	<ul id="menu">
+		<li class="menu-item">
+			<a href="/about" class="menu-item-link">关于我</a>
+		</li>
+		
+		<li class="menu-item">
+			<a href="https://fly542.cn" class="menu-item-link" target="_blank">
+				<i class="fa fa-github fa-2x"></i>
+			</a>
+		</li>
+	</ul>
+</header>
+
+
+	
+<div id="sidebar">
+	<button id="sidebar-toggle" class="toggle" ><i class="fa fa-arrow-right " aria-hidden="true"></i></button>
+	
+	<div id="site-toc">
+		<input id="search-input" class="search-input" type="text" placeholder="search...">
+		<div id="tree">
+			
+
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 操作系统
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/25/00%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+										linux下IO应用详解
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 架构设计与软件工程
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 架构设计
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/25/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/00%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/%E5%B8%B8%E8%A7%81%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F/">
+										常见架构模式
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 软件工程
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/01%20%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/UML%E7%B1%BB%E5%9B%BE%E5%9B%BE%E7%A4%BA%E6%A0%B7%E4%BE%8B/">
+										UML类图图示样例
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/01%20%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/">
+										时序图、活动图、状态图、协作图的区别
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 设计模式
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/08/02/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/00%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%85%AD%E5%A4%A7%E5%8E%9F%E5%88%99/">
+										00 设计模式的六大原则
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 创建型
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/08/01/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20%E5%88%9B%E5%BB%BA%E5%9E%8B/01%20Abstract%20Factory(%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82)/">
+										01 Abstract Factory(抽象工厂)
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/02/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01%20%E5%88%9B%E5%BB%BA%E5%9E%8B/02%20Builder%20(%E7%94%9F%E6%88%90%E5%99%A8)/">
+										02 Builder (生成器)
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 结构型
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/02%20%E7%BB%93%E6%9E%84%E5%9E%8B/01%20Adapter---%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
+										01 Adapter---适配器模式
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										03 行为型
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/08/01/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/03%20%E8%A1%8C%E4%B8%BA%E5%9E%8B/09%20Strategy%20(%E7%AD%96%E7%95%A5)/">
+										09 Strategy (策略)
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 DevOps
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 程序运维
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/26/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/00%20%E5%AE%9A%E4%BD%8Dcpu%20100_p%E7%9A%84%E6%96%B9%E6%B3%95/">
+										00 定位cpu 100_p的方法
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/13/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/01%20VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/">
+										01 VIRT与RES占用分析
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/14/02%20DevOps/01%20%E7%A8%8B%E5%BA%8F%E8%BF%90%E7%BB%B4/02%20%5B%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB%5D%E9%A2%91%E7%B9%81%E5%88%86%E9%85%8D%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/">
+										02 [百度分享]频繁分配释放内存导致的性能问题分析
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 常用软件
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/00%20%E5%B8%B8%E7%94%A8git%E5%91%BD%E4%BB%A4/">
+										00 常用git命令
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/30/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/01%20%E5%BC%80%E5%8F%91%E6%9C%BA%E9%83%A8%E7%BD%B2/">
+										01 开发机部署
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/30/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/02%20%E5%A4%9A%E7%89%88%E6%9C%ACgcc%E9%83%A8%E7%BD%B2/">
+										02 多版本gcc部署
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/30/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/03%20vimrc%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
+										03 vimrc配置文件
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/31/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/04%20goreplay%20%E5%BC%95%E6%B5%81%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7/">
+										04 goreplay 引流测试工具
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2014/08/01/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/05%20scons%E5%AE%9E%E7%94%A8%E8%AF%B4%E6%98%8E/">
+										05 scons实用说明
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2012/03/20/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/06%20ssh%E8%B7%B3%E8%BD%AC%E6%97%A0%E5%AF%86%E7%A0%81%E7%99%BB%E5%BD%95%E6%88%96%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4/">
+										06 ssh跳转无密码登录或执行命令
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2018/05/03/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/07%20%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6%E6%98%A0%E5%B0%84%E4%B8%BA%E7%A3%81%E7%9B%98/">
+										07 本地文件映射为磁盘
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/27/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/08%20Python%20%E5%86%85%E7%BD%AE%E7%9A%84SimpleHTTPServer%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">
+										08 Python 内置的SimpleHTTPServer使用指南
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/11/12/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/09%20%E7%9B%91%E6%8E%A7%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%8F%A5%E6%9F%84%E5%8F%8A%E5%90%AF%E5%8A%A8%E6%97%B6%E9%97%B4/">
+										09 监控进程的句柄及启动时间
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/12/04/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/10%20vim%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%8F%8A%E5%BF%AB%E6%8D%B7%E9%94%AE/">
+										10 vim常用命令及快捷键
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2021/02/24/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/11%20makefile%E5%8F%8A%E7%BC%96%E8%AF%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%B1%87%E6%80%BB/">
+										11 makefile及编译相关知识汇总
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2021/03/24/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/12%20doxygen%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/">
+										12 doxygen使用说明
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										03 工具参考
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/08/20/02%20DevOps/03%20%E5%B7%A5%E5%85%B7%E5%8F%82%E8%80%83/00%20objdump%20%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6%E5%88%86%E6%9E%90/">
+										00 objdump 二进制文件分析
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/20/02%20DevOps/03%20%E5%B7%A5%E5%85%B7%E5%8F%82%E8%80%83/01%20lsof%20%E4%B8%80%E5%88%87%E7%9A%86%E6%96%87%E4%BB%B6/">
+										01 lsof 一切皆文件
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/20/02%20DevOps/03%20%E5%B7%A5%E5%85%B7%E5%8F%82%E8%80%83/02%20strace%20%E8%B7%9F%E8%B8%AA%E8%BF%9B%E7%A8%8B%E4%B8%AD%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/">
+										02 strace 跟踪进程中的系统调用
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/20/02%20DevOps/03%20%E5%B7%A5%E5%85%B7%E5%8F%82%E8%80%83/03%20pstack%20%E8%B7%9F%E8%B8%AA%E8%BF%9B%E7%A8%8B%E6%A0%88/">
+										03 pstack 跟踪进程栈
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										03 开发
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 算法与数据结构
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2014/08/01/03%20%E5%BC%80%E5%8F%91/00%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01%20(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/">
+										01 (转载)一致性hash算法(consistent hashing)
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/03%20%E5%BC%80%E5%8F%91/00%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/02%20MD5%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/">
+										02 MD5算法原理
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/15/03%20%E5%BC%80%E5%8F%91/00%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%20%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/">
+										03 伸展树(splay)
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2021/05/10/03%20%E5%BC%80%E5%8F%91/00%20%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/04%20%E4%BA%8C%E5%8F%89%E6%A0%91%20AVL%E6%A0%91%20B%E6%A0%91%E7%AD%89%E7%AE%97%E6%B3%95%E6%A0%91%E4%BB%8B%E7%BB%8D/">
+										04 二叉树 AVL树 B树等算法树介绍
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 C&C++
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/08/16/03%20%E5%BC%80%E5%8F%91/01%20C&C++/00%20C++%20%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D(new%EF%BC%8Coperator%20new)%E8%AF%A6%E8%A7%A3/">
+										00 C++ 内存分配(new，operator new)详解
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/03/03%20%E5%BC%80%E5%8F%91/01%20C&C++/01%20getopt%E4%B8%8Egetopt_long%E4%BD%BF%E7%94%A8/">
+										01 getopt与getopt_long使用
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/26/03%20%E5%BC%80%E5%8F%91/01%20C&C++/02%20%E5%A4%A7%E7%AB%AF-%E5%B0%8F%E7%AB%AF%E5%AF%B9%E9%BD%90%E5%88%A4%E5%AE%9A%E5%87%BD%E6%95%B0/">
+										02 大端-小端对齐判定函数
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/28/03%20%E5%BC%80%E5%8F%91/01%20C&C++/03%20Linux%E4%B8%AD%E7%BA%BF%E7%A8%8B%E4%B8%8ECPU%E6%A0%B8%E7%9A%84%E7%BB%91%E5%AE%9A/">
+										03 Linux中线程与CPU核的绑定
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/29/03%20%E5%BC%80%E5%8F%91/01%20C&C++/04%20typedef%20%E7%B2%BE%E9%AB%93/">
+										04 typedef 精髓
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/11/17/03%20%E5%BC%80%E5%8F%91/01%20C&C++/05%20%E6%97%B6%E9%97%B4/">
+										05 时间
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/11/20/03%20%E5%BC%80%E5%8F%91/01%20C&C++/06%20%E8%99%9A%E7%BB%A7%E6%89%BF/">
+										06 虚继承
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/12/08/03%20%E5%BC%80%E5%8F%91/01%20C&C++/07%20%E5%AE%8F%E5%AE%9A%E4%B9%89define%E7%9A%84%E5%A5%87%E6%8A%80%E6%B7%AB%E5%B7%A7/">
+										07 宏定义define的奇技淫巧
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2021/01/13/03%20%E5%BC%80%E5%8F%91/01%20C&C++/08%20%E5%90%84%E7%B1%BBconst%20%E6%8C%87%E9%92%88%E7%9A%84%E5%8C%BA%E5%88%AB/">
+										08 各类const 指针的区别
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2021/02/22/03%20%E5%BC%80%E5%8F%91/01%20C&C++/09%20Linux%E4%B8%ADerrno%E8%AF%B4%E6%98%8E/">
+										09 Linux中errno说明
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2021/05/17/03%20%E5%BC%80%E5%8F%91/01%20C&C++/10%20%E6%8C%87%E9%92%88/">
+										10 指针
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2021/05/17/03%20%E5%BC%80%E5%8F%91/01%20C&C++/10%20%E6%8C%87%E9%92%88%E7%B2%BE%E9%AB%93/">
+										10 指针精髓
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file active">
+									<a href="/2021/08/09/03%20%E5%BC%80%E5%8F%91/01%20C&C++/11%20unique_ptr%E5%92%8Cshared_ptr%E5%8F%8Aweak_ptr%E7%9A%84%E4%BD%BF%E7%94%A8/">
+										11 unique_ptr和shared_ptr及weak_ptr的使用
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 Rust
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 fun_code
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/rust%20%E5%AE%9E%E7%8E%B0%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/">
+										rust 实现函数重载
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/rust%20%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%9A%84%E6%97%B6%E9%97%B4%E6%88%B3/">
+										rust 获取当前的时间戳
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/vec%E5%90%88%E5%B9%B6%E6%95%B0%E6%8D%AE%E6%97%B6%E9%98%B2%E6%AD%A2%E5%87%BA%E7%8E%B0%E6%8B%B7%E8%B4%9D%E7%9A%84%E6%96%B9%E6%B3%95/">
+										vec合并数据时防止出现拷贝的方法
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/%E5%90%8C%E4%B8%80%E4%B8%AAcrate%E5%86%85%E4%B8%8D%E5%90%8Clib%E6%88%96%E7%A8%8B%E5%BA%8F%E9%97%B4%E7%9A%84%E5%BC%95%E7%94%A8/">
+										同一个crate内不同lib或程序间的引用
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/%E6%89%93%E5%8D%B0%E5%8F%82%E6%95%B0%E7%B1%BB%E5%9E%8B/">
+										打印参数类型
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/%E6%89%93%E5%8D%B0%E5%8F%98%E9%87%8F%E5%9C%B0%E5%9D%80/">
+										打印变量地址
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/%E6%9C%89%E8%B6%A3%E7%9A%84%E6%89%80%E6%9C%89%E6%9D%83%E9%97%AE%E9%A2%98%E9%97%AE%E9%A2%98/">
+										有趣的所有权问题问题
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/rust%20%E5%AE%8F/">
+										rust 宏
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/25/03%20%E5%BC%80%E5%8F%91/02%20Rust/rust-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%B0%86u32%E8%BD%AC%E6%8D%A2%E4%B8%BAchar%EF%BC%9F/">
+										rust-为什么不能将u32转换为char？
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E6%8F%90%E7%A4%BA%E3%80%8Aremove%20this%20mut%E3%80%8B/">
+										为什么函数参数提示《remove this mut》
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										03 Shell
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/30/03%20%E5%BC%80%E5%8F%91/03%20Shell/awk%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/">
+										awk常用方法
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/03%20%E5%BC%80%E5%8F%91/03%20Shell/%E5%88%A9%E7%94%A8Shell%E5%91%BD%E4%BB%A4%E8%8E%B7%E5%8F%96IP%E5%9C%B0%E5%9D%80/">
+										利用Shell命令获取IP地址
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2018/11/30/03%20%E5%BC%80%E5%8F%91/03%20Shell/%E7%9B%91%E6%8E%A7%E6%8C%87%E5%AE%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%8F%A5%E6%9F%84%E4%BF%A1%E6%81%AF/">
+										监控指定进程的句柄信息
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										04 网络
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 DNS
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/08/26/04%20%E7%BD%91%E7%BB%9C/00%20DNS/00%20DNS%E5%8D%8F%E8%AE%AE/">
+										00 DNS协议
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/26/04%20%E7%BD%91%E7%BB%9C/00%20DNS/01%20DNS%E4%B8%ADRR%E4%BB%8B%E7%BB%8D/">
+										01 DNS中RR介绍
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/04%20%E7%BD%91%E7%BB%9C/hello-world/">
+										hello-world
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										05 分布式及数据库
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 传统数据库
+									</a>
+									
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										00 mysql
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/27/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/00%20%E4%BC%A0%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93/00%20mysql/mysql%20%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
+										mysql 常用命令
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										01 sqlite
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/26/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/00%20%E4%BC%A0%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93/01%20sqlite/sqlite3%20%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/">
+										sqlite3 客户端操作命令
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										02 Pika
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/07/29/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/02%20Pika/pika%20%E8%BF%90%E7%BB%B4%E5%91%BD%E4%BB%A4/">
+										pika 运维命令
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										03 squid
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/08/16/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/00%20squid%20%E5%86%85%E5%AD%98%E6%B1%A0%E7%A0%94%E7%A9%B6/">
+										00 squid 内存池研究
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/22/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/01%20suqid%20%E5%AD%98%E5%82%A8%E6%A8%A1%E5%9E%8B%E7%A0%94%E7%A9%B6/">
+										01 suqid 存储模型研究
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										04 scylladb&&cassandra
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/08/19/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&&cassandra/00%20scylladb/">
+										00 scylladb
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/31/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&&cassandra/01%20scylladb%20%E9%A9%B1%E5%8A%A8%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/">
+										01 scylladb 驱动使用方法
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										05 kafka
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/08/31/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/05%20kafka/00%20kafka%E5%9F%BA%E7%A1%80/">
+										00 kafka基础
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2020/08/31/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/05%20kafka/01%20kafka%E9%A9%B1%E5%8A%A8/">
+										01 kafka驱动
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										06 rocksdb
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/09/22/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/06%20rocksdb/00%20rocksdb_release_log/">
+										00 rocksdb_release_log
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+							<ul>
+								<li class="directory">
+									<a href="#" class="directory">
+										<i class="fa fa-plus-square-o"></i>
+										06 杂项
+									</a>
+									
+							<ul>
+								<li class="file">
+									<a href="/2020/08/19/06%20%E6%9D%82%E9%A1%B9/00%20%E7%A0%94%E5%8F%91%E9%A1%B9%E7%9B%AE%E4%BA%A4%E6%8E%A5%E5%86%85%E5%AE%B9/">
+										00 研发项目交接内容
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+								</li>
+								
+							</ul>
+			
+		</div>
+	</div>
+</div>
+
+	<!-- 引入正文 -->
+	<div id="content">
+		<h1 id="article-title">
+
+	11 unique_ptr和shared_ptr及weak_ptr的使用
+</h1>
+<div class="article-meta">
+	
+	<span>Fly542</span>
+	<span>2021-08-09 20:30:21</span>
+    
+		<div id="article-categories">
+            
+		</div>
+    
+</div>
+
+<div id="article-content">
+	<h1 id="1-unique-ptr"><a href="#1-unique-ptr" class="headerlink" title="1. unique_ptr"></a>1. unique_ptr</h1><p><a href="https://www.cnblogs.com/5iedu/p/11619357.html" target="_blank" rel="noopener">https://www.cnblogs.com/5iedu/p/11619357.html</a></p>
+<h2 id="1-1-初始化方式"><a href="#1-1-初始化方式" class="headerlink" title="1.1 初始化方式"></a>1.1 初始化方式</h2><ol>
+<li>直接初始化<pre><code>unique&lt;T&gt; myPtr(new T);  //ok。但不能通过隐式转换来构造，如unique&lt;T&gt; myPtr = new T()。因为unique_ptr构造函数被声明为explicit。</code></pre></li>
+<li>移动构造<pre><code>unique&lt;T&gt; myOtherPtr = std::move(myPtr);但不允许复制构造，如unique&lt;T&gt; myOther = myPtr; 因为unique是个只移动类型。</code></pre></li>
+<li>通过make_unique构造<pre><code>unique&lt;T&gt; myPtr = std::make_unique&lt;T&gt;(); //C++14支持的语法。但是make_都不支持添加删除器，或者初始化列表。</code></pre></li>
+<li>通过reset重置<pre><code>如std::unique_ptr up; up.reset(new T());</code></pre></li>
+</ol>
+<h2 id="1-2-指定删除器"><a href="#1-2-指定删除器" class="headerlink" title="1.2 指定删除器"></a>1.2 指定删除器</h2><ol>
+<li><p>unique_ptr&lt;T,D&gt;  u1(p,d);删除器是unique_ptr类型的组成部分，可是普通函数指针或lambda表达式。注意，当指定删除器时需要同时指定其类型，即D不可省略。</p>
+</li>
+<li><p>使用默认的deleter时，unique_ptr对象和原始指针的大小是一样的。当自定义deleter时，如果deleter是函数指针，则unique_ptr对象的大小为8字节。对于函数对象的deleter，unique_ptr对象的大小依赖于存储状态的多少，无状态的函数对象（如不捕获变量的lambda表达式），其大小为4字节。</p>
+</li>
+</ol>
+<h2 id="1-3-源码分析"><a href="#1-3-源码分析" class="headerlink" title="1.3 源码分析"></a>1.3 源码分析</h2><ol>
+<li>unique_ptr的构造函数被声明为explicit，禁止隐式类型转换的行为。原因如下：<pre><code>①可减少误将智能指针指向栈对象的情况。如unique_ptr&lt;int&gt; ui = &amp;i;其中的i为栈变量。
+②可避免将一个普通指针传递给形参为智能指针的函数。假设，如果允许将裸指针传给void foo(std::unique_ptr&lt;T&gt;)函数，则在函数结束后会因形参超出作用域，裸指针将被delete的误操作。</code></pre></li>
+<li>unique_ptr的拷贝构造和拷贝赋值均被声明为delete。因此无法实施拷贝和赋值操作，但可以移动构造和移动赋值。</li>
+<li>删除器是unique_ptr类型的一部分。默认为std::default_delete，内部是通过调用delete来实现。</li>
+<li>unique_ptr可以指向数组，并重载了operator []运算符。如unique_ptr&lt;int[]&gt; ptr(new int[10]); ptr[9]=9;但建议使用使作std::array、std::vector或std::string来代替这种原始数组。</li>
+</ol>
+<h2 id="1-4-常用操作"><a href="#1-4-常用操作" class="headerlink" title="1.4 常用操作"></a>1.4 常用操作</h2><ol>
+<li>get()：返回unique_ptr中保存的裸指针</li>
+<li>reset()：重置unique_ptr。</li>
+<li>release()：放弃对指针的控制权，返回裸指针，并将unique_ptr自身置空。通常用来初始化另一个智能指针。</li>
+<li>swap(q)：交换两个智能指针所指向的对象。</li>
+</ol>
+<h2 id="1-5-基本用法示例"><a href="#1-5-基本用法示例" class="headerlink" title="1.5  基本用法示例"></a>1.5  基本用法示例</h2><pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;memory&gt;  //for smart pointer
+
+using namespace std;
+
+class Widget {};
+
+//返回值RVO优化：
+unique_ptr&lt;int&gt; func()
+{
+    unique_ptr&lt;int&gt; up(new int(100));
+    return  up; //up是个左值，调用拷贝构造给返回值？ No。
+                //C++标准要求当RVO被允许时，要么消除拷贝，要么隐式地把std::move用在要返回的局部
+                //对象上去。这里编译器会直接在返回值位置创建up对象。因此根本不会发生拷贝构造，
+                //unique_ptr本身也不能被拷贝构造。
+
+    //return unique_ptr&lt;int&gt;(new int(100)); //右值，被移动构造。
+}
+
+void foo(std::unique_ptr&lt;int&gt; ptr)
+{
+}
+
+void myDeleter(int* p)
+{
+    cout &lt;&lt; &quot;invoke deleter(void* p)&quot;&lt;&lt; endl;
+    delete p;
+}
+
+int main()
+{
+    //1. unique_ptr的初始化
+    //1.1 通过裸指针创建unique_ptr（由于unique_ptr的构造函数是explicit的，必须使用直接初始化，不能做隐式类型转换）
+    std::unique_ptr&lt;Widget&gt; ptr1(new Widget);      //ok; 直接初始化
+    //std::unique_ptr&lt;Widget&gt; ptr1 = new Widget(); //error。不能隐式将Widget*转换为unqiue_ptr&lt;Widget&gt;类型。
+
+    std::unique_ptr&lt;int[]&gt; ptr2(new int[10]); //指向数组
+
+    //1.2 通过移动构造
+    //std::unique_ptr&lt;Widget&gt; ptr3 = ptr1;    //error，unique_ptr是独占型，不能复制构造
+    std::unique_ptr&lt;Widget&gt; ptr3 = std::move(ptr1);  //ok，unique_ptr是个只移动类型，可以移动构造
+    auto ptr4 = std::move(ptr3);     //ok， ptr4为unique_ptr&lt;Widget&gt;类型
+
+    //1.3 通过std::make_unique来创建
+    auto ptr5 = std::make_unique&lt;int&gt;(10);
+
+    //auto ptr6 = std::make_unique&lt;vector&lt;int&gt;&gt;({1,2,3,4,5}); //error，make_unique不支持初始化列表
+    auto initList = { 1,2,3,4,5 };
+    auto ptr6 = std::make_unique&lt;vector&lt;int&gt;&gt;(initList);
+
+    //2. 传参和返回值
+    int* px = new int(0);
+    //foo(px); //error，px无法隐式转为unique_ptr。可防止foo函数执行完毕后，px会自动释放。
+    //foo(ptr5); //error，智能指针不能被拷贝。因此，可以将foo的形参声明为引用，以避免所有权转移
+    foo(std::move(ptr5)); //ok，通过移动构造
+
+    auto ptr7 = func(); //移动构造
+
+    //3.常用操作
+    std::unique_ptr&lt;Widget&gt; upw1; //空的unique_ptr
+    upw1.reset(new Widget);
+    std::unique_ptr&lt;Widget&gt; upw2(new Widget);
+
+    cout &lt;&lt;&quot;before swap...&quot; &lt;&lt; endl;
+    cout &lt;&lt; &quot;upw1.get() = &quot; &lt;&lt; hex &lt;&lt; upw1.get() &lt;&lt; endl;
+
+    cout &lt;&lt; &quot;upw2.get() = &quot; &lt;&lt; hex &lt;&lt; upw2.get() &lt;&lt; endl;
+
+    cout &lt;&lt; &quot;after swap...&quot; &lt;&lt; endl;
+    upw1.swap(upw2); //交换指针所指的对象
+    cout &lt;&lt; &quot;upw1.get() = &quot; &lt;&lt; hex &lt;&lt; upw1.get() &lt;&lt; endl;
+    cout &lt;&lt; &quot;upw2.get() = &quot; &lt;&lt; hex &lt;&lt; upw2.get() &lt;&lt; endl;
+
+    //upw1.release(); //release放弃了控制权不会释放内存，丢失了指针
+    Widget* pw = upw1.release();//放弃对指针的控制
+    delete pw; //需手动删除
+
+    if (upw1) {  //unique_ptr重载了operator bool()
+        cout &lt;&lt; &quot;upw1 owns resourse&quot; &lt;&lt; endl;
+    }else {
+        cout &lt;&lt; &quot;upw1 lost resourse&quot; &lt;&lt; endl;
+    }
+
+    upw1.reset(upw2.release()); //转移所有权
+    cout &lt;&lt; &quot;upw1.get() = &quot; &lt;&lt; hex &lt;&lt; upw1.get() &lt;&lt; endl;
+    cout &lt;&lt; &quot;upw2.get() = &quot; &lt;&lt; hex &lt;&lt; upw2.get() &lt;&lt; endl;
+
+    //upw1 = nullptr; //释放upw1指向的对象，并将upw1置空
+    //upw1.reset(nullptr);
+
+    //4.unique_ptr的大小
+    std::unique_ptr&lt;int,decltype(&amp;myDeleter)&gt; upd1(new int(0), myDeleter); //自定义删除器
+    auto del = [](auto* p) {delete p; };
+    std::unique_ptr&lt;int, decltype(del)&gt; upd2(new int(0), del); 
+    cout &lt;&lt; sizeof(upw1) &lt;&lt; endl; //4字节，默认删除器
+    cout &lt;&lt; sizeof(upd1) &lt;&lt; endl; //8字节
+    cout &lt;&lt; sizeof(upd2) &lt;&lt; endl; //4字节
+
+    return 0;
+}</code></pre><h2 id="1-6-使用场景"><a href="#1-6-使用场景" class="headerlink" title="1.6 使用场景"></a>1.6 使用场景</h2><h3 id="1-6-1-作为工厂函数的返回类型"><a href="#1-6-1-作为工厂函数的返回类型" class="headerlink" title="1.6.1 作为工厂函数的返回类型"></a>1.6.1 作为工厂函数的返回类型</h3><p>　　1. 工厂函数负责在堆上创建对象，但是调用工厂函数的用户才会真正去使用这个对象，并且要负责这个对象生命周期的管理。所以使用unique_ptr是最好的选择。</p>
+<p>　　2. unique_ptr转为shared_ptr很容易，作为工厂函数本身并不知道用户希望所创建的对象的所有权是专有的还是共享的，返回unique_ptr时调用者可以按照需要做变换。</p>
+<h3 id="1-6-2-PImpl机制：（Pointer-to-Implemention）"><a href="#1-6-2-PImpl机制：（Pointer-to-Implemention）" class="headerlink" title="1.6.2 PImpl机制：（Pointer to Implemention）"></a>1.6.2 PImpl机制：（Pointer to Implemention）</h3><p>　　1. 操作方法</p>
+<p>　　（1）将曾经放在主类中的数据成员放到实现类中去，然后通过指针间接地访问那些数据成员。此时主类中存在只有声明而没有定义的类型（也叫非完整类型），如Widget::Impl。</p>
+<p>　　（2）在实现类中，动态分配和归还原那些原本应在主类中定义的那数据成员对象。即将这个数据成员放到实现类中定义（动态分配其内存）</p>
+<p>　　2. 注意事项</p>
+<p>　　（1）PImpl机制通过降低类的客户和类实现者之间的依赖性，减少了构建遍数。</p>
+<p>　　（2）对于采用std::unique_ptr来实现的PImpl指针，须在类的头文件中声明特殊成员函数，但在实现文件中实现它们（注意，不能直接在头文件中实现，具体原因见《编程实验》中的说明）。如，必须同时声明并实现类的析构函数。再由于自定义了析构函数，编译器不再提供默认的移动构造和移动赋值函数，如果需要这些函数，则也必须在头文件中声明，并在实现类中去实现。</p>
+<p>　　（3）上述建议仅适用于std::unique_ptr，但并不适用于std::shared_ptr。因为删除器在unique_ptr中是其类型的一部分，而在shared_ptr中则不是。声明对象时，unique_ptr<T>支持T是个非完整类型，但在析构时T必须己经是个完整的类型。unique_ptr析构时会先判断T是否为完整类型再调用delete删除其所指对象，但shared_ptr<T>则不会。</p>
+<h3 id="16-3-场景实验"><a href="#16-3-场景实验" class="headerlink" title="16.3 场景实验"></a>16.3 场景实验</h3><pre><code>#ifndef  _WIDGET_H_
+#define _WIDGET_H_
+#include &lt;memory&gt;
+
+//1.传统的做法
+//问题：数据成员会导致Widget.h文件必须include &lt;string&gt;
+//      &lt;vector&gt;和gadget.h。当客户包含Widget.h里，会增加编译时间，而且
+//      如果其中的某个头文件(如Gadget.h)发生改变，则Widget的客户必须重新编译！
+//class Widget
+//{
+//    std::string name;
+//    std::vector&lt;double&gt; data;
+//    Gadget g1, g2, g3;// //自定义类型，位于gadget.h。
+//public:
+//    Widget();
+//};
+
+//2. 采用PImpl手法
+class Widget
+{
+    //声明实现结构体以及指向它的指针
+    struct Impl; //注意只有声明，没实现。是个非完整类型。
+    std::unique_ptr&lt;Impl&gt; pImpl; //使用智能指针而非裸指针。这里声明一个指针非完整类型的指针。注意针对非完整
+                                 //类型，可以做的事情极其有限。由于unique_ptr中会将删除器作为其类型的一部分
+                                 //因此，但unique_ptr析构被调用时，当delete其所指对象时，会先判断T是否是个完
+                                 //整类型。如果不是，则会报错。因此必须在pImpl被析构前，确保Impl被定义（即是个完整类型）
+                                 //因此，使用unique_ptr&lt;非完整类型时&gt;，必须为该类同时定义析构函数！具体原因见后面的分析。
+
+    //std::shared_ptr&lt;Impl&gt; pImpl; //由于删除器不是shared_ptr类型的组成部分。当pImpl被析构时，不会判断T是否为完整类型。
+                                   //因此，不要求Widget必须自定义析构函数。
+
+public:
+    Widget();
+    ~Widget(); //Impl是个非完整类型，这里必须声明析构函数，并在Widget.cpp中实现它。
+                //注意，不能在该文件中实现，因为此时unique_ptr看到的Impl是个非完整类型，unique_ptr内部要求delete前，其
+                //其指向的必须是个完整类的指针。
+
+    //移动构造和移动赋值（由于自定义了析构函数，所以编译器不再提供默认的移动构造和移动赋值函数，这里需手动填加）
+    Widget(Widget&amp;&amp; rhs); //只能声明，须放在.cpp中去实现。编译器会在move构造函数内抛出异常的事件中生成析构pImpl代码，
+                          //而此处Impl为非完整类型。
+    Widget&amp; operator=(Widget&amp;&amp; rhs); //只能声明，须放在.cpp中去实现。因为移动赋值pImpl时，需要先析构pImpl所指对象，但
+                                     //此时仍为非完整类型。
+
+    //让Widget支持复制操作。注意unique_ptr不可复制
+    Widget(const Widget&amp; rhs);  //仅声明
+    Widget&amp; operator=(const Widget&amp; rhs); //仅声明
+};
+
+#endif // ! _WIDGET_H_
+
+Widget.h</code></pre><pre><code>#include &quot;Widget.h&quot;
+
+//将对string和vector和Gadget头文件的依赖从Wigdget.h转移动Wigdget.cpp文件中。如此，Widget类的使用者
+//只需依赖Widget.h，而把复杂的依赖关系留给Widget的实现者(Widget.cpp)去处理
+#include &lt;string&gt;
+#include &lt;vector&gt;
+class Gadget {}; //本应#include &quot;Gardget.h&quot;，但为了简明起见，就直接在这里声明该类
+
+//Widget::Impl的实现(包括此前在Widget中的数据成员)
+struct Widget::Impl
+{
+    std::string name;
+    std::vector&lt;double&gt; data;
+    Gadget g1, g2, g3;
+};
+
+Widget::Widget():pImpl(std::make_unique&lt;Impl&gt;())
+{}
+
+//注意：析构函数必须在Widget::Impl类之后定义。因为此时调用~Widget时，会调用unique_ptr的析构函数
+//而unique_ptr中会调用delete删除其指向的对象，由于~Widget定义在Widget::Impl之后，因此这时看到的
+//Impl是个完整的类，delete前通过了unique_ptr内部完整类型的判断！
+Widget::~Widget() {}//或Widget::~Widget = default;
+
+Widget::Widget(Widget&amp;&amp; rhs) = default;
+Widget&amp; Widget::operator=(Widget&amp;&amp; rhs) = default;
+
+//make_unique(Ts&amp;&amp;... params)== std::unique_ptr&lt;T&gt;(new T(std::forward&lt;Ts&gt;(params)...));
+Widget::Widget(const Widget&amp; rhs):pImpl(std::make_unique&lt;Impl&gt;(*rhs.pImpl))//深拷贝！
+{
+}
+
+Widget&amp; Widget::operator=(const Widget&amp; rhs)
+{
+    *pImpl = *rhs.pImpl; //深拷贝！复制两个指针所指向的内容。pImpl本身是只移动类型
+    return *this;
+}</code></pre><pre><code>#include &lt;iostream&gt;
+#include &lt;memory&gt;
+#include &lt;functional&gt;
+#include &quot;Widget.h&quot;
+using namespace std;
+
+enum class InvestmentType {itSock, itBond, itRealEstate};
+class Investment//投资
+{
+public:
+    virtual ~Investment() {} //声明为virtual,以便正确释放子类对象
+};
+
+class Stock : public Investment {};//股票
+class Bond : public Investment {};  //债券
+class RealEstate : public Investment {}; //不动产
+
+void makeLogEntry(Investment* pInvmt) {}
+
+//工厂函数
+template&lt;typename... Ts&gt;
+auto makeInvestment(Ts&amp;&amp;... params) //返回unique_ptr智能指针
+{
+    //自定义deleter
+    auto delInvmt = [](Investment* pInvmt) //父类指针
+    {
+        makeLogEntry(pInvmt);
+        delete pInvmt; //delete父类指针，所有析构函数须声明为virtual
+    };
+
+    std::unique_ptr&lt;Investment, decltype(delInvmt)&gt; pInv(nullptr, delInvmt);
+
+    if (1/*a Stock Object should be created*/) {
+        pInv.reset(new Stock(std::forward&lt;Ts&gt;(params)...)); //原始指针无法隐式转为unique_ptr，使用reset重置所有权
+    }
+    else if (0/*a Bond Object should be created*/)
+    {
+        pInv.reset(new Bond(std::forward&lt;Ts&gt;(params)...));
+    }
+    else if (0/*a RealEstate should be created*/)
+    {
+        pInv.reset(new RealEstate(std::forward&lt;Ts&gt;(params)...));
+    }
+
+    return pInv;
+}
+
+
+int main()
+{
+    //1. unique_ptr作为工厂函数的返回值。
+    std::shared_ptr&lt;Investment&gt; sp =  makeInvestment();  //从std::unique_ptr转换到std::shared_ptr（从独占到共享的
+                                                         //转换简单而高效） 
+
+    //2. PImpl手法的测试
+    Widget w;  //注意Widget的析构函数必须手动实现。否则，则当w析构时编译器会将默认的析构函数inline
+               //到这里来，但由于include widget.h在inline动作之前，此时编译器看到的是非完整类型的
+               //Impl类。因此Widget类中的unique_ptr析构时，delete前检查出是个非完整类指针，从而报错。
+}</code></pre><h1 id="2-shared-ptr"><a href="#2-shared-ptr" class="headerlink" title="2. shared_ptr"></a>2. shared_ptr</h1><p><a href="https://www.cnblogs.com/5iedu/p/11622401.html" target="_blank" rel="noopener">https://www.cnblogs.com/5iedu/p/11622401.html</a></p>
+<h2 id="2-1-shared-ptr的基本用法"><a href="#2-1-shared-ptr的基本用法" class="headerlink" title="2.1 shared_ptr的基本用法"></a>2.1 shared_ptr的基本用法</h2><h3 id="2-1-1-与unique-ptr的比较"><a href="#2-1-1-与unique-ptr的比较" class="headerlink" title="2.1.1 与unique_ptr的比较"></a>2.1.1 与unique_ptr的比较</h3><table>
+<thead>
+<tr>
+<th>比较</th>
+<th>shared_ptr</th>
+<th>unique_ptr</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>初始化</td>
+<td>①shared_ptr<T> sp; sp.reset(new T());②shared_ptr<T> sp(new T());③shared_ptr<T> sp1 = sp; <strong>//**</strong>拷贝构造**④auto sp = make_shared<int>(10);</td>
+<td>①unique_ptr<T> up; up.reset(new T());②unique_ptr<T> up(new T());③unique_ptr<T> up1 = std::move(up);<strong>//**</strong>移动构造**④auto up = make_unique<int>(10);</td>
+<td>两者的构造函数将声明为<strong>explicit，即不允许隐式类型转换，</strong>如shared_ptr<int> sp = new int(10);</td>
+</tr>
+<tr>
+<td>条件判断</td>
+<td>如，if(sp){…}</td>
+<td>如，if(up){…}</td>
+<td>两都均<strong>重载operator bool()</strong></td>
+</tr>
+<tr>
+<td>解引用</td>
+<td>*sp</td>
+<td>*up</td>
+<td>解引用，获得它所指向的对象</td>
+</tr>
+<tr>
+<td>-&gt;mem</td>
+<td>sp-&gt;mem</td>
+<td>up-&gt;mem</td>
+<td>重载-&gt;运算符</td>
+</tr>
+<tr>
+<td>get()</td>
+<td>sp.get()</td>
+<td>up.get()</td>
+<td>返回智能指针中保存的裸指针，要小心使用。</td>
+</tr>
+<tr>
+<td>p.swap(q)</td>
+<td>sp.swap(q);</td>
+<td>up.swap(q);</td>
+<td>交换p和q指针</td>
+</tr>
+<tr>
+<td>独有操作</td>
+<td>①shared_ptr<T> p(q);//拷贝构造②p = q;//赋值③p.unique();若p.use_count()为1，返回true,否则返回false。④p.use_count()//返回强引用计数</td>
+<td>①up=nullptr;释放up指向的对象，并将up置空。②up.release();//up<strong>放弃对指针的控制权，返回裸指针，并将up置空</strong>③up.reset();释放up指向的对象。 up.reset(q);其中q为裸指针。令up指向q所指对象。 up.reset(nullptr);置空</td>
+<td>注意:①unique_ptr<strong>不可拷贝和赋值，但可以被移动</strong>。②release会切断unique_ptr和它原来管理的对象间的联系。<strong>通常用来初始化另一个智能指针</strong>。</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-2-指定删除器"><a href="#2-1-2-指定删除器" class="headerlink" title="2.1.2 指定删除器"></a>2.1.2 指定删除器</h3><p>　　1. shared_ptr<T> sp1(q, deleter1);与unique_ptr不同，<strong>删除器不是shared_ptr类型的组成部分</strong>。假设，shared_ptr<T> sp2(q,deleter2)，尽管sp1和sp2有着不同的删除器，但两者的类型是一致的，都可以被放入vector&lt;shared_ptr<T>&gt;类型的同一容器里。</p>
+<p>　　2. 与std::unique_ptr不同，自定义删除器不会改变std::shared_ptr的大小。<strong>其始终是祼指针大小的两倍</strong>。</p>
+<p>　　3. 当使用shared_ptr<strong>管理动态数组</strong>时，需要指定删除器。因为默认删除器不支持数组对象。如shared_ptr<int> sp(new int[10], std::default_delete&lt;<strong>int[]</strong>&gt;);</p>
+<p>　　4. 删除器可以是普通函数、函数对象和lambda表达式等。默认的删除器为std::default_delete，其内部是通过delete来实现功能的。</p>
+<h2 id="2-2-剖析std-shared-ptr"><a href="#2-2-剖析std-shared-ptr" class="headerlink" title="2.2 剖析std::shared_ptr"></a>2.2 剖析std::shared_ptr</h2><h3 id="2-2-1-std-shared-ptr的内存模型"><a href="#2-2-1-std-shared-ptr的内存模型" class="headerlink" title="2.2.1 std::shared_ptr的内存模型"></a>2.2.1 std::shared_ptr的内存模型</h3><img src="/2021/08/09/03%20%E5%BC%80%E5%8F%91/01%20C&C++/11%20unique_ptr%E5%92%8Cshared_ptr%E5%8F%8Aweak_ptr%E7%9A%84%E4%BD%BF%E7%94%A8/2.png" class="">
+
+<p>　　1. shared_ptr包含了<strong>一个指向对象的指针和一个指向控制块的指针</strong>。每一个由std::shared_ptr管理的对象都有一个<strong>控制块</strong>，它除了<strong>包含引用计数之外，还包含了自定义删除器的副本和分配器的副本以及其他附加数据</strong>。<br>　　2. 控制块的创建规则：</p>
+<p>　　（1）<strong>std::make_shared总是创建一个控制块</strong>。</p>
+<p>　　（2）从<strong>具备所有权的指针出发构造一个std::shared_ptr时，会创建一个控制块</strong>。（如std::unique_ptr转为shared_ptr时会创建控制块，因为unique_ptr本身不使用控制块，同时unique_ptr置空）</p>
+<p>　　（3）<strong>当std::shared_ptr构造函数使用裸指针作为实参时，会创建一个控制块</strong>。这意味从同一个裸指针出发来构造不止一个std::shared_ptr时会创建多重的控制块，也意味着对象会被析构多次。如果想从一个己经拥有控制块的对象出发创建一个std::shared_ptr，可以传递一个shared_ptr或weak_ptr而非裸指针作为构造函数的实参，这样则不会创建新的控制块。</p>
+<p>【经验】</p>
+<p>　　①尽可能<strong>避免将裸指针传递给一个std::shared_ptr的构造函数</strong>，常用的替代手法是使用std::make_shared。</p>
+<p>　　②如果必须将一个裸指针传递给shared_ptr的构造函数，就<strong>直接传递new运算符的结果，而非传递一个裸指针变量</strong>。如shared_ptr<Widget> spw (new Widget, logginDel);</p>
+<p>　　③<strong>不要将this指针返回给shared_ptr</strong>。当希望将this指针托管给shared_ptr时，类需要继承自std::enable_shared_from_this，并且从shared_from_this()中获得shared_ptr指针。（具体见《enable_shared_from_this》部分的分析）</p>
+<p>　　3. 引用计数（强引用计数）</p>
+<p>　　（1）<strong>shared_ptr的构造函数会使该引用计数递增</strong>，而<strong>析构函数会使该计数递减</strong>。但移动构造时表示从一个己有的shared_ptr移动构造到一个新的shared_ptr。这意味着一旦新的shared_ptr产生后，原有的shared_ptr会被置空，其结果是引用计数没有变化。</p>
+<p>　　（2）<strong>复制赋值同时执行两种操作</strong>（如sp1 和sp2是指向不同对象的shared_ptr，则sp1 = sp2时，将修改sp1使得其指向sp2所指的对象。而最初sp1所指向的对象的引用计数递减，同时sp2所指向的对象引用计数递增）</p>
+<p>　　（3）reset函数，如果不带参数时，则引用计数减1。如果不带参数时，如sp.reset(p)则sp原来指向的对象引用计数减1，同时sp指向新的对象(p)</p>
+<p>　　（4）<strong>如果实施一次递减后最后的引用计数变成0，即不再有shared_ptr指向该对象，则会被shared_ptr析构掉</strong>。</p>
+<p>　　（5）引用计数的递增和递减是<strong>原子操作</strong>，即允许不同线程并发改变引用计数。</p>
+<p>shared_ptr的陷阱分析</p>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;memory&gt; // for smart pointer
+
+using namespace std;
+
+class Widget{};
+
+void func(shared_ptr&lt;Widget&gt; sp){}
+
+int funcException() { /*throw 1;*/ return 0; } //假设该函数会抛出异常
+
+void demo(shared_ptr&lt;int&gt; sp, int f){}
+
+int main()
+{
+    //1. 陷阱：用同一裸指针创建多个shared_ptr
+    //1.1 错误做法
+    auto pw = new Widget;
+    std::shared_ptr&lt;Widget&gt; spw1(pw); //强引用计数为1，为pw创建一个控制块
+    //std::shared_ptr&lt;Widget&gt; spw2(pw); //强引用计数为1，为pw创建另一个新的控制块，会导致多次析构
+
+    auto sp = new Widget;
+    func(shared_ptr&lt;Widget&gt;(sp)); //慎用裸指针，sp将在func结束后被释放！
+
+    //1.2 正确做法
+    std::shared_ptr&lt;Widget&gt; spw3(spw1); //ok，pw的强引用计数为2。使用与spw1同一个控制块。
+    std::shared_ptr&lt;Widget&gt; spw4(new Widget); //将new的结果直接传递给shared_ptr
+    std::shared_ptr&lt;Widget&gt; spw5 = std::make_shared&lt;Widget&gt;(); //强烈推荐的做法!
+
+    //2. 陷阱：在函数实参中创建shared_ptr
+    //2.1 shared_ptr与异常安全问题
+    //由于参数的计算顺序因编译器和调用约定而异。假定按如下顺序计算
+    //A.先前new int，然后funcException();
+    //B.假设恰好此时funcException产生异常。
+    //C.因异常出现shared_ptr还来不及创建，于是int内存泄露
+    demo(shared_ptr&lt;int&gt;(new int(100)), funcException());
+
+    //2.2 正确做法
+    auto p1 = std::make_shared&lt;int&gt;(100);
+    demo(p1, funcException());
+
+    //3. 陷阱：shared_ptr的循环引用（应避免）（见第22课 weak_ptr）
+
+    //4. 删除器
+    auto deleter1 = [](Widget* pw) {cout &lt;&lt; &quot;deleter1&quot;&lt;&lt; endl; delete pw; };
+    auto deleter2 = [](Widget* pw) {cout &lt;&lt; &quot;deleter2&quot;&lt;&lt; endl; delete pw; };
+
+    std::shared_ptr&lt;Widget&gt; pw1(new Widget, deleter1);
+    std::shared_ptr&lt;Widget&gt; pw2(new Widget, deleter2);
+
+    std::shared_ptr&lt;Widget&gt; pw3(pw1);
+    pw3.reset(new Widget); //deleter恢复为默认的std::default_delete
+
+    vector&lt;std::shared_ptr&lt;Widget&gt;&gt; vecs;
+    vecs.emplace_back(pw1);
+    vecs.emplace_back(pw2); //pw1和pw2虽然有不同的删除器，但类型相同，可以放入同一容器内。
+
+    //5. 其它
+    //5.1 shared_ptr的大小
+    cout &lt;&lt; sizeof(spw1) &lt;&lt; endl;//8
+    cout &lt;&lt; sizeof(pw1) &lt;&lt; endl; //8
+    //5.2 shared_ptr管理动态数组（建议用std::array、std::vector取代）
+    std::shared_ptr&lt;int&gt; pArray1(new int[10], [](int* p) {delete[] p; }); //使用delete[]
+    std::shared_ptr&lt;int&gt; pArray2(new int[10], std::default_delete&lt;int[]&gt;()); //使用default_delete&lt;int[]&gt;()
+    //5.3 常见操作
+    cout &lt;&lt; pw1.use_count() &lt;&lt; endl; //2
+
+    if (pw1) //pw1.use_count &gt;= 1 ?
+    {
+        cout &lt;&lt; &quot;pw1.use_count &gt;= 1&quot; &lt;&lt; endl;
+    }
+    else
+    {
+        cout &lt;&lt; &quot;pw1.use_count == 0&quot; &lt;&lt; endl;
+    }
+    //5.4 别名构造
+    int* p = new int(10);
+
+    std::shared_ptr&lt;int&gt; a(new int(20));
+    std::shared_ptr&lt;int&gt; b(a, p);  // alias constructor: co-owns a, points to p。可用于多继承中
+                                   // a 和 b拥用相同的控制块，但两者指向的对象不同。由于两者拥用相同的
+                                   //的控制块，可认为a和b所指对象具有相同的拥有者，因此10和20两个堆对象
+                                   //拥有相同的生命期
+    cout &lt;&lt; *a &lt;&lt; endl; //20
+    cout &lt;&lt; *b &lt;&lt; endl; //10
+
+    return 0;
+}</code></pre><h3 id="2-2-2-enable-shared-from-this模板的分析"><a href="#2-2-2-enable-shared-from-this模板的分析" class="headerlink" title="2.2.2 enable_shared_from_this模板的分析"></a>2.2.2 enable_shared_from_this模板的分析</h3><p><strong>（一）模板分析（以boost::enable_shared_from_this为例）</strong></p>
+<pre><code>template&lt;class T&gt; class enable_shared_from_this
+{
+protected:
+
+    enable_shared_from_this() BOOST_NOEXCEPT
+    {
+    }
+
+    enable_shared_from_this(enable_shared_from_this const &amp;) BOOST_NOEXCEPT
+    {
+    }
+
+    enable_shared_from_this &amp; operator=(enable_shared_from_this const &amp;) BOOST_NOEXCEPT
+    {
+        return *this;
+    }
+
+    ~enable_shared_from_this() BOOST_NOEXCEPT // ~weak_ptr&lt;T&gt; newer throws, so this call also must not throw
+    {
+    }
+
+public:
+
+    shared_ptr&lt;T&gt; shared_from_this()
+    {
+        shared_ptr&lt;T&gt; p( weak_this_ );
+        BOOST_ASSERT( p.get() == this );
+        return p;
+    }
+
+    shared_ptr&lt;T const&gt; shared_from_this() const
+    {
+        shared_ptr&lt;T const&gt; p( weak_this_ );
+        BOOST_ASSERT( p.get() == this );
+        return p;
+    }
+
+public: // actually private, but avoids compiler template friendship issues
+
+    // Note: invoked automatically by shared_ptr; do not call
+    template&lt;class X, class Y&gt; void _internal_accept_owner( shared_ptr&lt;X&gt; const * ppx, Y * py ) const
+    {
+        if( weak_this_.expired() )
+        {
+            weak_this_ = shared_ptr&lt;T&gt;( *ppx, py );
+        }
+    }
+
+private:
+
+    mutable weak_ptr&lt;T&gt; weak_this_;
+};
+
+boost::enable_shared_from_this</code></pre><ol>
+<li><p>enable_shared_from_this模板类提供两个public属性的shared_from_this成员函数。这两个函数内部会通过weak_this_（weak_ptr类型）成员来创建shared_ptr。</p>
+</li>
+<li><p><em>internal_accept_owner函数不能手动调用，这个**函数会被shared_ptr自动调用，该函数是用来初始化唯一的成员变量weak_this</em>**。</p>
+</li>
+<li><p>根据对象生成顺序，先初始化基类enable_shared_from_this，再初始化派生类对象本身。这时对象己经生成，但weak_this_成员还未被初始化，最后<strong>应通过shared_ptr<T> sp(new T())等方式调用shared_ptr构造函数(内部会调用_internal_accept_owner)来初始化weak_this_成员</strong>。而<strong>如果在调用shared_from_this函数之前weak_this_成员未被初始化，则会通过ASSERT报错提示。</strong></p>
+</li>
+</ol>
+<p>（二）使用说明</p>
+<ol>
+<li>基类必须为enable_shared_from_this<T>，其中<strong>T为派生类的类名</strong>。（这种方法叫奇妙递归模板模式）</li>
+<li>通过调用shared_from_this()成员函数获得一个和this指针指向相同对象的shared_ptr。</li>
+<li>从内部实现看，shared_from_this会查询当前对象的控制块，并创建一个指向该控制块的新shared_ptr。这样的设计就要求当前对象己有一个与其关联的控制块。为了实现这一点，就必须有一个己经存在指向当前对象的std::shared_ptr，如果不存在，则通常shared_from_this会抛出异常。</li>
+</ol>
+<p>安全地从this指针创建shared_ptr</p>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;memory&gt;
+
+using namespace std;
+
+//1. 从this指针创建shared_ptr
+//1.1 错误的做法
+class Test1
+{
+public:
+    //析构函数
+    ~Test1() { cout &lt;&lt;&quot;~Test1()&quot; &lt;&lt; endl; }
+
+    //获取指向当前对象的指针
+    std::shared_ptr&lt;Test1&gt; getObject()
+    {
+        shared_ptr&lt;Test1&gt; pTest(this); //危险！ 直接从this指针创建，会为this对象创建新的控制块！
+                                       //从而可能导致this所指对象被多次析构
+        return pTest;
+    }
+};
+
+//1.2 正确的做法
+class Test2 : public std::enable_shared_from_this&lt;Test2&gt; //继承！ 注意Test2为基类的模板参数  (递归模板模式)
+{
+public:
+    //析构函数
+    ~Test2() { cout &lt;&lt; &quot;~Test2()&quot; &lt;&lt; endl; }
+
+    std::shared_ptr&lt;Test2&gt; getObject()
+    {
+        return shared_from_this(); //调用enable_shared_from_this模板的成员函数，获取this对象的shared_ptr
+    }
+};
+
+//2. shared_from_this函数的正确调用
+//2.1 一般做法
+class Test3 : public std::enable_shared_from_this&lt;Test3&gt;
+{
+public:
+    //构造函数中不能使用shared_from_this
+    Test3()
+    {
+        //std::shared_ptr&lt;Test3&gt; sp = shared_from_this(); //error，此时基类（enable_shared_from_this&lt;Test3&gt;）
+                                                          //虽己构造完，但shared_ptr的构造函数还没被调用，weak_this_指针
+                                                          //未被初始化，因此调用shared_from_this会抛出异常
+    }
+
+    //调用process之前，必须确保shared_ptr的构造函数己被执行（即weak_this_被初始化）
+    void process()
+    {
+        std::shared_ptr&lt;Test3&gt; sp = shared_from_this();
+    }
+};
+
+//2.2 改进做法：利用工厂函数来提供shared_ptr
+class Test4 : public std::enable_shared_from_this&lt;Test4&gt;
+{
+    Test4() {}  //构造函数设为private
+public:
+
+    //提供工厂函数
+    template&lt;typename... Ts&gt;
+    static std::shared_ptr&lt;Test4&gt; create(Ts&amp;&amp; ... params)
+    {
+        std::shared_ptr&lt;Test4&gt; ret(new Test4(params...));
+        return ret;
+    }
+
+    void process()
+    {
+        std::shared_ptr&lt;Test4&gt; sp = shared_from_this();
+    }
+};
+
+//3. enable_shared_from_this的应用举例
+class Widget;
+std::vector&lt;std::shared_ptr&lt;Widget&gt;&gt; processWidgets; //记录己被处理过的Widgets
+
+class Widget : public std::enable_shared_from_this&lt;Widget&gt; //需要从这里继承
+{
+public:
+    void process()
+    {
+        //错误做法：直接将this传给shared_ptr&lt;Widget&gt;
+        //processWidgets.emplace_back(this); //将处理完的Widget加入链表。
+                                             //error，这种做法本质上是用裸指针来创建shared_ptr，会为this对象创建
+                                             //新的控制块。如果外部new Widget时，也将指针交给shared_ptr管理时，会出现为同
+                                             //一个this对象创建多个控制块，从而造成this对象的多次析构！
+
+        //正确做法：（为了确保shared_from_this在shared_ptr构造函数后被调用，可以采用工厂函数的方式来创建Widget，
+        //具体见前面的例子）
+        processWidgets.emplace_back(shared_from_this()); //将指向当前对象的shared_ptr加入到链表中
+    }
+
+    ~Widget() { cout &lt;&lt;&quot;~Widget()&quot; &lt;&lt; endl; }
+};
+
+int main()
+{
+    //1.  从this指针创建shared_ptr
+    //1.1 错误做法：对象被多次析构
+    {
+        //std::shared_ptr&lt;Test1&gt; pt1(new Test1());
+        //std::shared_ptr&lt;Test1&gt; pt2 = pt1-&gt;getObject();
+    }
+
+    //1.2 正确做法
+    {
+        std::shared_ptr&lt;Test2&gt; pt1(new Test2());
+        std::shared_ptr&lt;Test2&gt; pt2 = pt1-&gt;getObject();
+    }
+
+    //2. shared_from_this的正确调用
+    {
+        //2.1 错误方法：
+        Test3 t;
+        //t.process(); //错误，shared_ptr构造函数没有被执行
+
+        Test3* pt = new Test3();
+        //pt-&gt;process(); //错误，原因同上。
+        delete pt;
+
+        //正确做法
+        std::shared_ptr&lt;Test3&gt; spt(new Test3); //shared_ptr构造被执行,weak_this_被正确初始化
+        spt-&gt;process(); 
+
+        //2.2 工厂方法提供shared_ptr，确保shared_ptr构造函数被执行！
+        std::shared_ptr&lt;Test4&gt; spt2 = Test4::create();
+        spt2-&gt;process();
+    }
+
+    //3. enable_shared_from_this的应用举例
+    {
+        std::shared_ptr&lt;Widget&gt; sp(new Widget);
+        sp-&gt;process();
+    }
+
+    return 0;
+}</code></pre><h1 id="3-weak-ptr"><a href="#3-weak-ptr" class="headerlink" title="3. weak_ptr"></a>3. weak_ptr</h1><p><a href="https://www.cnblogs.com/5iedu/p/11623757.html" target="_blank" rel="noopener">https://www.cnblogs.com/5iedu/p/11623757.html</a></p>
+<h2 id="3-1-weak-ptr的概况"><a href="#3-1-weak-ptr的概况" class="headerlink" title="3.1. weak_ptr的概况"></a>3.1. weak_ptr的概况</h2><h3 id="3-1-1-weak-ptr的创建"><a href="#3-1-1-weak-ptr的创建" class="headerlink" title="3.1.1 weak_ptr的创建"></a>3.1.1 weak_ptr的创建</h3><p>　　1. 直接初始化：weak_ptr<T> wp(sp); //其中sp为shared_ptr类型</p>
+<p>　　2. 赋值： wp1 = sp; //其中sp为shared_ptr类型</p>
+<p> 　　　　　　wp2 = wp1; //其中wp1为weak_ptr类型</p>
+<h3 id="3-1-2-常用操作"><a href="#3-1-2-常用操作" class="headerlink" title="3.1.2 常用操作"></a>3.1.2 常用操作</h3><p>　　1. use_count()：获取当前控制块中资源的强引用计数。</p>
+<p>　　2. expired()：判断所观测的资源<strong>是否失效</strong>（即己经被释放），即use_count是否为0。</p>
+<p> 　　（1）shared_ptr<int> sp1 = wp.<strong>lock()</strong>;//<strong>如果wp失效,则sp为空</strong>（其中wp为weak_ptr类型）</p>
+<p> 　　（2）shared_ptr<int> sp2(wp); //<strong>如果wp失效，则抛std::bad_weak_ptr异常</strong>。</p>
+<p>　　3. lock()：<strong>获取所监视资源的shared_ptr</strong>，如shared_ptr<int> sp = wp.lock(); //wp为weak_ptr类型。</p>
+<p>　　4. reset()：重置weak_ptr，<strong>影响弱引用计数</strong>。</p>
+<h3 id="3-1-3-注意事项"><a href="#3-1-3-注意事项" class="headerlink" title="3.1.3 注意事项"></a>3.1.3 注意事项</h3><p>　　1. weak_ptr不是独立的智能指针，它是shared_ptr的助手，只是监视shared_ptr管理的资源是否释放，<strong>不会影响强引用计数</strong>，不能管理资源。</p>
+<p>　　2.weak_ptr<strong>没有重载操作符*和-&gt;</strong>，因为它不共享指针，不能操作资源。</p>
+<p>　　3.weak_ptr主要<strong>用来代替可能空悬的shared_ptr</strong>。</p>
+<p>【编程实验】weak_ptr初体验</p>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;memory&gt;
+
+using namespace std;
+
+int main()
+{
+    auto sp1 = make_shared&lt;int&gt;(10);
+    weak_ptr&lt;int&gt; wp(sp1);  //通过shared_ptr初始化
+    weak_ptr&lt;int&gt; wp1, wp2;
+    wp1 = sp1;   //利用shared_ptr来赋值
+    wp2 = wp;    //利用weak_ptr赋值
+    auto sp2 = wp2.lock(); //sp2为shared_ptr类型
+
+    sp1 = nullptr;
+
+    cout &lt;&lt; wp2.use_count() &lt;&lt; endl; //1，强引用计数
+    return 0;
+}
+</code></pre><h2 id="3-2-weak-ptr的应用"><a href="#3-2-weak-ptr的应用" class="headerlink" title="3.2 weak_ptr的应用"></a>3.2 weak_ptr的应用</h2><h3 id="3-2-1-缓存对象"><a href="#3-2-1-缓存对象" class="headerlink" title="3.2.1 缓存对象"></a>3.2.1 缓存对象</h3><p>　　1. 考虑一个工厂函数loadWidget，该函数基于唯一ID来创建一些指向只读对象的智能指针。</p>
+<p>　　2. 假设该只读对象需要被频繁使用，而且经常需要从文件或数据库中加载。那么可以考虑将对象缓存起来。同时为了避免过量缓存，当不再使用时，则将该对象删除。</p>
+<p>　　3. 由于带缓存，工厂函数返回unique_ptr类型显然不合适。因为调用者和缓存管理器均需要一个指向这些对象的指针。</p>
+<p>　　4. 当用户用完工厂函数返回的对象后，该对象会被析构，此时相应的缓存条目将会空悬。因为可以<strong>考虑将工厂函数的返回值设定为shared_ptr类型，而缓存类型为weak_ptr类型</strong>。</p>
+<h3 id="3-2-2-观察者模式"><a href="#3-2-2-观察者模式" class="headerlink" title="3.2.2 观察者模式"></a>3.2.2 观察者模式</h3><ol>
+<li><p>观察者模式是在subject状态发生改变时，通知观察者的一种设计模式。</p>
+<ol start="2">
+<li>在多数实现中，<strong>每个subject持有指向观察者的指针</strong>，这使得当subject状态改变时可以很容易通知观察者。</li>
+</ol>
+</li>
+<li><p><strong>subject</strong>不会控制其观察者的生存期，因此应该是持有观察者的weak_ptr指针**。同时在subject的使用某个指针时，可以先确定是否空悬。</p>
+</li>
+</ol>
+<h3 id="3-2-3-解决循环引用"><a href="#3-2-3-解决循环引用" class="headerlink" title="3.2.3 解决循环引用"></a>3.2.3 解决循环引用</h3> <img src="/2021/08/09/03%20%E5%BC%80%E5%8F%91/01%20C&C++/11%20unique_ptr%E5%92%8Cshared_ptr%E5%8F%8Aweak_ptr%E7%9A%84%E4%BD%BF%E7%94%A8/1.png" class="">
+
+<p>　　1. A、B、C三个对象的数据结构中，A和C共享B的所有权，因此各持有一个指向B的std::shared_ptr;</p>
+<p>　　2. 假设有一个指针从B指回A（<strong>即上图中的红色箭**</strong>头**），则该指针的类型应为weak_ptr，而不能是裸指针或shared_ptr，原因如下：</p>
+<p>　　　①假如是裸指针，当A被析构时，由于C仍指向B，所以B会被保留。但B中保存着指向A的空悬指针（野指针），而B却检测不出来，但解引用该指针时会产生未定义行为。</p>
+<p>　　　②假如是shared_ptr时。由于A和B相互保存着指向对方的shared_ptr，此时会形成循环引用，从而阻止了A和B的析构。</p>
+<p>　　　③假如是weak_ptr，这可以避免循环引用。假设A被析构，那么B的回指指针会空悬，但B可以检测到这一点，同时由于该指针是weak_ptr，不会影响A的强引用计数，因此当shared_ptr不再指向A时，不会阻止A的析构。</p>
+<h3 id="3-2-4监视this智能指针"><a href="#3-2-4监视this智能指针" class="headerlink" title="3.2.4监视this智能指针"></a>3.2.4监视this智能指针</h3><p>见shared_ptr中的enable_shared_from_this，其中的weak_this_指针即为weak_ptr类型，用于监视this指针。</p>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;memory&gt; //for smart pointer
+#include &lt;unordered_map&gt; //for unordered_map
+#include &lt;set&gt;
+
+using namespace std;
+
+class Widget
+{
+public:
+    Widget(int id):ID(id){}
+
+    int ID;
+};
+
+//1. 利用weak_ptr来缓存对象
+//模拟从数据库中加载，并创建shared_ptr指向widget对象
+shared_ptr&lt;Widget&gt; loadWidget(int WidgetID)
+{
+    return make_shared&lt;Widget&gt;(WidgetID); 
+}
+
+//带缓存的工厂函数
+std::shared_ptr&lt;const Widget&gt; fastloadWidget(int WidgetID) //返回shared_ptr类型
+{
+    //缓存：weak_ptr类型
+    static std::unordered_map&lt;int, std::weak_ptr&lt;const Widget&gt;&gt; cache;
+
+    auto objPtr = cache[WidgetID].lock(); //objPtr的类型为shared_ptr，指向缓存的对象
+
+    if (!objPtr) { //如果对象不在缓存中. 这里省略了缓存中因失效而不断累积std::weak_ptr的处理。
+        objPtr = loadWidget(WidgetID);
+        cache[WidgetID] = objPtr;
+    }
+
+    return objPtr;
+}
+
+//2. 观察者模式
+//2.1 观察者
+class WeatherObservers //抽象观察者
+{
+public:
+    virtual void updateWeatherInfo(int num) = 0;
+};
+//机场：具体观察者
+class Airport : public WeatherObservers
+{
+public:
+    void updateWeatherInfo(int num) override
+    {
+        std::cout &lt;&lt;&quot;Airport: &quot; &lt;&lt; num &lt;&lt; endl;
+    }
+};
+//学校：具体观察者
+class School : public WeatherObservers
+{
+public:
+    void updateWeatherInfo(int num) override
+    {
+        std::cout &lt;&lt; &quot;School: &quot; &lt;&lt; num &lt;&lt; endl;
+    }
+};
+
+//2.1 主题（气象站）
+class WeatherStation
+{
+    using ObserverPtr = std::weak_ptr&lt;WeatherObservers&gt;; //弱引用
+
+    //set集合中保存观察者的弱引用（以ObserverPtr为关键字，基于ownership排序）
+    using ObserverList = std::set&lt;ObserverPtr, std::owner_less&lt;ObserverPtr&gt;&gt;;
+
+    ObserverList obs; //保存所有观察者
+public:
+    //注册观察者
+    void registerObserver(const ObserverPtr oPtr)
+    {
+        if (obs.find(oPtr) == obs.end()) {
+            obs.insert(oPtr);
+        }
+    }
+    //注销观察者
+    void unregisterObserver(const ObserverPtr oPtr) //oPtr为weak_ptr类型
+    {
+        if (obs.find(oPtr) != obs.end())
+        {
+            obs.erase(oPtr);
+        }
+    }
+
+    //通知各个观察者
+    void notifyObservers(int num)
+    {
+        std::shared_ptr&lt;WeatherObservers&gt; tempPtr;
+        for (auto&amp; ob : obs)
+        {
+            if ((tempPtr = ob.lock())) {
+                tempPtr-&gt;updateWeatherInfo(num);
+            }
+        }
+    }
+};
+
+
+int main()
+{
+    //观察者模式
+    WeatherStation station;
+    std::shared_ptr&lt;Airport&gt; airport(new Airport());
+    std::shared_ptr&lt;School&gt;  school(new School());
+
+    station.registerObserver(airport);
+    station.registerObserver(school);
+
+    station.notifyObservers(1);
+
+    station.unregisterObserver(school);
+    station.notifyObservers(2);
+
+    return 0;
+}
+/*输出结果
+Airport: 1
+School: 1
+Airport: 2
+*/</code></pre>
+</div>
+
+
+    <div class="post-guide">
+        <div class="item left">
+            
+        </div>
+        <div class="item right">
+            
+              <a href="/2021/05/17/03%20%E5%BC%80%E5%8F%91/01%20C&C++/10%20%E6%8C%87%E9%92%88/">
+                10 指针
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+              </a>
+            
+        </div>
+    </div>
+
+
+
+	<div id="vcomments"></div>
+
+
+<script>
+	
+		// 评论
+		new Valine({
+			av: AV,
+			el: '#vcomments',
+			notify: false,
+			verify: false,
+			path: window.location.pathname,
+			appId: 'kqRG1YI357MX0zgAERzjbptL-gzGzoHsz',
+			appKey: '2PLYnaLv42a7NAbLhpOadDfj',
+			placeholder: '请输入评论',
+			avatar: 'retro',
+			recordIP: false
+		})
+	
+	
+</script>
+	</div>
+	<div id="footer">
+	<p>
+	©2019-<span id="footerYear"></span> 
+	<a href="/">Fly542</a> 
+	
+	
+		|
+		<span id="busuanzi_container_site_pv">
+			pv
+			<span id="busuanzi_value_site_pv"></span>
+		</span>
+		|
+		<span id="busuanzi_container_site_uv"> 
+			uv
+			<span id="busuanzi_value_site_uv"></span>
+		</span>
+	
+	<br>
+	Powered by <a href="//fly542.cn" target="_blank">Fly542</a>
+	</p>
+</div>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?a630d6a8f1929d069d0a6c8ade4e9add";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+	<button id="totop-toggle" class="toggle"><i class="fa fa-angle-double-up" aria-hidden="true"></i></button>
+</body>
+</html>
