@@ -9,7 +9,7 @@
 	
 	<title>
 	
-		03 开发/02 Rust/00 fun_code/有趣的所有权问题问题 | 
+		c++11 std::bind 详解 | 
 	 
 	Fly542 技术积累
 	</title>
@@ -658,7 +658,7 @@
 							</ul>
 			
 							<ul>
-								<li class="file">
+								<li class="file active">
 									<a href="/2021/08/12/03%20%E5%BC%80%E5%8F%91/01%20C&C++/12%20c11%20bind%E8%AF%A6%E8%A7%A3/">
 										12 c11 bind详解
 									</a>
@@ -739,7 +739,7 @@
 							</ul>
 			
 							<ul>
-								<li class="file active">
+								<li class="file">
 									<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/%E6%9C%89%E8%B6%A3%E7%9A%84%E6%89%80%E6%9C%89%E6%9D%83%E9%97%AE%E9%A2%98%E9%97%AE%E9%A2%98/">
 										有趣的所有权问题问题
 									</a>
@@ -1090,12 +1090,12 @@
 	<div id="content">
 		<h1 id="article-title">
 
-	有趣的所有权问题问题
+	12 c11 bind详解
 </h1>
 <div class="article-meta">
 	
 	<span>Fly542</span>
-	<span>2020-07-31 10:22:08</span>
+	<span>2021-08-12 12:01:03</span>
     
 		<div id="article-categories">
             
@@ -1104,39 +1104,45 @@
 </div>
 
 <div id="article-content">
-	<p>代码1</p>
-<pre><code>fn main() {
-    let mut v = vec![1,2,3];
-    let first = &amp;v[0];
-    v.push(5);
-    println!(&quot;Hello, world!, first={}&quot;, first);
-}</code></pre><p>代码2</p>
-<pre><code>fn main() {
-    let mut v = vec![1,2,3];
-    let first = &amp;v[0];
-    println!(&quot;Hello, world!, first={}&quot;, first);
-    v.push(5);
-}
-</code></pre><p>上述<code>代码1</code>会编译报错，提示<code>error[E0502]: cannot borrow</code>v<code>as mutable because it is also borrowed as immutable</code></p>
-<p>而<code>代码2</code>却可以正常编译通过，为什么那？</p>
-<p>个人认为这正是rust在在编译期发现问题的优点之一，代码1报借用和可变借用同时存在错误，是因为在print的时候使用first，这时进行所有权规则检查，发现了E0502错误。而<code>代码2</code>为什么没有报错，是因为在编译时，运行到print进行所有权检测，此时还没有发生所有权问题，而在检测后续的push时first已经没有任何引用或使用，所以相关所有权规则没有问题</p>
-
+	<h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h2><p> std::bind 函数定义在头文件<functional>中，是一个函数模板，它就像一个函数适配器，接受一个可调用对象（callable object），生成一个新的可调用对象来“适应”原对象的参数列表。一般而言，我们用它可以把一个原本接收N个参数的函数fn，通过绑定一些参数，返回一个接收M个（M可以大于N，但这么做没什么意义）参数的新函数。同时，使用std::bind函数还可以实现参数顺序调整等操作。</p>
+<h2 id="2-函数原型"><a href="#2-函数原型" class="headerlink" title="2. 函数原型"></a>2. 函数原型</h2><p>std::bind函数有两种函数原型，定义如下：</p>
+<pre><code>template&lt; class F, class... Args &gt; bind( F&amp;&amp; f, Args&amp;&amp;... args ); 
+template&lt; class R, class F, class... Args &gt;  bind( F&amp;&amp; f, Args&amp;&amp;... args );</code></pre><p>std::bind返回一个基于f的函数对象(obj)，调用obj时参数被绑定到args上。f的参数要么被绑定到具体的值，要么被绑定到 placeholders(占位符，如_1, _2, …, _n).</p>
+<p>其中占位符<code>_1</code>,<code>_2</code>表示，当执行obj函数时的第1,第2 … 第n个参数。</p>
+<h2 id="3-参数及用法解释"><a href="#3-参数及用法解释" class="headerlink" title="3. 参数及用法解释"></a>3. 参数及用法解释</h2><h3 id="3-1-参数"><a href="#3-1-参数" class="headerlink" title="3.1 参数"></a>3.1 参数</h3><p>f：一个可调用对象（可以是函数对象、函数指针、函数引用、成员函数指针、数据成员指针），它的参数将被绑定到args上。<br>args：绑定参数列表，参数会被值或占位符替换，其长度必须与f接收的参数个数一致。</p>
+<h3 id="3-2-调用形式"><a href="#3-2-调用形式" class="headerlink" title="3.2 调用形式"></a>3.2 调用形式</h3><p>调用std::bind的一般形式为：</p>
+<pre><code>auto newCallable = std::bind(callable, arg_list);</code></pre><p>其中，newCallable 本身是一个可调用对象，arg_list 是一个逗号分隔的参数列表，对应给定的 callable 的参数。即，当我们调用 newCallable 时，newCallable 会调用callable，并传递给它 arg_list 中的参数。</p>
+<h3 id="3-3-返回类型"><a href="#3-3-返回类型" class="headerlink" title="3.3 返回类型"></a>3.3 返回类型</h3><p>std::bind 的返回类型是一个函数对象,这个函数对象是一个未指定类型T的函数对象，这个函数对象的 std::is_bind_expression<T>::value == true；这个函数对象包含以下成员：</p>
+<pre><code>1. 对象成员
+ 一个由std::forward&lt;F&gt;(f)构造而来的std::decay&lt;F&gt;::type类型的对象，一个对象的每一个参数类型都是由std::forward&lt;Arg_i&gt;(arg_i)构造而来的std::decay&lt;Arg_i&gt;::type。简单来说，std::decay&lt;F&gt;::type对象保存了调用std::bind时传递过来的f参数，而若干个std::decay&lt;Arg_i&gt;::type则保存了传递过来的args参数（一个std::decay&lt;Arg_i&gt;::type保存一个args）。
+2. 构造函数
+ 如果T的所有对象成员都是可拷贝的，则它自身也是可拷贝的；如果它的所有对象成员都是可移动构造的，则它自身也是可移动构造的。
+3. 成员类型 result_type（从C++17开始result_type已经被弃用）
+·如果F是函数指针或者成员函数指针，result_type就是F的返回值类型
+·如果F是一个拥有（或者说定义了）result_type的类类型，那么T的result_type就是F::result_type，即使result_type已经在T中被定义过
+4. 成员函数 operator()
+ 这是最应该了解的，因为在实际使用过程中，我们调用std::bind得到的返回值就是用来作为函数调用的。
+ bind的返回值T，假设我们这样调用：g(a1, a2, a3, … ai); 此时g内部保存的std::decay&lt;F&gt;::type类型的对象将被调用, 它将会按照如下的方式来为a1, a2, …, ai 绑定值。
+ · 如果调用bind时指定的是reference_wrapper&lt;T&gt;类型的，比如在调用bind时使用了std::ref 或者 std::cref来包装args，那么调用g内部的这个对象时，对应参数会以T&amp;类型传入std::decay&lt;F&gt;::type类型的对象.
+ · 如果在创建g时，使用了嵌套的bind，即g = bind(fn, args…)的参数列表args中，存在某个arg：使得std::is_bind_expression&lt;decltype(arg)&gt;::value == true, 那么这个嵌套的bind表达式会被立即调用，其返回值会被传给ret里的_MyFun作为参数(也就是说嵌套的bind返回值会被当做ret调用时的参数)， 如果嵌套的bind里用到了占位符placeholder, 这些placeholder将会从ret的调用参数ret(a1, a2, … ai)中对应位置选择.
+ · 如果在创建g时，使用了占位符placeholders, 即 g = bind(fn, arg1, arg2, …, _1, _2, …), (对于_1, _2…, 有std::is_placeholder&lt;T&gt;::value != 0). 那么a1, a2, …, ai会以转发的形式forward&lt;ai&gt;(ai)传递给_MyFun, a1对应_1, a2对应_2, 以此类推.
+ 否则，ret内部保存的args，即上文提到的_Mybargs(bind调用时绑定的参数们)将被以左值的形式传给_MyFun以完成调用，这些参数和g有相同cv限定属性.
+ 如果g(a1, a2, …, ai)中，有哪些ai没有匹配任何的placeholders，比如在调用bind时，placeholder只有_1, 而g(a1, a2, a3), 那么a2, a3就是没有匹配的，没有被匹配的参数将被求值，但是会被丢弃。
+ 如果g被指定为volatile(volatile or const volatile)，结果是未定义的。</code></pre><h2 id="4-类成员函数回调"><a href="#4-类成员函数回调" class="headerlink" title="4 类成员函数回调"></a>4 类成员函数回调</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><pre><code>https://blog.csdn.net/afei__/article/details/81985937
+https://blog.csdn.net/hyp1977/article/details/51784520
+https://en.cppreference.com/w/cpp/utility/functional/bind
+</code></pre>
 </div>
 
 
     <div class="post-guide">
         <div class="item left">
             
-              <a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/%E6%89%93%E5%8D%B0%E5%8F%82%E6%95%B0%E7%B1%BB%E5%9E%8B/">
-                  <i class="fa fa-angle-left" aria-hidden="true"></i>
-                  打印参数类型
-              </a>
-            
         </div>
         <div class="item right">
             
-              <a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/vec%E5%90%88%E5%B9%B6%E6%95%B0%E6%8D%AE%E6%97%B6%E9%98%B2%E6%AD%A2%E5%87%BA%E7%8E%B0%E6%8B%B7%E8%B4%9D%E7%9A%84%E6%96%B9%E6%B3%95/">
-                vec合并数据时防止出现拷贝的方法
+              <a href="/2021/08/09/03%20%E5%BC%80%E5%8F%91/01%20C&C++/11%20unique_ptr%E5%92%8Cshared_ptr%E5%8F%8Aweak_ptr%E7%9A%84%E4%BD%BF%E7%94%A8/">
+                11 unique_ptr和shared_ptr及weak_ptr的使用
                 <i class="fa fa-angle-right" aria-hidden="true"></i>
               </a>
             
