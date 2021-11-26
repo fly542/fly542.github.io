@@ -1128,7 +1128,114 @@ template&lt; class R, class F, class... Args &gt;  bind( F&amp;&amp; f, Args&amp
  · 如果在创建g时，使用了占位符placeholders, 即 g = bind(fn, arg1, arg2, …, _1, _2, …), (对于_1, _2…, 有std::is_placeholder&lt;T&gt;::value != 0). 那么a1, a2, …, ai会以转发的形式forward&lt;ai&gt;(ai)传递给_MyFun, a1对应_1, a2对应_2, 以此类推.
  否则，ret内部保存的args，即上文提到的_Mybargs(bind调用时绑定的参数们)将被以左值的形式传给_MyFun以完成调用，这些参数和g有相同cv限定属性.
  如果g(a1, a2, …, ai)中，有哪些ai没有匹配任何的placeholders，比如在调用bind时，placeholder只有_1, 而g(a1, a2, a3), 那么a2, a3就是没有匹配的，没有被匹配的参数将被求值，但是会被丢弃。
- 如果g被指定为volatile(volatile or const volatile)，结果是未定义的。</code></pre><h2 id="4-类成员函数回调"><a href="#4-类成员函数回调" class="headerlink" title="4 类成员函数回调"></a>4 类成员函数回调</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><pre><code>https://blog.csdn.net/afei__/article/details/81985937
+ 如果g被指定为volatile(volatile or const volatile)，结果是未定义的。</code></pre><h2 id="4-类成员函数回调"><a href="#4-类成员函数回调" class="headerlink" title="4 类成员函数回调"></a>4 类成员函数回调</h2><p>在c++中，常用的回调函数场景是，在一个类A中，有一个普通成员函数a,在类B中，有一个普通成员函数b,在b中，想要回调函数a，这才是c++回调函数的正确打开方式。</p>
+<p>先上一段代码：</p>
+<pre><code>#include &lt;iostream&gt;
+
+#include &lt;functional&gt;
+
+using namespace std;
+using namespace std::placeholders;
+
+typedef std::function&lt;void(int,int)&gt; Fun;
+
+class B{
+    public:
+        void call(int a,Fun f)
+        {
+            f(a,2);
+        }
+};
+
+class Test{
+public:
+    void callback(int a,int b)
+    {
+        cout&lt;&lt;a&lt;&lt;&quot;+&quot;&lt;&lt;b&lt;&lt;&quot;=&quot;&lt;&lt;a+b&lt;&lt;endl;
+    }
+
+    void bind()
+    {
+        Fun fun=std::bind(&amp;Test::callback,this,_1,_2);
+        B b;
+        b.call(1,fun);
+    }
+
+};
+int main()
+{
+    Test test;
+    test.bind();
+    return 0;
+}</code></pre><p>上面的程序中，Test类中的bind函数调用B类中的call函数，b中的call函数又反过来回调Test类中的callback函数。记住function和bind都是c++11标准函数，编译的时候要加-std=c++11。</p>
+<p>在分析上面程序之前，先介绍一下两个辅助函数，分别是bind函数和function函数，这两个函数之前是boost函数成员，现在加入到c++11标准中，使用更加方便。</p>
+<h3 id="bind函数"><a href="#bind函数" class="headerlink" title="bind函数"></a>bind函数</h3><p>定义在头文件functional中。可以看成是对一个函数的改造器，可以借助于集合的观点来说（尽管可能没这回事），可以将bind函数看作是返回一个子函数。这个子函数可以是bind绑定的函数的子集，也可以是本身。</p>
+<p> 一般常用语法是： newFunName=bind(oldFunName,arg_list);</p>
+<p>bind函数返回一个新的函数对象。其中bind第一个参数是oldFunName,它是待绑定的函数名，arg_list是oldFunName的参数列表。注意，这个参数列表是旧函数的参数列表，前面提到，返回的是子函数。我们可以随便给子函数定几个参数，但是肯定不能多于bind所绑定的原函数的参数个数。举个例子：</p>
+<pre><code>//g是一个有两个参数的可调用对象
+auto g=bind(f,a,b,_2,c,_1);
+//其中f是具有5个参数的函数
+//当我们调用g(x,y)时，实际调用的是f(a,b,y,c,x)</code></pre><p>在这个示例中，我们可能要调用f函数，并传入5个参数，但是我们现在调用g(x,y)，只要传入两个参数，同样能达到这个效果。当然，我费这么多事其实肯定不是为了省几个参数，主要还是为了将一个函数转化成一个可以作为回调的函数指针，可以看成是原函数指针的别名。</p>
+<p>上面出现的_1，_2是它的占位符，bind最多可以使用9个占位符。这个占位符命名在std的placeholders中，使用时，要使用using std::placeholders.</p>
+<h3 id="function函数"><a href="#function函数" class="headerlink" title="function函数"></a>function函数</h3><p> function是一个函数对象的<code>容器</code>。</p>
+<p>如function&lt;int(int,int)&gt; fun;  fun是一个函数模板，可以接受两个int型参数，并返回一个int型参数。平时可以将它赋值给一个函数指针。</p>
+<p>例如上面的回调函数： Fun fun=std::bind(&amp;Test::callback,this,_1,_2);</p>
+<p>其中bind用于绑定一个Test类的callback函数，它有两个参数，在这里，因为它是一个类成员函数，中间传入一个this指针，另外两个_1和_2则是它的两个参数。bind返回一个函数指针，将它赋给fun,fun作为一个函数容器，容纳bind函数返回的临时函数指针。 这样就成功的将fun作为一个函数参数的别名，可以用于传给回调函数了。</p>
+<p>关于bind和function函数，再举一个例子。</p>
+<pre><code>#include &lt;iostream&gt;  
+#include &lt;functional&gt;  
+using namespace std;  
+
+typedef std::function&lt;void ()&gt; fp;  
+void g_fun()  
+{  
+    cout&lt;&lt;&quot;g_fun()&quot;&lt;&lt;endl;  
+}  
+class A  
+{  
+public:  
+    static void A_fun_static()  
+    {  
+        cout&lt;&lt;&quot;A_fun_static()&quot;&lt;&lt;endl;  
+    }  
+    void A_fun()  
+    {  
+        cout&lt;&lt;&quot;A_fun()&quot;&lt;&lt;endl;  
+    }  
+    void A_fun_int(int i)  
+    {  
+        cout&lt;&lt;&quot;A_fun_int() &quot;&lt;&lt;i&lt;&lt;endl;  
+    }  
+
+    //非静态类成员，因为含有this指针，所以需要使用bind  
+    void init()  
+    {  
+        fp fp1=std::bind(&amp;A::A_fun,this);  
+        fp1();  
+    }  
+
+    void init2()  
+    {  
+        typedef std::function&lt;void (int)&gt; fpi;  
+        //对于参数要使用占位符 std::placeholders::_1  
+        fpi f=std::bind(&amp;A::A_fun_int,this,std::placeholders::_1);  
+        f(5);  
+    }  
+};  
+int main()  
+{  
+    //绑定到全局函数  
+    fp f2=fp(&amp;g_fun);  
+    f2();  
+
+    //绑定到类静态成员函数  
+    fp f1=fp(&amp;A::A_fun_static);  
+    f1();  
+
+    A().init();  
+    A().init2();  
+    return 0;  
+}</code></pre><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><pre><code>https://blog.csdn.net/afei__/article/details/81985937
 https://blog.csdn.net/hyp1977/article/details/51784520
 https://en.cppreference.com/w/cpp/utility/functional/bind
 </code></pre>
