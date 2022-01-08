@@ -422,6 +422,15 @@
 								<div class="article-toc" style="display: none;"></div>
 							</ul>
 			
+							<ul>
+								<li class="file">
+									<a href="/2021/12/22/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/13%20typora%E9%85%8D%E7%BD%AE%E6%A0%87%E9%A2%98%E8%87%AA%E5%8A%A8%E6%B7%BB%E5%8A%A0%E5%BA%8F%E5%8F%B7/">
+										13 typora配置标题自动添加序号
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
 								</li>
 								
 							</ul>
@@ -542,6 +551,15 @@
 								<li class="file">
 									<a href="/2020/08/16/03%20%E5%BC%80%E5%8F%91/01%20C&C++/00%20C++%20%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D(new%EF%BC%8Coperator%20new)%E8%AF%A6%E8%A7%A3/">
 										00 C++ 内存分配(new，operator new)详解
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file">
+									<a href="/2022/01/07/03%20%E5%BC%80%E5%8F%91/01%20C&C++/00%20%E4%B8%AA%E4%BA%BA%E5%BC%80%E5%8F%91%E5%9F%BA%E6%9C%AC%E5%8E%9F%E5%88%99/">
+										00 个人开发基本原则
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -769,7 +787,7 @@
 			
 							<ul>
 								<li class="file">
-									<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E6%8F%90%E7%A4%BA%E3%80%8Aremove%20this%20mut%E3%80%8B/">
+									<a href="/2021/12/22/03%20%E5%BC%80%E5%8F%91/02%20Rust/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E6%8F%90%E7%A4%BA%E3%80%8Aremove%20this%20mut%E3%80%8B/">
 										为什么函数参数提示《remove this mut》
 									</a>
 								</li>
@@ -860,7 +878,7 @@
 			
 							<ul>
 								<li class="file">
-									<a href="/2020/07/27/04%20%E7%BD%91%E7%BB%9C/hello-world/">
+									<a href="/2021/12/22/04%20%E7%BD%91%E7%BB%9C/hello-world/">
 										hello-world
 									</a>
 								</li>
@@ -987,7 +1005,7 @@
 									
 							<ul>
 								<li class="file">
-									<a href="/2020/08/19/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&&cassandra/00%20scylladb/">
+									<a href="/2021/12/22/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&&cassandra/00%20scylladb/">
 										00 scylladb
 									</a>
 								</li>
@@ -1069,7 +1087,7 @@
 									
 							<ul>
 								<li class="file">
-									<a href="/2020/08/19/06%20%E6%9D%82%E9%A1%B9/00%20%E7%A0%94%E5%8F%91%E9%A1%B9%E7%9B%AE%E4%BA%A4%E6%8E%A5%E5%86%85%E5%AE%B9/">
+									<a href="/2021/12/22/06%20%E6%9D%82%E9%A1%B9/00%20%E7%A0%94%E5%8F%91%E9%A1%B9%E7%9B%AE%E4%BA%A4%E6%8E%A5%E5%86%85%E5%AE%B9/">
 										00 研发项目交接内容
 									</a>
 								</li>
@@ -1087,6 +1105,73 @@
 	<!-- 引入正文 -->
 	<div id="content">
 		<div id="index">
+	
+		<div class="index-li">
+			<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/vec%E5%90%88%E5%B9%B6%E6%95%B0%E6%8D%AE%E6%97%B6%E9%98%B2%E6%AD%A2%E5%87%BA%E7%8E%B0%E6%8B%B7%E8%B4%9D%E7%9A%84%E6%96%B9%E6%B3%95/">
+				<h2 class="index-title">
+					vec合并数据时防止出现拷贝的方法
+				</h2>
+				<div class="index-brief">
+					当结构体中使用Vec在头部插入一个新的Vec数据时可以通过mem::replace方法来减少数据的拷贝。
+use std::mem;
+struct Myvec {
+    data: Vec&lt;u8&gt;,
+    count: usize,
+}
+
+impl Myvec {
+    fn ne
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-31</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
+			<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/%E5%90%8C%E4%B8%80%E4%B8%AAcrate%E5%86%85%E4%B8%8D%E5%90%8Clib%E6%88%96%E7%A8%8B%E5%BA%8F%E9%97%B4%E7%9A%84%E5%BC%95%E7%94%A8/">
+				<h2 class="index-title">
+					同一个crate内不同lib或程序间的引用
+				</h2>
+				<div class="index-brief">
+					在同一个大型项目中，可能会建立多个lib，有时候想要以外部调用库的方式测试其中的某个lib的某项功能，这时怎么修改Cargo.toml文件引用工程内的某个lib？答案是修改Cargo.toml 文件中的[dependencies]
+参考arnl/test_simple/test_redis/Carg
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-31</span>
+                    
+                            
+                    
+                </div>
+		</div>	
+	
+		<div class="index-li">
+			<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/00%20fun_code/rust%20%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%9A%84%E6%97%B6%E9%97%B4%E6%88%B3/">
+				<h2 class="index-title">
+					rust 获取当前的时间戳
+				</h2>
+				<div class="index-brief">
+					示例代码如下：
+use std::time::{SystemTime};
+fn get_timestamp() -&gt; u64 {
+    match SystemTime::now().duration_since(SystemTime::UNIX_EPOCH) {
+        Ok(no
+					...
+				</div>
+			</a>
+                <div class="article-meta">
+				    <span>2020-07-31</span>
+                    
+                            
+                    
+                </div>
+		</div>	
 	
 		<div class="index-li">
 			<a href="/2020/07/30/03%20%E5%BC%80%E5%8F%91/03%20Shell/awk%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/">
@@ -1137,15 +1222,13 @@ set fileencodings=ucs
 		</div>	
 	
 		<div class="index-li">
-			<a href="/2020/07/30/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/02%20%E5%A4%9A%E7%89%88%E6%9C%ACgcc%E9%83%A8%E7%BD%B2/">
+			<a href="/2020/07/30/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/01%20%E5%BC%80%E5%8F%91%E6%9C%BA%E9%83%A8%E7%BD%B2/">
 				<h2 class="index-title">
-					02 多版本gcc部署
+					01 开发机部署
 				</h2>
 				<div class="index-brief">
-					安装scl源：yum install centos-release-SCL scl-utils-build
-查看从 SCL 中安装的包的列表：scl –list
-列出scl源有哪些包可以用：yum list all –enablerepo=’centos-sclo-rh’
-查看从 SCL 中安装的包
+					开发机部署修改服务器名hostnamectl set-hostname xxxx实际修改的是/proc/sys/kernel/hostname的内容
+安装开发包yum install gcc-c++ cmake 系统更新   yum update  安装python2.7安装python2.7的时候
 					...
 				</div>
 			</a>
@@ -1158,13 +1241,15 @@ set fileencodings=ucs
 		</div>	
 	
 		<div class="index-li">
-			<a href="/2020/07/30/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/01%20%E5%BC%80%E5%8F%91%E6%9C%BA%E9%83%A8%E7%BD%B2/">
+			<a href="/2020/07/30/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/02%20%E5%A4%9A%E7%89%88%E6%9C%ACgcc%E9%83%A8%E7%BD%B2/">
 				<h2 class="index-title">
-					01 开发机部署
+					02 多版本gcc部署
 				</h2>
 				<div class="index-brief">
-					开发机部署修改服务器名hostnamectl set-hostname xxxx实际修改的是/proc/sys/kernel/hostname的内容
-安装开发包yum install gcc-c++ cmake 系统更新   yum update  安装python2.7安装python2.7的时候
+					安装scl源：yum install centos-release-SCL scl-utils-build
+查看从 SCL 中安装的包的列表：scl –list
+列出scl源有哪些包可以用：yum list all –enablerepo=’centos-sclo-rh’
+查看从 SCL 中安装的包
 					...
 				</div>
 			</a>
@@ -1224,74 +1309,6 @@ set fileencodings=ucs
 				</h2>
 				<div class="index-brief">
 					1. IntroductionMD5算法是一种消息摘要算法(Message Digest Algorithm)，此算法以任意长度的信息(message)作为输入进行计算，产生一个128-bit(16-byte)的指纹或报文摘要(fingerprint or message digest)。两个不同的
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-27</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/07/27/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/00%20%E5%B8%B8%E7%94%A8git%E5%91%BD%E4%BB%A4/">
-				<h2 class="index-title">
-					00 常用git命令
-				</h2>
-				<div class="index-brief">
-					1. 远程主机操作//查看该主机的详细信息
-git remote show &lt;主机名&gt;
-//添加远程主机，添加后通过《 8.取回远程主机某个分支的更新》来建立本地新的分支
-git remote add &lt;主机名&gt; &lt;网址&gt;
-//删除远程主机
-git remote 
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-27</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/07/27/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/00%20%E4%BC%A0%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93/00%20mysql/mysql%20%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
-				<h2 class="index-title">
-					mysql 常用命令
-				</h2>
-				<div class="index-brief">
-					
-显示当前的缓存状态show variables like &#39;%query_cache%&#39;;
-
-显示当前的存储类型show engines;
-
-删除数据库test_db下所有表select concat(&#39;drop table &#39;,table_name,&#39;;&
-					...
-				</div>
-			</a>
-                <div class="article-meta">
-				    <span>2020-07-27</span>
-                    
-                            
-                    
-                </div>
-		</div>	
-	
-		<div class="index-li">
-			<a href="/2020/07/27/01%20%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/02%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/02%20%E7%BB%93%E6%9E%84%E5%9E%8B/01%20Adapter---%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
-				<h2 class="index-title">
-					01 Adapter---适配器模式
-				</h2>
-				<div class="index-brief">
-					1. 意图：将一个类的接口转换为客户希望的另外一个接口。此模式是的原本由于接口不兼容而不能一起工作的那些类可以一起工作
-2. 适用性：
-想使用一个已经存在的类，而它的接口不符合你的需求。
-想创建一个可以复用的类，该类可以与其他不相关的类或不可预见的类协同工作
-想使用一些已经存在的类，但是不可能对每一
 					...
 				</div>
 			</a>

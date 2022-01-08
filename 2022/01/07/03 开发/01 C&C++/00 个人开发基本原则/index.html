@@ -9,7 +9,7 @@
 	
 	<title>
 	
-		05 分布式及数据库/04 scylladb&amp;&amp;cassandra/00 scylladb | 
+		个人开发基本原则 | 
 	 
 	Fly542 技术积累
 	</title>
@@ -424,6 +424,15 @@
 								<div class="article-toc" style="display: none;"></div>
 							</ul>
 			
+							<ul>
+								<li class="file">
+									<a href="/2021/12/22/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/13%20typora%E9%85%8D%E7%BD%AE%E6%A0%87%E9%A2%98%E8%87%AA%E5%8A%A8%E6%B7%BB%E5%8A%A0%E5%BA%8F%E5%8F%B7/">
+										13 typora配置标题自动添加序号
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
 								</li>
 								
 							</ul>
@@ -544,6 +553,15 @@
 								<li class="file">
 									<a href="/2020/08/16/03%20%E5%BC%80%E5%8F%91/01%20C&C++/00%20C++%20%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D(new%EF%BC%8Coperator%20new)%E8%AF%A6%E8%A7%A3/">
 										00 C++ 内存分配(new，operator new)详解
+									</a>
+								</li>
+								<div class="article-toc" style="display: none;"></div>
+							</ul>
+			
+							<ul>
+								<li class="file active">
+									<a href="/2022/01/07/03%20%E5%BC%80%E5%8F%91/01%20C&C++/00%20%E4%B8%AA%E4%BA%BA%E5%BC%80%E5%8F%91%E5%9F%BA%E6%9C%AC%E5%8E%9F%E5%88%99/">
+										00 个人开发基本原则
 									</a>
 								</li>
 								<div class="article-toc" style="display: none;"></div>
@@ -771,7 +789,7 @@
 			
 							<ul>
 								<li class="file">
-									<a href="/2020/07/31/03%20%E5%BC%80%E5%8F%91/02%20Rust/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E6%8F%90%E7%A4%BA%E3%80%8Aremove%20this%20mut%E3%80%8B/">
+									<a href="/2021/12/22/03%20%E5%BC%80%E5%8F%91/02%20Rust/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E6%8F%90%E7%A4%BA%E3%80%8Aremove%20this%20mut%E3%80%8B/">
 										为什么函数参数提示《remove this mut》
 									</a>
 								</li>
@@ -862,7 +880,7 @@
 			
 							<ul>
 								<li class="file">
-									<a href="/2020/07/27/04%20%E7%BD%91%E7%BB%9C/hello-world/">
+									<a href="/2021/12/22/04%20%E7%BD%91%E7%BB%9C/hello-world/">
 										hello-world
 									</a>
 								</li>
@@ -988,8 +1006,8 @@
 									</a>
 									
 							<ul>
-								<li class="file active">
-									<a href="/2020/08/19/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&&cassandra/00%20scylladb/">
+								<li class="file">
+									<a href="/2021/12/22/05%20%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&&cassandra/00%20scylladb/">
 										00 scylladb
 									</a>
 								</li>
@@ -1071,7 +1089,7 @@
 									
 							<ul>
 								<li class="file">
-									<a href="/2020/08/19/06%20%E6%9D%82%E9%A1%B9/00%20%E7%A0%94%E5%8F%91%E9%A1%B9%E7%9B%AE%E4%BA%A4%E6%8E%A5%E5%86%85%E5%AE%B9/">
+									<a href="/2021/12/22/06%20%E6%9D%82%E9%A1%B9/00%20%E7%A0%94%E5%8F%91%E9%A1%B9%E7%9B%AE%E4%BA%A4%E6%8E%A5%E5%86%85%E5%AE%B9/">
 										00 研发项目交接内容
 									</a>
 								</li>
@@ -1090,12 +1108,12 @@
 	<div id="content">
 		<h1 id="article-title">
 
-	00 scylladb
+	00 个人开发基本原则
 </h1>
 <div class="article-meta">
 	
 	<span>Fly542</span>
-	<span>2020-08-19 17:03:42</span>
+	<span>2022-01-07 07:03:15</span>
     
 		<div id="article-categories">
             
@@ -1104,16 +1122,15 @@
 </div>
 
 <div id="article-content">
-	<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>ScyllaDB是用C++重写的Cassandra，其官网宣称其每节点每秒可处理100万TPS。ScyllaDB完全兼容Apache Cassandra，拥有比Cassandra多10X倍的吞吐量，并降低了延迟。ScyllaDB是性能优异的NoSQL列存储数据库。</p>
-<p>ScyllaDB在垃圾收集或者Compaction的时候不需要暂停（但是通过压测和Longevity测试发现Compaction的过程中对性能还是有很大影响）。</p>
-<p>ScyllaDB在常规生产负载的时候可以添加或删除节点（通过nodetool来同步数据）。</p>
-<p>ScyllaDB是一个P2P的分布式系统，集群中各节点之间相互平等。其数据分布于集群中的各节点，各节点之间每秒钟交换一次信息。</p>
-<p>其每个节点使用Commit Log提交日志捕获写操作来保持数据的正确性。数据首先被写入MemTable（内存中的数据结构）中。当MemTable满后数据被写入SSTable（存储在硬盘上的数据文件）中。</p>
-<p>用户可以使用类似于SQL的CQL来查询数据。用户可以链接至集群中的任意节点。</p>
-<p>在集群中，一个Keyspace代表关系数据库中的一个数据库。一个Keyspace中可以包含多个表。</p>
-<p>参考文档： <a href="https://blog.csdn.net/mytobaby00/article/details/80375196" target="_blank" rel="noopener">https://blog.csdn.net/mytobaby00/article/details/80375196</a></p>
-<h1 id="驱动使用说明："><a href="#驱动使用说明：" class="headerlink" title="驱动使用说明："></a>驱动使用说明：</h1><p>datastax提供的cpp驱动，在 centos7 下只能安装v2.9.0 版，高于2.9.0版由于ssl原因无法编译通过，待研究解决中。<br>2.9版驱动地址： <a href="https://downloads.datastax.com/cpp-driver/centos/7/cassandra/v2.9.0/" target="_blank" rel="noopener">https://downloads.datastax.com/cpp-driver/centos/7/cassandra/v2.9.0/</a></p>
-<h1 id="资料"><a href="#资料" class="headerlink" title="资料"></a>资料</h1><p>官方网址：<a href="https://www.scylladb.com/download/#drivers" target="_blank" rel="noopener">https://www.scylladb.com/download/#drivers</a><br>官网驱动列表：<a href="https://docs.scylladb.com/getting-started/scylla_drivers/" target="_blank" rel="noopener">https://docs.scylladb.com/getting-started/scylla_drivers/</a><br>Cassandra 驱动源码地址：<a href="https://github.com/datastax/cpp-driver/" target="_blank" rel="noopener">https://github.com/datastax/cpp-driver/</a><br>Cassandra 驱动rpm包地址: <a href="https://downloads.datastax.com/cpp-driver/centos/7/cassandra/" target="_blank" rel="noopener">https://downloads.datastax.com/cpp-driver/centos/7/cassandra/</a><br>Cassandra 驱动依赖包地址: <a href="https://downloads.datastax.com/cpp-driver/centos/7/dependencies/libuv/" target="_blank" rel="noopener">https://downloads.datastax.com/cpp-driver/centos/7/dependencies/libuv/</a></p>
+	<h1 id="cpp"><a href="#cpp" class="headerlink" title="cpp"></a>cpp</h1><h2 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h2><ul>
+<li>不要在构造函数中注册任何回调；</li>
+<li>不要在构造函数中把 this 传给跨线程的对象<pre><code>  因为在构造函数执行期间对象还没有完成初始化，如果 this被泄露（escape）给了其他对象（其自身创建的子对象除外），那么别的线程有可能访问这个半成品对象，这会造成难以预料的后果</code></pre><h2 id="智能指针"><a href="#智能指针" class="headerlink" title="智能指针"></a>智能指针</h2></li>
+<li>shared_ptr 是管理共享资源的利器，需要注意避免循环引用，通常的做法是 owner 持有指向 child 的 shared_ptr， child 持有指向 owner 的 weak_ptr。</li>
+<li>std::bind 拷贝的是实参类型，不是形参类型</li>
+</ul>
+<h1 id="c"><a href="#c" class="headerlink" title="c"></a>c</h1><h1 id="linux"><a href="#linux" class="headerlink" title="linux"></a>linux</h1><ul>
+<li>/usr/include/netinet/tcp.h 中的 tcp_info 获取连接的状态数据信息  </li>
+</ul>
 
 </div>
 
@@ -1121,16 +1138,11 @@
     <div class="post-guide">
         <div class="item left">
             
-              <a href="/2020/08/20/02%20DevOps/03%20%E5%B7%A5%E5%85%B7%E5%8F%82%E8%80%83/00%20objdump%20%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6%E5%88%86%E6%9E%90/">
-                  <i class="fa fa-angle-left" aria-hidden="true"></i>
-                  00 objdump 二进制文件分析
-              </a>
-            
         </div>
         <div class="item right">
             
-              <a href="/2020/08/19/06%20%E6%9D%82%E9%A1%B9/00%20%E7%A0%94%E5%8F%91%E9%A1%B9%E7%9B%AE%E4%BA%A4%E6%8E%A5%E5%86%85%E5%AE%B9/">
-                
+              <a href="/2021/12/22/02%20DevOps/02%20%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6/13%20typora%E9%85%8D%E7%BD%AE%E6%A0%87%E9%A2%98%E8%87%AA%E5%8A%A8%E6%B7%BB%E5%8A%A0%E5%BA%8F%E5%8F%B7/">
+                13 typora配置标题自动添加序号
                 <i class="fa fa-angle-right" aria-hidden="true"></i>
               </a>
             
