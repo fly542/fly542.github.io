@@ -1,0 +1,532 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="一致性hash算法 consistent hashing算法早在1997年就在论文**Consistent hashing and random trees**中被提出，目前在cache系统中应用越来越广泛； 1 基本场景比如你有N个cache服务器（后面简称cache），那么如何将一个对象object映射到N个cache上呢，你很可能会采用类似下面的通用方法计算object的hash值，然后均匀">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(转载) 一致性hash算法（consistent hashing）">
+<meta property="og:url" content="http://fly542.cn/2014/08/01/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="一致性hash算法 consistent hashing算法早在1997年就在论文**Consistent hashing and random trees**中被提出，目前在cache系统中应用越来越广泛； 1 基本场景比如你有N个cache服务器（后面简称cache），那么如何将一个对象object映射到N个cache上呢，你很可能会采用类似下面的通用方法计算object的hash值，然后均匀">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://fly542.cn/2014/08/01/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/circle.jpg">
+<meta property="og:image" content="http://fly542.cn/2014/08/01/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/object.jpg">
+<meta property="og:image" content="http://fly542.cn/2014/08/01/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/cache.jpg">
+<meta property="og:image" content="http://fly542.cn/2014/08/01/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/remove.jpg">
+<meta property="og:image" content="http://fly542.cn/2014/08/01/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/add.jpg">
+<meta property="og:image" content="http://fly542.cn/2014/08/01/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/virtual.jpg">
+<meta property="og:image" content="http://fly542.cn/2014/08/01/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/map.jpg">
+<meta property="article:published_time" content="2014-08-01T13:23:21.000Z">
+<meta property="article:modified_time" content="2022-01-08T14:23:39.252Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="hash, 算法">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://fly542.cn/2014/08/01/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/circle.jpg">
+  
+  
+  <title>(转载) 一致性hash算法（consistent hashing） - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="(转载) 一致性hash算法（consistent hashing）">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2014-08-01 21:23" pubdate>
+        2014年8月1日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      3.7k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      32 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">(转载) 一致性hash算法（consistent hashing）</h1>
+            
+            <div class="markdown-body">
+              <p>一致性hash算法 consistent hashing算法早在1997年就在论文**<a target="_blank" rel="noopener" href="http://portal.acm.org/citation.cfm?id=258660">Consistent hashing and random trees</a>**中被提出，目前在cache系统中应用越来越广泛；</p>
+<h2 id="1-基本场景"><a href="#1-基本场景" class="headerlink" title="1 基本场景"></a>1 基本场景</h2><p>比如你有N个cache服务器（后面简称cache），那么如何将一个对象object映射到N个cache上呢，你很可能会采用类似下面的通用方法计算object的hash值，然后均匀的映射到到N个cache；</p>
+<p>hash(object)%N </p>
+<p>一切都运行正常，再考虑如下的两种情况；</p>
+<p>1 一个cache服务器m down掉了（在实际应用中必须要考虑这种情况），这样所有映射到cache m的对象都会失效，怎么办，需要把cache m从cache中移除，这时候cache是N-1台，映射公式变成了hash(object)%(N-1)；</p>
+<p>2 由于访问加重，需要添加cache，这时候cache是N+1台，映射公式变成了hash(object)%(N+1)；</p>
+<p>1和2意味着什么？这意味着突然之间几乎所有的cache都失效了。对于服务器而言，这是一场灾难，洪水般的访问都会直接冲向后台服务器；</p>
+<p>再来考虑第三个问题，由于硬件能力越来越强，你可能想让后面添加的节点多做点活，显然上面的hash算法也做不到。</p>
+<p>有什么方法可以改变这个状况呢，这就是consistent hashing…</p>
+<h2 id="2-hash算法和单调性"><a href="#2-hash算法和单调性" class="headerlink" title="2 hash算法和单调性"></a>2 hash算法和单调性</h2><p>　　Hash算法的一个衡量指标是单调性（Monotonicity），定义如下：</p>
+<p>　　单调性是指如果已经有一些内容通过哈希分派到了相应的缓冲中，又有新的缓冲加入到系统中。哈希的结果应能够保证原有已分配的内容可以被映射到新的缓冲中去，而不会被映射到旧的缓冲集合中的其他缓冲区。</p>
+<p>容易看到，上面的简单hash算法hash(object)%N难以满足单调性要求。</p>
+<h2 id="3-consistent-hashing算法的原理"><a href="#3-consistent-hashing算法的原理" class="headerlink" title="3 consistent hashing算法的原理"></a>3 consistent hashing算法的原理</h2><p>consistent hashing是一种hash算法，简单的说，在移除/添加一个cache时，它能够尽可能小的改变已存在key映射关系，尽可能的满足单调性的要求。</p>
+<p>下面就来按照5个步骤简单讲讲consistent hashing算法的基本原理。</p>
+<h3 id="3-1环形hash空间"><a href="#3-1环形hash空间" class="headerlink" title="3.1环形hash空间"></a>3.1环形hash空间</h3><p>考虑通常的hash算法都是将value映射到一个32为的key值，也即是0~2^32-1次方的数值空间；我们可以将这个空间想象成一个首（0）尾（2^32-1）相接的圆环，如下面图1所示的那样。</p>
+<img src="/2014/08/01/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/circle.jpg" srcset="/img/loading.gif" lazyload class="" title="图1. 环形hash空间">
+
+<h3 id="3-2-把对象映射到hash空间"><a href="#3-2-把对象映射到hash空间" class="headerlink" title="3.2 把对象映射到hash空间"></a>3.2 把对象映射到hash空间</h3><p>接下来考虑4个对象object1~object4，通过hash函数计算出的hash值key在环上的分布如图2所示。</p>
+<p>hash(object1) = key1;</p>
+<p>… …</p>
+<p>hash(object4) = key4;</p>
+<img src="/2014/08/01/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/object.jpg" srcset="/img/loading.gif" lazyload class="" title="图2. 4个对象的key值分布">
+
+<h3 id="3-3-把cache映射到hash空间"><a href="#3-3-把cache映射到hash空间" class="headerlink" title="3.3 把cache映射到hash空间"></a>3.3 把cache映射到hash空间</h3><p>Consistent hashing的基本思想就是将对象和cache都映射到同一个hash数值空间中，并且使用相同的hash算法。</p>
+<p>假设当前有A,B和C共3台cache，那么其映射结果将如图3所示，他们在hash空间中，以对应的hash值排列。</p>
+<p>hash(cache A) = key A;</p>
+<p>… …</p>
+<p>hash(cache C) = key C;</p>
+<img src="/2014/08/01/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/cache.jpg" srcset="/img/loading.gif" lazyload class="" title="图3 cache和对象的key值分布">
+
+
+<p>说到这里，顺便提一下cache的hash计算，一般的方法可以使用cache机器的IP地址或者机器名作为hash输入。</p>
+<h3 id="3-4-把对象映射到cache"><a href="#3-4-把对象映射到cache" class="headerlink" title="3.4 把对象映射到cache"></a>3.4 把对象映射到cache</h3><p>现在cache和对象都已经通过同一个hash算法映射到hash数值空间中了，接下来要考虑的就是如何将对象映射到cache上面了。</p>
+<p>在这个环形空间中，如果沿着顺时针方向从对象的key值出发，直到遇见一个cache，那么就将该对象存储在这个cache上，因为对象和cache的hash值是固定的，因此这个cache必然是唯一和确定的。这样不就找到了对象和cache的映射方法了吗？！</p>
+<p>依然继续上面的例子（参见图3），那么根据上面的方法，对象object1将被存储到cache A上；object2和object3对应到cache C；object4对应到cache B；</p>
+<h3 id="3-5-考察cache的变动"><a href="#3-5-考察cache的变动" class="headerlink" title="3.5 考察cache的变动"></a>3.5 考察cache的变动</h3><p>前面讲过，通过 hash然后求余的方法带来的最大问题就在于不能满足单调性，当cache有所变动时，cache会失效，进而对后台服务器造成巨大的冲击，现在就来分析分析consistent hashing算法。</p>
+<h4 id="3-5-1-移除cache"><a href="#3-5-1-移除cache" class="headerlink" title="3.5.1 移除cache"></a>3.5.1 移除cache</h4><p>考虑假设cache B挂掉了，根据上面讲到的映射方法，这时受影响的将仅是那些沿cache B逆时针遍历直到下一个cache（cache C）之间的对象，也即是本来映射到cache B上的那些对象。</p>
+<p>因此这里仅需要变动对象object4，将其重新映射到cache C上即可；参见图4。</p>
+<img src="/2014/08/01/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/remove.jpg" srcset="/img/loading.gif" lazyload class="" title="图4 CacheB被移除后的cache映射">
+
+<h4 id="3-5-2-添加cache"><a href="#3-5-2-添加cache" class="headerlink" title="3.5.2 添加cache"></a>3.5.2 添加cache</h4><p>再考虑添加一台新的cache D的情况，假设在这个环形hash空间中，cache D被映射在对象object2和object3之间。这时受影响的将仅是那些沿cache D逆时针遍历直到下一个cache（cache B）之间的对象（它们是也本来映射到cache C上对象的一部分），将这些对象重新映射到cache D上即可。</p>
+<p>因此这里仅需要变动对象object2，将其重新映射到cache D上；参见图5。</p>
+<img src="/2014/08/01/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/add.jpg" srcset="/img/loading.gif" lazyload class="" title="图5. 添加cacheD后的映射关系">
+
+<h2 id="4-虚拟节点"><a href="#4-虚拟节点" class="headerlink" title="4 虚拟节点"></a>4 虚拟节点</h2><p>考量Hash算法的另一个指标是平衡性(Balance)，定义如下：</p>
+<p>平衡性</p>
+<p>　　平衡性是指哈希的结果能够尽可能分布到所有的缓冲中去，这样可以使得所有的缓冲空间都得到利用。</p>
+<p>hash算法并不是保证绝对的平衡，如果cache较少的话，对象并不能被均匀的映射到cache上，比如在上面的例子中，仅部署cache A和cache C的情况下，在4个对象中，cache A仅存储了object1，而cache C则存储了object2、object3和object4；分布是很不均衡的。</p>
+<p>为了解决这种情况，consistent hashing引入了“虚拟节点”的概念，它可以如下定义：</p>
+<p>“虚拟节点”（virtual node）是实际节点在hash空间的复制品（replica），一实际个节点对应了若干个“虚拟节点”，这个对应个数也成为“复制个数”，“虚拟节点”在hash空间中以hash值排列。</p>
+<p>仍以仅部署cache A和cache C的情况为例，在图4中我们已经看到，cache分布并不均匀。现在我们引入虚拟节点，并设置“复制个数”为2，这就意味着一共会存在4个“虚拟节点”， cache A1, cache A2代表了cache A；cache C1, cache C2代表了cache C；假设一种比较理想的情况，参见图6。</p>
+<img src="/2014/08/01/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/virtual.jpg" srcset="/img/loading.gif" lazyload class="" title="图6. 引入“虚拟节点”后的映射关系">
+
+<p>此时，对象到“虚拟节点”的映射关系为：</p>
+<p>objec1-&gt;cache A2；objec2-&gt;cache A1；objec3-&gt;cache C1；objec4-&gt;cache C2；</p>
+<p>因此对象object1和object2都被映射到了cache A上，而object3和object4映射到了cache C上；平衡性有了很大提高。</p>
+<p>引入“虚拟节点”后，映射关系就从{对象-&gt;节点}转换到了{对象-&gt;虚拟节点}。查询物体所在cache时的映射关系如图7所示。</p>
+<img src="/2014/08/01/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01(%E8%BD%AC%E8%BD%BD)%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95(consistent%20hashing)/map.jpg" srcset="/img/loading.gif" lazyload class="" title="图7. 查询对象所在cache">
+
+
+<p>“虚拟节点”的hash计算可以采用对应节点的IP地址加数字后缀的方式。例如假设cache A的IP地址为202.168.14.241。</p>
+<p>引入“虚拟节点”前，计算cache A的hash值：</p>
+<p>Hash(“202.168.14.241”);</p>
+<p>引入“虚拟节点”后，计算“虚拟节”点cache A1和cache A2的hash值：</p>
+<p>Hash(“202.168.14.241#1”); // cache A1</p>
+<p>Hash(“202.168.14.241#2”); // cache A2</p>
+<h2 id="5-小结"><a href="#5-小结" class="headerlink" title="5 小结"></a>5 小结</h2><p>Consistent hashing的基本原理就是这些，具体的分布性等理论分析应该是很复杂的，不过一般也用不到。</p>
+<p><a target="_blank" rel="noopener" href="http://weblogs.java.net/blog/2007/11/27/consistent-hashing%E4%B8%8A%E9%9D%A2%E6%9C%89%E4%B8%80%E4%B8%AAjava%E7%89%88%E6%9C%AC%E7%9A%84%E4%BE%8B%E5%AD%90%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%8F%82%E8%80%83%E3%80%82">http://weblogs.java.net/blog/2007/11/27/consistent-hashing上面有一个java版本的例子，可以参考。</a></p>
+<p><a target="_blank" rel="noopener" href="http://blog.csdn.net/mayongzhan/archive/2009/06/25/4298834.aspx%E8%BD%AC%E8%BD%BD%E4%BA%86%E4%B8%80%E4%B8%AAPHP%E7%89%88%E7%9A%84%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81%E3%80%82">http://blog.csdn.net/mayongzhan/archive/2009/06/25/4298834.aspx转载了一个PHP版的实现代码。</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.codeproject.com/KB/recipes/lib-conhash.aspx">http://www.codeproject.com/KB/recipes/lib-conhash.aspx</a> C语言版本</p>
+<p>一些参考资料地址：</p>
+<p><a target="_blank" rel="noopener" href="http://portal.acm.org/citation.cfm?id=258660">http://portal.acm.org/citation.cfm?id=258660</a></p>
+<p><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Consistent_hashing">http://en.wikipedia.org/wiki/Consistent_hashing</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.spiteful.com/2008/03/17/programmers-toolbox-part-3-consistent-hashing/">http://www.spiteful.com/2008/03/17/programmers-toolbox-part-3-consistent-hashing/</a></p>
+<p><a target="_blank" rel="noopener" href="http://weblogs.java.net/blog/2007/11/27/consistent-hashing">http://weblogs.java.net/blog/2007/11/27/consistent-hashing</a></p>
+<p><a target="_blank" rel="noopener" href="http://tech.idv2.com/2008/07/24/memcached-004/">http://tech.idv2.com/2008/07/24/memcached-004/</a></p>
+<p><a target="_blank" rel="noopener" href="http://blog.csdn.net/mayongzhan/archive/2009/06/25/4298834.aspx">http://blog.csdn.net/mayongzhan/archive/2009/06/25/4298834.aspx</a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">算法与数据结构</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/hash-%E7%AE%97%E6%B3%95/">hash, 算法</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2014/08/01/04DevOps/05%20scons%E5%AE%9E%E7%94%A8%E8%AF%B4%E6%98%8E/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">scons实用说明</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2012/03/20/04DevOps/06%20ssh%E8%B7%B3%E8%BD%AC%E6%97%A0%E5%AF%86%E7%A0%81%E7%99%BB%E5%BD%95%E6%88%96%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4/">
+                        <span class="hidden-mobile">ssh跳转无密码登录或执行命令</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

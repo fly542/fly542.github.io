@@ -1,0 +1,484 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1. IntroductionMD5算法是一种消息摘要算法(Message Digest Algorithm)，此算法以任意长度的信息(message)作为输入进行计算，产生一个128-bit(16-byte)的指纹或报文摘要(fingerprint or message digest)。两个不同的message产生相同message digest的几率相当小，从一个给定的message dige">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MD5算法原理">
+<meta property="og:url" content="http://fly542.cn/2020/07/27/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/02MD5%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="1. IntroductionMD5算法是一种消息摘要算法(Message Digest Algorithm)，此算法以任意长度的信息(message)作为输入进行计算，产生一个128-bit(16-byte)的指纹或报文摘要(fingerprint or message digest)。两个不同的message产生相同message digest的几率相当小，从一个给定的message dige">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-27T09:51:20.000Z">
+<meta property="article:modified_time" content="2022-01-08T14:23:39.230Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>MD5算法原理 - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="MD5算法原理">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-07-27 17:51" pubdate>
+        2020年7月27日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      5.7k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      48 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">MD5算法原理</h1>
+            
+            <div class="markdown-body">
+              <h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h1><p>MD5算法是一种消息摘要算法(Message Digest Algorithm)，此算法以任意长度的信息(message)作为输入进行计算，产生一个128-bit(16-byte)的指纹或报文摘要(fingerprint or message digest)。两个不同的message产生相同message digest的几率相当小，从一个给定的message digest逆向产生原始message更是困难(不过据说我国的某个教授很善于从message digest构造message)，因此MD5算法适合用在数字签名应用中。MD5实现简单，在32位的机器上运行速度也相当快，当然实际应用也不仅仅局限于数字签名。</p>
+<h1 id="2-MD5-Algorithm-Description"><a href="#2-MD5-Algorithm-Description" class="headerlink" title="2. MD5 Algorithm Description"></a>2. MD5 Algorithm Description</h1><p>假设输入信息(input message)的长度为b(bit)，我们想要产生它的报文摘要，在此处b为任意的非负整数：b也可能为0，也不一定为8的整数倍，且可能是任意大的长度。设该信息的比特流表示如下：</p>
+<p>M[0] M[1] M[2] … M[b-1]</p>
+<p>计算此信息的报文摘要需要如下5步：</p>
+<h2 id="2-1-Append-Padding-Bits"><a href="#2-1-Append-Padding-Bits" class="headerlink" title="2.1 Append Padding Bits"></a>2.1 Append Padding Bits</h2><p>信息计算前先要进行位补位，设补位后信息的长度为LEN(bit)，则LEN%512 = 448(bit)，即数据扩展至<br>K<em>512+448(bit)。即K</em>64+56(byte)，K为整数。补位操作始终要执行，即使补位前信息的长度对512求余的结果是448。具体补位操作：补一个1，然后补0至满足上述要求。总共最少要补1bit，最多补512bit。</p>
+<h2 id="2-2-Append-Length"><a href="#2-2-Append-Length" class="headerlink" title="2.2 Append Length"></a>2.2 Append Length</h2><p>将输入信息的原始长度b(bit)表示成一个64-bit的数字，把它添加到上一步的结果后面(在32位的机器上，这64位将用2个字来表示并且低位在前)。当遇到b大于2^64这种极少的情况时，b的高位被截去，仅使用b的低64位。经过上面两步，数据就被填补成长度为512(bit)的倍数。也就是说，此时的数据长度是16个字(32byte)的整数倍。此时的数据表示为：</p>
+<p>M[0 … N-1]</p>
+<p>其中的N是16的倍数。</p>
+<h2 id="2-3-Initialize-MD-Buffer"><a href="#2-3-Initialize-MD-Buffer" class="headerlink" title="2.3 Initialize MD Buffer"></a>2.3 Initialize MD Buffer</h2><p>用一个四个字的缓冲器(A，B，C，D)来计算报文摘要，A,B,C,D分别是32位的寄存器，初始化使用的是十六进制表示的数字，注意低字节在前：</p>
+<p>word A: 01 23 45 67<br>word B: 89 ab cd ef<br>word C: fe dc ba 98<br>word D: 76 54 32 10</p>
+<h2 id="2-4-Process-Message-in-16-Word-Blocks"><a href="#2-4-Process-Message-in-16-Word-Blocks" class="headerlink" title="2.4 Process Message in 16-Word Blocks"></a>2.4 Process Message in 16-Word Blocks</h2><p>首先定义4个辅助函数，每个函数的输入是三个32位的字，输出是一个32位的字：</p>
+<p>F(X,Y,Z) = XY v not(X) Z<br>G(X,Y,Z) = XZ v Y not(Z)<br>H(X,Y,Z) = X xor Y xor Z<br>I(X,Y,Z) = Y xor (X v not(Z))</p>
+<p>NOTE：not(X)代表X的按位补运算，X v Y 表示X和Y的按位或运算，X xor Y代表X和Y的按位异或运算，XY代表X和Y的按位与运算。</p>
+<p>具体过程如下：</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></div></td><td class="code"><pre><code class="hljs prolog"><span class="hljs-comment">/* Process each 16-word block. */</span><br><span class="hljs-symbol">For</span> i = <span class="hljs-number">0</span> to <span class="hljs-symbol">N</span>/<span class="hljs-number">16</span><span class="hljs-number">-1</span> do<br><br><span class="hljs-comment">/* Copy block i into X. */</span><br><span class="hljs-symbol">For</span> j = <span class="hljs-number">0</span> to <span class="hljs-number">15</span> do<br><span class="hljs-symbol">Set</span> <span class="hljs-symbol">X</span>[j] to <span class="hljs-symbol">M</span>[i*<span class="hljs-number">16</span>+j].<br>end <span class="hljs-comment">/* of loop on j */</span><br><br><span class="hljs-comment">/* Save A as AA, B as BB, C as CC, and D as DD. */</span><br><span class="hljs-symbol">AA</span> = <span class="hljs-symbol">A</span><br><span class="hljs-symbol">BB</span> = <span class="hljs-symbol">B</span><br><span class="hljs-symbol">CC</span> = <span class="hljs-symbol">C</span><br><span class="hljs-symbol">DD</span> = <span class="hljs-symbol">D</span><br><br><span class="hljs-comment">/* Round 1. */</span><br><span class="hljs-comment">/* Let [abcd k s i] denote the operation</span><br><span class="hljs-comment">a = b + ((a + F(b,c,d) + X[k] + T[i]) &lt;&lt;&lt; s). */</span><br><span class="hljs-comment">/* Do the following 16 operations. */</span><br>[<span class="hljs-symbol">ABCD</span> <span class="hljs-number">0</span> <span class="hljs-number">7</span> <span class="hljs-number">1</span>] [<span class="hljs-symbol">DABC</span> <span class="hljs-number">1</span> <span class="hljs-number">12</span> <span class="hljs-number">2</span>] [<span class="hljs-symbol">CDAB</span> <span class="hljs-number">2</span> <span class="hljs-number">17</span> <span class="hljs-number">3</span>] [<span class="hljs-symbol">BCDA</span> <span class="hljs-number">3</span> <span class="hljs-number">22</span> <span class="hljs-number">4</span>]<br>[<span class="hljs-symbol">ABCD</span> <span class="hljs-number">4</span> <span class="hljs-number">7</span> <span class="hljs-number">5</span>] [<span class="hljs-symbol">DABC</span> <span class="hljs-number">5</span> <span class="hljs-number">12</span> <span class="hljs-number">6</span>] [<span class="hljs-symbol">CDAB</span> <span class="hljs-number">6</span> <span class="hljs-number">17</span> <span class="hljs-number">7</span>] [<span class="hljs-symbol">BCDA</span> <span class="hljs-number">7</span> <span class="hljs-number">22</span> <span class="hljs-number">8</span>]<br>[<span class="hljs-symbol">ABCD</span> <span class="hljs-number">8</span> <span class="hljs-number">7</span> <span class="hljs-number">9</span>] [<span class="hljs-symbol">DABC</span> <span class="hljs-number">9</span> <span class="hljs-number">12</span> <span class="hljs-number">10</span>] [<span class="hljs-symbol">CDAB</span> <span class="hljs-number">10</span> <span class="hljs-number">17</span> <span class="hljs-number">11</span>] [<span class="hljs-symbol">BCDA</span> <span class="hljs-number">11</span> <span class="hljs-number">22</span> <span class="hljs-number">12</span>]<br>[<span class="hljs-symbol">ABCD</span> <span class="hljs-number">12</span> <span class="hljs-number">7</span> <span class="hljs-number">13</span>] [<span class="hljs-symbol">DABC</span> <span class="hljs-number">13</span> <span class="hljs-number">12</span> <span class="hljs-number">14</span>] [<span class="hljs-symbol">CDAB</span> <span class="hljs-number">14</span> <span class="hljs-number">17</span> <span class="hljs-number">15</span>] [<span class="hljs-symbol">BCDA</span> <span class="hljs-number">15</span> <span class="hljs-number">22</span> <span class="hljs-number">16</span>]<br><br><span class="hljs-comment">/* Round 2. */</span><br><span class="hljs-comment">/* Let [abcd k s i] denote the operation</span><br><span class="hljs-comment">a = b + ((a + G(b,c,d) + X[k] + T[i]) &lt;&lt;&lt; s). */</span><br><span class="hljs-comment">/* Do the following 16 operations. */</span><br>[<span class="hljs-symbol">ABCD</span> <span class="hljs-number">1</span> <span class="hljs-number">5</span> <span class="hljs-number">17</span>] [<span class="hljs-symbol">DABC</span> <span class="hljs-number">6</span> <span class="hljs-number">9</span> <span class="hljs-number">18</span>] [<span class="hljs-symbol">CDAB</span> <span class="hljs-number">11</span> <span class="hljs-number">14</span> <span class="hljs-number">19</span>] [<span class="hljs-symbol">BCDA</span> <span class="hljs-number">0</span> <span class="hljs-number">20</span> <span class="hljs-number">20</span>]<br>[<span class="hljs-symbol">ABCD</span> <span class="hljs-number">5</span> <span class="hljs-number">5</span> <span class="hljs-number">21</span>] [<span class="hljs-symbol">DABC</span> <span class="hljs-number">10</span> <span class="hljs-number">9</span> <span class="hljs-number">22</span>] [<span class="hljs-symbol">CDAB</span> <span class="hljs-number">15</span> <span class="hljs-number">14</span> <span class="hljs-number">23</span>] [<span class="hljs-symbol">BCDA</span> <span class="hljs-number">4</span> <span class="hljs-number">20</span> <span class="hljs-number">24</span>]<br>[<span class="hljs-symbol">ABCD</span> <span class="hljs-number">9</span> <span class="hljs-number">5</span> <span class="hljs-number">25</span>] [<span class="hljs-symbol">DABC</span> <span class="hljs-number">14</span> <span class="hljs-number">9</span> <span class="hljs-number">26</span>] [<span class="hljs-symbol">CDAB</span> <span class="hljs-number">3</span> <span class="hljs-number">14</span> <span class="hljs-number">27</span>] [<span class="hljs-symbol">BCDA</span> <span class="hljs-number">8</span> <span class="hljs-number">20</span> <span class="hljs-number">28</span>]<br>[<span class="hljs-symbol">ABCD</span> <span class="hljs-number">13</span> <span class="hljs-number">5</span> <span class="hljs-number">29</span>] [<span class="hljs-symbol">DABC</span> <span class="hljs-number">2</span> <span class="hljs-number">9</span> <span class="hljs-number">30</span>] [<span class="hljs-symbol">CDAB</span> <span class="hljs-number">7</span> <span class="hljs-number">14</span> <span class="hljs-number">31</span>] [<span class="hljs-symbol">BCDA</span> <span class="hljs-number">12</span> <span class="hljs-number">20</span> <span class="hljs-number">32</span>]<br><br><span class="hljs-comment">/* Round 3. */</span><br><span class="hljs-comment">/* Let [abcd k s t] denote the operation</span><br><span class="hljs-comment">a = b + ((a + H(b,c,d) + X[k] + T[i]) &lt;&lt;&lt; s). */</span><br><span class="hljs-comment">/* Do the following 16 operations. */</span><br>[<span class="hljs-symbol">ABCD</span> <span class="hljs-number">5</span> <span class="hljs-number">4</span> <span class="hljs-number">33</span>] [<span class="hljs-symbol">DABC</span> <span class="hljs-number">8</span> <span class="hljs-number">11</span> <span class="hljs-number">34</span>] [<span class="hljs-symbol">CDAB</span> <span class="hljs-number">11</span> <span class="hljs-number">16</span> <span class="hljs-number">35</span>] [<span class="hljs-symbol">BCDA</span> <span class="hljs-number">14</span> <span class="hljs-number">23</span> <span class="hljs-number">36</span>]<br>[<span class="hljs-symbol">ABCD</span> <span class="hljs-number">1</span> <span class="hljs-number">4</span> <span class="hljs-number">37</span>] [<span class="hljs-symbol">DABC</span> <span class="hljs-number">4</span> <span class="hljs-number">11</span> <span class="hljs-number">38</span>] [<span class="hljs-symbol">CDAB</span> <span class="hljs-number">7</span> <span class="hljs-number">16</span> <span class="hljs-number">39</span>] [<span class="hljs-symbol">BCDA</span> <span class="hljs-number">10</span> <span class="hljs-number">23</span> <span class="hljs-number">40</span>]<br>[<span class="hljs-symbol">ABCD</span> <span class="hljs-number">13</span> <span class="hljs-number">4</span> <span class="hljs-number">41</span>] [<span class="hljs-symbol">DABC</span> <span class="hljs-number">0</span> <span class="hljs-number">11</span> <span class="hljs-number">42</span>] [<span class="hljs-symbol">CDAB</span> <span class="hljs-number">3</span> <span class="hljs-number">16</span> <span class="hljs-number">43</span>] [<span class="hljs-symbol">BCDA</span> <span class="hljs-number">6</span> <span class="hljs-number">23</span> <span class="hljs-number">44</span>]<br>[<span class="hljs-symbol">ABCD</span> <span class="hljs-number">9</span> <span class="hljs-number">4</span> <span class="hljs-number">45</span>] [<span class="hljs-symbol">DABC</span> <span class="hljs-number">12</span> <span class="hljs-number">11</span> <span class="hljs-number">46</span>] [<span class="hljs-symbol">CDAB</span> <span class="hljs-number">15</span> <span class="hljs-number">16</span> <span class="hljs-number">47</span>] [<span class="hljs-symbol">BCDA</span> <span class="hljs-number">2</span> <span class="hljs-number">23</span> <span class="hljs-number">48</span>]<br><br><span class="hljs-comment">/* Round 4. */</span><br><span class="hljs-comment">/* Let [abcd k s t] denote the operation</span><br><span class="hljs-comment">a = b + ((a + I(b,c,d) + X[k] + T[i]) &lt;&lt;&lt; s). */</span><br><span class="hljs-comment">/* Do the following 16 operations. */</span><br>[<span class="hljs-symbol">ABCD</span> <span class="hljs-number">0</span> <span class="hljs-number">6</span> <span class="hljs-number">49</span>] [<span class="hljs-symbol">DABC</span> <span class="hljs-number">7</span> <span class="hljs-number">10</span> <span class="hljs-number">50</span>] [<span class="hljs-symbol">CDAB</span> <span class="hljs-number">14</span> <span class="hljs-number">15</span> <span class="hljs-number">51</span>] [<span class="hljs-symbol">BCDA</span> <span class="hljs-number">5</span> <span class="hljs-number">21</span> <span class="hljs-number">52</span>]<br>[<span class="hljs-symbol">ABCD</span> <span class="hljs-number">12</span> <span class="hljs-number">6</span> <span class="hljs-number">53</span>] [<span class="hljs-symbol">DABC</span> <span class="hljs-number">3</span> <span class="hljs-number">10</span> <span class="hljs-number">54</span>] [<span class="hljs-symbol">CDAB</span> <span class="hljs-number">10</span> <span class="hljs-number">15</span> <span class="hljs-number">55</span>] [<span class="hljs-symbol">BCDA</span> <span class="hljs-number">1</span> <span class="hljs-number">21</span> <span class="hljs-number">56</span>]<br>[<span class="hljs-symbol">ABCD</span> <span class="hljs-number">8</span> <span class="hljs-number">6</span> <span class="hljs-number">57</span>] [<span class="hljs-symbol">DABC</span> <span class="hljs-number">15</span> <span class="hljs-number">10</span> <span class="hljs-number">58</span>] [<span class="hljs-symbol">CDAB</span> <span class="hljs-number">6</span> <span class="hljs-number">15</span> <span class="hljs-number">59</span>] [<span class="hljs-symbol">BCDA</span> <span class="hljs-number">13</span> <span class="hljs-number">21</span> <span class="hljs-number">60</span>]<br>[<span class="hljs-symbol">ABCD</span> <span class="hljs-number">4</span> <span class="hljs-number">6</span> <span class="hljs-number">61</span>] [<span class="hljs-symbol">DABC</span> <span class="hljs-number">11</span> <span class="hljs-number">10</span> <span class="hljs-number">62</span>] [<span class="hljs-symbol">CDAB</span> <span class="hljs-number">2</span> <span class="hljs-number">15</span> <span class="hljs-number">63</span>] [<span class="hljs-symbol">BCDA</span> <span class="hljs-number">9</span> <span class="hljs-number">21</span> <span class="hljs-number">64</span>]<br><br><span class="hljs-comment">/* Then perform the following additions. (That is increment each</span><br><span class="hljs-comment">of the four registers by the value it had before this block</span><br><span class="hljs-comment">was started.) */</span><br><span class="hljs-symbol">A</span> = <span class="hljs-symbol">A</span> + <span class="hljs-symbol">AA</span><br><span class="hljs-symbol">B</span> = <span class="hljs-symbol">B</span> + <span class="hljs-symbol">BB</span><br><span class="hljs-symbol">C</span> = <span class="hljs-symbol">C</span> + <span class="hljs-symbol">CC</span><br><span class="hljs-symbol">D</span> = <span class="hljs-symbol">D</span> + <span class="hljs-symbol">DD</span><br><br>end <span class="hljs-comment">/* of loop on i */</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="2-5-Output"><a href="#2-5-Output" class="headerlink" title="2.5 Output"></a>2.5 Output</h2><p>报文摘要的产生后的形式为：A，B，C，D。也就是低位字节A开始，高位字节D结束。</p>
+<h1 id="3-C-Implementation"><a href="#3-C-Implementation" class="headerlink" title="3. C++ Implementation"></a>3. C++ Implementation</h1><p>有了上面5个步骤的算法描述，用C++实现起来就很直接了。需要注意的是在具体实现的时候上述5个步骤的顺序会有所变动，因为在大多数情况下我们都无法或很难提前计算出输入信息的长度b(如输入信息来自文件或网络)。因此在具体实现时Append Padding Bits和Append Length这两步会放在最后面。</p>
+<h1 id="4-Test-Suite"><a href="#4-Test-Suite" class="headerlink" title="4. Test Suite"></a>4. Test Suite</h1><p>由于实现代码比较长，在这里就不贴出来了，在本文后面会提供下载。MD5类的public接口如下：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs arduino">md5.h<br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MD5</span> &#123;</span><br><span class="hljs-keyword">public</span>:<br>	<span class="hljs-built_in">MD5</span>();<br>	<span class="hljs-built_in">MD5</span>(<span class="hljs-keyword">const</span> <span class="hljs-keyword">void</span>* input, <span class="hljs-keyword">size_t</span> length);<br>	<span class="hljs-built_in">MD5</span>(<span class="hljs-keyword">const</span> string&amp; str);<br>	<span class="hljs-built_in">MD5</span>(ifstream &amp;in);<br>	<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">update</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">void</span>* input, <span class="hljs-keyword">size_t</span> length)</span></span>;<br>	<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">update</span><span class="hljs-params">(<span class="hljs-keyword">const</span> string&amp; str)</span></span>;<br>	<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">update</span><span class="hljs-params">(ifstream&amp; in)</span></span>;<br>	<span class="hljs-function"><span class="hljs-keyword">const</span> <span class="hljs-keyword">byte</span>* <span class="hljs-title">digest</span><span class="hljs-params">()</span></span>;<br>	<span class="hljs-function">string <span class="hljs-title">toString</span><span class="hljs-params">()</span></span>;<br>	<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">reset</span><span class="hljs-params">()</span></span>;<br> ...<br> &#125;;<br></code></pre></td></tr></table></figure>
+
+<p>下面简单介绍一下具体用法：</p>
+<h2 id="4-1-计算字符串的MD5值"><a href="#4-1-计算字符串的MD5值" class="headerlink" title="4.1 计算字符串的MD5值"></a>4.1 计算字符串的MD5值</h2><p>下面的代码计算字符串”abc”的MD5值并用cout输出：</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">MD5 md5;<br>md5.update(<span class="hljs-string">&quot;abc&quot;</span>);<br>cout &lt;&lt; md5.<span class="hljs-keyword">to</span><span class="hljs-constructor">String()</span> &lt;&lt; endl;<br><span class="hljs-comment">//或者更简单点</span><br>cout &lt;&lt; <span class="hljs-constructor">MD5(<span class="hljs-string">&quot;abc&quot;</span>)</span>.<span class="hljs-keyword">to</span><span class="hljs-constructor">String()</span> &lt;&lt; endl;<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-2-计算文件的MD5值"><a href="#4-2-计算文件的MD5值" class="headerlink" title="4.2 计算文件的MD5值"></a>4.2 计算文件的MD5值</h2><p>下面的代码计算文本文件”D:\test.txt”的MD5值并用cout输出，如果是二进制文件打开的时候记得要指定ios::binary模式。另外需要注意的是用来计算的文件必须存在，所以最好在计算前先判断下ifstream的状态。<br>(本来判断ifstream是否有效不该是客户的责任，原本想在ifstream无效时用文件名做参数抛出FileNotFoundException之类的异常，后来却发现从ifstream中居然无法得到文件名…)</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">MD5 md5;<br>md5.update(ifstream(<span class="hljs-string">&quot;D:\\test.txt&quot;</span>));<br>cout &lt;&lt; md5.<span class="hljs-keyword">to</span><span class="hljs-constructor">String()</span> &lt;&lt; endl;<br><span class="hljs-comment">//或者更简单点</span><br>cout &lt;&lt; <span class="hljs-constructor">MD5(<span class="hljs-params">ifstream</span>(<span class="hljs-string">&quot;D:\\test.txt&quot;</span>)</span>).<span class="hljs-keyword">to</span><span class="hljs-constructor">String()</span> &lt;&lt; endl;<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-3-最基本的用法"><a href="#4-3-最基本的用法" class="headerlink" title="4.3 最基本的用法"></a>4.3 最基本的用法</h2><p>上面的用来计算字符串和文件MD5值的接口都是为了方便才提供的，其实最基本的接口是：<br>void update(const void *input, size_t length);<br>update的另外两个重载都是基于它来实现的，下面的代码用上述接口来实现FileDigest函数，该函数用来计算文件的MD5值：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-function">string <span class="hljs-title">FileDigest</span><span class="hljs-params">(<span class="hljs-keyword">const</span> string&amp; file)</span> </span>&#123;<br>	<span class="hljs-function">ifstream <span class="hljs-title">in</span><span class="hljs-params">(file.c_str(), ios::binary)</span></span>;<br>	<span class="hljs-keyword">if</span> (!in) <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>;<br><br>	MD5 md5;<br>	std::streamsize length;<br>	<span class="hljs-keyword">char</span> buffer[<span class="hljs-number">1024</span>];<br>	<span class="hljs-keyword">while</span> (!in.<span class="hljs-built_in">eof</span>()) &#123;<br>		in.<span class="hljs-built_in">read</span>(buffer, <span class="hljs-number">1024</span>);<br>		length = in.<span class="hljs-built_in">gcount</span>();<br>		<span class="hljs-keyword">if</span> (length &gt; <span class="hljs-number">0</span>)<br>		md5.<span class="hljs-built_in">update</span>(buffer, length);<br>	&#125;<br>	in.<span class="hljs-built_in">close</span>();<br>	<span class="hljs-keyword">return</span> md5.<span class="hljs-built_in">toString</span>();<br> &#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-4-下面看看测试代码："><a href="#4-4-下面看看测试代码：" class="headerlink" title="4.4 下面看看测试代码："></a>4.4 下面看看测试代码：</h2><p>test.cpp</p>
+<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs q">#include <span class="hljs-string">&quot;md5.h&quot;</span><br>#include &lt;iostream&gt;<br><br>using namespace std;<br>void PrintMD5(const <span class="hljs-built_in">string</span>&amp; str, MD5&amp; <span class="hljs-built_in">md5</span>) &#123;<br>	cout &lt;&lt; <span class="hljs-string">&quot;MD5(\&quot;&quot;</span> &lt;&lt; str &lt;&lt; <span class="hljs-string">&quot;\&quot;) = &quot;</span> &lt;&lt; <span class="hljs-built_in">md5</span>.toString() &lt;&lt; endl;<br>&#125;<br><br><span class="hljs-type">int</span> main() &#123;<br>	MD5 <span class="hljs-built_in">md5</span>;<br>	<span class="hljs-built_in">md5</span>.<span class="hljs-keyword">update</span>(<span class="hljs-string">&quot;&quot;</span>);<br>	PrintMD5(<span class="hljs-string">&quot;&quot;</span>, <span class="hljs-built_in">md5</span>);<br>	<br>	<span class="hljs-built_in">md5</span>.<span class="hljs-keyword">update</span>(<span class="hljs-string">&quot;a&quot;</span>);<br>	PrintMD5(<span class="hljs-string">&quot;a&quot;</span>, <span class="hljs-built_in">md5</span>);<br>	<br>	<span class="hljs-built_in">md5</span>.<span class="hljs-keyword">update</span>(<span class="hljs-string">&quot;bc&quot;</span>);<br>	PrintMD5(<span class="hljs-string">&quot;abc&quot;</span>, <span class="hljs-built_in">md5</span>);<br>	<br>	<span class="hljs-built_in">md5</span>.<span class="hljs-keyword">update</span>(<span class="hljs-string">&quot;defghijklmnopqrstuvwxyz&quot;</span>);<br>	PrintMD5(<span class="hljs-string">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span>, <span class="hljs-built_in">md5</span>);<br>	<br>	<span class="hljs-built_in">md5</span>.reset();<br>	<span class="hljs-built_in">md5</span>.<span class="hljs-keyword">update</span>(<span class="hljs-string">&quot;message digest&quot;</span>);<br>	PrintMD5(<span class="hljs-string">&quot;message digest&quot;</span>, <span class="hljs-built_in">md5</span>);<br>	<br>	<span class="hljs-built_in">md5</span>.reset();<br>	<span class="hljs-built_in">md5</span>.<span class="hljs-keyword">update</span>(ifstream(<span class="hljs-string">&quot;D:\\test.txt&quot;</span>));<br>	PrintMD5(<span class="hljs-string">&quot;D:\\test.txt&quot;</span>, <span class="hljs-built_in">md5</span>);<br>	<br>	return <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>测试结果：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">MD5</span>(<span class="hljs-string">&quot;&quot;</span>) = d<span class="hljs-number">41</span>d<span class="hljs-number">8</span>cd<span class="hljs-number">98</span>f<span class="hljs-number">00</span>b<span class="hljs-number">204</span>e<span class="hljs-number">9800998</span>ecf<span class="hljs-number">8427</span>e<br><span class="hljs-attribute">MD5</span>(<span class="hljs-string">&quot;a&quot;</span>) = <span class="hljs-number">0</span>cc<span class="hljs-number">175</span>b<span class="hljs-number">9</span>c<span class="hljs-number">0</span>f<span class="hljs-number">1</span>b<span class="hljs-number">6</span>a<span class="hljs-number">831</span>c<span class="hljs-number">399</span>e<span class="hljs-number">269772661</span><br><span class="hljs-attribute">MD5</span>(<span class="hljs-string">&quot;abc&quot;</span>) = <span class="hljs-number">900150983</span>cd<span class="hljs-number">24</span>fb<span class="hljs-number">0</span>d<span class="hljs-number">6963</span>f<span class="hljs-number">7</span>d<span class="hljs-number">28</span>e<span class="hljs-number">17</span>f<span class="hljs-number">72</span><br><span class="hljs-attribute">MD5</span>(<span class="hljs-string">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span>) = c<span class="hljs-number">3</span>fcd<span class="hljs-number">3</span>d<span class="hljs-number">76192</span>e<span class="hljs-number">4007</span>dfb<span class="hljs-number">496</span>cca<span class="hljs-number">67</span>e<span class="hljs-number">13</span>b<br><span class="hljs-attribute">MD5</span>(<span class="hljs-string">&quot;message digest&quot;</span>) = f<span class="hljs-number">96</span>b<span class="hljs-number">697</span>d<span class="hljs-number">7</span>cb<span class="hljs-number">7938</span>d<span class="hljs-number">525</span>a<span class="hljs-number">2</span>f<span class="hljs-number">31</span>aaf<span class="hljs-number">161</span>d<span class="hljs-number">0</span><br><span class="hljs-attribute">MD5</span>(<span class="hljs-string">&quot;D:\test.txt&quot;</span>) = <span class="hljs-number">7</span>ac<span class="hljs-number">66</span>c<span class="hljs-number">0</span>f<span class="hljs-number">148</span>de<span class="hljs-number">9519</span>b<span class="hljs-number">8</span>bd<span class="hljs-number">264312</span>c<span class="hljs-number">4</span>d<span class="hljs-number">64</span><br></code></pre></td></tr></table></figure>
+
+<h1 id="5-测试程序"><a href="#5-测试程序" class="headerlink" title="5 测试程序"></a>5 测试程序</h1><a href="/2020/07/27/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/02MD5%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/md5_test.rar" title="md5_test">md5_test</a>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">算法与数据结构</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E7%AE%97%E6%B3%95/">算法</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/07/27/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/09%E5%88%A9%E7%94%A8Shell%E5%91%BD%E4%BB%A4%E8%8E%B7%E5%8F%96IP%E5%9C%B0%E5%9D%80/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">利用Shell命令获取IP地址</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/07/27/04DevOps/00%20%E5%B8%B8%E7%94%A8git%E5%91%BD%E4%BB%A4/">
+                        <span class="hidden-mobile">常用git命令</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

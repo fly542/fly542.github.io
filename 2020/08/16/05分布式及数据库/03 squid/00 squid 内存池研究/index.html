@@ -1,0 +1,577 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1. 概述本文的squid原理及代码基于squid 4.12版的源码，主要阐述及分析了squid的内存池原理及响应的代码实现。squid的内存池有两种模式，一种是poolmalloc模式，另外一种是poolchunked模式 2. 原理分析从总体上来看，squid的内存池是通过按照不同大小的固定尺寸内存链来处理的。应用向内存池申请内存时，先找到应用需要的内存对应的内存链，再从内存链中获取一个可用的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="00 squid 内存池研究">
+<meta property="og:url" content="http://fly542.cn/2020/08/16/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/00%20squid%20%E5%86%85%E5%AD%98%E6%B1%A0%E7%A0%94%E7%A9%B6/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="1. 概述本文的squid原理及代码基于squid 4.12版的源码，主要阐述及分析了squid的内存池原理及响应的代码实现。squid的内存池有两种模式，一种是poolmalloc模式，另外一种是poolchunked模式 2. 原理分析从总体上来看，squid的内存池是通过按照不同大小的固定尺寸内存链来处理的。应用向内存池申请内存时，先找到应用需要的内存对应的内存链，再从内存链中获取一个可用的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://fly542.cn/2020/08/16/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/00%20squid%20%E5%86%85%E5%AD%98%E6%B1%A0%E7%A0%94%E7%A9%B6/1.png">
+<meta property="og:image" content="http://fly542.cn/2020/08/16/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/00%20squid%20%E5%86%85%E5%AD%98%E6%B1%A0%E7%A0%94%E7%A9%B6/2.png">
+<meta property="article:published_time" content="2020-08-16T00:09:00.000Z">
+<meta property="article:modified_time" content="2022-01-08T14:23:38.833Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="squid">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://fly542.cn/2020/08/16/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/00%20squid%20%E5%86%85%E5%AD%98%E6%B1%A0%E7%A0%94%E7%A9%B6/1.png">
+  
+  
+  <title>00 squid 内存池研究 - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="00 squid 内存池研究">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-08-16 08:09" pubdate>
+        2020年8月16日 早上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.8k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      16 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">00 squid 内存池研究</h1>
+            
+            <div class="markdown-body">
+              <h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h1><p>本文的squid原理及代码基于squid 4.12版的源码，主要阐述及分析了squid的内存池原理及响应的代码实现。<br>squid的内存池有两种模式，一种是poolmalloc模式，另外一种是poolchunked模式</p>
+<h1 id="2-原理分析"><a href="#2-原理分析" class="headerlink" title="2. 原理分析"></a>2. 原理分析</h1><p>从总体上来看，squid的内存池是通过按照不同大小的固定尺寸内存链来处理的。应用向内存池申请内存时，先找到应用需要的内存对应的内存链，再从内存链中获取一个可用的固定尺寸的内存块即可。</p>
+<img src="/2020/08/16/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/00%20squid%20%E5%86%85%E5%AD%98%E6%B1%A0%E7%A0%94%E7%A9%B6/1.png" srcset="/img/loading.gif" lazyload class="">
+<p>当内存链中的没有任何可用对象时，根据新申请的可用对象的申请方式，将内存池模式分为了malloc和chunked两种模式。</p>
+<h2 id="2-1-malloc-模式分析"><a href="#2-1-malloc-模式分析" class="headerlink" title="2.1 malloc 模式分析"></a>2.1 malloc 模式分析</h2><p>此模式的内存池原理比较简单，每次应用向内存池申请内存时，先从内存池已有的空闲对象列表中直接pop出一个即可，如果空闲列表对象池中没有任何可用空闲对象，则直接调用系统的malloc进行申请；当应用归还内存时直接将归还的内存放入空闲队列中即可。</p>
+<h2 id="2-2-chunked-模式分析"><a href="#2-2-chunked-模式分析" class="headerlink" title="2.2 chunked 模式分析"></a>2.2 chunked 模式分析</h2><p>此模式主要原理是，当内存链中没有可用空闲内存对象时，先向操作系统申请一块大内存(如2MB)，再将这块大内存按照内存链对象的大小进行切分，将规整切分后的内存加入到可用内存链中。</p>
+<img src="/2020/08/16/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/00%20squid%20%E5%86%85%E5%AD%98%E6%B1%A0%E7%A0%94%E7%A9%B6/2.png" srcset="/img/loading.gif" lazyload class="">
+
+<h1 id="3-源码分析"><a href="#3-源码分析" class="headerlink" title="3. 源码分析"></a>3. 源码分析</h1><p>内存源码位于src/mem目录下，</p>
+<h2 id="3-1-文件及目录结构说明"><a href="#3-1-文件及目录结构说明" class="headerlink" title="3.1 文件及目录结构说明"></a>3.1 文件及目录结构说明</h2><table>
+<thead>
+<tr>
+<th align="left">文件名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">AllocatorProxy.h和AllocatorProxy.cpp</td>
+<td>提供给外部期望使用内存池分配类对象空间的代理类</td>
+</tr>
+<tr>
+<td align="left">forward.h</td>
+<td>内存池对外头文件</td>
+</tr>
+<tr>
+<td align="left">Meter.h</td>
+<td>跟踪内存使用情况的对象</td>
+</tr>
+<tr>
+<td align="left">old_api.cc</td>
+<td>实现forward.h中的相关全局函数声明</td>
+</tr>
+<tr>
+<td align="left">pool.h 及pool.cpp</td>
+<td>内存池对象接口</td>
+</tr>
+<tr>
+<td align="left">PoolMalloc.h及PoolMalloc.cc</td>
+<td>malloc内存池模式实现</td>
+</tr>
+<tr>
+<td align="left">PoolChunked.h及PoolChunked.cc</td>
+<td>chunked内存池模式实现</td>
+</tr>
+</tbody></table>
+<h2 id="3-2-总体调用关系说明"><a href="#3-2-总体调用关系说明" class="headerlink" title="3.2 总体调用关系说明"></a>3.2 总体调用关系说明</h2><p>程序启动的时候调用Mem::Init() 函数对全局的内存池进行初始化，默认全局初始化了2KB、4KB、8KB、16KB、32KB、64KB、dread_ctrl、dwrite_q、MD5 digest(16字节)  的全局内存池对象（static MemAllocator *pools[MEM_MAX]） ，并设置内存池对象类型的最大个数为mem_type::MEM_MAX个;</p>
+<p>其中除了MD5 digest内存池的chunk块大小512字节外，其他内存池的chunk块大小均为2MB</p>
+<p>针对String 类型，squid定义了一组特殊的小内存内存块。通过memAllocString 函数调用，默认定义了6中类型的内存池，大小分别是36Byte, 128Byte, 512Byte, 1024Byte,  4096Byte, 16KB 等6种，存放于static const PoolMeta PoolAttrs[mem_str_pool_count] 中</p>
+<p>当程序申请内存时通过2中方式来申请，</p>
+<ol>
+<li>调用memAllocBuf 来申请内存自定义大小的内存，当申请的内存超过pools中最大内存池64KB时则直接调用malloc进行申请</li>
+<li>调用memAllocate根据类型MEM_NONE~~MEM_MAX的类型来调用指定大小的内存</li>
+</ol>
+<h2 id="3-3-PoolChunked源码分析"><a href="#3-3-PoolChunked源码分析" class="headerlink" title="3.3 PoolChunked源码分析"></a>3.3 PoolChunked源码分析</h2><p>每个固定大小的内存池 MemPoolChunked 由多个MemChunk组成，MemPoolChunked 成员变量解释如下：</p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>变量含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>chunk_size</td>
+<td>当前内存池每个chunk的大小</td>
+</tr>
+<tr>
+<td>chunk_capacity</td>
+<td>每个chunk内可分配的内存item个数</td>
+</tr>
+<tr>
+<td>chunkCount</td>
+<td>当前内存池的chunk个数</td>
+</tr>
+<tr>
+<td>freeCache</td>
+<td>当前内存池中空闲item列表(自身是空闲的，自身前sizeof(void*)个字节内记录了下一个空闲对象的地址)</td>
+</tr>
+<tr>
+<td>nextFreeChunk</td>
+<td>当有新申请的空闲chunk时指向新申请的空闲chunk</td>
+</tr>
+<tr>
+<td>Chunks</td>
+<td>当前内存池chunk块链表的第一个chunk</td>
+</tr>
+<tr>
+<td>allChunks</td>
+<td>所有chunk块列表，使用伸展树(<em>Splay Tree</em>)存储</td>
+</tr>
+</tbody></table>
+<p>MemChunk 成员变量说明如下：</p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>变量含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>freeList</td>
+<td>当前chunk内空闲item列表</td>
+</tr>
+<tr>
+<td>objCache</td>
+<td>当前chunk的首个item地址</td>
+</tr>
+<tr>
+<td>inuse_count</td>
+<td>当前chunk中正在被使用的item个数</td>
+</tr>
+<tr>
+<td>nextFreeChunk</td>
+<td>当前chunk的前一个被使用完的空闲chunk</td>
+</tr>
+<tr>
+<td>next</td>
+<td>当前chunk的下一个chunk地址</td>
+</tr>
+<tr>
+<td>lastref</td>
+<td>最后使用时间</td>
+</tr>
+<tr>
+<td>pool</td>
+<td>所属的内存池对象地址</td>
+</tr>
+</tbody></table>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BB%A3%E7%90%86%E8%BD%AF%E4%BB%B6/">高性能代理软件</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/squid/">squid</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/08/16/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/00C++%20%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D(new%EF%BC%8Coperator%20new)%E8%AF%A6%E8%A7%A3/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">(转载)C++ 内存分配(new，operator new)详解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/08/15/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/">
+                        <span class="hidden-mobile">伸展树(splay)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

@@ -1,0 +1,484 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="一、概述squid 从3.5.0开始移除了之前的coss存储机制，改为支持aufs, diskd, rock, ufs四种存储机制。 至于为什么去掉coss机制有待后续调研确定。 当前先研究下已有的几种类型 ufs 存储机制ufs是Squid存储格式中一直存储的著名的存储格式。UFS 即 Unix Filesystem 的缩写使用方法：    cache_dir ufs Directory-Nam">
+<meta property="og:type" content="article">
+<meta property="og:title" content="suqid 存储模型研究">
+<meta property="og:url" content="http://fly542.cn/2020/08/22/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/01%20suqid%20%E5%AD%98%E5%82%A8%E6%A8%A1%E5%9E%8B%E7%A0%94%E7%A9%B6/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="一、概述squid 从3.5.0开始移除了之前的coss存储机制，改为支持aufs, diskd, rock, ufs四种存储机制。 至于为什么去掉coss机制有待后续调研确定。 当前先研究下已有的几种类型 ufs 存储机制ufs是Squid存储格式中一直存储的著名的存储格式。UFS 即 Unix Filesystem 的缩写使用方法：    cache_dir ufs Directory-Nam">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-22T14:38:22.000Z">
+<meta property="article:modified_time" content="2022-01-08T14:23:38.822Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="squid">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>suqid 存储模型研究 - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="suqid 存储模型研究">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-08-22 22:38" pubdate>
+        2020年8月22日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      4.1k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      34 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">suqid 存储模型研究</h1>
+            
+            <div class="markdown-body">
+              <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>squid 从3.5.0开始移除了之前的coss存储机制，改为支持aufs, diskd, rock, ufs四种存储机制。</p>
+<p>至于为什么去掉coss机制有待后续调研确定。</p>
+<p>当前先研究下已有的几种类型</p>
+<h2 id="ufs-存储机制"><a href="#ufs-存储机制" class="headerlink" title="ufs 存储机制"></a>ufs 存储机制</h2><p>ufs是Squid存储格式中一直存储的著名的存储格式。UFS 即 Unix Filesystem 的缩写<br>使用方法：<br>    cache_dir ufs Directory-Name Mbytes L1 L2 [options]</p>
+<p>Mbytes 是此目录下要使用的磁盘空间（MB）数量。 默认值为100 MB。 更改此设置以适合您的配置。 请勿在此处放置磁盘驱动器的大小。 相反，如果您希望Squid使用整个磁盘驱动器，请减去20％并使用该值。</p>
+<p>L1 是将在”目录”下创建的第一级子目录的数量。 默认值为16。</p>
+<p>L2 是将在每个第一级目录下创建的第二级子目录的数量。 默认值为256。</p>
+<h2 id="aufs-存储机制"><a href="#aufs-存储机制" class="headerlink" title="aufs 存储机制"></a>aufs 存储机制</h2><p>aufs存储机制已经发展到超出了改进squid磁盘I/O响应时间的最初尝试。”a”代表着异步I/O。默认的ufs和aufs之间的唯一区别，在于I/O是否被squid主进程执行。数据格式都是一样的，所以你能在两者之间轻松选择，而不用丢失任何cache数据。</p>
+<p>aufs使用大量线程进行磁盘I/O操作。每次squid需要读写，打开关闭，或删除cache文件时，I/O请求被分派到这些线程之一。当线程完成了I/O后，它给squid主进程发送信号，并且返回一个状态码。实际上在squid2.5中，某些文件操作默认不是异步执行的。最明显的，磁盘写总是同步执行。你可以修改src/fs/aufs/store_asyncufs.h文件，将ASYNC_WRITE设为1，并且重编译squid。</p>
+<p>aufs代码需要pthreads库。这是POSIX定义的标准线程接口。尽管许多Unix系统支持pthreads库，但我经常遇到兼容性问题。aufs存储系统看起来仅仅在Linux和Solaris上运行良好。在其他操作系统上，尽管代码能编译，但也许会面临严重的问题。</p>
+<p>为了使用aufs，可以在./configure时增加一个选项：</p>
+<div class="code-wrapper"><pre><code class="hljs">% ./configure --enable-storeio=aufs,ufs
+</code></pre></div>
+<p>严格讲，你不必在storeio模块列表中指定ufs。然而，假如你以后不喜欢aufs，那么就需要指定ufs，以便能重新使用稳定的ufs存储机制。</p>
+<p>假如愿意，你也能使用—with-aio-threads=N选项。假如你忽略它，squid基于aufs cache_dir的数量，自动计算可使用的线程数量。表8-1显示了1-6个cache目录的默认线程数量。</p>
+<h3 id="aufs如何工作-待研究确定4-12版机制"><a href="#aufs如何工作-待研究确定4-12版机制" class="headerlink" title="aufs如何工作 (待研究确定4.12版机制???)"></a>aufs如何工作 (待研究确定4.12版机制???)</h3><p>Squid通过调用pthread_create()来创建大量的线程。所有线程在任何磁盘活动之上创建。这样，即使squid空闲，你也能见到所有的线程。</p>
+<p>无论何时，squid想执行某些磁盘I/O操作（例如打开文件读），它分配一对数据结构，并将I/O请求放进队列中。线程循环读取队列，取得I/O请求并执行它们。因为请求队列共享给所有线程，squid使用独享锁来保证仅仅一个线程能在给定时间内更新队列。</p>
+<p>I/O操作阻塞线程直到它们被完成。然后，将操作状态放进一个完成队列里。作为完整的操作，squid主进程周期性的检查完成队列。请求磁盘I/O的模块被通知操作已完成，并获取结果。</p>
+<p>你可能已猜想到，aufs在多CPU系统上优势更明显。唯一的锁操作发生在请求和结果队列。然而，所有其他的函数执行都是独立的。当主进程在一个CPU上执行时，其他的CPU处理实际的I/O系统调用。</p>
+<h2 id="diskd-存储机制"><a href="#diskd-存储机制" class="headerlink" title="diskd 存储机制"></a>diskd 存储机制</h2><p>diskd（disk守护进程的短称）类似于aufs，磁盘I/O被外部进程来执行。不同于aufs的是，diskd不使用线程。代替的，它通过消息队列和共享内存来实现内部进程间通信。</p>
+<p>消息队列是现代Unix操作系统的标准功能。许多年以前在AT&amp;T的Unix System V的版本1上实现了它们。进程间的队列消息以较少的字节传递：32-40字节。每个diskd进程使用一个队列来接受来自squid的请求，并使用另一个队列来传回请求。</p>
+<h3 id="diskd如何工作-待研究确定4-12版机制"><a href="#diskd如何工作-待研究确定4-12版机制" class="headerlink" title="diskd如何工作 (待研究确定4.12版机制???)"></a>diskd如何工作 (待研究确定4.12版机制???)</h3><p>Squid对每个cache_dir创建一个diskd进程。这不同于aufs，aufs对所有的cache_dir使用一个大的线程池。对每个I/O操作，squid发送消息到相应的diskd进程。当该操作完成后，diskd进程返回一个状态消息给squid。squid和diskd进程维护队列里的消息的顺序。这样，不必担心I/O会无序执行。</p>
+<p>对读和写操作，squid和diskd进程使用共享内存区域。两个进程能对同一内存区域进行读和写。例如，当squid产生读请求时，它告诉diskd进程在内存中何处放置数据。diskd将内存位置传递给read()系统调用，并且通过发送队列消息，通知squid该过程完成了。然后squid从共享内存区域访问最近的可读数据。</p>
+<p>diskd与aufs本质上都支持squid的无阻塞磁盘I/O。当diskd进程在I/O操作上阻塞时，squid有空去处理其他任务。在diskd进程能跟上负载情况下，这点确实工作良好。因为squid主进程现在能够去做更多工作，当然它有可能会加大diskd的负载。diskd有两个功能来帮助解决这个问题。</p>
+<p>首先，squid等待diskd进程捕获是否队列超出了某种极限。默认值是64个排队消息。假如diskd进程获取的数值远大于此，squid会休眠片刻，并等待diskd完成一些未决操作。这本质上让squid进入阻塞I/O模式。它也让更多的CPU时间对diskd进程可用。通过指定cache_dir行的Q2参数的值，你可以配置这个极限值：</p>
+<p>cache_dir diskd /cache0 7000 16 256 Q2=50<br>第二，假如排队操作的数量抵达了另一个极限，squid会停止要求diskd进程打开文件。这里的默认值是72个消息。假如squid想打开一个磁盘文件读或写，但选中的cache_dir有太多的未完成操作，那么打开请求会失败。当打开文件读时，会导致cache丢失。当打开文件写时，会阻碍squid存储cache响应。这两种情况下用户仍能接受到有效响应。唯一实际的影响是squid的命中率下降。这个极限用Q1参数来配置：</p>
+<p>cache_dir diskd /cache0 7000 16 256 Q1=60 Q2=50<br>注意在某些版本的squid中，Q1和Q2参数混杂在默认的配置文件里。最佳选择是，Q1应该大于Q2。</p>
+<h2 id="rock-存储机制"><a href="#rock-存储机制" class="headerlink" title="rock 存储机制"></a>rock 存储机制</h2><p>rock 存储机制是数据库样式的存储。所有缓存的条目都使用固定大小的 slot 存储在“数据库”文件中。单个条目占用一个或多个slot。</p>
+<p>如果可能的话，使用Rock Store的Squid会创建一个名为 “disker” 的专用子进程，以避免Squid 的worker阻塞磁盘I/O上。将为每个cache_dir创建一个disker进程。squid只有运行在daemon模式下且磁盘的I/O模式设置为 IpcIo 时才会创建disker。</p>
+<p>参数 swap-timeout = msec<br>    如果Squid预估swap操作花费的时间超过指定的毫秒数，则开始停止向磁盘写未命中数据或从磁盘中读取命中数据。默认情况下，当设置为零时，禁用磁盘I / O时间限制实施。使用阻塞I/O模式时将被忽略，因为阻塞同步I/O不允许Squid预估swap操作消耗的时间。</p>
+<p>参数 max-swap-rate = swaps / sec：<br>    使用指定的I/O速率限制来人为限制磁盘访问。交换将导致平均I/O速率超过限制的请求将延迟。各个请求的交换（例如，命中或读取）不会延迟，但是它们确实有助于测量交换率，并且由于它们与交换请求位于同一FIFO队列中，因此如果max-swap-rate较小，它们可能会等待更长的时间。这在缓冲 “太多” 写入然后在将这些写入提交到磁盘的同时开始阻止Squid和其他进程的文件系统上是必需的。通常与swap-timeout一起使用，以避免在磁盘需求超出可用磁盘“带宽”时出现过多的延迟和队列溢出。默认情况下，当设置为零时，禁用磁盘I / O速率限制实施。当前只有 IpcIo 模式支持。</p>
+<p>参数 slot-size = bytes<br>    用于存储缓存的响应的数据库 “记录” 的大小。一个已经被缓存的请求内容至少占用一个slot，并且所有数据库I/O 均使用单独的 slot 完成，因此增加此参数会导致更多的磁盘空间浪费，而减少则导致更多的磁盘I/O开销。应该设置为操作系统I/O页面大小的倍数。默认为16KB。每个slot均存储一个header，较小尺寸的slot将被拒绝。header 小于100个字节。</p>
+<h1 id="二、源码研究"><a href="#二、源码研究" class="headerlink" title="二、源码研究"></a>二、源码研究</h1><h2 id="代码理解关键点："><a href="#代码理解关键点：" class="headerlink" title="代码理解关键点："></a>代码理解关键点：</h2><p><em>SwapDir</em> 的定义是通过在src/store/forword.h 中的 typedef Store::Disk SwapDir 来定义的，实际上是Store命名空间中的Disk类</p>
+<p>StoreController 的定义是通过在src/store/forword.h 中的 typedef Store::Controller StoreController来定义的，实际上是Store命名空间中的Controller 类</p>
+<p>StoreHashIndex 的定义是通过在src/store/forword.h 中的 typedef Store::Disks StoreHashIndex;来定义的，实际是Store命名空间中的Disks 类</p>
+<p>SwapDirPointer 的定义是通过在src/store/forword.h 中的 typedef RefCount&lt;Store::Disk&gt; SwapDirPointer来定义的，实际是Store命名空间中的Disks 类</p>
+<p>UFSSwapLogParser  swap log解析器, 通过cc文件中继承实现了不同版本解析器来解析对应的swap log</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BB%A3%E7%90%86%E8%BD%AF%E4%BB%B6/">高性能代理软件</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/squid/">squid</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/00DNS%E5%8D%8F%E8%AE%AE/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/08/20/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/03pstack%20%E8%B7%9F%E8%B8%AA%E8%BF%9B%E7%A8%8B%E6%A0%88/">
+                        <span class="hidden-mobile">pstack 跟踪进程栈</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

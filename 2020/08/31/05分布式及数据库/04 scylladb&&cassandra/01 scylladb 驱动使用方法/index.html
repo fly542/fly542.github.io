@@ -1,0 +1,462 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="本文主要总结下 scylladb 的c&#x2F;c++驱动使用详细方法与步骤，便于快速进行开发。 1. 基本使用步骤创建 cluster 创建方法： CassCluster * cluster &#x3D; cass_cluster_new(); cass_cluster_free(cluster); &#x2F;&#x2F;不用时释放申请的资源 对cluster进行参数设置  根据需要对cluster 进行各种相关参数的设置，主要进">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fly542 技术沉淀">
+<meta property="og:url" content="http://fly542.cn/2020/08/31/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&&cassandra/01%20scylladb%20%E9%A9%B1%E5%8A%A8%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="本文主要总结下 scylladb 的c&#x2F;c++驱动使用详细方法与步骤，便于快速进行开发。 1. 基本使用步骤创建 cluster 创建方法： CassCluster * cluster &#x3D; cass_cluster_new(); cass_cluster_free(cluster); &#x2F;&#x2F;不用时释放申请的资源 对cluster进行参数设置  根据需要对cluster 进行各种相关参数的设置，主要进">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-31T04:32:15.000Z">
+<meta property="article:modified_time" content="2022-01-08T14:23:38.803Z">
+<meta property="article:author" content="Fly542">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-08-31 12:32" pubdate>
+        2020年8月31日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      14k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      121 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none"></h1>
+            
+            <div class="markdown-body">
+              <p>本文主要总结下 scylladb 的c/c++驱动使用详细方法与步骤，便于快速进行开发。</p>
+<h2 id="1-基本使用步骤"><a href="#1-基本使用步骤" class="headerlink" title="1. 基本使用步骤"></a>1. 基本使用步骤</h2><h3 id="创建-cluster"><a href="#创建-cluster" class="headerlink" title="创建 cluster"></a>创建 cluster</h3><ol>
+<li>创建方法：<br> CassCluster * cluster = cass_cluster_new();<br> cass_cluster_free(cluster); //不用时释放申请的资源</li>
+<li>对cluster进行参数设置</li>
+</ol>
+<p>根据需要对cluster 进行各种相关参数的设置，主要进行以下设置</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><pre><code class="hljs reasonml">cass<span class="hljs-constructor">_cluster_set_port(<span class="hljs-params">cluster</span>, <span class="hljs-params">port</span>)</span>;  <span class="hljs-comment">//设置集群连接的端口号</span><br>cass<span class="hljs-constructor">_cluster_set_contact_points(<span class="hljs-params">cluster</span>, <span class="hljs-params">addr</span>)</span>; <span class="hljs-comment">//设置集群连接地址，只需要指定一个地址即可</span><br>cass<span class="hljs-constructor">_cluster_set_credentials(<span class="hljs-params">cluster</span>, <span class="hljs-params">user</span>, <span class="hljs-params">pass</span>)</span>; <span class="hljs-comment">//设置集群连接时的认证信息(用户名、密码)</span><br>cass<span class="hljs-constructor">_cluster_set_num_threads_io(<span class="hljs-params">cluster</span>, <span class="hljs-params">num</span>)</span>; <span class="hljs-comment">//设置处理io的线程数，，默认2个</span><br>cass<span class="hljs-constructor">_cluster_set_core_connections_per_host(<span class="hljs-params">cluster</span>, <span class="hljs-params">count</span>)</span>; <span class="hljs-comment">// 设置集群中每个服务端的连接数，默认为1个</span><br></code></pre></td></tr></table></figure>
+<p>总的io连接数=io线程数 × 每个服务端的连接数 × 集群服务端个数</p>
+<h3 id="创建-session"><a href="#创建-session" class="headerlink" title="创建 session"></a>创建 session</h3><p>CassSession维护每个节点的连接以及可调整的I / O线程池，以根据负载平衡策略进行查询。 因为CassSession是线程安全的，所以通常建议您为每个 keyspace 创建一个会话，并在应用程序线程之间共享它。</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">CassSession<span class="hljs-operator"> * </span>session = cass<span class="hljs-constructor">_session_new()</span>;<br>cass<span class="hljs-constructor">_session_free(<span class="hljs-params">session</span>)</span>;  <span class="hljs-comment">//不用时释放申请的资源</span><br></code></pre></td></tr></table></figure>
+<h3 id="执行操作语句"><a href="#执行操作语句" class="headerlink" title="执行操作语句"></a>执行操作语句</h3><p>执行操作主要按以下步骤进行处理</p>
+<ol>
+<li>创建操作执行对象<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">CassStatement<span class="hljs-operator"> * </span>statement = cass<span class="hljs-constructor">_statement_new(<span class="hljs-params">qstr</span>.<span class="hljs-params">c_str</span>()</span>, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
+第一个参数为要执行的操作语句，第二个参数代表要使用的占位符个数，在批量循环处理的时候使用占位符时使用，</li>
+<li>执行具体操作语句<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">CassFuture<span class="hljs-operator"> * </span>futrue = cass<span class="hljs-constructor">_session_execute(<span class="hljs-params">session</span>, <span class="hljs-params">statement</span>)</span>;<br></code></pre></td></tr></table></figure></li>
+<li>等待执行结果<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">cass<span class="hljs-constructor">_future_wait(<span class="hljs-params">future</span>)</span>;<br></code></pre></td></tr></table></figure></li>
+<li>判定执行结果<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-keyword">if</span> (CASS_OK != cass_future_error_code(future)) &#123;<br>	<span class="hljs-regexp">//</span> 异常处理<br>&#125; <span class="hljs-keyword">else</span> &#123;<br>	<span class="hljs-regexp">//</span> 成功执行相关语句<br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li>释放执行资源<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">cass<span class="hljs-constructor">_statement_free(<span class="hljs-params">statement</span>)</span>;<br>cass<span class="hljs-constructor">_future_free(<span class="hljs-params">future</span>)</span>;<br></code></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="2-封装库示例"><a href="#2-封装库示例" class="headerlink" title="2. 封装库示例"></a>2. 封装库示例</h2><p>头文件db_scylla.h</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;vector&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cassandra.h&gt;</span></span><br><br><span class="hljs-keyword">namespace</span> DB &#123;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ed_error</span>;</span><br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">scylla_obj</span></span><br><span class="hljs-class">&#123;</span> <span class="hljs-comment">//数据库查询查询传递对象</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">scylla_obj</span>() &#123;&#125;<br>    ~<span class="hljs-built_in">scylla_obj</span> () &#123;&#125;<br><br><span class="hljs-keyword">public</span>:<br>    std::string  uri_;                          <span class="hljs-comment">//uri</span><br>    std::vector&lt;std::string&gt; vidc_;             <span class="hljs-comment">//idc列表</span><br>&#125;;<br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">record_scylla</span> :</span> <span class="hljs-keyword">public</span> record_base<br>&#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">record_scylla</span>();<br>    ~<span class="hljs-built_in">record_scylla</span>();<br><br><span class="hljs-keyword">public</span>:<br>    std::string  uri_;                           <span class="hljs-comment">//uri</span><br>    std::string  vidc_;                          <span class="hljs-comment">//vidc</span><br>    std::string  cache_;                         <span class="hljs-comment">//cache</span><br>    std::string  zone_;                          <span class="hljs-comment">//zone</span><br>    <span class="hljs-keyword">int</span>     type_;                          <span class="hljs-comment">//type</span><br>&#125;;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">db_scylla</span></span><br><span class="hljs-class">&#123;</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">db_scylla</span> ();<br>    ~<span class="hljs-built_in">db_scylla</span> ();<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 打开数据库</span><br><span class="hljs-comment">     * @param addr 要打开的地址</span><br><span class="hljs-comment">     * @param port 要打开的端口号</span><br><span class="hljs-comment">     * @return true 成功打开，false 打开失败</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">open</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * addr, <span class="hljs-keyword">int</span> port)</span></span>;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 查询内容</span><br><span class="hljs-comment">     * @param obj 要查询的信息</span><br><span class="hljs-comment">     * @param bhot 是否是查询热点数据</span><br><span class="hljs-comment">     * @param vec 返回查询结果</span><br><span class="hljs-comment">     * @param err 错误时返回错误详细信息</span><br><span class="hljs-comment">     * @return true 成功查询，false 未查询到</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">query</span><span class="hljs-params">(<span class="hljs-keyword">const</span> scylla_obj &amp; obj, <span class="hljs-keyword">bool</span> bhot,</span></span><br><span class="hljs-params"><span class="hljs-function">            std::vector&lt;record_scylla&gt; &amp; vec, ed_error * err)</span></span>;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 批量插入数据</span><br><span class="hljs-comment">     * @param vec 要插入的数据总量</span><br><span class="hljs-comment">     * @param ttl 过期时间 &lt;=0 则永不过期，单位秒</span><br><span class="hljs-comment">     * @param err 出错时返回错误详细信息</span><br><span class="hljs-comment">     * @return  成功插入记录数</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">size_t</span> <span class="hljs-title">insert</span><span class="hljs-params">(<span class="hljs-keyword">const</span> std::vector&lt;record_scylla&gt; &amp; vec,</span></span><br><span class="hljs-params"><span class="hljs-function">            <span class="hljs-keyword">long</span> <span class="hljs-keyword">long</span> ttl, ed_error * err)</span></span>;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 删除数据</span><br><span class="hljs-comment">     * @param vec 要删除的记录</span><br><span class="hljs-comment">     * @param err 出错时返回错误详细信息</span><br><span class="hljs-comment">     * @return 成功删除的记录数</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">size_t</span> <span class="hljs-title">remove</span><span class="hljs-params">(<span class="hljs-keyword">const</span> std::vector&lt;record_scylla&gt; &amp; vec, ed_error * err)</span></span>;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 设置认证的用户名和密码</span><br><span class="hljs-comment">     * @param user 用户名</span><br><span class="hljs-comment">     * @param pass 密码</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">set_auth</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * user, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * pass)</span></span>;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 设置连接超时</span><br><span class="hljs-comment">     * @param ms_timeout 超时时间，单位ms</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">set_conn_timeout</span><span class="hljs-params">(<span class="hljs-keyword">int</span> ms_timeout)</span></span>;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 设置读写超时</span><br><span class="hljs-comment">     * @param timeout 超时时间，单位ms</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">set_rw_timeout</span><span class="hljs-params">(<span class="hljs-keyword">int</span> ms_timeout)</span></span>;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 设置scyllad 处理io的线程数</span><br><span class="hljs-comment">     * @param cn 线程数</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">set_io_thread_num</span><span class="hljs-params">(<span class="hljs-keyword">int</span> cn)</span></span>;<br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 创建session连接</span><br><span class="hljs-comment">     * @return 非NULL 成功连接，返回连接对象，NULL 连接失败</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function">CassSession* <span class="hljs-title">create_connect_session</span><span class="hljs-params">(ed_error *err)</span></span>;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 获取查询的字符串信息</span><br><span class="hljs-comment">     * @param obj 要查询的对象信息</span><br><span class="hljs-comment">     * @param bhot 是否是查询热点数据</span><br><span class="hljs-comment">     * @param str 返回查询字符串</span><br><span class="hljs-comment">     * @param cloNum 返回查询的字段个数</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">get_query_string</span><span class="hljs-params">(<span class="hljs-keyword">const</span> scylla_obj &amp; obj, <span class="hljs-keyword">bool</span> bhot, acl::string &amp; str)</span></span>;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 从row中解析一条记录到vec中</span><br><span class="hljs-comment">     * @param row 要解析的行</span><br><span class="hljs-comment">     * @param bhot 是否是查询热点数据</span><br><span class="hljs-comment">     * @param vec 存储解析结果</span><br><span class="hljs-comment">     * @return true 成功解析，false 解析失败</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">parse_one_record</span><span class="hljs-params">(<span class="hljs-keyword">const</span> CassRow* row, <span class="hljs-keyword">bool</span> bhot,</span></span><br><span class="hljs-params"><span class="hljs-function">            std::vector&lt;record_scylla&gt; &amp; vec)</span></span>;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 获取其中某一列的值</span><br><span class="hljs-comment">     * @param row 行信息</span><br><span class="hljs-comment">     * @param cname 列名</span><br><span class="hljs-comment">     * @param value 返回获取到的value</span><br><span class="hljs-comment">     * @return true 成功获取，false 获取失败</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">get_col_value</span><span class="hljs-params">(<span class="hljs-keyword">const</span> CassRow* row, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * cname,</span></span><br><span class="hljs-params"><span class="hljs-function">            std::string &amp; value)</span></span>;<br>    <span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">get_col_value</span><span class="hljs-params">(<span class="hljs-keyword">const</span> CassRow* row, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * cname, <span class="hljs-keyword">int</span> &amp; value)</span></span>;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 获取删除条件字符串</span><br><span class="hljs-comment">     * @param key 添加的条件字符串</span><br><span class="hljs-comment">     * @param key_title 添加时使用的关键字</span><br><span class="hljs-comment">     * @param all 返回添加后的结果</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">get_remove_cond_str</span><span class="hljs-params">(<span class="hljs-keyword">const</span> std::string &amp; key,</span></span><br><span class="hljs-params"><span class="hljs-function">            <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * key_title, std::string &amp; all)</span></span>;<br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">get_remove_cond_int</span><span class="hljs-params">(<span class="hljs-keyword">int</span> key, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * key_title, std::string &amp; all)</span></span>;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 从连接池池中获取一个连接</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function">CassSession * <span class="hljs-title">get_session</span><span class="hljs-params">(ed_error * err)</span></span>;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 归还使用后的session</span><br><span class="hljs-comment">     * @param session 要归还的session</span><br><span class="hljs-comment">     * @param bok false session 异常，true 正常</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">put_session</span><span class="hljs-params">(CassSession * session, <span class="hljs-keyword">bool</span> bok)</span></span>;<br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-keyword">int</span> port_;                          <span class="hljs-comment">//端口号</span><br>    <span class="hljs-keyword">int</span> conn_timeout_;                  <span class="hljs-comment">//连接超时</span><br>    <span class="hljs-keyword">int</span> rw_timeout_;                    <span class="hljs-comment">//读写超时</span><br>    <span class="hljs-keyword">int</span> thread_num_;                    <span class="hljs-comment">//处理io线程数</span><br>    std::string addr_;                  <span class="hljs-comment">//连接地址</span><br>    std::string user_;                  <span class="hljs-comment">//用户名</span><br>    std::string pass_;                  <span class="hljs-comment">//密码</span><br>    CassSession * session_;<br>#    QLock lock_;                        <span class="hljs-comment">// pool_ 实际应用时需要考虑加 锁</span><br>&#125;;<br><br>&#125; <span class="hljs-comment">/* DB */</span><br><br></code></pre></td></tr></table></figure>
+
+<p>db_scylla.cpp</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&quot;stdafx.h&quot;</span></span><br><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&quot;db_scylla.h&quot;</span></span><br><br><span class="hljs-keyword">namespace</span> DB &#123;<br><br><span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * CONST_COL_URI = <span class="hljs-string">&quot;uri&quot;</span>;<br><span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * CONST_COL_VIDC = <span class="hljs-string">&quot;vidc&quot;</span>;<br><span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * CONST_COL_CACHE = <span class="hljs-string">&quot;cache&quot;</span>;<br><span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * CONST_COL_TYPE = <span class="hljs-string">&quot;typ&quot;</span>;<br><br><span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * CONST_COL_ZONE = <span class="hljs-string">&quot;zone&quot;</span>;<br><span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * CONST_COL_LEVEL = <span class="hljs-string">&quot;level&quot;</span>;<br><span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * KEYSPACE_TABLE=<span class="hljs-string">&quot;keyspace.test_table&quot;</span>;<br><br>db_scylla::<span class="hljs-built_in">db_scylla</span>()<br>: <span class="hljs-built_in">port_</span>(<span class="hljs-number">9042</span>)<br>, <span class="hljs-built_in">conn_timeout_</span>(<span class="hljs-number">2000</span>)<br>, <span class="hljs-built_in">rw_timeout_</span>(<span class="hljs-number">2000</span>)<br>, <span class="hljs-built_in">thread_num_</span>(<span class="hljs-number">10</span>)<br>, <span class="hljs-built_in">cluster_</span>(<span class="hljs-literal">NULL</span>)<br>, <span class="hljs-built_in">session_</span>(<span class="hljs-literal">NULL</span>)<br>&#123;<br>&#125;<br><br>db_scylla::~<span class="hljs-built_in">db_scylla</span>() &#123;<br>    <span class="hljs-keyword">if</span>(cluster_) &#123;<br>        <span class="hljs-built_in">cass_cluster_free</span>(cluster_);<br>    &#125;<br>	<span class="hljs-keyword">if</span>(session_) &#123;<br>		<span class="hljs-built_in">cass_session_free</span>(session_);<br>		session_ = <span class="hljs-literal">NULL</span>;<br>	&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">db_scylla::open</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * addr, <span class="hljs-keyword">int</span> port)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span>(<span class="hljs-literal">NULL</span>==addr || port&gt;<span class="hljs-number">65535</span> || port&lt;=<span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;open scylladb failed addr=%s, port=%d\n&quot;</span>,<br>                <span class="hljs-literal">NULL</span>==addr?<span class="hljs-string">&quot;NULL&quot;</span>:addr, port);<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    &#125;<br><br>    cluster_ = <span class="hljs-built_in">cass_cluster_new</span>();<br>    <span class="hljs-built_in">cass_cluster_set_port</span>(cluster_, port);<br>    <span class="hljs-built_in">cass_cluster_set_contact_points</span>(cluster_, addr);<br>    <span class="hljs-built_in">cass_cluster_set_credentials</span>(cluster_, user_.<span class="hljs-built_in">c_str</span>(), pass_.<span class="hljs-built_in">c_str</span>());<br>    <span class="hljs-built_in">cass_cluster_set_num_threads_io</span>(cluster_, thread_num_); <span class="hljs-comment">//处理请求的线程数</span><br>    <span class="hljs-comment">//cass_cluster_set_max_connections_per_host(cluster_, 50); //被废弃可不用了</span><br>    <span class="hljs-comment">//cass_cluster_set_core_connections_per_host(cluster_, 1); //每个线程的连接, 不用设置太多，默认的就够</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">db_scylla::get_remove_cond_str</span><span class="hljs-params">(<span class="hljs-keyword">const</span> std::string &amp; key,</span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * key_title, std::string &amp; all)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span>(key.<span class="hljs-built_in">empty</span>()) &#123;<br>        <span class="hljs-keyword">return</span> ;<br>    &#125;<br>    acl::string tmp;<br>    tmp.format(<span class="hljs-string">&quot;%s=&#x27;%s&#x27;&quot;</span>,key_title, key.<span class="hljs-built_in">c_str</span>());<br>    <span class="hljs-keyword">if</span>(<span class="hljs-literal">false</span> == all.<span class="hljs-built_in">empty</span>()) &#123;<br>        all.<span class="hljs-built_in">append</span>(<span class="hljs-string">&quot; AND &quot;</span>);<br>    &#125;<br>    all.<span class="hljs-built_in">append</span>(tmp.<span class="hljs-built_in">c_str</span>());<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">db_scylla::get_remove_cond_int</span><span class="hljs-params">(<span class="hljs-keyword">int</span> key,</span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * key_title, std::string &amp; all)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span>(key&lt;<span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-keyword">return</span> ;<br>    &#125;<br>    acl::string tmp;<br>    tmp.format(<span class="hljs-string">&quot;%s=%d&quot;</span>,key_title, key);<br>    <span class="hljs-keyword">if</span>(<span class="hljs-literal">false</span> == all.<span class="hljs-built_in">empty</span>()) &#123;<br>        all.<span class="hljs-built_in">append</span>(<span class="hljs-string">&quot; AND &quot;</span>);<br>    &#125;<br>    all.<span class="hljs-built_in">append</span>(tmp.<span class="hljs-built_in">c_str</span>());<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">size_t</span> <span class="hljs-title">db_scylla::remove</span><span class="hljs-params">(<span class="hljs-keyword">const</span> std::vector&lt;record_scylla&gt; &amp; vec, ed_error * err)</span> </span>&#123;<br>    <span class="hljs-keyword">size_t</span> iok = <span class="hljs-number">0</span>;<br>    CassSession * session = <span class="hljs-built_in">get_session</span>(err);<br>    <span class="hljs-keyword">if</span>(<span class="hljs-literal">NULL</span>==session || vec.<span class="hljs-built_in">empty</span>()) &#123;<br>        <span class="hljs-keyword">return</span> iok;<br>    &#125;<br><br>    CassFuture* futures[ vec.<span class="hljs-built_in">size</span>() ];<br>    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">size_t</span> i=<span class="hljs-number">0</span>; i&lt;vec.<span class="hljs-built_in">size</span>(); ++i) &#123;<br>        std::string strtmp;<br>        <span class="hljs-built_in">get_remove_cond_str</span>(vec[i].uri_, CONST_COL_URI, strtmp);<br>        <span class="hljs-built_in">get_remove_cond_str</span>(vec[i].vidc_, CONST_COL_VIDC, strtmp);<br>        <span class="hljs-built_in">get_remove_cond_str</span>(vec[i].cache_, CONST_COL_CACHE, strtmp);<br>        <span class="hljs-built_in">get_remove_cond_int</span>(vec[i].type_, CONST_COL_TYPE, strtmp);<br><br>        acl::string qstr;<br>        qstr.format(<span class="hljs-string">&quot;DELETE FROM cdn_global_index.uri_index WHERE %s ;&quot;</span>, strtmp.<span class="hljs-built_in">c_str</span>());<br>        CassStatement * statement = <span class="hljs-built_in">cass_statement_new</span>(qstr.<span class="hljs-built_in">c_str</span>(), <span class="hljs-number">0</span>);<br>        futures[i] = <span class="hljs-built_in">cass_session_execute</span>(session, statement);<br>        <span class="hljs-built_in">cass_statement_free</span>(statement);<br>    &#125;<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">size_t</span> i=<span class="hljs-number">0</span>; i&lt;vec.<span class="hljs-built_in">size</span>(); ++i) &#123;<br>        CassFuture* future = futures[i];<br>        <span class="hljs-built_in">cass_future_wait</span>(future);<br>        CassError rc = <span class="hljs-built_in">cass_future_error_code</span>(future);<br>        <span class="hljs-keyword">if</span> (rc != CASS_OK) &#123;<br>            <span class="hljs-built_in">ADD_ED_ERROR</span>(err, ERR_SDB_DELETE, <span class="hljs-string">&quot;%s failed. err=%s&quot;</span>, vec[i].uri_.<span class="hljs-built_in">c_str</span>(),<br>                    <span class="hljs-built_in">cass_error_desc</span>(rc));<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            iok++;<br>        &#125;<br>        <span class="hljs-built_in">cass_future_free</span>(future);<br>    &#125;<br>    <span class="hljs-built_in">put_session</span>(session, <span class="hljs-number">0</span>==iok?<span class="hljs-literal">false</span>:<span class="hljs-literal">true</span>);<br>    <span class="hljs-keyword">return</span> iok;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">size_t</span>  <span class="hljs-title">db_scylla::insert</span><span class="hljs-params">(<span class="hljs-keyword">const</span> std::vector&lt;record_scylla&gt; &amp; vec, <span class="hljs-keyword">long</span> <span class="hljs-keyword">long</span> ttl,</span></span><br><span class="hljs-params"><span class="hljs-function">        ed_error * err)</span> </span>&#123;<br>    <span class="hljs-keyword">size_t</span> iok = <span class="hljs-number">0</span>;<br>    CassSession * session = <span class="hljs-built_in">get_session</span>(err);<br>    <span class="hljs-keyword">if</span>(<span class="hljs-literal">NULL</span>==session || vec.<span class="hljs-built_in">empty</span>()) &#123;<br>        <span class="hljs-keyword">return</span> iok;<br>    &#125;<br>    acl::string qstr;<br>    <span class="hljs-keyword">if</span>(ttl&gt;<span class="hljs-number">0</span>) &#123;<br>        qstr.format(<span class="hljs-string">&quot;INSERT INTO %s (%s, %s, %s, %s) VALUES(?,?,?,?) USING TTL %lld;&quot;</span>,<br>                KEYSPACE_TABLE, CONST_COL_URI, CONST_COL_VIDC, CONST_COL_CACHE, CONST_COL_TYPE, ttl);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        qstr.format(<span class="hljs-string">&quot;INSERT INTO %s (%s, %s, %s, %s) VALUES(?,?,?,?) ;&quot;</span>,<br>                KEYSPACE_TABLE, CONST_COL_URI, CONST_COL_VIDC, CONST_COL_CACHE, CONST_COL_TYPE);<br>    &#125;<br>    CassFuture* futures[ vec.<span class="hljs-built_in">size</span>() ];<br>    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">size_t</span> i=<span class="hljs-number">0</span>; i&lt;vec.<span class="hljs-built_in">size</span>(); ++i) &#123;<br>        CassStatement * statement = <span class="hljs-built_in">cass_statement_new</span>(qstr.<span class="hljs-built_in">c_str</span>(), <span class="hljs-number">4</span>);<br>        <span class="hljs-built_in">cass_statement_bind_string</span>(statement, <span class="hljs-number">0</span>, vec[i].uri_.<span class="hljs-built_in">c_str</span>());<br>        <span class="hljs-built_in">cass_statement_bind_string</span>(statement, <span class="hljs-number">1</span>, vec[i].vidc_.<span class="hljs-built_in">c_str</span>());<br>        <span class="hljs-built_in">cass_statement_bind_string</span>(statement, <span class="hljs-number">2</span>, vec[i].cache_.<span class="hljs-built_in">c_str</span>());<br>        <span class="hljs-built_in">cass_statement_bind_int32</span>(statement, <span class="hljs-number">3</span>, vec[i].type_);<br><br>        futures[i] = <span class="hljs-built_in">cass_session_execute</span>(session, statement);<br>        <span class="hljs-built_in">cass_statement_free</span>(statement);<br>    &#125;<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">size_t</span> i=<span class="hljs-number">0</span>; i&lt;vec.<span class="hljs-built_in">size</span>(); ++i) &#123;<br>        CassFuture* future = futures[i];<br>        <span class="hljs-built_in">cass_future_wait</span>(future);<br>        CassError rc = <span class="hljs-built_in">cass_future_error_code</span>(future);<br>        <span class="hljs-keyword">if</span> (rc != CASS_OK) &#123;<br>            <span class="hljs-built_in">ADD_ED_ERROR</span>(err, ERR_SDB_INSERT, <span class="hljs-string">&quot;%s failed. err=%s&quot;</span>, vec[i].uri_.<span class="hljs-built_in">c_str</span>(),<br>                    <span class="hljs-built_in">cass_error_desc</span>(rc));<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            iok++;<br>        &#125;<br>        <span class="hljs-built_in">cass_future_free</span>(future);<br>    &#125;<br>    <span class="hljs-built_in">put_session</span>(session, <span class="hljs-number">0</span>==iok?<span class="hljs-literal">false</span>:<span class="hljs-literal">true</span>);<br>    <span class="hljs-keyword">return</span> iok;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">db_scylla::query</span><span class="hljs-params">(<span class="hljs-keyword">const</span> scylla_obj &amp; obj, <span class="hljs-keyword">bool</span> bhot,</span></span><br><span class="hljs-params"><span class="hljs-function">        std::vector&lt;record_scylla&gt; &amp; vec, ed_error * err)</span> </span>&#123;<br>    CassSession * session = <span class="hljs-built_in">get_session</span>(err);<br>    <span class="hljs-keyword">if</span>(<span class="hljs-literal">NULL</span>==session) &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    &#125;<br>    CassError rc = CASS_OK;<br>    acl::string qstr;<br>    <span class="hljs-built_in">get_query_string</span>(obj, bhot, qstr);<br>    CassStatement * statement = <span class="hljs-built_in">cass_statement_new</span>(qstr.<span class="hljs-built_in">c_str</span>(), <span class="hljs-number">0</span>);<br>    CassFuture * future = <span class="hljs-built_in">cass_session_execute</span>(session, statement);<br>    <span class="hljs-keyword">if</span>(CASS_OK!=(rc=<span class="hljs-built_in">cass_future_error_code</span>(future))) &#123;<br>        <span class="hljs-built_in">ADD_ED_ERROR</span>(err, ERR_SDB_QUERY, <span class="hljs-string">&quot;query cass_future_wait failed. err=%s&quot;</span>,<br>                <span class="hljs-built_in">cass_error_desc</span>(rc));<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">const</span> CassResult* result = <span class="hljs-built_in">cass_future_get_result</span>(future);<br>        CassIterator* iterator = <span class="hljs-built_in">cass_iterator_from_result</span>(result);<br>        <span class="hljs-keyword">while</span> (<span class="hljs-built_in">cass_iterator_next</span>(iterator)) &#123;<br>            <span class="hljs-keyword">const</span> CassRow* row = <span class="hljs-built_in">cass_iterator_get_row</span>(iterator);<br>            <span class="hljs-built_in">parse_one_record</span>(row, bhot, vec);<br>        &#125;<br>        <span class="hljs-built_in">cass_result_free</span>(result);<br>        <span class="hljs-built_in">cass_iterator_free</span>(iterator);<br>    &#125;<br><br>    <span class="hljs-built_in">cass_future_free</span>(future);<br>    <span class="hljs-built_in">cass_statement_free</span>(statement);<br>    <span class="hljs-built_in">put_session</span>(session, rc==CASS_OK);<br>    <span class="hljs-keyword">return</span> rc==CASS_OK;<br>&#125;<br><br><br><span class="hljs-function">CassSession * <span class="hljs-title">db_scylla::get_session</span><span class="hljs-params">(ed_error * err)</span> </span>&#123;<br>    lock_.<span class="hljs-built_in">lock</span>();<br>    <span class="hljs-keyword">if</span>(<span class="hljs-literal">NULL</span>==session_) &#123;<br>        session_ = <span class="hljs-built_in">create_connect_session</span>(err);<br>    &#125;<br>    lock_.<span class="hljs-built_in">unlock</span>();<br>    <span class="hljs-keyword">return</span> session_;<br>    CassSession * session = <span class="hljs-literal">NULL</span>;<br>    lock_.<span class="hljs-built_in">lock</span>();<br>    <span class="hljs-keyword">if</span>(pool_.<span class="hljs-built_in">empty</span>()) &#123;<br>        lock_.<span class="hljs-built_in">unlock</span>();<br>        session = <span class="hljs-built_in">create_connect_session</span>(err);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        session = pool_.<span class="hljs-built_in">front</span>();<br>        pool_.<span class="hljs-built_in">pop_front</span>();<br>        lock_.<span class="hljs-built_in">unlock</span>();<br>    &#125;<br>    <span class="hljs-keyword">return</span> session;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">db_scylla::put_session</span><span class="hljs-params">(CassSession * session, <span class="hljs-keyword">bool</span> bok)</span> </span>&#123;<br>    <span class="hljs-keyword">return</span>;<br>    <span class="hljs-keyword">if</span>(bok) &#123;<br>        lock_.<span class="hljs-built_in">lock</span>();<br>        pool_.<span class="hljs-built_in">push_back</span>(session);<br>        lock_.<span class="hljs-built_in">unlock</span>();<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-built_in">cass_session_free</span>(session);<br>    &#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">db_scylla::set_auth</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * user, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * pass)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span>(<span class="hljs-literal">NULL</span>==pass || <span class="hljs-literal">NULL</span>==user) &#123;<br>        <span class="hljs-built_in">logger_error</span>(<span class="hljs-string">&quot;user or pass is NULL.&quot;</span>);<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br>    user_ = user;<br>    pass_ = pass;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">db_scylla::set_conn_timeout</span><span class="hljs-params">(<span class="hljs-keyword">int</span> ms_timeout)</span> </span>&#123;<br>    conn_timeout_ = ms_timeout;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">db_scylla::set_rw_timeout</span><span class="hljs-params">(<span class="hljs-keyword">int</span> ms_timeout)</span> </span>&#123;<br>    rw_timeout_ = ms_timeout;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">db_scylla::set_io_thread_num</span><span class="hljs-params">(<span class="hljs-keyword">int</span> cn)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span>(cn&gt;<span class="hljs-number">0</span> &amp;&amp; cn&lt;<span class="hljs-number">1024</span>) &#123;<br>        thread_num_ = cn;<br>    &#125;<br>&#125;<br><br><span class="hljs-function">CassSession* <span class="hljs-title">db_scylla::create_connect_session</span><span class="hljs-params">(ed_error* err)</span></span>&#123;<br>    CassSession* session = <span class="hljs-built_in">cass_session_new</span>();<br>    <span class="hljs-keyword">if</span>(<span class="hljs-literal">NULL</span>==session) &#123;<br>        <span class="hljs-built_in">ADD_ED_ERROR</span>(err, ERR_SDB_CREATE_SESSION, <span class="hljs-string">&quot;create session failed.&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>    &#125;<br>    CassFuture* future = <span class="hljs-built_in">cass_session_connect</span>(session, cluster_);<br>    <span class="hljs-built_in">cass_future_wait</span>(future);<br>    CassError rc = <span class="hljs-built_in">cass_future_error_code</span>(future);<br>    <span class="hljs-keyword">if</span> (rc != CASS_OK) &#123;<br>        <span class="hljs-built_in">ADD_ED_ERROR</span>(err, ERR_SDB_CREATE_SESSION, <span class="hljs-string">&quot;create session failed. err=%s&quot;</span>,<br>                <span class="hljs-built_in">cass_error_desc</span>(rc));<br>        <span class="hljs-built_in">cass_session_free</span>(session);<br>        session = <span class="hljs-literal">NULL</span>;<br>    &#125;<br>    <span class="hljs-built_in">cass_future_free</span>(future);<br>    <span class="hljs-keyword">return</span> session;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">db_scylla::get_query_string</span><span class="hljs-params">(<span class="hljs-keyword">const</span> scylla_obj &amp; obj, <span class="hljs-keyword">bool</span> bhot,</span></span><br><span class="hljs-params"><span class="hljs-function">        acl::string &amp; str)</span> </span>&#123;<br>    std::string tmpstr;<br>    <span class="hljs-keyword">size_t</span> maxPos = obj.vidc_.<span class="hljs-built_in">size</span>()<span class="hljs-number">-1</span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">size_t</span> i=<span class="hljs-number">0</span>; i&lt;obj.vidc_.<span class="hljs-built_in">size</span>(); ++i) &#123;<br>        tmpstr.<span class="hljs-built_in">append</span>(<span class="hljs-string">&quot;&#x27;&quot;</span>).<span class="hljs-built_in">append</span>(obj.vidc_[i]).<span class="hljs-built_in">append</span>(<span class="hljs-string">&quot;&#x27;&quot;</span>);<br>        <span class="hljs-keyword">if</span>(i!=maxPos) &#123;<br>            tmpstr.<span class="hljs-built_in">append</span>(<span class="hljs-string">&quot;,&quot;</span>);<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">if</span>(bhot) &#123;<br>        <span class="hljs-keyword">if</span>(tmpstr.<span class="hljs-built_in">empty</span>()) &#123;<br>            str.format(<span class="hljs-string">&quot;SELECT %s,%s FROM %s WHERE uri=&#x27;%s&#x27;&quot;</span>,<br>                    CONST_COL_ZONE, CONST_COL_LEVEL, KEYSPACE_TABLE, obj.uri_.<span class="hljs-built_in">c_str</span>());<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            str.format(<span class="hljs-string">&quot;SELECT %s,%s FROM %s WHERE uri=&#x27;%s&#x27; AND zone in(%s)&quot;</span>,<br>                    CONST_COL_ZONE, CONST_COL_LEVEL, KEYSPACE_TABLE, <br>                    obj.uri_.<span class="hljs-built_in">c_str</span>(), tmpstr.<span class="hljs-built_in">c_str</span>());<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">if</span>(tmpstr.<span class="hljs-built_in">empty</span>()) &#123;<br>            str.format(<span class="hljs-string">&quot;SELECT %s,%s,%s,%s FROM %s WHERE uri=&#x27;%s&#x27;&quot;</span>,<br>                    CONST_COL_URI, CONST_COL_VIDC, CONST_COL_CACHE, CONST_COL_TYPE,<br>                    KEYSPACE_TABLE, obj.uri_.<span class="hljs-built_in">c_str</span>());<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            str.format(<span class="hljs-string">&quot;SELECT %s,%s,%s,%s FROM %s WHERE uri=&#x27;%s&#x27; AND vidc in(%s)&quot;</span>,<br>                    CONST_COL_URI, CONST_COL_VIDC, CONST_COL_CACHE, CONST_COL_TYPE,<br>                    KEYSPACE_TABLE, obj.uri_.<span class="hljs-built_in">c_str</span>(), tmpstr.<span class="hljs-built_in">c_str</span>());<br>        &#125;<br>    &#125;<br><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">db_scylla::parse_one_record</span><span class="hljs-params">(<span class="hljs-keyword">const</span> CassRow* row, <span class="hljs-keyword">bool</span> bhot,</span></span><br><span class="hljs-params"><span class="hljs-function">        std::vector&lt;record_scylla&gt; &amp; vec)</span> </span>&#123;<br>    <span class="hljs-keyword">bool</span> bret = <span class="hljs-literal">true</span>;<br>    record_scylla record;<br>    <span class="hljs-keyword">if</span>(bhot) &#123;<br>        <span class="hljs-built_in">get_col_value</span>(row, CONST_COL_ZONE, record.vidc_); <span class="hljs-comment">//将zone 存放到vidc_中</span><br>        <span class="hljs-built_in">get_col_value</span>(row, CONST_COL_LEVEL, record.type_); <span class="hljs-comment">//将level 存放到type中</span><br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-built_in">get_col_value</span>(row, CONST_COL_URI, record.uri_);<br>        <span class="hljs-built_in">get_col_value</span>(row, CONST_COL_VIDC, record.vidc_);<br>        <span class="hljs-built_in">get_col_value</span>(row, CONST_COL_CACHE, record.cache_);<br>        <span class="hljs-comment">//    get_col_value(row, &quot;zone&quot;, record.zone_);</span><br>        <span class="hljs-built_in">get_col_value</span>(row, CONST_COL_TYPE, record.type_);<br>    &#125;<br>    vec.<span class="hljs-built_in">push_back</span>(record);<br>    <span class="hljs-keyword">return</span> bret;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">db_scylla::get_col_value</span><span class="hljs-params">(<span class="hljs-keyword">const</span> CassRow* row, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * cname,</span></span><br><span class="hljs-params"><span class="hljs-function">        std::string &amp; value)</span> </span>&#123;<br>    <span class="hljs-keyword">bool</span> bret = <span class="hljs-literal">false</span>;<br>    <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* row_key;<br>    <span class="hljs-keyword">size_t</span> row_key_length;<br>    <span class="hljs-keyword">if</span>(CASS_OK==<span class="hljs-built_in">cass_value_get_string</span>(<br>                <span class="hljs-built_in">cass_row_get_column_by_name</span>(row, cname),<br>                &amp;row_key, &amp;row_key_length)) &#123;<br>        value = row_key;<br>        bret = <span class="hljs-literal">true</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> bret;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">db_scylla::get_col_value</span><span class="hljs-params">(<span class="hljs-keyword">const</span> CassRow* row, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * cname,</span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-keyword">int</span> &amp; value)</span> </span>&#123;<br>    <span class="hljs-keyword">bool</span> bret = <span class="hljs-literal">false</span>;<br>    <span class="hljs-keyword">if</span>(CASS_OK==<span class="hljs-built_in">cass_value_get_int32</span>(<span class="hljs-built_in">cass_row_get_column_by_name</span>(row, cname),<br>                &amp;value)) &#123;<br>        bret = <span class="hljs-literal">true</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> bret;<br>&#125;<br><br>&#125; <span class="hljs-comment">/* DB */</span><br><br></code></pre></td></tr></table></figure>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+                    
+                  </div>
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/08/31/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&amp;&amp;cassandra/00%20scylladb/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/08/29/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/04typedef%20%E7%B2%BE%E9%AB%93/">
+                        <span class="hidden-mobile">typedef 精髓</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

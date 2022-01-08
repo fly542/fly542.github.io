@@ -1,0 +1,458 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="关闭文件:w    &#x2F;&#x2F;保存文件:w vpser.net &#x2F;&#x2F;保存至vpser.net文件:q      &#x2F;&#x2F;退出编辑器，如果文件已修改请使用下面的命令:q!     &#x2F;&#x2F;退出编辑器，且不保存:wq     &#x2F;&#x2F;退出编辑器，且保存文件：x：保存当前文件并退出 移动光标类命令 h ：光标左移一个字符l ：光标右移一个字符space：光标右移一个字符Backspace：光标左移一个字符k或Ctrl+p">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vim常用命令及快捷键">
+<meta property="og:url" content="http://fly542.cn/2020/12/04/04DevOps/10%20vim%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%8F%8A%E5%BF%AB%E6%8D%B7%E9%94%AE/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="关闭文件:w    &#x2F;&#x2F;保存文件:w vpser.net &#x2F;&#x2F;保存至vpser.net文件:q      &#x2F;&#x2F;退出编辑器，如果文件已修改请使用下面的命令:q!     &#x2F;&#x2F;退出编辑器，且不保存:wq     &#x2F;&#x2F;退出编辑器，且保存文件：x：保存当前文件并退出 移动光标类命令 h ：光标左移一个字符l ：光标右移一个字符space：光标右移一个字符Backspace：光标左移一个字符k或Ctrl+p">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-04T04:03:05.000Z">
+<meta property="article:modified_time" content="2022-01-08T14:23:38.859Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="vim">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>vim常用命令及快捷键 - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="vim常用命令及快捷键">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-12-04 12:03" pubdate>
+        2020年12月4日 中午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.1k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      18 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">vim常用命令及快捷键</h1>
+            
+            <div class="markdown-body">
+              <p><strong>关闭文件</strong><br>:w    //保存文件<br>:w vpser.net //保存至vpser.net文件<br>:q      //退出编辑器，如果文件已修改请使用下面的命令<br>:q!     //退出编辑器，且不保存<br>:wq     //退出编辑器，且保存文件<br>：x：保存当前文件并退出</p>
+<p><strong>移动光标类命令</strong></p>
+<p>h ：光标左移一个字符<br>l ：光标右移一个字符<br>space：光标右移一个字符<br>Backspace：光标左移一个字符<br>k或Ctrl+p：光标上移一行<br>j或Ctrl+n ：光标下移一行<br>Enter ：光标下移一行<br>w或W ：光标右移一个字至字首<br>b或B ：光标左移一个字至字首<br>e或E ：光标右移一个字至字尾<br>) ：光标移至句尾<br>( ：光标移至句首<br>}：光标移至段落开头<br>{：光标移至段落结尾<br>nG：光标移至第n行首<br>n+：光标下移n行<br>n-：光标上移n行<br>n$：光标移至第n行尾<br>H ：光标移至屏幕顶行<br>M ：光标移至屏幕中间行<br>L ：光标移至屏幕最后行<br>0：（注意是数字零）光标移至当前行首<br>$：光标移至当前行尾<br>n+     //向下跳n行<br>n-     //向上跳n行<br>nG     //跳到行号为n的行<br>G      //跳至文件的底部</p>
+<p><strong>屏幕翻滚类命令</strong><br>Ctrl+u：向文件首翻半屏<br>Ctrl+d：向文件尾翻半屏<br>Ctrl+f：向文件尾翻一屏<br>Ctrl＋b；向文件首翻一屏<br>nz：将第n行滚至屏幕顶部，不指定n时将当前行滚至屏幕顶部。</p>
+<p><strong>插入文本类命令</strong><br>i ：在光标前<br>I ：在当前行首<br>a：光标后<br>A：在当前行尾<br>o：在当前行之下新开一行<br>O：在当前行之上新开一行<br>r：替换当前字符<br>R：替换当前字符及其后的字符，直至按ESC键<br>s：从当前光标位置处开始，以输入的文本替代指定数目的字符<br>S：删除指定数目的行，并以所输入文本代替之<br>ncw或nCW：修改指定数目的字<br>nCC：修改指定数目的行</p>
+<p><strong>复制、粘贴</strong><br>yy   //将当前行复制到缓存区，也可以用 “ayy 复制，”a 为缓冲区，a也可以替换为a到z的任意字母，可以完成多个复制任务。<br>nyy  //将当前行向下n行复制到缓冲区，也可以用 “anyy 复制，”a 为缓冲区，a也可以替换为a到z的任意字母，可以完成多个复制任务。<br>yw   //复制从光标开始到词尾的字符。<br>nyw  //复制从光标开始的n个单词。<br>y^    //复制从光标到行首的内容。<br>y$    //复制从光标到行尾的内容。<br>p     //粘贴剪切板里的内容在光标后，如果使用了前面的自定义缓冲区，建议使用”ap 进行粘贴。<br>P     //粘贴剪切板里的内容在光标前，如果使用了前面的自定义缓冲区，建议使用”aP 进行粘贴。</p>
+<p><strong>文本替换</strong><br>:s/old/new    //用new替换行中首次出现的old<br>:s/old/new/g     //用new替换行中所有的old<br>:n,m s/old/new/g   //用new替换从n到m行里所有的old<br>:%s/old/new/g    //用new替换当前文件里所有的old<br>:%s/\s+$//    //将行未空格删除<br>简单替换表达式<br>:%s/four/4/g<br>“%” 范围前缀表示在所有行中执行替换，最后的 “g” 标记表示替换行中的所有匹配点，如果仅仅对当前行进行操作，那么只要去掉%即可<br>如果你有一个像 “thirtyfour” 这样的单词，上面的命令会出错。这种情况下，这个单词会被替换成”thirty4″。要解决这个问题，用 “&lt; span&gt;来指定匹配单词开头：<br> :%s/<br>显然，这样在处理 “fourty” 的时候还是会出错。用 “&lt;” 来解决这个问题：<br> :%s//4/g<br>如果你在编码，你可能只想替换注释中的 “four”，而保留代码中的。由于这很难指定，可以在替换命令中加一个 “c” 标记，这样，Vim 会在每次替换前提示你：<br>:%s//4/gc</p>
+<p><strong>单词精确匹配替换</strong><br>sed -e “s//new/g”  file</p>
+<p><strong>删除命令</strong><br>ndw或ndW：删除光标处开始及其后的n-1个字<br>d0：删至行首   (0为数字)<br>d$：删至行尾<br>D : 删除至行尾<br>ndd：删除当前行及其后n-1行<br>x或X：删除一个字符，x删除光标后的，而X删除光标前的<br>Ctrl+u：删除输入方式下所输入的文本<br>x     //删除当前字符<br>nx     //删除从光标开始的n个字符<br>dd    //删除当前行<br>ndd   //向下删除当前行在内的n行<br>u     //撤销上一步操作<br>U    //撤销对当前行的所有操作</p>
+<p><strong>搜索及替换命令</strong><br>/pattern：从光标开始处向文件尾搜索pattern<br>?pattern：从光标开始处向文件首搜索pattern<br>n：在同一方向重复上一次搜索命令<br>N：在反方向上重复上一次搜索命令<br>：s/p1/p2/g：将当前行中所有p1均用p2替代<br>：n1,n2s/p1/p2/g：将第n1至n2行中所有p1均用p2替代<br>：g/p1/s//p2/g：将文件中所有p1均用p2替换</p>
+<p><strong>最后行方式命令</strong><br>：n1,n2 co n3：将n1行到n2行之间的内容拷贝到第n3行下<br>：n1,n2 m n3：将n1行到n2行之间的内容移至到第n3行下<br>：n1,n2 d ：将n1行到n2行之间的内容删除<br>：e filename：打开文件filename进行编辑<br>：!command：执行shell命令command<br>：n1,n2 w!command：将文件中n1行至n2行的内容作为command的输入并执行之，若不指定n1，n2，则表示将整个文件内容作为command的输入<br>：r!command：将命令command的输出结果放到当前行<br>：%!xxd  十六进制显示内容</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/devops/">devops</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/vim/">vim</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/12/08/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/07%E5%AE%8F%E5%AE%9A%E4%B9%89define%E7%9A%84%E5%A5%87%E6%8A%80%E6%B7%AB%E5%B7%A7/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">宏定义define的奇技淫巧</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/11/20/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/06%E8%99%9A%E7%BB%A7%E6%89%BF/">
+                        <span class="hidden-mobile">虚继承</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

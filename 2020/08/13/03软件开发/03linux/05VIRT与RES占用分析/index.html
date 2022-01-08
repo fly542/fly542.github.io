@@ -1,0 +1,502 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1、概述在Linux命令行中执行top命令，可以查询到所有进程使用的VIRT虚拟内存、RES常驻内存和共享内存SHR。那么，什么是VIRT虚拟内存、RES常驻内存和共享内存SHR？我们编写的Linux C++程序如何影响它们呢？ VIRT：- 进程“需要的”虚拟内存大小，包括进程使用的库、代码、数据，以及malloc、new分配的堆空间和分配的栈空间等； - 假如进程新申请10MB的内存，但实际只">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VIRT 与 RSE 占用分析">
+<meta property="og:url" content="http://fly542.cn/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="1、概述在Linux命令行中执行top命令，可以查询到所有进程使用的VIRT虚拟内存、RES常驻内存和共享内存SHR。那么，什么是VIRT虚拟内存、RES常驻内存和共享内存SHR？我们编写的Linux C++程序如何影响它们呢？ VIRT：- 进程“需要的”虚拟内存大小，包括进程使用的库、代码、数据，以及malloc、new分配的堆空间和分配的栈空间等； - 假如进程新申请10MB的内存，但实际只">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://fly542.cn/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/1.png">
+<meta property="og:image" content="http://fly542.cn/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/2.png">
+<meta property="og:image" content="http://fly542.cn/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/3.png">
+<meta property="og:image" content="http://fly542.cn/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/4.png">
+<meta property="og:image" content="http://fly542.cn/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/5.png">
+<meta property="og:image" content="http://fly542.cn/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/6.png">
+<meta property="article:published_time" content="2020-08-13T04:28:09.000Z">
+<meta property="article:modified_time" content="2022-01-08T14:23:38.959Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="linux,c">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://fly542.cn/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/1.png">
+  
+  
+  <title>VIRT 与 RSE 占用分析 - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="VIRT 与 RSE 占用分析">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-08-13 12:28" pubdate>
+        2020年8月13日 中午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      3.5k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      29 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">VIRT 与 RSE 占用分析</h1>
+            
+            <div class="markdown-body">
+              <h1 id="1、概述"><a href="#1、概述" class="headerlink" title="1、概述"></a>1、概述</h1><p>在Linux命令行中执行top命令，可以查询到所有进程使用的VIRT虚拟内存、RES常驻内存和共享内存SHR。那么，什么是VIRT虚拟内存、RES常驻内存和共享内存SHR？我们编写的Linux C++程序如何影响它们呢？</p>
+<h2 id="VIRT："><a href="#VIRT：" class="headerlink" title="VIRT："></a>VIRT：</h2><div class="code-wrapper"><pre><code class="hljs">- 进程“需要的”虚拟内存大小，包括进程使用的库、代码、数据，以及malloc、new分配的堆空间和分配的栈空间等；
+- 假如进程新申请10MB的内存，但实际只使用了1MB，那么它会增长10MB，而不是实际的1MB使用量。
+- VIRT = SWAP + RES
+</code></pre></div>
+<h2 id="RES："><a href="#RES：" class="headerlink" title="RES："></a>RES：</h2><div class="code-wrapper"><pre><code class="hljs">- 进程当前使用的内存大小，包括使用中的malloc、new分配的堆空间和分配的栈空间，但不包括swap out量；
+- 包含其他进程的共享；
+- 如果申请10MB的内存，实际使用1MB，它只增长1MB，与VIRT相反；
+- 关于库占用内存的情况，它只统计加载的库文件所占内存大小。
+- RES = CODE + DATA
+</code></pre></div>
+<h2 id="SHR："><a href="#SHR：" class="headerlink" title="SHR："></a>SHR：</h2><div class="code-wrapper"><pre><code class="hljs">- 除了自身进程的共享内存，也包括其他进程的共享内存；
+- 虽然进程只使用了几个共享库的函数，但它包含了整个共享库的大小；
+- 计算某个进程所占的物理内存大小公式：RES – SHR；
+- swap out后，它将会降下来。
+</code></pre></div>
+<h1 id="2、程序验证"><a href="#2、程序验证" class="headerlink" title="2、程序验证"></a>2、程序验证</h1><h2 id="2-1-申请但未使用的堆空间不占用RES，但占用VIRT"><a href="#2-1-申请但未使用的堆空间不占用RES，但占用VIRT" class="headerlink" title="2.1 申请但未使用的堆空间不占用RES，但占用VIRT"></a>2.1 申请但未使用的堆空间不占用RES，但占用VIRT</h2><figure class="highlight cpp"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></div></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-keyword">char</span> * p = <span class="hljs-keyword">new</span> <span class="hljs-keyword">char</span> [<span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*<span class="hljs-number">512</span>];<br>    <span class="hljs-built_in">getchar</span>();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>top显示如下：</p>
+<img src="/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/1.png" srcset="/img/loading.gif" lazyload class="">
+<p>VIRT包含了new出来的512MB空间，但是RES不包含该空间。即malloc或new出来的空间，如果没有使用，会放入SWAP中，并不在内容中真实的分配物理内存。</p>
+<h2 id="2-2-申请且使用了的堆空间占用RES"><a href="#2-2-申请且使用了的堆空间占用RES" class="headerlink" title="2.2 申请且使用了的堆空间占用RES"></a>2.2 申请且使用了的堆空间占用RES</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-keyword">char</span> * p = <span class="hljs-keyword">new</span> <span class="hljs-keyword">char</span> [<span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*<span class="hljs-number">512</span>];<br>    <span class="hljs-built_in">memset</span>(p, <span class="hljs-number">0</span>, <span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*<span class="hljs-number">512</span>); <span class="hljs-comment">//使用申请的空间</span><br>    <span class="hljs-built_in">getchar</span>();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>top显示如下:</p>
+<img src="/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/2.png" srcset="/img/loading.gif" lazyload class="">
+<p>VIRT包含new出来的512MB空间，RES包含目前使用的memset的512M空间。即new出来的空间被使用后，会真实分配物理内存。</p>
+<p><strong>使用部分申请了的堆空间则RES显示使用的部分</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-keyword">char</span> * p = <span class="hljs-keyword">new</span> <span class="hljs-keyword">char</span> [<span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*<span class="hljs-number">512</span>];<br>    <span class="hljs-built_in">memset</span>(p + <span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*<span class="hljs-number">128</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*<span class="hljs-number">128</span>);<br>    <span class="hljs-built_in">getchar</span>();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>top显示如下:</p>
+<img src="/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/3.png" srcset="/img/loading.gif" lazyload class="">
+<p>VIRT包含new出来的512MB空间，RES包含目前使用的memset的128M空间。即new出来的空间，如果只使用部分，则只分配部分物理内存。</p>
+<h2 id="2-3-申请但未使用的栈空间不占用RES，但占用VIRT"><a href="#2-3-申请但未使用的栈空间不占用RES，但占用VIRT" class="headerlink" title="2.3 申请但未使用的栈空间不占用RES，但占用VIRT"></a>2.3 申请但未使用的栈空间不占用RES，但占用VIRT</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-keyword">char</span> p[<span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*<span class="hljs-number">20</span>];<br>    <span class="hljs-built_in">getchar</span>();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>top显示如下：</p>
+<img src="/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/4.png" srcset="/img/loading.gif" lazyload class="">
+<p>没有使用的栈空间，VIRT会包含（没有使用的栈空间会在SWAP中）。</p>
+<h2 id="2-4-已经使用的栈空间，VIRT和RES都会包含"><a href="#2-4-已经使用的栈空间，VIRT和RES都会包含" class="headerlink" title="2.4 已经使用的栈空间，VIRT和RES都会包含"></a>2.4 已经使用的栈空间，VIRT和RES都会包含</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-keyword">char</span> p[<span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*<span class="hljs-number">20</span>];<br>	<span class="hljs-built_in">memset</span>(p, <span class="hljs-number">0</span>, <span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*<span class="hljs-number">20</span>);<br>    <span class="hljs-built_in">getchar</span>();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>top显示如下：</p>
+<img src="/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/5.png" srcset="/img/loading.gif" lazyload class="">
+
+<h2 id="2-5-局部申请的内存释放后RES并未减少"><a href="#2-5-局部申请的内存释放后RES并未减少" class="headerlink" title="2.5 局部申请的内存释放后RES并未减少"></a>2.5 局部申请的内存释放后RES并未减少</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;unistd.h&gt;</span></span><br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">test_part_virt</span><span class="hljs-params">(<span class="hljs-keyword">int</span> len)</span> </span>&#123;<br>    <span class="hljs-keyword">int</span> i = len+<span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">char</span> *p = <span class="hljs-keyword">new</span> <span class="hljs-keyword">char</span>[<span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*i*<span class="hljs-number">10</span>];<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;i=%d, p=%p\n&quot;</span>, i, p);<br>    <span class="hljs-built_in">memset</span>(p, <span class="hljs-number">0</span>, <span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*i*<span class="hljs-number">10</span>);<br>    <span class="hljs-keyword">delete</span> [] p;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-comment">//char * p = new char [1024*1024*512];</span><br>    <span class="hljs-keyword">char</span> p[<span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*<span class="hljs-number">20</span>];<br>    <span class="hljs-built_in">memset</span>(p, <span class="hljs-number">0</span>, <span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*<span class="hljs-number">20</span>);<br>    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>; i&lt;<span class="hljs-number">20</span>; ++i) &#123;<br>        <span class="hljs-built_in">sleep</span>(<span class="hljs-number">10</span>);<br>        <span class="hljs-built_in">test_part_virt</span>(i%<span class="hljs-number">4</span>);<br>    &#125;<br>    <span class="hljs-built_in">getchar</span>();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>top显示如下：</p>
+<img src="/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/6.png" srcset="/img/loading.gif" lazyload class="">
+<p>在 <code>currlwent i=1, p=0xfd0010 </code> 时RES开始增加，每次增加10M, 且一直占用，此问题主要由于Glibc的内存分配由brk和mmap两种内存内存分配策略导致。<br>    从操作系统的角度看，进程的内存分配由两个系统调用完成：brk和mmap。brk是将数据段(.data)的最高地址指针_edata往高地址推，mmap是在进程的虚拟地址空间中找一块空闲的。其中，mmap分配的内存由munmap释放，内存释放时将立即归还操作系统；而brk分配的内存需要等到高地址内存释放以后才能释放，可通过在程序启动时增加以下代码，修改内存分配方式来解决问题    </p>
+<blockquote>
+<p>mallopt(M_MMAP_MAX, 0); // 禁止malloc调用mmap分配内存<br>mallopt(M_TRIM_THRESHOLD, 0); // 禁止内存缩进，sbrk申请的内存释放后不会归还给操作系统</p>
+</blockquote>
+<p>修改后的代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;malloc.h&gt;</span></span><br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">test_part_virt</span><span class="hljs-params">(<span class="hljs-keyword">int</span> len)</span> </span>&#123;<br>    <span class="hljs-keyword">int</span> i = len+<span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">char</span> p[<span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*i*<span class="hljs-number">10</span>];<br>    <span class="hljs-built_in">memset</span>(p, <span class="hljs-number">0</span>, <span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*i*<span class="hljs-number">10</span>);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;currlwent i=%d, p=%p\n&quot;</span>, i, p);<br>    <span class="hljs-comment">//char *p = new char[1024*1024*i*10];</span><br>    <span class="hljs-comment">//printf(&quot;currlwent i=%d, p=%p\n&quot;, i, p);</span><br>    <span class="hljs-comment">//memset(p, 0, 1024*1024*i*10);</span><br>    <span class="hljs-comment">//delete [] p;</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-built_in">mallopt</span>(M_MMAP_MAX, <span class="hljs-number">0</span>); <span class="hljs-comment">// 禁止malloc调用mmap分配内存</span><br>    <span class="hljs-comment">//char * p = new char [1024*1024*512];</span><br>    <span class="hljs-keyword">char</span> p[<span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*<span class="hljs-number">20</span>];<br>    <span class="hljs-built_in">memset</span>(p, <span class="hljs-number">0</span>, <span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*<span class="hljs-number">20</span>);<br>    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>; i&lt;<span class="hljs-number">20</span>; ++i) &#123;<br>        <span class="hljs-built_in">sleep</span>(<span class="hljs-number">10</span>);<br>        <span class="hljs-built_in">test_part_virt</span>(i%<span class="hljs-number">4</span>);<br>    &#125;<br>    <span class="hljs-built_in">getchar</span>();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>经过以上的代码修改程序RES内存稳定再20MB</p>
+<h1 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/huyiyang2010/article/details/7815491#">https://blog.csdn.net/huyiyang2010/article/details/7815491#</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/hmylk/article/details/37761247">https://blog.csdn.net/hmylk/article/details/37761247</a><br><a target="_blank" rel="noopener" href="https://bbs.csdn.net/topics/330179712">https://bbs.csdn.net/topics/330179712</a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/linux-c/">linux,c</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/08/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/02%20%5B%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB%5D%E9%A2%91%E7%B9%81%E5%88%86%E9%85%8D%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">02 [百度分享]频繁分配释放内存导致的性能问题分析</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/08/03/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/01getopt%E4%B8%8Egetopt_long%E4%BD%BF%E7%94%A8/">
+                        <span class="hidden-mobile">getopt与getopt_long使用</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

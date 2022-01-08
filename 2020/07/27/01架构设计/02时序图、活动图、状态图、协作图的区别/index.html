@@ -1,0 +1,483 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="时序图时序图用于描述对象之间的传递消息的时间顺序, 即用例中的行为顺序.当执行一个用例时, 时序图中的每条消息对应了一个类操作或者引起转换的触发事件.在 UML 中, 时序图表示为一个二维的关系图, 其中, 纵轴是时间轴, 时间延竖线向下延伸. 横轴代表在协作中各个独立的对象. 当对象存在时, 生命线用一条虚线表示, 消息用从一个对象的生命线到另一个对象的生命线的箭头表示. 箭头以时间的顺序在图中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="时序图、活动图、状态图、协作图的区别">
+<meta property="og:url" content="http://fly542.cn/2020/07/27/01%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/02%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="时序图时序图用于描述对象之间的传递消息的时间顺序, 即用例中的行为顺序.当执行一个用例时, 时序图中的每条消息对应了一个类操作或者引起转换的触发事件.在 UML 中, 时序图表示为一个二维的关系图, 其中, 纵轴是时间轴, 时间延竖线向下延伸. 横轴代表在协作中各个独立的对象. 当对象存在时, 生命线用一条虚线表示, 消息用从一个对象的生命线到另一个对象的生命线的箭头表示. 箭头以时间的顺序在图中">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://fly542.cn/2020/07/27/01%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/02%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/1.gif">
+<meta property="og:image" content="http://fly542.cn/2020/07/27/01%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/02%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/2.gif">
+<meta property="og:image" content="http://fly542.cn/2020/07/27/01%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/02%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/3.gif">
+<meta property="og:image" content="http://fly542.cn/2020/07/27/01%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/02%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/4.gif">
+<meta property="og:image" content="http://fly542.cn/2020/07/27/01%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/02%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/5.gif">
+<meta property="article:published_time" content="2020-07-27T03:47:49.000Z">
+<meta property="article:modified_time" content="2022-01-08T14:23:39.144Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="软件工程,UML">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://fly542.cn/2020/07/27/01%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/02%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/1.gif">
+  
+  
+  <title>时序图、活动图、状态图、协作图的区别 - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="时序图、活动图、状态图、协作图的区别">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-07-27 11:47" pubdate>
+        2020年7月27日 中午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.2k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      11 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">时序图、活动图、状态图、协作图的区别</h1>
+            
+            <div class="markdown-body">
+              <h1 id="时序图"><a href="#时序图" class="headerlink" title="时序图"></a>时序图</h1><p>时序图用于描述对象之间的传递消息的时间顺序, 即用例中的行为顺序.当执行一个用例时, 时序图中的每条消息对应了一个类操作或者引起转换的触发事件.<br>在 UML 中, 时序图表示为一个二维的关系图, 其中, 纵轴是时间轴, 时间延竖线向下延伸. 横轴代表在协作中各个独立的对象. 当对象存在时, 生命线用一条虚线表示, 消息用从一个对象的生命线到另一个对象的生命线的箭头表示. 箭头以时间的顺序在图中上下排列.</p>
+<img src="/2020/07/27/01%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/02%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/1.gif" srcset="/img/loading.gif" lazyload class="" title="图1. ATM 用户成功登陆的时序图">
+<p>时序图中的基本概念</p>
+<ul>
+<li>对象: 时序图中对象使用矩形表示, 并且对象名称下有下划线. 将对象置于时序图的顶部说明在交互开始时对象就已经存在了. 如果对象的位置不在顶部, 表示对象是在交互的过程中被创建的.</li>
+<li>生命线: 生命线是一条垂直的虚线. 表示时序图中的对象在一段生命周期内存在. 每个对象底部中心的位置都带有生命线.</li>
+<li>消息: 两个对象之间的单路通信. 从发送方指向接收方. 在时序图中很少使用返回消息.</li>
+<li>激活: 时序图可以描述对象的激活和钝化. 激活表示该对象被占用以完成某个任务. 钝化指对象处于空闲状态, 等待消息. 在 UML 中, 对象激活时将对象的生命线拓宽为矩形来表示的. 矩形称为计划条或控制期. 对象就是在激活条的顶部被激活的. 对象在完成自己的工作后被钝化.<br>对象的创建和销毁: 在时序图中, 对象的默认位置是在图的顶部. 这说明对象在交互开始之前就已经存在了. 如果对象是在交互过程中创建的, 那么就应该将对象放到中间部分. 如果要撤销一个对象, 在其生命线终止点处放置 “ X” 符号.<br>  练习:  <img src="/2020/07/27/01%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/02%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/2.gif" srcset="/img/loading.gif" lazyload class="" title="图2.孙中山的......"></li>
+</ul>
+<h1 id="活动图"><a href="#活动图" class="headerlink" title="活动图"></a>活动图</h1><p>在 UML 中, 活动图本质上就是流程图. 它用于描述系统的活动, 判定点和分支等.</p>
+<img src="/2020/07/27/01%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/02%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/3.gif" srcset="/img/loading.gif" lazyload class="" title="图3.活动图">
+
+<p>活动图中的基本概念：</p>
+<ul>
+<li>动作状态: 原子的, 不可中断的动作, 并在此动作完成之后向另一个动作转变. 在 UML 中动作状态用圆角矩形 表示, 动作状态所表示的动作写在圆角矩形内部.</li>
+<li>分支与合并: 分支在软件系统中很常见. 一般用于表示对象类所具有的条件行为. 用一个布尔型表达式的真假来判定动作的流向. 条件行为用分支和合并表达.在活动图中, 分支用空心小菱形 表示. 分支包括一个入转换和两个带条件的出转换, 出转换的条件应该是互斥的, 须保证只有一条出转换能够被触发. 合并包含两个带条件的入转换和一个出转换.</li>
+</ul>
+<h1 id="状态图"><a href="#状态图" class="headerlink" title="状态图"></a>状态图</h1><p>状态图: 通过建立对象的生存周期模型来描述对象随时间变化的动态行为.</p>
+<img src="/2020/07/27/01%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/02%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/4.gif" srcset="/img/loading.gif" lazyload class="" title="图 4.状态图">
+
+<p>状态图中的基本概念</p>
+<ul>
+<li>状态: 用圆角矩形表示. 状态名称表示状态的名字, 通常用字符串表示. 一个状态的名称在状态图所在的上下文中应该是唯一的.</li>
+<li>转换: 用带箭头的直线表示. 一端连着源状态, 一端连着目标状态.</li>
+<li>初始状态: 每个状态图都有一个初始状态. 此状态代表状态图的起始位置. 初始状态只能作为转换的源, 不能作为转换的目标, 并且在状态图中只能有一个. 初始状态用一个实心圆表示.</li>
+<li>终止状态: 模型元素的最后状态, 是一个状态图的终止点. 终止状态在一个状态图中可以有多个.</li>
+</ul>
+<h1 id="协作图"><a href="#协作图" class="headerlink" title="协作图"></a>协作图</h1><p>协作图(也叫合作图)是一种交互图.<br>时序图主要侧重于对象间消息传递在时间上的先后关系, 而协作图表达对象间的交互过程及对象间的关联关系</p>
+<img src="/2020/07/27/01%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/02%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/5.gif" srcset="/img/loading.gif" lazyload class="" title="图 5 协作图">
+
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/">架构设计</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B-UML/">软件工程,UML</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/07/27/01%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/02UML%E7%B1%BB%E5%9B%BE%E5%9B%BE%E7%A4%BA%E6%A0%B7%E4%BE%8B/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">UML类图图示样例</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/07/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/00%E5%AE%9A%E4%BD%8Dcpu%20100_p%E7%9A%84%E6%96%B9%E6%B3%95/">
+                        <span class="hidden-mobile">定位程序cpu 100%方法</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

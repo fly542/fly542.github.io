@@ -1,0 +1,459 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1. 现象 压力测试过程中，发现被测对象性能不够理想，具体表现为：进程的系统态CPU消耗20，用户态CPU消耗10，系统idle大约70  用ps -o majflt,minflt -C program命令查看，发现majflt每秒增量为0，而minflt每秒增量大于10000。  2. 分析2.1 初步分析majflt代表major fault，中文名叫大错误，minflt代表minor fau">
+<meta property="og:type" content="article">
+<meta property="og:title" content="02 [百度分享]频繁分配释放内存导致的性能问题分析">
+<meta property="og:url" content="http://fly542.cn/2020/08/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/02%20[%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB]%E9%A2%91%E7%B9%81%E5%88%86%E9%85%8D%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="1. 现象 压力测试过程中，发现被测对象性能不够理想，具体表现为：进程的系统态CPU消耗20，用户态CPU消耗10，系统idle大约70  用ps -o majflt,minflt -C program命令查看，发现majflt每秒增量为0，而minflt每秒增量大于10000。  2. 分析2.1 初步分析majflt代表major fault，中文名叫大错误，minflt代表minor fau">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://fly542.cn/2020/08/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/02%20%5B%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB%5D%E9%A2%91%E7%B9%81%E5%88%86%E9%85%8D%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/c_1.jpg">
+<meta property="og:image" content="http://fly542.cn/2020/08/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/02%20%5B%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB%5D%E9%A2%91%E7%B9%81%E5%88%86%E9%85%8D%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/c_2.jpg">
+<meta property="og:image" content="http://fly542.cn/2020/08/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/02%20%5B%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB%5D%E9%A2%91%E7%B9%81%E5%88%86%E9%85%8D%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/c_3.jpg">
+<meta property="article:published_time" content="2020-08-14T15:38:47.000Z">
+<meta property="article:modified_time" content="2022-01-08T14:23:38.905Z">
+<meta property="article:author" content="Fly542">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://fly542.cn/2020/08/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/02%20%5B%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB%5D%E9%A2%91%E7%B9%81%E5%88%86%E9%85%8D%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/c_1.jpg">
+  
+  
+  <title>02 [百度分享]频繁分配释放内存导致的性能问题分析 - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="02 [百度分享]频繁分配释放内存导致的性能问题分析">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-08-14 23:38" pubdate>
+        2020年8月14日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.7k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      23 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">02 [百度分享]频繁分配释放内存导致的性能问题分析</h1>
+            
+            <div class="markdown-body">
+              <h1 id="1-现象"><a href="#1-现象" class="headerlink" title="1. 现象"></a>1. 现象</h1><ol>
+<li>压力测试过程中，发现被测对象性能不够理想，具体表现为：<br>进程的系统态CPU消耗20，用户态CPU消耗10，系统idle大约70 </li>
+<li>用ps -o majflt,minflt -C program命令查看，发现majflt每秒增量为0，而minflt每秒增量大于10000。</li>
+</ol>
+<h1 id="2-分析"><a href="#2-分析" class="headerlink" title="2. 分析"></a>2. 分析</h1><h2 id="2-1-初步分析"><a href="#2-1-初步分析" class="headerlink" title="2.1 初步分析"></a>2.1 初步分析</h2><p>majflt代表major fault，中文名叫大错误，minflt代表minor fault，中文名叫小错误。<br>这两个数值表示一个进程自启动以来所发生的缺页中断的次数。<br>当一个进程发生缺页中断的时候，进程会陷入内核态，执行以下操作：<br>检查要访问的虚拟地址是否合法<br>查找/分配一个物理页<br>填充物理页内容（读取磁盘，或者直接置0，或者啥也不干）<br>建立映射关系（虚拟地址到物理地址）<br>重新执行发生缺页中断的那条指令<br>如果第3步，需要读取磁盘，那么这次缺页中断就是majflt，否则就是minflt。<br>此进程minflt如此之高，一秒10000多次，不得不怀疑它跟进程内核态cpu消耗大有很大关系。</p>
+<h2 id="2-2-分析代码"><a href="#2-2-分析代码" class="headerlink" title="2.2 分析代码"></a>2.2 分析代码</h2><p>查看代码，发现是这么写的：一个请求来，用malloc分配2M内存，请求结束后free这块内存。看日志，发现分配内存语句耗时10us，平均一条请求处理耗时1000us 。 原因已找到！<br>虽然分配内存语句的耗时在一条处理请求中耗时比重不大，但是这条语句严重影响了性能。要解释清楚原因，需要先了解一下内存分配的原理。 </p>
+<h2 id="2-3-内存分配的原理"><a href="#2-3-内存分配的原理" class="headerlink" title="2.3 内存分配的原理"></a>2.3 内存分配的原理</h2><p>从操作系统角度来看，进程分配内存有两种方式，分别由两个系统调用完成：brk和mmap（不考虑共享内存）。brk是将数据段(.data)的最高地址指针_edata往高地址推，mmap是在进程的虚拟地址空间中（一般是堆和栈中间）找一块空闲的。这两种方式分配的都是虚拟内存，没有分配物理内存。在第一次访问已分配的虚拟地址空间的时候，发生缺页中断，操作系统负责分配物理内存，然后建立虚拟内存和物理内存之间的映射关系。<br>在标准C库中，提供了malloc/free函数分配释放内存，这两个函数底层是由brk，mmap，munmap这些系统调用实现的。<br>下面以一个例子来说明内存分配的原理：</p>
+<img src="/2020/08/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/02%20%5B%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB%5D%E9%A2%91%E7%B9%81%E5%88%86%E9%85%8D%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/c_1.jpg" srcset="/img/loading.gif" lazyload class="">
+<ol>
+<li>进程启动的时候，其（虚拟）内存空间的初始布局如图1所示。其中，mmap内存映射文件是在堆和栈的中间（例如libc-2.2.93.so，其它数据文件等），为了简单起见，省略了内存映射文件。_edata指针（glibc里面定义）指向数据段的最高地址。 </li>
+<li>进程调用A=malloc(30K)以后，内存空间如图2：malloc函数会调用brk系统调用，将_edata指针往高地址推30K，就完成虚拟内存分配。你可能会问：只要把_edata+30K就完成内存分配了？事实是这样的，_edata+30K只是完成虚拟地址的分配，A这块内存现在还是没有物理页与之对应的，等到进程第一次读写A这块内存的时候，发生缺页中断，这个时候，内核才分配A这块内存对应的物理页。也就是说，如果用malloc分配了A这块内容，然后从来不访问它，那么，A对应的物理页是不会被分配的。 </li>
+<li>进程调用B=malloc(40K)以后，内存空间如图3. <img src="/2020/08/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/02%20%5B%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB%5D%E9%A2%91%E7%B9%81%E5%88%86%E9%85%8D%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/c_2.jpg" srcset="/img/loading.gif" lazyload class="">
+</li>
+<li>进程调用C=malloc(200K)以后，内存空间如图4：默认情况下，malloc函数分配内存，如果请求内存大于128K（可由M_MMAP_THRESHOLD选项调节），那就不是去推_edata指针了，而是利用mmap系统调用，从堆和栈的中间分配一块虚拟内存。这样子做主要是因为brk分配的内存需要等到高地址内存释放以后才能释放（例如，在B释放之前，A是不可能释放的），而mmap分配的内存可以单独释放。当然，还有其它的好处，也有坏处，再具体下去，有兴趣的同学可以去看glibc里面malloc的代码了。 </li>
+<li>进程调用D=malloc(100K)以后，内存空间如图5. </li>
+<li>进程调用free(C)以后，C对应的虚拟内存和物理内存一起释放 <img src="/2020/08/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/02%20%5B%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB%5D%E9%A2%91%E7%B9%81%E5%88%86%E9%85%8D%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/c_3.jpg" srcset="/img/loading.gif" lazyload class="">     </li>
+<li>进程调用free(B)以后，如图7所示。B对应的虚拟内存和物理内存都没有释放，因为只有一个_edata指针，如果往回推，那么D这块内存怎么办呢？当然，B这块内存，是可以重用的，如果这个时候再来一个40K的请求，那么malloc很可能就把B这块内存返回回去了。 </li>
+<li>进程调用free(D)以后，如图8所示。B和D连接起来，变成一块140K的空闲内存。 </li>
+<li>默认情况下：当最高地址空间的空闲内存超过128K（可由M_TRIM_THRESHOLD选项调节）时，执行内存紧缩操作（trim）。在上一个步骤free的时候，发现最高地址空闲内存超过128K，于是内存紧缩，变成图9所示。</li>
+</ol>
+<h1 id="2-4-真相大白"><a href="#2-4-真相大白" class="headerlink" title="2.4 真相大白"></a>2.4 真相大白</h1><p>说完内存分配的原理，那么被测模块在内核态cpu消耗高的原因就很清楚了：每次请求来都malloc一块2M的内存，默认情况下，malloc调用mmap分配内存，请求结束的时候，调用munmap释放内存。假设每个请求需要6个物理页，那么每个请求就会产生6个缺页中断，在2000的压力下，每秒就产生了10000多次缺页中断，这些缺页中断不需要读取磁盘解决，所以叫做minflt；缺页中断在内核态执行，因此进程的内核态cpu消耗很大。缺页中断分散在整个请求的处理过程中，所以表现为分配语句耗时（10us）相对于整条请求的处理时间（1000us）比重很小。</p>
+<h1 id="3-解决办法"><a href="#3-解决办法" class="headerlink" title="3. 解决办法"></a>3. 解决办法</h1><p>将动态内存改为静态分配，或者启动的时候，用malloc为每个线程分配，然后保存在threaddata里面。但是，由于这个模块的特殊性，静态分配，或者启动时候分配都不可行。另外，Linux下默认栈的大小限制是10M，如果在栈上分配几M的内存，有风险。<br>禁止malloc调用mmap分配内存，禁止内存紧缩。<br>在进程启动时候，加入以下两行代码：<br>mallopt(M_MMAP_MAX, 0);         // 禁止malloc调用mmap分配内存<br>mallopt(M_TRIM_THRESHOLD, -1);  // 禁止内存紧缩<br>效果：加入这两行代码以后，用ps命令观察，压力稳定以后，majlt和minflt都为0。进程的系统态cpu从20降到10。</p>
+<h1 id="4-小结"><a href="#4-小结" class="headerlink" title="4. 小结"></a>4. 小结</h1><p>可以用命令ps -o majflt minflt -C program来查看进程的majflt, minflt的值，这两个值都是累加值，从进程启动开始累加。在对高性能要求的程序做压力测试的时候，我们可以多关注一下这两个值。<br>如果一个进程使用了mmap将很大的数据文件映射到进程的虚拟地址空间，我们需要重点关注majflt的值，因为相比minflt，majflt对于性能的损害是致命的，随机读一次磁盘的耗时数量级在几个毫秒，而minflt只有在大量的时候才会对性能产生影响。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/08/15/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">伸展树(splay)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/">
+                        <span class="hidden-mobile">VIRT 与 RSE 占用分析</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

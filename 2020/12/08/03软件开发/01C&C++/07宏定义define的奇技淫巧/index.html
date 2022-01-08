@@ -1,0 +1,483 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="define中的三个特殊符号：#，##，#@#define Conn(x,y) x##y #define ToChar(x)#@x #define ToString(x)#x  对应解释如下： (1)x##y 表示x连接y，如下：     int n &#x3D; Conn(123,456);&#x2F;* 结果就是n&#x3D;123456;*&#x2F;     char* str &#x3D; Conn(&quot;asdf&quot;,&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="宏定义define的奇技淫巧">
+<meta property="og:url" content="http://fly542.cn/2020/12/08/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&C++/07%E5%AE%8F%E5%AE%9A%E4%B9%89define%E7%9A%84%E5%A5%87%E6%8A%80%E6%B7%AB%E5%B7%A7/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="define中的三个特殊符号：#，##，#@#define Conn(x,y) x##y #define ToChar(x)#@x #define ToString(x)#x  对应解释如下： (1)x##y 表示x连接y，如下：     int n &#x3D; Conn(123,456);&#x2F;* 结果就是n&#x3D;123456;*&#x2F;     char* str &#x3D; Conn(&quot;asdf&quot;,&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-08T12:40:05.000Z">
+<meta property="article:modified_time" content="2022-01-08T14:23:39.084Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="c,c++">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>宏定义define的奇技淫巧 - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="宏定义define的奇技淫巧">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-12-08 20:40" pubdate>
+        2020年12月8日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.2k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      10 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">宏定义define的奇技淫巧</h1>
+            
+            <div class="markdown-body">
+              <h1 id="define中的三个特殊符号：-，-，"><a href="#define中的三个特殊符号：-，-，" class="headerlink" title="define中的三个特殊符号：#，##，#@"></a>define中的三个特殊符号：#，##，#@</h1><div class="code-wrapper"><pre><code class="hljs">#define Conn(x,y) x##y
+#define ToChar(x)#@x
+#define ToString(x)#x
+</code></pre></div>
+<p>对应解释如下：</p>
+<div class="code-wrapper"><pre><code class="hljs">(1)x##y 表示x连接y，如下：
+    int n = Conn(123,456);/* 结果就是n=123456;*/
+    char* str = Conn(&quot;asdf&quot;,&quot;adf&quot;);/*结果就是 str = &quot;asdfadf&quot;;*/
+(2) #@x代表给x加上单引号，结果返回是一个const char。如下：
+    char a = ToChar(1);结果就是a=&#39;1&#39;;
+    做个越界试验char a = ToChar(123);结果就错了;
+    但是如果你的参数超过四个字符，编译器就给给你报错了！
+    error C2015: too many characters in constant ：P
+(3) #x 给x加双引号
+    char* str = ToString(123132);就成了str=&quot;123132&quot;;
+    
+</code></pre></div>
+<h1 id="得到一个field在结构体-struct-中的偏移量"><a href="#得到一个field在结构体-struct-中的偏移量" class="headerlink" title="得到一个field在结构体(struct)中的偏移量"></a>得到一个field在结构体(struct)中的偏移量</h1><div class="code-wrapper"><pre><code class="hljs">#define OFFSETOF( type, field ) ((size_t)&amp;(( type *) 0)-&gt; field )
+</code></pre></div>
+<h1 id="得到一个结构体中field所占用的字节数"><a href="#得到一个结构体中field所占用的字节数" class="headerlink" title="得到一个结构体中field所占用的字节数"></a>得到一个结构体中field所占用的字节数</h1><div class="code-wrapper"><pre><code class="hljs">#define FSIZ( type, field ) sizeof(((type *) 0)-&gt;field )
+</code></pre></div>
+<h1 id="将一个字母转换为大写"><a href="#将一个字母转换为大写" class="headerlink" title="将一个字母转换为大写"></a>将一个字母转换为大写</h1><div class="code-wrapper"><pre><code class="hljs">#define UPCASE( c )(((c)&gt;=&#39;a&#39;&amp;&amp;(c)&lt;=&#39;z&#39;)?((c)- 0x20):(c))
+</code></pre></div>
+<h1 id="判断字符是不是10进值的数字"><a href="#判断字符是不是10进值的数字" class="headerlink" title="判断字符是不是10进值的数字"></a>判断字符是不是10进值的数字</h1><div class="code-wrapper"><pre><code class="hljs">#define DECCHK( c )((c)&gt;=&#39;0&#39;&amp;&amp;(c)&lt;=&#39;9&#39;)
+</code></pre></div>
+<h1 id="判断字符是不是16进值的数字"><a href="#判断字符是不是16进值的数字" class="headerlink" title="判断字符是不是16进值的数字"></a>判断字符是不是16进值的数字</h1><div class="code-wrapper"><pre><code class="hljs">#define HEXCHK( c )(((c)&gt;=&#39;0&#39;&amp;&amp;(c)&lt;=&#39;9&#39;)||((c)&gt;=&#39;A&#39;&amp;&amp;(c)&lt;=&#39;F&#39;)||((c)&gt;=&#39;a&#39;&amp;&amp;(c)&lt;=&#39;f&#39;))
+</code></pre></div>
+<h1 id="防止溢出的一个方法"><a href="#防止溢出的一个方法" class="headerlink" title="防止溢出的一个方法"></a>防止溢出的一个方法</h1><div class="code-wrapper"><pre><code class="hljs">#define INC_SAT( val )(val =((val)+1 &gt;(val))?(val)+1 :(val))
+</code></pre></div>
+<h1 id="返回数组元素的个数"><a href="#返回数组元素的个数" class="headerlink" title="返回数组元素的个数"></a>返回数组元素的个数</h1><div class="code-wrapper"><pre><code class="hljs">#define ARR_SIZE( a )(sizeof((a))/sizeof((a[0])))
+</code></pre></div>
+<h1 id="使用一些宏跟踪调试"><a href="#使用一些宏跟踪调试" class="headerlink" title="使用一些宏跟踪调试"></a>使用一些宏跟踪调试</h1><div class="code-wrapper"><pre><code class="hljs">_LINE_ /*(两个下划线)，对应%d*/
+_FILE_ /*对应%s*/
+_DATE_ /*对应%s*/
+_TIME_ /*对应%s*/
+</code></pre></div>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/c-c/">c,c++</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/01/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/08%E5%90%84%E7%B1%BBconst%20%E6%8C%87%E9%92%88%E7%9A%84%E5%8C%BA%E5%88%AB/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">const char*, char const*, char*const 的区别</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/12/04/04DevOps/10%20vim%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%8F%8A%E5%BF%AB%E6%8D%B7%E9%94%AE/">
+                        <span class="hidden-mobile">vim常用命令及快捷键</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

@@ -1,0 +1,642 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="一. 对于I&#x2F;O的概述Linux磁盘I&#x2F;O分为Buffered IO和Direct IO，这两者有何区别？ Buffered IO：当应用程序尝试读取某块数据的时候，如果这块数据已经存放在了页缓存（page cache）中，那么这块数据就可以立即返回给应用程序，而不需要经过实际的物理读盘操作。当然，如果数据在应用程序读取之前并未被存放在页缓存中，那么就需要先将数据从磁盘读到页缓存中去。对于写操作来">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux下IO应用详解">
+<meta property="og:url" content="http://fly542.cn/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/07linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="一. 对于I&#x2F;O的概述Linux磁盘I&#x2F;O分为Buffered IO和Direct IO，这两者有何区别？ Buffered IO：当应用程序尝试读取某块数据的时候，如果这块数据已经存放在了页缓存（page cache）中，那么这块数据就可以立即返回给应用程序，而不需要经过实际的物理读盘操作。当然，如果数据在应用程序读取之前并未被存放在页缓存中，那么就需要先将数据从磁盘读到页缓存中去。对于写操作来">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://fly542.cn/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/07linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio1.gif">
+<meta property="og:image" content="http://fly542.cn/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/07linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif">
+<meta property="og:image" content="http://fly542.cn/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/07linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif">
+<meta property="og:image" content="http://fly542.cn/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/07linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif">
+<meta property="og:image" content="http://fly542.cn/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/07linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif">
+<meta property="article:published_time" content="2020-07-25T09:44:11.000Z">
+<meta property="article:modified_time" content="2022-01-08T14:23:38.935Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://fly542.cn/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/07linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio1.gif">
+  
+  
+  <title>linux下IO应用详解 - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="linux下IO应用详解">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-07-25 17:44" pubdate>
+        2020年7月25日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      19k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      159 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">linux下IO应用详解</h1>
+            
+            <div class="markdown-body">
+              <h2 id="一-对于I-O的概述"><a href="#一-对于I-O的概述" class="headerlink" title="一. 对于I/O的概述"></a>一. 对于I/O的概述</h2><p>Linux磁盘I/O分为Buffered IO和Direct IO，这两者有何区别？</p>
+<p>Buffered IO：<br>当应用程序尝试读取某块数据的时候，如果这块数据已经存放在了页缓存（page cache）中，那么这块数据就可以立即返回给应用程序，而不需要经过实际的物理读盘操作。当然，如果数据在应用程序读取之前并未被存放在页缓存中，那么就需要先将数据从磁盘读到页缓存中去。对于写操作来说，应用程序也会将数据先写到页缓存中去，数据是否被立即写到磁盘上去取决于应用程序所采用的写操作机制：如果用户采用的是同步写机制（ synchronous writes ），那么数据会立即被写回到磁盘上，应用程序会一直等到数据被写完为止；如果用户采用的是延迟写机制（ deferred writes ），那么应用程序就完全不需要等到数据全部被写回到磁盘，数据只要被写到页缓存中去就可以了。在延迟写机制的情况下，操作系统会定期地将放在页缓存中的数据刷到磁盘上。与异步写机制（ asynchronous writes ）不同的是，<font color="#ff0000"><code>延迟写机制在数据完全写到磁盘上的时候不会通知应用程序，而异步写机制在数据完全写到磁盘上的时候是会返回给应用程序的。所以延迟写机制本身是存在数据丢失的风险的</code></font>，而异步写机制则不会有这方面的担心。</p>
+<p>总结下，Buffered IO的特点是使用了内存缓存，如：</p>
+<ul>
+<li>读操作：硬盘-&gt;内核页缓存-&gt;用户缓冲区</li>
+<li>写操作：用户缓冲区-&gt;内核页缓存-&gt;硬盘</li>
+</ul>
+<p>对Buffered IO，数据在传输过程中需要在应用程序地址空间和页缓存之间进行多次数据拷贝操作，这些数据拷贝操作所带来的 CPU 以及内存开销是非常大的。</p>
+<p>对于某些特殊的应用程序（如数据库）来说，避开操作系统内核缓冲区而直接在应用程序地址空间和磁盘之间传输数据会比使用操作系统内核缓冲区获取更好的性能。</p>
+<p>Direct IO:<br>Direct-io的目的在于绕过文件系统（ext）的cache，直接对block设备上的文件进行读写。但不经内核缓冲区，直接写磁盘，必然会引起阻塞。所以通常DIRECT-io与AIO（异步IO）会一起出现。</p>
+<h2 id="二-I-O模型的类比"><a href="#二-I-O模型的类比" class="headerlink" title="二. I/O模型的类比"></a>二. I/O模型的类比</h2><p>Linux下的I/O模型。</p>
+<img src="/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/07linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio1.gif" srcset="/img/loading.gif" lazyload class="" title="图 1. 基本 Linux I&#x2F;O 模型的简单矩阵">
+<p>如图每个 I/O 模型都有自己的使用模式，它们对于特定的应用程序都有自己的优点。下面一一来介绍：</p>
+<h3 id="2-1-同步阻塞-I-O-模型"><a href="#2-1-同步阻塞-I-O-模型" class="headerlink" title="2.1 同步阻塞 I/O 模型"></a>2.1 同步阻塞 I/O 模型</h3><img src="/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/07linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif" srcset="/img/loading.gif" lazyload class="" title="图 2. 同步阻塞 I&#x2F;O 模型的典型流程">
+<p>在这个模型中，用户空间的应用程序执行一个系统调用，这会导致应用程序阻塞。这意味着应用程序会一直阻塞，直到系统调用完成为止（数据传输完成或发生错误）。调用应用程序处于一种不再消费 CPU 而只是简单等待响应的状态，因此从处理的角度来看，这是非常有效的。</p>
+<h3 id="2-2-同步非阻塞-I-O"><a href="#2-2-同步非阻塞-I-O" class="headerlink" title="2.2 同步非阻塞 I/O"></a>2.2 同步非阻塞 I/O</h3><img src="/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/07linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif" srcset="/img/loading.gif" lazyload class="" title="图 3. 同步非阻塞 I&#x2F;O 模型的典型流程">
+<p>同步阻塞 I/O 的一种效率稍低的变种是同步非阻塞 I/O。在这种模型中，设备是以非阻塞的形式打开的。这意味着 I/O 操作不会立即完成，read操作可能会返回一个错误代码，说明这个命令不能立即满足（EAGAIN 或 EWOULDBLOCK）</p>
+<h3 id="2-3-异步阻塞-I-O"><a href="#2-3-异步阻塞-I-O" class="headerlink" title="2.3 异步阻塞 I/O"></a>2.3 异步阻塞 I/O</h3><img src="/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/07linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif" srcset="/img/loading.gif" lazyload class="" title="图 4. 异步阻塞 I&#x2F;O 模型的典型流程 (select)">
+<p>IO多路复用(复用的select线程)。I/O复用模型会用到select、poll、epoll函数，这几个函数也会使进程阻塞，但是和阻塞I/O所不同的的，这两个函数可以同时阻塞多个I/O操作。而且可以同时对多个读操作，多个写操作的I/O函数进行检测，直到有数据可读或可写时，才真正调用I/O操作函数。对于每个提示符来说，我们可以获取这个描述符可以写数据、有读数据可用以及是否发生错误的通知。</p>
+<h4 id="epoll总结："><a href="#epoll总结：" class="headerlink" title="epoll总结："></a>epoll总结：</h4><p>epoll支持水平触发和边缘触发，最大的特点在于边缘触发，它只告诉进程哪些fd刚刚变为就需态，并且只会通知一次。还有一个特点是，epoll使用“事件”的就绪通知方式，通过epoll_ctl注册fd，一旦该fd就绪，内核就会采用类似callback的回调机制来激活该fd，epoll_wait便可以收到通知.</p>
+<h4 id="epoll的优点"><a href="#epoll的优点" class="headerlink" title="epoll的优点:"></a>epoll的优点:</h4><ul>
+<li><p> 没有最大并发连接的限制，能打开的FD的上限远大于1024（1G的内存上能监听约10万个端口）。</p>
+</li>
+<li><p> 效率提升，不是轮询的方式,只管你“活跃”的连接，不会随着FD数目的增加效率下降。只有活跃可用的FD才会调用callback函数。</p>
+</li>
+<li><p> 内存拷贝，利用mmap()文件映射内存加速与内核空间的消息传递；即epoll使用mmap减少复制开销。</p>
+</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>表面上看epoll的性能最好，但是在连接数少并且连接都十分活跃的情况下，select和poll的性能可能比epoll好，毕竟epoll的通知机制需要很多函数回调。</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<h3 id="2-4-异步非阻塞-I-O（AIO）"><a href="#2-4-异步非阻塞-I-O（AIO）" class="headerlink" title="2.4 异步非阻塞 I/O（AIO）"></a>2.4 异步非阻塞 I/O（AIO）</h3><img src="/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/07linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/aio2.gif" srcset="/img/loading.gif" lazyload class="" title="图 5. 异步非阻塞 I&#x2F;O 模型的典型流程">
+<p>异步非阻塞 I/O 模型是一种CPU处理与 I/O 重叠进行的模型。读请求会立即返回，说明 read 请求已经成功发起了。在后台完成读操作时，应用程序然后会执行其他处理操作。当 read 的响应到达时，就会产生一个信号或执行一个基于线程的回调函数来完成这次 I/O 处理过程。</p>
+<h2 id="三-AIO编程介绍："><a href="#三-AIO编程介绍：" class="headerlink" title="三. AIO编程介绍："></a>三. AIO编程介绍：</h2><p>aio异步读写是在Linux内核2.6之后才正式纳入其标准。之所以会增加此模块，是因为众所周知我们计算机CPU的执行速度远大于I/O读写的执行速度，如果我们用传统的阻塞式或非阻塞式来操作I/O的话，那么我们在同一个程序中(不用多线程或多进程)就不能同时操作俩个以上的文件I/O，每次只能对一个文件进行I/O操作，很明显这样效率很低下(因为CPU速度远大于I/O操作的速度，所以当执行I/O时，CPU其实还可以做更多的事)。因此就诞生了相对高效的异步I/O。<br>在 Linux 系统上有三种方式来实现 AIO：</p>
+<ul>
+<li>内核系统调用</li>
+<li>对内核系统调用进行封装进而在用户空间提供服务，例如 libaio</li>
+<li>完全在用户空间实现 AIO，并且不使用内核支持，例如librt和部分libc </li>
+</ul>
+<h3 id="3-1-内核系统调用"><a href="#3-1-内核系统调用" class="headerlink" title="3.1 内核系统调用"></a>3.1 内核系统调用</h3><p>内核提供的API有io_setup, io_submit, io_getevents, io_destroy，<br>所使用的参数是 aio_context_t 而非libaio中的 io_context_t<br>一般不采用此方式直接调用，一般使用的是libaio库进行调用。</p>
+<h3 id="3-2-libaio"><a href="#3-2-libaio" class="headerlink" title="3.2 libaio"></a>3.2 libaio</h3><p>libaio提供的API有：io_setup, io_submit, io_getevents, io_destroy</p>
+<p>使用时需要独立安装相关的 libaio-devel 开发库<br><code>yum install libaio-devel</code></p>
+<h4 id="3-2-1-相关结构体"><a href="#3-2-1-相关结构体" class="headerlink" title="3.2.1 相关结构体"></a>3.2.1 相关结构体</h4><figure class="highlight c++"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></div></td><td class="code"><pre><code class="hljs c++"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">iocb</span> &#123;</span>　　　　　　　　<span class="hljs-comment">// 描述IO请求</span><br><br>        <span class="hljs-keyword">void</span>     *data;  <span class="hljs-comment">/* Return in the io completion event */</span><br>        <span class="hljs-keyword">unsigned</span> key;   <span class="hljs-comment">/*r use in identifying io requests */</span><br>        <span class="hljs-keyword">short</span>           aio_lio_opcode;　　<span class="hljs-comment">// 操作的类型：IO_CMD_PWRITE | IO_CMD_PREAD</span><br>        <span class="hljs-keyword">short</span>           aio_reqprio;<br>        <span class="hljs-keyword">int</span>             aio_fildes;　　　　<span class="hljs-comment">// 操作的文件fd</span><br>        <span class="hljs-class"><span class="hljs-keyword">union</span> &#123;</span><br>                <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">io_iocb_common</span>           <span class="hljs-title">c</span>;</span><br>                <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">io_iocb_vector</span>           <span class="hljs-title">v</span>;</span><br>                <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">io_iocb_poll</span>             <span class="hljs-title">poll</span>;</span><br>                <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">io_iocb_sockaddr</span> <span class="hljs-title">saddr</span>;</span><br>        &#125; u;<br>&#125;;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">io_iocb_common</span> &#123;</span>　　<br>        <span class="hljs-keyword">void</span>            *buf;　　<br>        <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span>   nbytes;<br>        <span class="hljs-keyword">long</span> <span class="hljs-keyword">long</span>       offset;<br>        <span class="hljs-keyword">unsigned</span>        flags;<br>        <span class="hljs-keyword">unsigned</span>        resfd;<br>&#125;;<br><br>　　<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">io_event</span> &#123;</span>　　　　<span class="hljs-comment">// 描述返回结果</span><br>　　　　<span class="hljs-keyword">void</span> *data;<br>　　　　<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">iocb</span> *<span class="hljs-title">obj</span>;</span>　　<span class="hljs-comment">// 提交的任务</span><br>　　　　<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> res;　　<span class="hljs-comment">// IO任务完成的状态</span><br>　　　<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> res2;　　<span class="hljs-comment">// 同上</span><br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h4 id="3-2-2-应用步骤"><a href="#3-2-2-应用步骤" class="headerlink" title="3.2.2 应用步骤"></a>3.2.2 应用步骤</h4><h5 id="3-2-2-1-建立IO任务"><a href="#3-2-2-1-建立IO任务" class="headerlink" title="3.2.2.1 建立IO任务"></a>3.2.2.1 建立IO任务</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">io_setup</span> <span class="hljs-params">(<span class="hljs-keyword">int</span> maxevents, <span class="hljs-keyword">io_context_t</span> *ctxp)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>io_context_t对应内核中一个结构，为异步IO请求提供上下文环境。<br>注意: 在调用 io_setup 前必须将 io_context_t 初始化为0。<br>也需要open打开文件的时候设置 <em><strong>O_DIRECT</strong></em> 标志。</p>
+</blockquote>
+<h5 id="3-2-2-2-提交IO任务"><a href="#3-2-2-2-提交IO任务" class="headerlink" title="3.2.2.2 提交IO任务"></a>3.2.2.2 提交IO任务</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">long</span> <span class="hljs-title">io_submit</span> <span class="hljs-params">(<span class="hljs-keyword">io_context_t</span> ctx_id, <span class="hljs-keyword">long</span> nr, struct iocb **iocbpp)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>提交任务之前必须先填充iocb结构体，libaio提供的包装函数说明了需要完成的工作：</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">void io<span class="hljs-constructor">_prep_pread(<span class="hljs-params">struct</span> <span class="hljs-params">iocb</span> <span class="hljs-operator">*</span><span class="hljs-params">iocb</span>, <span class="hljs-params">int</span> <span class="hljs-params">fd</span>, <span class="hljs-params">void</span> <span class="hljs-operator">*</span><span class="hljs-params">buf</span>, <span class="hljs-params">size_t</span> <span class="hljs-params">count</span>, <span class="hljs-params">long</span> <span class="hljs-params">long</span> <span class="hljs-params">offset</span>)</span><br>&#123;<br>　　memset(iocb, <span class="hljs-number">0</span>, sizeof(*iocb));<br>　　iocb-&gt;aio_fildes = fd;<br>　　iocb-&gt;aio_lio_opcode = IO_CMD_PREAD;<br>　　iocb-&gt;aio_reqprio = <span class="hljs-number">0</span>;<br>　　iocb-&gt;u.c.buf = buf;<br>　　iocb-&gt;u.c.nbytes = count;<br>　　iocb-&gt;u.c.offset = offset;<br>&#125;<br><br>void io<span class="hljs-constructor">_prep_pwrite(<span class="hljs-params">struct</span> <span class="hljs-params">iocb</span> <span class="hljs-operator">*</span><span class="hljs-params">iocb</span>, <span class="hljs-params">int</span> <span class="hljs-params">fd</span>, <span class="hljs-params">void</span> <span class="hljs-operator">*</span><span class="hljs-params">buf</span>, <span class="hljs-params">size_t</span> <span class="hljs-params">count</span>, <span class="hljs-params">long</span> <span class="hljs-params">long</span> <span class="hljs-params">offset</span>)</span><br>&#123;<br>　　memset(iocb, <span class="hljs-number">0</span>, sizeof(*iocb));<br>　　iocb-&gt;aio_fildes = fd;<br>　　iocb-&gt;aio_lio_opcode = IO_CMD_PWRITE;<br>　　iocb-&gt;aio_reqprio = <span class="hljs-number">0</span>;<br>　　iocb-&gt;u.c.buf = buf;<br>　　iocb-&gt;u.c.nbytes = count;<br>　　iocb-&gt;u.c.offset = offset;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这里注意读写的buf都必须是按扇区对齐的，可以用posix_memalign来分配。</p>
+<p>详细代码内容可参考 <em><a target="_blank" rel="noopener" href="https://pagure.io/libaio/blob/master/f/src/libaio.h">https://pagure.io/libaio/blob/master/f/src/libaio.h</a></em></p>
+<h5 id="3-2-2-3-获取完成的IO"><a href="#3-2-2-3-获取完成的IO" class="headerlink" title="3.2.2.3 获取完成的IO"></a>3.2.2.3 获取完成的IO</h5><p>io_getevents 系统调用尝试从 ctx_id 指定的AIO上下文的完成队列中读取至少min_nr, 最多nr个事件,<br>timeout指定等待IO完成的超时时间，为NULL时一直等待到至少看到min_nr个事件为止;</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">long</span> <span class="hljs-title">io_getevents</span> <span class="hljs-params">(<span class="hljs-keyword">io_context_t</span> ctx_id, <span class="hljs-keyword">long</span> min_nr, <span class="hljs-keyword">long</span> nr, struct io_event *events, struct timespec *timeout)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>这里最重要的就是提供一个io_event数组给内核来copy完成的IO请求到这里，数组的大小是io_setup时指定的maxevents。</p>
+<h5 id="3-2-2-4-销毁IO任务"><a href="#3-2-2-4-销毁IO任务" class="headerlink" title="3.2.2.4 销毁IO任务"></a>3.2.2.4 销毁IO任务</h5><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">io_destroy</span> <span class="hljs-params">(<span class="hljs-keyword">io_context_t</span> ctx)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h4 id="3-2-3-libaio和epoll的结合"><a href="#3-2-3-libaio和epoll的结合" class="headerlink" title="3.2.3 libaio和epoll的结合"></a>3.2.3 libaio和epoll的结合</h4><p>在异步编程中，任何一个环节的阻塞都会导致整个程序的阻塞，所以一定要避免在 io_getevents 调用时阻塞式的等待。还记得 io_iocb_common 中的 flags 和 resfd 吗？看看libaio是如何提供io_getevents和事件循环的结合：</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">void io<span class="hljs-constructor">_set_eventfd(<span class="hljs-params">struct</span> <span class="hljs-params">iocb</span> <span class="hljs-operator">*</span><span class="hljs-params">iocb</span>, <span class="hljs-params">int</span> <span class="hljs-params">eventfd</span>)</span> &#123;<br>    iocb-&gt;u.c.flags <span class="hljs-pattern-match">|= (1 &lt;&lt; 0) <span class="hljs-operator">/</span><span class="hljs-operator">*</span> <span class="hljs-constructor">IOCB_FLAG_RESFD</span> <span class="hljs-operator">*</span><span class="hljs-operator">/</span>;</span><br><span class="hljs-pattern-match">    iocb-&gt;u.c.resfd = eventfd;</span><br><span class="hljs-pattern-match">&#125;</span><br></code></pre></td></tr></table></figure>
+<p>这里的resfd是通过系统调用eventfd生成的。<br><code>int eventfd(unsigned int initval, int flags);</code><br>eventfd 函数是linux 2.6.22内核之后加进来的syscall，作用是内核用来通知应用程序发生的事件的数量，从而使应用程序不用频繁地去轮询内核是否有时间发生，而是有内核将发生事件的数量写入到该fd，应用程序发现fd可读后，从fd读取该数值，并马上去内核读取。</p>
+<p>有了eventfd，就可以很好地将libaio和epoll事件循环结合起来：</p>
+<div class="code-wrapper"><pre><code class="hljs">1. 创建一个eventfd
+    efd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
+
+2. 将eventfd设置到iocb中, 将eventfd和iocb进行关联
+    io_set_eventfd(iocb, efd);
+
+3. 交接AIO请求
+    io_submit(ctx, NUM_EVENTS, iocb);
+
+4. 创建一个epollfd，并将eventfd加到epoll中
+    epfd = epoll_create(1);
+    epoll_ctl(epfd, EPOLL_CTL_ADD, efd, &amp;epevent);
+    epoll_wait(epfd, &amp;epevent, 1, -1);
+
+5. 当 `eventfd` 可读时，从 `eventfd` 读出完成IO请求的数量，并调用 `io_getevents` 获取这些IO
+    read(efd, &amp;finished_aio, sizeof(finished_aio);
+    r = io_getevents(ctx, 1, NUM_EVENTS, events, &amp;tms);
+</code></pre></div>
+<h4 id="3-2-4-epoll-aio-eventfd结合使用的简单例子"><a href="#3-2-4-epoll-aio-eventfd结合使用的简单例子" class="headerlink" title="3.2.4 epoll/aio/eventfd结合使用的简单例子"></a>3.2.4 epoll/aio/eventfd结合使用的简单例子</h4><p>make时需要增加-laio 库引用<br><code>g++ main.cpp -o aiolib -laio</code></p>
+<p>main.cpp内容如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;errno.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;libaio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/eventfd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/epoll.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/types.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdint.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/stat.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;fcntl.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;inttypes.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> TEST_FILE   <span class="hljs-meta-string">&quot;aio_test_file&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> TEST_FILE_SIZE  (127 * 1024)</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> NUM_EVENTS  128</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> ALIGN_SIZE  512</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> RD_WR_SIZE  1024</span><br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">custom_iocb</span> &#123;</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">iocb</span> <span class="hljs-title">iocb</span>;</span><br>    <span class="hljs-keyword">int</span> nth_request;<br>&#125;;<br><br><span class="hljs-comment">// aio 完成后的回调函数</span><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">aio_callback</span><span class="hljs-params">(<span class="hljs-keyword">io_context_t</span> ctx, struct iocb *iocb, <span class="hljs-keyword">long</span> res, <span class="hljs-keyword">long</span> res2)</span> </span>&#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">custom_iocb</span> *<span class="hljs-title">iocbp</span> =</span> (struct custom_iocb *)iocb;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;nth_request: %d, request_type: %s, offset: %lld, length: %lu, res: %ld, res2: %ld\n&quot;</span>,<br>            iocbp-&gt;nth_request, (iocb-&gt;aio_lio_opcode == IO_CMD_PREAD) ? <span class="hljs-string">&quot;READ&quot;</span> : <span class="hljs-string">&quot;WRITE&quot;</span>,<br>            iocb-&gt;u.c.offset, iocb-&gt;u.c.nbytes, res, res2);<br>&#125;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> *  eventfd 被epoll触发后的事件处理</span><br><span class="hljs-comment"> *  @param ctx io操作上下文</span><br><span class="hljs-comment"> *  @param efd 被epoll触发的eventfd</span><br><span class="hljs-comment"> *  @return &gt;0 返回完成的事件个数 &lt;0 失败</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> <span class="hljs-title">epoll_eventfd_hanlder</span><span class="hljs-params">(<span class="hljs-keyword">io_context_t</span> ctx, <span class="hljs-keyword">int</span> efd)</span> </span>&#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">io_event</span> <span class="hljs-title">events</span>[64];</span> <span class="hljs-comment">//事件列表, 每次最多处理64个</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">timespec</span> <span class="hljs-title">tms</span>;</span><br>    <span class="hljs-keyword">uint64_t</span> finished_aio = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">read</span>(efd, &amp;finished_aio, <span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(finished_aio)) != <span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(finished_aio)) &#123; <span class="hljs-comment">// 读取当前完成的aio读取事件个数</span><br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;read&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<br>    &#125;<br>    <span class="hljs-keyword">int</span> iret = (<span class="hljs-keyword">int</span>)finished_aio;<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;finished io number: %ld\n&quot;</span>, finished_aio);<br>    <span class="hljs-keyword">while</span> (finished_aio &gt; <span class="hljs-number">0</span>) &#123; <span class="hljs-comment">// 循环处理所有已完成aio事件</span><br>        tms.tv_sec = <span class="hljs-number">0</span>;<br>        tms.tv_nsec = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">int</span> r = <span class="hljs-built_in">io_getevents</span>(ctx, <span class="hljs-number">1</span>, <span class="hljs-number">64</span>, events, &amp;tms); <span class="hljs-comment">// 每次最多处理64个任务</span><br>        <span class="hljs-keyword">if</span> (r &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;@@@ get io_event num=%d,\n&quot;</span>, r);<br>            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j=<span class="hljs-number">0</span>; j&lt;r; ++j) &#123;<br>                ((<span class="hljs-keyword">io_callback_t</span>)(events[j].data))(ctx, events[j].obj, events[j].res, events[j].res2);<br>            &#125;<br>            finished_aio -= r;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> iret;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span> argc, <span class="hljs-keyword">char</span> *argv[])</span> </span>&#123;<br>    <span class="hljs-keyword">int</span> efd=<span class="hljs-number">-1</span>, fd=<span class="hljs-number">-1</span>, epfd=<span class="hljs-number">-1</span>;<br>    <span class="hljs-keyword">io_context_t</span> ctx;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">custom_iocb</span> <span class="hljs-title">iocbs</span>[<span class="hljs-title">NUM_EVENTS</span>];</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">iocb</span> *<span class="hljs-title">iocbps</span>[<span class="hljs-title">NUM_EVENTS</span>];</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">custom_iocb</span> *<span class="hljs-title">iocbp</span>;</span><br>    <span class="hljs-keyword">int</span> i, j;<br>    <span class="hljs-keyword">void</span> *buf;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">epoll_event</span> <span class="hljs-title">epevent</span>;</span><br><br>    <span class="hljs-keyword">if</span> ( <span class="hljs-number">0</span>&gt;(efd=<span class="hljs-built_in">eventfd</span>(<span class="hljs-number">0</span>, EFD_NONBLOCK | EFD_CLOEXEC)) ) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;eventfd&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">2</span>;<br>    &#125;<br><br>    <span class="hljs-keyword">if</span> (<span class="hljs-number">0</span>&gt;(fd = <span class="hljs-built_in">open</span>(TEST_FILE, O_RDWR | O_CREAT | O_DIRECT, <span class="hljs-number">0644</span>))) &#123; <span class="hljs-comment">//注意添加O_DIRECT</span><br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;open&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">3</span>;<br>    &#125;<br>    <span class="hljs-built_in">ftruncate</span>(fd, TEST_FILE_SIZE);<br><br>    <span class="hljs-built_in">memset</span>(&amp;ctx, <span class="hljs-number">0</span>, <span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(ctx)); <span class="hljs-comment">// 注意必须初始化为0</span><br><br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">io_setup</span>(<span class="hljs-number">8192</span>, &amp;ctx)) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;io_setup&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">4</span>;<br>    &#125;<br><br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">posix_memalign</span>(&amp;buf, ALIGN_SIZE, RD_WR_SIZE)) &#123; <span class="hljs-comment">// 申请内存对齐的空间,类似malloc 需调用free释放空间</span><br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;posix_memalign&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">5</span>;<br>    &#125;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;buf: %p\n&quot;</span>, buf);<br><br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>, iocbp = iocbs; i &lt; NUM_EVENTS; ++i, ++iocbp) &#123;<br>        iocbps[i] = &amp;iocbp-&gt;iocb;<br>        <span class="hljs-built_in">io_prep_pread</span>(&amp;iocbp-&gt;iocb, fd, buf, RD_WR_SIZE, i * RD_WR_SIZE);<br>        <span class="hljs-built_in">io_set_eventfd</span>(&amp;iocbp-&gt;iocb, efd);<br>        <span class="hljs-built_in">io_set_callback</span>(&amp;iocbp-&gt;iocb, aio_callback);<br>        iocbp-&gt;nth_request = i + <span class="hljs-number">1</span>;<br>    &#125;<br><br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">io_submit</span>(ctx, NUM_EVENTS, iocbps) != NUM_EVENTS) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;io_submit&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">6</span>;<br>    &#125;<br><br>    <span class="hljs-keyword">if</span> (<span class="hljs-number">0</span>&gt;(epfd = <span class="hljs-built_in">epoll_create</span>(<span class="hljs-number">1</span>))) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;epoll_create&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">7</span>;<br>    &#125;<br><br>    epevent.events = EPOLLIN | EPOLLET;<br>    epevent.data.ptr = <span class="hljs-literal">NULL</span>;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">epoll_ctl</span>(epfd, EPOLL_CTL_ADD, efd, &amp;epevent)) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;epoll_ctl&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">8</span>;<br>    &#125;<br><br>    i = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">while</span> (i &lt; NUM_EVENTS) &#123; <span class="hljs-comment">//如果是服务端，此处应该一直循环</span><br>        <span class="hljs-keyword">if</span> (<span class="hljs-number">1</span> != <span class="hljs-built_in">epoll_wait</span>(epfd, &amp;epevent, <span class="hljs-number">1</span>, <span class="hljs-number">-1</span>)) &#123;<br>            <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;epoll_wait&quot;</span>);<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">9</span>;<br>        &#125;<br>        <span class="hljs-keyword">int</span> iok = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">if</span>(<span class="hljs-number">0</span>&lt;(iok=<span class="hljs-built_in">epoll_eventfd_hanlder</span>(ctx, efd))) &#123;<br>            i += iok;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">10</span>;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-built_in">close</span>(epfd);<br>    <span class="hljs-built_in">free</span>(buf);<br>    <span class="hljs-built_in">io_destroy</span>(ctx);<br>    <span class="hljs-built_in">close</span>(fd);<br>    <span class="hljs-built_in">close</span>(efd);<br>    <span class="hljs-built_in">remove</span>(TEST_FILE);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-3-POSIX-AIO"><a href="#3-3-POSIX-AIO" class="headerlink" title="3.3 POSIX AIO"></a>3.3 POSIX AIO</h3><p>当前的Linux POSIX AIO由glibc在用户空间中实现。POSIX AIO 有许多限制，最值得注意的是，维护多个线程来执行I/O操作是昂贵的，并且可扩展性很差。在基于内核状态机的 AIO 实现上已经进行了一段时间的工作，但是这个实现还没有成熟到可以使用内核系统调用完全重新实现POSIX AIO实现的程度。</p>
+<h4 id="3-3-1-函数说明"><a href="#3-3-1-函数说明" class="headerlink" title="3.3.1 函数说明"></a>3.3.1 函数说明</h4><table>
+<thead>
+<tr>
+<th>API函数</th>
+<th>函数说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>aio_read</td>
+<td>异步读操作</td>
+</tr>
+<tr>
+<td>aio_write</td>
+<td>异步写操作</td>
+</tr>
+<tr>
+<td>aio_error</td>
+<td>检查异步请求的状态</td>
+</tr>
+<tr>
+<td>aio_return</td>
+<td>获得异步请求完成时的返回值</td>
+</tr>
+<tr>
+<td>aio_suspend</td>
+<td>挂起调用进程，直到一个或多个异步请求已完成</td>
+</tr>
+<tr>
+<td>aio_cancel</td>
+<td>取消异步请求</td>
+</tr>
+<tr>
+<td>lio_list</td>
+<td>发起一系列异步I/O请求</td>
+</tr>
+</tbody></table>
+<h4 id="3-3-2-库"><a href="#3-3-2-库" class="headerlink" title="3.3.2 库"></a>3.3.2 库</h4><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">librt libc</span> <br></code></pre></td></tr></table></figure>
+<p>linux内核中aiocd结构体原型：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;aiocb.h&gt;</span></span><br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">aiocb</span> &#123;</span><br>    <span class="hljs-comment">/* The order of these fields is implementation-dependent */</span><br><br>    <span class="hljs-keyword">int</span>             aio_fildes;     <span class="hljs-comment">/* File descriptor */</span><br>    <span class="hljs-keyword">off_t</span>           aio_offset;     <span class="hljs-comment">/* File offset */</span><br>    <span class="hljs-keyword">volatile</span> <span class="hljs-keyword">void</span>  *aio_buf;        <span class="hljs-comment">/* Location of buffer */</span><br>    <span class="hljs-keyword">size_t</span>          aio_nbytes;     <span class="hljs-comment">/* Length of transfer */</span><br>    <span class="hljs-keyword">int</span>             aio_reqprio;    <span class="hljs-comment">/* Request priority */</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sigevent</span> <span class="hljs-title">aio_sigevent</span>;</span>   <span class="hljs-comment">/* Notification method */</span><br>    <span class="hljs-keyword">int</span>             aio_lio_opcode; <span class="hljs-comment">/* Operation to be performed;</span><br><span class="hljs-comment">                                       lio_listio() only */</span><br><br>    <span class="hljs-comment">/* Various implementation-internal fields not shown */</span><br>&#125;;<br><span class="hljs-comment">/* Operation codes for &#x27;aio_lio_opcode&#x27;: */</span><br>     <span class="hljs-class"><span class="hljs-keyword">enum</span> &#123;</span> LIO_READ, LIO_WRITE, LIO_NOP &#125;;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>aio_filedes  要执行io操作的文件描述符</li>
+<li>aio_offset  要执行io操作的文件的偏移量</li>
+<li>aio_buf 读写传输数据的缓冲区空间</li>
+<li>aio_nbytes 指定的aio_buf缓冲区的大小</li>
+<li>aio_reqprio   该字段指定从调用线程的实时优先级中减去的值，以确定执行此I / O请求的优先级（请参阅pthread_setschedparam（3））。 指定的值必须在0到sysconf（_SC_AIO_PRIO_DELTA_MAX）返回的值之间。 对于文件同步操作，将忽略此字段。</li>
+<li>aio_sigevent 指定异步io操作完成时的通知方式， aio_sigevent.sigev_notify 的值可能是SIGEV_NONE, SIGEV_SIGNAL和 SIGEV_THREAD，相信信息可参考 sigevent(7)</li>
+<li>aio_lio_opcode 要执行的操作类型； 仅用于lio_listio</li>
+</ul>
+<h4 id="3-3-3-API详细介绍及实例："><a href="#3-3-3-API详细介绍及实例：" class="headerlink" title="3.3.3 API详细介绍及实例："></a>3.3.3 API详细介绍及实例：</h4><h5 id="1-aio-read"><a href="#1-aio-read" class="headerlink" title="1. aio_read()"></a>1. aio_read()</h5><p><code>aio_read</code> 函数请求对一个有效的文件描述符进行异步读操作。这个文件描述符可以表示一个文件、套接字甚至管道。<code>aio_read</code> 函数的原型如下:</p>
+<p><code>int aio_read(struct aiocb *aiocbp);</code></p>
+<p> <code>aio_read</code> 函数在请求进行排队之后会立即返回。如果执行成功，返回值就为 0；如果出现错误，返回值就为 -1，并设置 errno 的值。</p>
+<h5 id="2-aio-error"><a href="#2-aio-error" class="headerlink" title="2. aio_error()"></a>2. aio_error()</h5><p><code>aio_error</code> 函数被用来确定请求的状态。</p>
+<p><code>int aio_error( struct aiocb *aiocbp );</code></p>
+<p>返回值：<br>EINPROGRESS，说明请求尚未完成</p>
+<p>ECANCELLED，说明请求被应用程序取消了<br>-1，说明发生了错误，具体错误原因可以查阅 errno<br>0 ,说明完成当前请求</p>
+<h5 id="3-aio-return"><a href="#3-aio-return" class="headerlink" title="3. aio_return()"></a>3. aio_return()</h5><p>异步 I/O 和标准块 I/O 之间的另外一个区别是我们不能立即访问这个函数的返回状态，因为我们并没有阻塞在 <code>read</code> 调用上。在标准的 <code>read</code> 调用中，返回状态是在该函数返回时提供的。但是在异步 I/O 中，我们要使用     <code>aio_return</code> 函数。这个函数的原型如下：</p>
+<p><code>ssize_t aio_return( struct aiocb *aiocbp );</code></p>
+<p>对以上三个API的源码实例：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;sys/socket.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;netinet/in.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;arpa/inet.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;assert.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;errno.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;sys/types.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;fcntl.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;aio.h&gt;</span></span><br> <br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> BUFFER_SIZE 1024</span><br><span class="hljs-keyword">int</span> MAX_LIST = <span class="hljs-number">2</span>;<br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span> argc,<span class="hljs-keyword">char</span> **argv)</span></span>&#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">aiocb</span> <span class="hljs-title">rd</span>;</span> <span class="hljs-comment">//aio操作所需结构体</span><br>    <span class="hljs-keyword">int</span> fd,ret,couter;<br><br>    fd = <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;test.txt&quot;</span>,O_RDONLY, <span class="hljs-number">0644</span>);<br>    <span class="hljs-keyword">if</span>(fd &lt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;test.txt&quot;</span>);<br>    &#125;<br>    <span class="hljs-comment">//将rd结构体清空</span><br>    <span class="hljs-built_in">bzero</span>(&amp;rd,<span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(rd));<br><br>    rd.aio_buf = <span class="hljs-built_in">malloc</span>(BUFFER_SIZE + <span class="hljs-number">1</span>); <span class="hljs-comment">//为rd.aio_buf分配空间</span><br>    <span class="hljs-comment">//填充rd结构体</span><br>    rd.aio_fildes = fd;<br>    rd.aio_nbytes = BUFFER_SIZE;<br>    rd.aio_offset = <span class="hljs-number">0</span>;<br><br>    ret = <span class="hljs-built_in">aio_read</span>(&amp;rd); <span class="hljs-comment">//进行异步读操作</span><br>    <span class="hljs-keyword">if</span>(ret &lt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;aio_read&quot;</span>);<br>        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);<br>    &#125;<br>    <span class="hljs-comment">//do other things</span><br><br>    couter = <span class="hljs-number">0</span>;<br>    <span class="hljs-comment">//  循环等待异步读操作结束</span><br>    <span class="hljs-keyword">while</span>(<span class="hljs-built_in">aio_error</span>(&amp;rd) == EINPROGRESS) &#123; <span class="hljs-comment">//一直不停的查询(消耗cpu)</span><br>         <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;第%d次\n&quot;</span>,++couter);<br>    &#125;<br><br>    <span class="hljs-comment">//获取异步读返回值</span><br>    ret = <span class="hljs-built_in">aio_return</span>(&amp;rd);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n\n返回值为:%d\n&quot;</span>,ret);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%s\n&quot;</span>,rd.aio_buf);<br>    <span class="hljs-built_in">free</span>((<span class="hljs-keyword">char</span>*)rd.aio_buf);<br>    <span class="hljs-built_in">close</span>(fd);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h5 id="4-aio-write"><a href="#4-aio-write" class="headerlink" title="4. aio_write()"></a>4. aio_write()</h5><p><code>aio_write</code> 函数用来请求一个异步写操作。其函数原型如下：</p>
+<p><code>intaio_write( struct aiocb *aiocbp );</code></p>
+<p> <code>aio_write</code> 函数会立即返回，说明请求已经进行排队（成功时返回值为 0，失败时返回值为 -1，并相应地设置 errno）。</p>
+<p> 这与 read 系统调用类似，但是有一点不一样的行为需要注意。回想一下对于 read 调用来说，要使用的偏移量是非常重要的。然而，对于 write 来说，这个偏移量只有在没有设置 O_APPEND 选项的文件上下文中才会非常重要。如果设置了 O_APPEND，那么这个偏移量就会被忽略，数据都会被附加到文件的末尾。否则，aio_offset 域就确定了数据在要写入的文件中的偏移量.</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;sys/socket.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;netinet/in.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;arpa/inet.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;assert.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;errno.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;sys/types.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;fcntl.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;aio.h&gt;</span></span><br> <br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> BUFFER_SIZE 1024</span><br> <br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span> argc,<span class="hljs-keyword">char</span> **argv)</span> </span>&#123;<br>    <span class="hljs-comment">//定义aio控制块结构体</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">aiocb</span> <span class="hljs-title">wr</span>;</span> <br>    <span class="hljs-keyword">int</span> ret,fd; <br>    <span class="hljs-keyword">char</span> str[<span class="hljs-number">20</span>] = &#123;<span class="hljs-string">&quot;hello,world&quot;</span>&#125;;    <br>    <span class="hljs-built_in">bzero</span>(&amp;wr,<span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(wr));<span class="hljs-comment">//置零wr结构体</span><br> <br>    fd = <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;test.txt&quot;</span>,O_WRONLY | O_APPEND, <span class="hljs-number">0644</span>);<br>    <span class="hljs-keyword">if</span>(fd &lt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;test.txt&quot;</span>);<br>    &#125;<br> <br>    <span class="hljs-comment">//为aio.buf申请空间</span><br>    wr.aio_buf = (<span class="hljs-keyword">char</span> *)<span class="hljs-built_in">malloc</span>(BUFFER_SIZE);<br>    <span class="hljs-keyword">if</span>(wr.aio_buf == <span class="hljs-literal">NULL</span>) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;buf&quot;</span>);<br>    &#125;<br> <br>    wr.aio_buf = str;<br> <br>    <span class="hljs-comment">//填充aiocb结构</span><br>    wr.aio_fildes = fd;<br>    wr.aio_nbytes = <span class="hljs-number">1024</span>;<br> <br>    ret = <span class="hljs-built_in">aio_write</span>(&amp;wr); <span class="hljs-comment">//异步写操作</span><br>    <span class="hljs-keyword">if</span>(ret &lt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;aio_write&quot;</span>);<br>    &#125;<br> <br>    <span class="hljs-comment">//等待异步写完成</span><br>    <span class="hljs-keyword">while</span>(<span class="hljs-built_in">aio_error</span>(&amp;wr) == EINPROGRESS)&#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;hello,world\n&quot;</span>);<br>    &#125;<br> <br>    <span class="hljs-comment">//获得异步写的返回值</span><br>    ret = <span class="hljs-built_in">aio_return</span>(&amp;wr);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n\n\n返回值为:%d\n&quot;</span>,ret);<br>    <span class="hljs-built_in">free</span>((<span class="hljs-keyword">char</span>*)wr.aio_buf);<br>    <span class="hljs-built_in">close</span>(fd);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h5 id="5-aio-suspend"><a href="#5-aio-suspend" class="headerlink" title="5. aio_suspend()"></a>5. aio_suspend()</h5><ul>
+<li>aio_suspend函数可以时当前进程挂起，直到有向其注册的异步事件完成为止 </li>
+<li>阻塞</li>
+<li>当有AIO请求返程后，该函数返回</li>
+</ul>
+<p><code>int aio_suspend(const struct aiocb *const cblist[],int n,const struct timespec *timeout);</code></p>
+<p> 第一个参数是个保存了<code>aiocb</code>块地址的数组，我们可以向其内添加想要等待阻塞的异步事件，第二个参数为向<code>cblist</code>注册的<code>aiocb</code>个数,第三个参数为等待阻塞的超时时间，NULL为无限等待.</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;sys/socket.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;netinet/in.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;arpa/inet.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;assert.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;errno.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;sys/types.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;fcntl.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;aio.h&gt;</span></span><br> <br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> BUFFER_SIZE 1024</span><br> <br><span class="hljs-keyword">int</span> MAX_LIST = <span class="hljs-number">2</span>;<br> <br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span> argc,<span class="hljs-keyword">char</span> **argv)</span> </span>&#123;<br>    <span class="hljs-comment">//aio操作所需结构体</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">aiocb</span> <span class="hljs-title">rd</span>;</span><br>	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">aiocb</span> <span class="hljs-title">wd</span>;</span><br>    <span class="hljs-keyword">int</span> fd,ret,couter;<br> <br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">aiocb</span> *<span class="hljs-title">aiocb_list</span>[2];</span><span class="hljs-comment">//cblist链表</span><br> <br>    fd = <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;test.txt&quot;</span>,O_RDONLY, <span class="hljs-number">0644</span>);<br>    <span class="hljs-keyword">if</span>(fd &lt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;test.txt&quot;</span>);<br>    &#125;<br> <br>    <span class="hljs-built_in">bzero</span>(&amp;rd,<span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(rd));<span class="hljs-comment">//将rd结构体清空</span><br> <br>    rd.aio_buf = <span class="hljs-built_in">malloc</span>(BUFFER_SIZE + <span class="hljs-number">1</span>);<span class="hljs-comment">//为rd.aio_buf分配空间</span><br> <br>    <span class="hljs-comment">//填充rd结构体</span><br>    rd.aio_fildes = fd;<br>    rd.aio_nbytes =  BUFFER_SIZE;<br>    rd.aio_offset = <span class="hljs-number">0</span>;<br> <br>    <span class="hljs-comment">//将读fd的事件注册</span><br>    aiocb_list[<span class="hljs-number">0</span>] = &amp;rd;<br> <br>    <span class="hljs-comment">//进行异步读操作</span><br>    ret = <span class="hljs-built_in">aio_read</span>(&amp;rd);<br>    <span class="hljs-keyword">if</span>(ret &lt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;aio_read&quot;</span>);<br>        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);<br>    &#125;<br> <br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;我要开始等待异步读事件完成\n&quot;</span>);<br>    ret = <span class="hljs-built_in">aio_suspend</span>(aiocb_list,MAX_LIST,<span class="hljs-literal">NULL</span>); <span class="hljs-comment">//阻塞等待异步读事件完成</span><br>    ret = <span class="hljs-built_in">aio_return</span>(&amp;rd);<span class="hljs-comment">//获取异步读返回值</span><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n\n返回值为:%d\n&quot;</span>,ret);<br>	<span class="hljs-built_in">free</span>((<span class="hljs-keyword">char</span>*)rd.aio_buf);<br>    <span class="hljs-built_in">close</span>(fd);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h5 id="6-lio-listio"><a href="#6-lio-listio" class="headerlink" title="6.lio_listio()"></a>6.lio_listio()</h5><p>aio同时还为我们提供了一个可以发起多个或多种I/O请求的接口lio_listio </p>
+<p>这个函数效率很高，因为我们只需一次系统调用(一次内核上下位切换)就可以完成大量的I/O操作</p>
+<p><code>int lio_listio(int mode,struct aiocb *list[],int nent,struct sigevent *sig);</code></p>
+<p> 第一个参数<code>mode</code>可以有两个实参，<code>LIO_WAIT</code>和<code>LIO_NOWAIT</code>，前一个会阻塞该调用直到所有I/O都完成为止，后一个则会挂入队列就返回</p>
+<ul>
+<li>LIO_WAIT 阻塞发起</li>
+<li>LIO_NOWAIT  非阻塞发起<blockquote>
+<p>批量发起AIO的两种方法</p>
+</blockquote>
+</li>
+<li>阻塞等到所有发起的AIO全部完成后，才会返回</li>
+<li>发起后立即返回，通过绑定的信号来通知</li>
+</ul>
+<p>LIO_WAIT  demo::</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;sys/socket.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;netinet/in.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;arpa/inet.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;assert.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;errno.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;sys/types.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;fcntl.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;aio.h&gt;</span></span><br> <br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> BUFFER_SIZE 1025</span><br><span class="hljs-keyword">int</span> MAX_LIST = <span class="hljs-number">2</span>;<br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span> argc,<span class="hljs-keyword">char</span> **argv)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">aiocb</span> *<span class="hljs-title">listio</span>[2];</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">aiocb</span> <span class="hljs-title">rd</span>,<span class="hljs-title">wr</span>;</span><br>    <span class="hljs-keyword">int</span> fd,ret;<br> <br>    <span class="hljs-comment">//异步读事件</span><br>    fd = <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;test1.txt&quot;</span>,O_RDONLY, <span class="hljs-number">0644</span>);<br>    <span class="hljs-keyword">if</span>(fd &lt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;test1.txt&quot;</span>);<br>    &#125;<br> <br>    <span class="hljs-built_in">bzero</span>(&amp;rd,<span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(rd));<br> <br>    rd.aio_buf = (<span class="hljs-keyword">char</span> *)<span class="hljs-built_in">malloc</span>(BUFFER_SIZE);<br>    <span class="hljs-keyword">if</span>(rd.aio_buf == <span class="hljs-literal">NULL</span>) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;aio_buf&quot;</span>);<br>    &#125;<br> <br>    rd.aio_fildes = fd;<br>    rd.aio_nbytes = <span class="hljs-number">1024</span>;<br>    rd.aio_offset = <span class="hljs-number">0</span>;<br>    rd.aio_lio_opcode = LIO_READ;   <span class="hljs-comment">///lio操作类型为异步读</span><br> <br>    listio[<span class="hljs-number">0</span>] = &amp;rd;<span class="hljs-comment">//将异步读事件添加到list中</span><br> <br>    fd = <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;test2.txt&quot;</span>,O_WRONLY | O_APPEND, <span class="hljs-number">0644</span>); <span class="hljs-comment">//异步些事件</span><br>    <span class="hljs-keyword">if</span>(fd &lt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;test2.txt&quot;</span>);<br>    &#125;<br> <br>    <span class="hljs-built_in">bzero</span>(&amp;wr,<span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(wr));<br> <br>    wr.aio_buf = (<span class="hljs-keyword">char</span> *)<span class="hljs-built_in">malloc</span>(BUFFER_SIZE);<br>    <span class="hljs-keyword">if</span>(wr.aio_buf == <span class="hljs-literal">NULL</span>) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;aio_buf&quot;</span>);<br>    &#125;<br> <br>    wr.aio_fildes = fd;<br>    wr.aio_nbytes = <span class="hljs-number">1024</span>;<br>    wr.aio_lio_opcode = LIO_WRITE;   <span class="hljs-comment">///lio操作类型为异步写</span><br> <br>    <span class="hljs-comment">//将异步写事件添加到list中</span><br>    listio[<span class="hljs-number">1</span>] = &amp;wr;<br> <br>    ret = <span class="hljs-built_in">lio_listio</span>(LIO_WAIT,listio,MAX_LIST,<span class="hljs-literal">NULL</span>);  <span class="hljs-comment">//使用lio_listio发起一系列请求</span><br>    ret = <span class="hljs-built_in">aio_return</span>(&amp;rd);  <span class="hljs-comment">//当异步读写都完成时获取他们的返回值</span><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n读返回值:%d&quot;</span>,ret);<br> <br>    ret = <span class="hljs-built_in">aio_return</span>(&amp;wr);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n写返回值:%d&quot;</span>,ret);<br>	<span class="hljs-built_in">free</span>((<span class="hljs-keyword">char</span>*)wr.aio_buf);<br>	<span class="hljs-built_in">free</span>((<span class="hljs-keyword">char</span>*)rd.aio_buf);<br>    <span class="hljs-built_in">close</span>(rd.aio_fildes);<br>	<span class="hljs-built_in">close</span>(wr.aio_fildes);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>LIO_NOWAIT demo::</p>
+<p>当我们的异步IO操作完成之时，我们可以通过信号通知我们的进程也可用回调函数来进行异步通知，接下来我会为大家主要介绍以下回调函数来进行异步通知</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sigevent</span> &#123;</span><br><span class="hljs-keyword">int</span>           sigev_notify;            <span class="hljs-comment">//Notification type. </span><br><span class="hljs-keyword">int</span>           sigev_signo;            <span class="hljs-comment">//Signal number. </span><br><span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">sigval</span>  <span class="hljs-title">sigev_value</span>;</span>             <span class="hljs-comment">//Signal value. </span><br><span class="hljs-built_in"><span class="hljs-keyword">void</span></span>         (*sigev_notify_function)(<span class="hljs-keyword">union</span> sigval); <span class="hljs-comment">//Notification function. </span><br><span class="hljs-keyword">pthread_attr_t</span> *sigev_notify_attributes;  <span class="hljs-comment">//Notification attributes. </span><br>&#125;; <br></code></pre></td></tr></table></figure>
+
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;sys/socket.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;netinet/in.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;arpa/inet.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;assert.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;errno.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;sys/types.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;fcntl.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;aio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;unistd.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> BUFFER_SIZE 1025</span><br><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">aio_completion_handler</span><span class="hljs-params">(<span class="hljs-keyword">sigval_t</span> sigval)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-comment">//用来获取读aiocb结构的指针</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">aiocb</span> *<span class="hljs-title">prd</span>;</span><br>    <span class="hljs-keyword">int</span> ret;<br>	<br>    prd = (struct aiocb *)sigval.sival_ptr;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;hello\n&quot;</span>);<br>    <span class="hljs-comment">//获取返回值</span><br>    ret = <span class="hljs-built_in">aio_return</span>(prd);<br>	<span class="hljs-built_in">free</span>(prd-&gt;aio_buf);<br>	<span class="hljs-built_in">close</span>(prd-&gt;aio_fildes);<br>&#125;<br> <br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span> argc,<span class="hljs-keyword">char</span> **argv)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">int</span> fd,ret;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">aiocb</span> <span class="hljs-title">rd</span>;</span><br> <br>    fd = <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;test.txt&quot;</span>,O_RDONLY);<br>    <span class="hljs-keyword">if</span>(fd &lt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;test.txt&quot;</span>);<br>    &#125;<br><br>    <span class="hljs-built_in">bzero</span>(&amp;rd,<span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(rd));<span class="hljs-comment">//填充aiocb的基本内容</span><br> <br>    rd.aio_fildes = fd;<br>    rd.aio_buf = (<span class="hljs-keyword">char</span> *)<span class="hljs-built_in">malloc</span>(<span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(BUFFER_SIZE + <span class="hljs-number">1</span>));<br>    rd.aio_nbytes = BUFFER_SIZE;<br>    rd.aio_offset = <span class="hljs-number">0</span>;<br> <br>    <span class="hljs-comment">//填充aiocb中有关回调通知的结构体sigevent</span><br>    rd.aio_sigevent.sigev_notify = SIGEV_THREAD;<span class="hljs-comment">//使用线程回调通知</span><br>    rd.aio_sigevent.sigev_notify_function = aio_completion_handler;<span class="hljs-comment">//设置回调函数</span><br>    rd.aio_sigevent.sigev_notify_attributes = <span class="hljs-literal">NULL</span>;<span class="hljs-comment">//使用默认属性</span><br>    rd.aio_sigevent.sigev_value.sival_ptr = &amp;rd;<span class="hljs-comment">//在aiocb控制块中加入自己的引用</span><br> <br>    <span class="hljs-comment">//异步读取文件</span><br>    ret = <span class="hljs-built_in">aio_read</span>(&amp;rd);<br>    <span class="hljs-keyword">if</span>(ret &lt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;aio_read&quot;</span>);<br>    &#125;<br> <br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;异步读以开始\n&quot;</span>);<br>    <span class="hljs-built_in">sleep</span>(<span class="hljs-number">1</span>);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;异步读结束\n&quot;</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="四-参考"><a href="#四-参考" class="headerlink" title="四. 参考"></a>四. 参考</h2><p><a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/linux/l-async/index.html">https://www.ibm.com/developerworks/cn/linux/l-async/index.html</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/abraham_1/article/details/79824350">https://blog.csdn.net/abraham_1/article/details/79824350</a><br><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man7/aio.7.html">https://man7.org/linux/man-pages/man7/aio.7.html</a><br><a target="_blank" rel="noopener" href="http://guleilab.com/2019/01/30/linux-aio/">http://guleilab.com/2019/01/30/linux-aio/</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/chenny7/p/4362910.html">https://www.cnblogs.com/chenny7/p/4362910.html</a><br><a target="_blank" rel="noopener" href="https://pagure.io/libaio/blob/master/f/src">https://pagure.io/libaio/blob/master/f/src</a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/linux/">linux</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/07/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/02Rust/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E6%8F%90%E7%A4%BA%E3%80%8Aremove%20this%20mut%E3%80%8B/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">为什么函数参数提示《remove this mut》</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/02Rust/rust-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%B0%86u32%E8%BD%AC%E6%8D%A2%E4%B8%BAchar%EF%BC%9F/">
+                        <span class="hidden-mobile">rust - 为什么不能将u32转换为char</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

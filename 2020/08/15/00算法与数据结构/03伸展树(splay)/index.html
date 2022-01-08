@@ -1,0 +1,478 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="概述二叉查找树（Binary Search Tree，也叫二叉排序树，即Binary Sort Tree）能够支持多种动态集合操作，它可以用来表示有序集合、建立索引等，因而在实际应用中，二叉排序树是一种非常重要的数据结构。 从算法复杂度角度考虑，我们知道，作用于二叉查找树上的基本操作（如查找，插入等）的时间复杂度与树的高度成正比。对一个含n个节点的完全二叉树，这些操作的最坏情况运行时间为O(log">
+<meta property="og:type" content="article">
+<meta property="og:title" content="伸展树(splay)">
+<meta property="og:url" content="http://fly542.cn/2020/08/15/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="概述二叉查找树（Binary Search Tree，也叫二叉排序树，即Binary Sort Tree）能够支持多种动态集合操作，它可以用来表示有序集合、建立索引等，因而在实际应用中，二叉排序树是一种非常重要的数据结构。 从算法复杂度角度考虑，我们知道，作用于二叉查找树上的基本操作（如查找，插入等）的时间复杂度与树的高度成正比。对一个含n个节点的完全二叉树，这些操作的最坏情况运行时间为O(log">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://fly542.cn/2020/08/15/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/1.jpeg">
+<meta property="og:image" content="http://fly542.cn/2020/08/15/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/2.jpeg">
+<meta property="og:image" content="http://fly542.cn/2020/08/15/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/3.jpeg">
+<meta property="og:image" content="http://fly542.cn/2020/08/15/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/4.jpeg">
+<meta property="article:published_time" content="2020-08-15T09:59:02.000Z">
+<meta property="article:modified_time" content="2022-01-08T14:23:39.218Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://fly542.cn/2020/08/15/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/1.jpeg">
+  
+  
+  <title>伸展树(splay) - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="伸展树(splay)">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-08-15 17:59" pubdate>
+        2020年8月15日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.8k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      15 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">伸展树(splay)</h1>
+            
+            <div class="markdown-body">
+              <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>二叉查找树（Binary Search Tree，也叫二叉排序树，即Binary Sort Tree）能够支持多种动态集合操作，它可以用来表示有序集合、建立索引等，因而在实际应用中，二叉排序树是一种非常重要的数据结构。</p>
+<p>从算法复杂度角度考虑，我们知道，作用于二叉查找树上的基本操作（如查找，插入等）的时间复杂度与树的高度成正比。对一个含n个节点的完全二叉树，这些操作的最坏情况运行时间为O(log n)。但如果因为频繁的删除和插入操作，导致树退化成一个n个节点的线性链（此时即为一个单链表），则这些操作的最坏情况运行时间为O(n)。为了克服以上缺点，很多二叉查找树的变形出现了，如红黑树、AVL树，Treap树等。</p>
+<h1 id="splay-特点"><a href="#splay-特点" class="headerlink" title="splay 特点"></a>splay 特点</h1><p>伸展树(Splay Tree)是二叉查找树的一种改进数据结构。它的主要特点是不会保证树一直是平衡的，但各种操作的平摊时间复杂度是O(log n)，因而，从平摊复杂度上看，二叉查找树也是一种平衡二叉树。另外，相比于其他树状数据结构（如红黑树，AVL树等），伸展树的空间要求与编程复杂度要小得多。</p>
+<h1 id="splay算法解决的问题"><a href="#splay算法解决的问题" class="headerlink" title="splay算法解决的问题"></a>splay算法解决的问题</h1><p>考虑到局部性原理（刚被访问的内容下次可能仍会被访问，查找次数多的内容可能下一次会被访问），为了使整个查找时间更小，被查频率高的那些节点应当经常处于靠近树根的位置。这样，很容易得想到以下这个方案：每次查找节点之后对树进行重构，把被查找的节点搬移到树根，这种自调整形式的二叉查找树就是伸展树。每次对伸展树进行操作后，它均会通过旋转的方法把被访问节点旋转到树根的位置。</p>
+<p>为了将当前被访问节点旋转到树根，我们通常将节点自底向上旋转，直至该节点成为树根为止。“旋转”的巧妙之处就是在不打乱数列中数据大小关系（指中序遍历结果是全序的）情况下，所有基本操作的平摊复杂度仍为O（log n）。</p>
+<p>伸展树主要有三种旋转操作，分别为单旋转，一字形旋转和之字形旋转。为了便于解释，我们假设当前被访问节点为X，X的父亲节点为Y（如果X的父亲节点存在），X的祖父节点为Z（如果X的祖父节点存在）。</p>
+<h2 id="单旋转"><a href="#单旋转" class="headerlink" title="单旋转"></a>单旋转</h2><p>节点X的父节点Y是根节点。这时，如果X是Y的左孩子，我们进行一次右旋操作；如果X 是Y 的右孩子，则我们进行一次左旋操作。经过旋转，X成为二叉查找树T的根节点，调整结束。</p>
+<img src="/2020/08/15/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/1.jpeg" srcset="/img/loading.gif" lazyload class="">
+
+<h2 id="一字型旋转"><a href="#一字型旋转" class="headerlink" title="一字型旋转"></a>一字型旋转</h2><p>节点X 的父节点Y不是根节点，Y 的父节点为Z，且X与Y同时是各自父节点的左孩子或者同时是各自父节点的右孩子。这时，我们进行一次左左旋转操作或者右右旋转操作。</p>
+<img src="/2020/08/15/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/2.jpeg" srcset="/img/loading.gif" lazyload class="">
+
+<h2 id="之字形旋转"><a href="#之字形旋转" class="headerlink" title="之字形旋转"></a>之字形旋转</h2><p>节点X的父节点Y不是根节点，Y的父节点为Z，X与Y中一个是其父节点的左孩子而另一个是其父节点的右孩子。这时，我们进行一次左右旋转操作或者右左旋转操作。</p>
+<img src="/2020/08/15/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/3.jpeg" srcset="/img/loading.gif" lazyload class="">
+
+<h1 id="伸展树区间操作"><a href="#伸展树区间操作" class="headerlink" title="伸展树区间操作"></a>伸展树区间操作</h1><p>在实际应用中，伸展树的中序遍历即为我们维护的数列，这就引出一个问题，怎么在伸展树中表示某个区间？比如我们要提取区间[a,b]，那么我们将a前面一个数对应的结点转到树根，将b 后面一个结点对应的结点转到树根的右边，那么根右边的左子树就对应了区间[a,b]。原因很简单，将a 前面一个数对应的结点转到树根后， a 及a 后面的数就在根的右子树上，然后又将b后面一个结点对应的结点转到树根的右边，那么[a,b]这个区间就是下图中B所示的子树。</p>
+<img src="/2020/08/15/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/4.jpeg" srcset="/img/loading.gif" lazyload class="">
+
+<p>利用区间操作我们可以实现线段树的一些功能，比如回答对区间的询问（最大值，最小值等）。具体可以这样实现，在每个结点记录关于以这个结点为根的子树的信息，然后询问时先提取区间，再直接读取子树的相关信息。还可以对区间进行整体修改，这也要用到与线段树类似的延迟标记技术，即对于每个结点，额外记录一个或多个标记，表示以这个结点为根的子树是否被进行了某种操作，并且这种操作影响其子结点的信息值，当进行旋转和其他一些操作时相应地将标记向下传递。</p>
+<p>与线段树相比，伸展树功能更强大，它能解决以下两个线段树不能解决的问题：</p>
+<p>（1） 在a后面插入一些数。方法是：首先利用要插入的数构造一棵伸展树，接着，将a 转到根，并将a 后面一个数对应的结点转到根结点的右边，最后将这棵新的子树挂到根右子结点的左子结点上。</p>
+<p>（2）  删除区间[a,b]内的数。首先提取[a,b]区间，直接删除即可。</p>
+<h1 id="已知应用"><a href="#已知应用" class="headerlink" title="已知应用"></a>已知应用</h1><ul>
+<li>squid 4中的内存池使用了伸展树</li>
+<li>轻量级web服务器lighttpd中用到数据结构splay tree<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><a target="_blank" rel="noopener" href="http://dongxicheng.org/structure/splay-tree/">http://dongxicheng.org/structure/splay-tree/</a></li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">算法与数据结构</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E7%AE%97%E6%B3%95/">算法</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/08/16/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/00%20squid%20%E5%86%85%E5%AD%98%E6%B1%A0%E7%A0%94%E7%A9%B6/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">00 squid 内存池研究</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/08/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/02%20%5B%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB%5D%E9%A2%91%E7%B9%81%E5%88%86%E9%85%8D%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/">
+                        <span class="hidden-mobile">02 [百度分享]频繁分配释放内存导致的性能问题分析</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

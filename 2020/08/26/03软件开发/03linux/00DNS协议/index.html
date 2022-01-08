@@ -1,0 +1,573 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1. DNS 基础内容什么是 DNS？DNS 是一个应用层协议,域名系统 (DNS) 的作用是将人类可读的域名 (如，www.example.com) 转换为机器可读的 IP 地址 (如，192.0.2.44)。DNS 协议建立在 UDP 或 TCP 协议之上，默认使用 53 号端口。客户端默认通过 UDP 协议进行通讯，但是由于广域网中不适合传输过大的 UDP 数据包，因此规定当报文长度超过了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fly542 技术沉淀">
+<meta property="og:url" content="http://fly542.cn/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/00DNS%E5%8D%8F%E8%AE%AE/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="1. DNS 基础内容什么是 DNS？DNS 是一个应用层协议,域名系统 (DNS) 的作用是将人类可读的域名 (如，www.example.com) 转换为机器可读的 IP 地址 (如，192.0.2.44)。DNS 协议建立在 UDP 或 TCP 协议之上，默认使用 53 号端口。客户端默认通过 UDP 协议进行通讯，但是由于广域网中不适合传输过大的 UDP 数据包，因此规定当报文长度超过了">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://fly542.cn/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/00DNS%E5%8D%8F%E8%AE%AE/2.png">
+<meta property="article:published_time" content="2020-08-26T11:02:20.000Z">
+<meta property="article:modified_time" content="2022-01-08T14:23:38.983Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="dns,linux">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://fly542.cn/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/00DNS%E5%8D%8F%E8%AE%AE/2.png">
+  
+  
+  <title>Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-08-26 19:02" pubdate>
+        2020年8月26日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      6.2k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      52 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none"></h1>
+            
+            <div class="markdown-body">
+              <h1 id="1-DNS-基础内容"><a href="#1-DNS-基础内容" class="headerlink" title="1. DNS 基础内容"></a>1. DNS 基础内容</h1><h2 id="什么是-DNS？"><a href="#什么是-DNS？" class="headerlink" title="什么是 DNS？"></a>什么是 DNS？</h2><p>DNS 是一个应用层协议,域名系统 (DNS) 的作用是将人类可读的域名 (如，<a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a>) 转换为机器可读的 IP 地址 (如，192.0.2.44)。DNS 协议建立在 UDP 或 TCP 协议之上，默认使用 53 号端口。客户端默认通过 UDP 协议进行通讯，但是由于广域网中不适合传输过大的 UDP 数据包，因此规定当报文长度超过了 512 字节时，应转换为使用 TCP 协议进行数据传输。<br>可能会出现如下的两种情况：</p>
+<ul>
+<li>客户端认为 UDP 响应包长度可能超过 512 字节，主动使用 TCP 协议；</li>
+<li>客户端使用 UDP 协议发送 DNS 请求，服务端发现响应报文超过了 512 字节，在截断的 UDP 响应报文中将 TC 设置为 1 ，以通知客户端该报文已经被截断，客户端收到之后再发起一次 TCP 请求。</li>
+</ul>
+<h2 id="什么是域名？"><a href="#什么是域名？" class="headerlink" title="什么是域名？"></a>什么是域名？</h2><p>域名是由一串用点分隔符 . 组成的互联网上某一台计算机或计算机组的名称，用于在数据传输时标识计算机的方位。域名可以说是一个 IP 地址的代称，目的是为了便于记忆后者。例如，wikipedia.org 是一个域名，和 IP 地址 208.80.152.2 相对应。人们可以直接访问 wikipedia.org 来代替 IP 地址，然后域名系统（DNS）就会将它转化成便于机器识别的 IP 地址。这样，人们只需要记忆 wikipedia.org 这一串带有特殊含义的字符，而不需要记忆没有含义的数字。</p>
+<h2 id="DNS-的分层"><a href="#DNS-的分层" class="headerlink" title="DNS 的分层"></a>DNS 的分层</h2><p>域名系统是分层次的。</p>
+
+
+
+<ul>
+<li><p>根域：DNS域名使用中规定由尾部句点’.’来指定名称位于根或者更高层次的域层次结构,根服务器有13台。</p>
+</li>
+<li><p>顶级域：用来指示某个国家、地区或者组织。采用三个字符，如com -&gt; 商业公司，edu -&gt; 教育机构，net -&gt; 网络公司，gov -&gt; 非军事政府机构等等。</p>
+</li>
+<li><p>二级域：个人或者组织在Internet使用的注册名称。采用两个字符，如：cn -&gt; 代表中国，jp -&gt; 日本，uk -&gt; 英国，hk -&gt; 香港等等</p>
+</li>
+<li><p>主机：主机名处于域名空间结构中的最底层，主机名和域名结合构成FQDN，主机名是FQDN最左端的部分。</p>
+</li>
+</ul>
+<p>在域名系统的层次结构中，各种域名都隶属于域名系统根域的下级。域名的第一级是顶级域，它包括通用顶级域，例如 .com、.net 和 .org；以及国家和地区顶级域，例如 .us、.cn 和 .tk。顶级域名下一层是二级域名，一级一级地往下。这些域名向人们提供注册服务，人们可以用它创建公开的互联网资源或运行网站。顶级域名的管理服务由对应的域名注册管理机构（域名注册局）负责，注册服务通常由域名注册商负责。</p>
+<ul>
+<li>授权型 DNS - 一种授权型 DNS 服务提供一种更新机制，供开发人员用于管理其公用 DNS 名称。然后，它响应 DNS 查询，将域名转换为 IP 地址，以便计算机可以相互通信。授权型 DNS 对域有最终授权且负责提供递归型 DNS 服务器对 IP 地址信息的响应。Amazon Route 53 是一种授权型 DNS 系统。</li>
+<li>递归型 DNS - 客户端通常不会对授权型 DNS 服务直接进行查询。而是通常连接到称为解析程序的其他类型 DNS 服务，或递归型 DNS 服务。递归型 DNS 服务就像是旅馆的门童：尽管没有任何自身的 DNS 记录，但是可充当代表您获得 DNS 信息的中间程序。如果递归型 DNS 拥有已缓存或存储一段时间的 DNS 参考，那么它会通过提供源或 IP 信息来响应 DNS 查询。如果没有，则它会将查询传递到一个或多个授权型 DNS 服务器以查找信息。</li>
+</ul>
+<p><strong>记录类型</strong><br> DNS 中，常见的资源记录类型有：</p>
+<ul>
+<li>NS 记录（域名服务） ─ 指定解析域名或子域名的 DNS 服务器。</li>
+<li>MX 记录（邮件交换） ─ 指定接收信息的邮件服务器。</li>
+<li>A 记录（地址） ─ 指定域名对应的 IPv4 地址记录。</li>
+<li>AAAA 记录（地址） ─ 指定域名对应的 IPv6 地址记录。</li>
+<li><strong>NAME（规范）</strong> ─ 一个域名映射到另一个域名或 <code>CNAME</code> 记录（ example.com 指向 <a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=http://www.example.com/">www.example.com</a> ）或映射到一个 <code>A</code>记录。</li>
+<li>PTR 记录（反向记录） ─ PTR 记录用于定义与 IP 地址相关联的名称。 PTR 记录是 A 或 AAAA 记录的逆。 PTR 记录是唯一的，因为它们以 .arpa 根开始并被委派给 IP 地址的所有者。</li>
+</ul>
+<h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><p>主机名到 IP 地址的映射有两种方式：</p>
+<ul>
+<li>静态映射 - 在本机上配置域名和 IP 的映射，旨在本机上使用。Windows 和 Linux 的 hosts 文件中的内容就属于静态映射。</li>
+<li>动态映射 - 建立一套域名解析系统（DNS），只在专门的 DNS 服务器上配置主机到 IP 地址的映射，网络上需要使用主机名通信的设备，首先需要到 DNS 服务器查询主机所对应的 IP 地址。</li>
+</ul>
+<p>通过域名去查询域名服务器，得到 IP 地址的过程叫做域名解析。在解析域名时，一般先静态域名解析，再动态解析域名。可以将一些常用的域名放入静态域名解析表中，这样可以大大提高域名解析效率。</p>
+<img src="/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/00DNS%E5%8D%8F%E8%AE%AE/2.png" srcset="/img/loading.gif" lazyload class="" title="域名解析过程">
+
+
+<p>上图展示了一个动态域名解析的流程，步骤如下：</p>
+<ol>
+<li><p>用户打开 Web 浏览器，在地址栏中输入 <a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a> ，然后按 Enter 键。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a> 的请求被路由到 DNS 解析程序，这一般由用户的 Internet 服务提供商 (ISP) 进行管理，例如有线 Internet 服<br> 务提供商、DSL 宽带提供商或公司网络。</p>
+</li>
+<li><p>ISP 的 DNS 解析程序将 <a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a> 的请求转发到 DNS 根名称服务器。</p>
+</li>
+<li><p>ISP 的 DNS 解析程序再次转发 <a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a>  的请求，这次转发到 .com 域的一个 TLD 名称服务器。.com 域的名称服务器使用与 example.com 域相关的四个 Amazon Route 53 名称服务器的名称来响应该请求。</p>
+</li>
+<li><p>ISP 的 DNS 解析程序选择一个 Amazon Route 53 名称服务器，并将  <a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a>  的请求转发到该名称服务器。</p>
+</li>
+<li><p>Amazon Route 53 名称服务器在 example.com 托管区域中查找 <a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a> 记录，获得相关值，例如，Web 服务器的 IP 地址 (192.0.2.44)，并将 IP 地址返回至 DNS 解析程序。</p>
+</li>
+<li><p>ISP 的 DNS 解析程序最终获得用户需要的 IP 地址。解析程序将此值返回至 Web 浏览器。DNS 解析程序还会将 example.com 的 IP 地址缓存 (存储) 您指定的时长，以便它能够在下次有人浏览 example.com 时更快地作出响应。有关更多信息，请参阅存活期 (TTL)。</p>
+</li>
+<li><p>Web 浏览器将 <a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a> 的请求发送到从 DNS 解析程序中获得的 IP 地址。这是您的内容所处位置，例如，在 Amazon EC2 实例中或配置为网站终端节点的 Amazon S3 存储桶中运行的 Web 服务器。</p>
+</li>
+<li><p>192.0.2.44 上的 Web 服务器或其他资源将 <a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a>  的 Web 页面返回到 Web 浏览器，且 Web 浏览器会显示该页面。<br> 注意：只有配置了域名服务器，才能执行域名解析。<br> 例如，在 Linux 中执行 vim /etc/resolv.conf 命令，在其中添加下面的内容来配置域名服务器地址：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">nameserver</span> <span class="hljs-number">218.2.135.1</span><br></code></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="Linux-上的域名相关命令"><a href="#Linux-上的域名相关命令" class="headerlink" title="Linux 上的域名相关命令"></a>Linux 上的域名相关命令</h2><p><strong>hostname</strong></p>
+<blockquote>
+<p>hostname 命令用于查看和设置系统的主机名称。环境变量 HOSTNAME 也保存了当前的主机名。在使用 hostname 命令设置主机名后，系统并不会永久保存新的主机名，重新启动机器之后还是原来的主机名。如果需要永久修改主机名，需要同时修改 /etc/hosts 和 /etc/sysconfig/network 的相关内容。<br> 示例：</p>
+</blockquote>
+   <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs undefined">hostname<br>test123vm6<br></code></pre></td></tr></table></figure>
+
+<p>  <strong>nslookup</strong><br> nslookup 命令是常用域名查询工具，就是查 DNS 信息用的命令。<br> 示例：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs ruby"><span class="hljs-variable">$ </span>nslookup www.baidu.com<br><span class="hljs-symbol">Server:</span>     <span class="hljs-number">192.168</span>.<span class="hljs-number">16.24</span><br><span class="hljs-symbol">Address:</span>    <span class="hljs-number">192.168</span>.<span class="hljs-number">16.24</span><span class="hljs-comment">#53</span><br><br>Non-authoritative <span class="hljs-symbol">answer:</span><br>www.baidu.com   canonical name = www.a.shifen.com.<br><span class="hljs-symbol">Name:</span>   www.a.shifen.com<br><span class="hljs-symbol">Address:</span> <span class="hljs-number">14.215</span>.<span class="hljs-number">177.38</span><br><span class="hljs-symbol">Name:</span>   www.a.shifen.com<br><span class="hljs-symbol">Address:</span> <span class="hljs-number">14.215</span>.<span class="hljs-number">177.39</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="递归查询-VS-迭代查询"><a href="#递归查询-VS-迭代查询" class="headerlink" title="递归查询 VS. 迭代查询"></a>递归查询 VS. 迭代查询</h2><p>在递归查询模式下，DNS 服务器在接收到客户机请求时，必须使用一个准确的查询结果回复客户机。也就意味着，如果 DNS 服务器本地没有缓存所查询的 DNS 信息，那么该服务器会询问其它服务器，并将返回的查询结果提交给客户机。</p>
+<p>而在使用迭代查询时，DNS 服务器会向客户机提供其它能够解析查询请求的 DNS 服务器地址。也就是说，当客户机发送查询请求时，DNS 服务器并不直接回复查询结果，而是告诉客户机另一台 DNS 服务器地址，客户机需要再向这台 DNS 服务器提交请求，依次循环直到返回查询的结果为止。</p>
+<p>也就是说，关键的区别是由谁去查询最终的结果。</p>
+<h2 id="DDoS"><a href="#DDoS" class="headerlink" title="DDoS"></a>DDoS</h2><p>发送大量的 DNS 递归查询会消耗服务端的一定资源，所以，只需要将发送的报文设置一个 RD 标志位即可。<br>当发送垃圾查询时，例如 <code>www.baidu.com</code> 这类必然不存在的域名，必然会导致查询很慢。</p>
+<h2 id="ECS"><a href="#ECS" class="headerlink" title="ECS"></a>ECS</h2><p>ECS（EDNS-Client-Subnet）是DNS服务支持的新协议。该协议会在DNS请求包中附加请求域名解析的用户IP地址。这样，DNS服务器就可以根据该地址返回用户更容易访问的服务器IP地址。该技术广泛应用于CDN应用中。Nmap的dns-client-subnet-scan脚本利用该协议，通过提交不同的IP地址，获取指定域名所有的IP地址。</p>
+<h1 id="2-报文格式"><a href="#2-报文格式" class="headerlink" title="2. 报文格式"></a>2. 报文格式</h1><p>整个报文的格式如下，包括了五部分组成。</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">+---------------------+</span><br><span class="hljs-section">|        Header       | 报文头</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|       Question      | 查询请求</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|        Answer       | 应答</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|      Authority      | 授权应答</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|      Additional     | 附加信息</span><br><span class="hljs-section">+---------------------+</span><br></code></pre></td></tr></table></figure>
+
+<p>详细介绍如下。</p>
+<ul>
+<li>Header 必选，定义了报文是请求还是应答、错误码以及其它的一些标志位；</li>
+<li>Question 描述了查询的请求报文，包括查询类型(QTYPE)、查询类(QCLASS) 以及查询的域名(QNAME)；</li>
+</ul>
+<p>剩下的3个段包含相同的格式:一系列可能为空的资源记录(RRs)。 Answer段包含回答问题的RRs；授权段包含授权域名服务器的RRs； 附加段包含和请求相关的，但是不是必须回答的RRs。</p>
+<h2 id="报文头"><a href="#报文头" class="headerlink" title="报文头"></a>报文头</h2><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--+<br><span class="hljs-section">|                      ID                       |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|QR|  Opcode   |AA|TC|RD|RA|   Z    |   RCODE   |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    QDCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    ANCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    NSCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    ARCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></code></pre></td></tr></table></figure>
+
+<p>字段介绍如下。</p>
+<ul>
+<li>ID 16Bits 客户端设置，响应报文会原样带回，用于客户端区分不同的请求应答；</li>
+<li>QR 1Bits 区分是请求 (0 Question) 还是应答 (1 Response)；</li>
+<li>Opcode 4Bits 设置查询的种类，响应报文会原样带回，可以为：0 标准查询 QUERY；1 反向查询 IQUERY；2 服务器状态查询 STATUS；3~15 保留；</li>
+<li>AA 1Bits 授权应答 AuthoritativeAnswer，响应报文生效，用于标示服务器响应报文是否为授权服务器返回的结果，可能是在本地 Cache 的缓存；</li>
+<li>TC 1Bits 截断 TrunCation，报文因为超过了允许的长度，导致被截断；</li>
+<li>RD 1Bits 用于请求中，期望使用递归查询；</li>
+<li>RA 1Bits 用于响应中，如果服务器支持递归查询则设置为 1 ，否则设置为 0 ；</li>
+<li>RCODE 4Bits 应答码 ResponseCode，会在响应报文中设置，其代表的含义如下：<ul>
+<li>0 没有错误；</li>
+<li>1 报文格式错误(Format Error)，服务器解析请求报文时报错；</li>
+<li>2 服务器失败(Server Failure)，因为服务器的原因导致没办法处理这个请求；</li>
+<li>3 名字错误(Name Error)，只对授权域名解析服务器有意义，解析的域名不存在；</li>
+<li>4 没有实现(Not Implemented)，域名服务器不支持查询类型；</li>
+<li>5 拒绝(Refused)，由于服务器设置的策略拒绝给出应答，通常是安全的配置；</li>
+<li>6-15 保留值，暂未使用。</li>
+</ul>
+</li>
+<li>QDCOUNT 无符号16位整数表示报文请求段中的问题记录数；</li>
+<li>ANCOUNT 无符号16位整数表示报文回答段中的回答记录数；</li>
+<li>NSCOUNT 无符号16位整数表示报文授权段中的授权记录数；</li>
+<li>ARCOUNT 无符号16位整数表示报文附加段中的附加记录数。</li>
+</ul>
+<h2 id="查询请求"><a href="#查询请求" class="headerlink" title="查询请求"></a>查询请求</h2><p>用来标识，查询的请求参数，同时需要在头中设置 <code>QDCOUNT</code> 这个字段。</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--+<br>|                                               |<br>/                     QNAME                     /<br><span class="hljs-section">/                                               /</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                     QTYPE                     |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                     QCLASS                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></code></pre></td></tr></table></figure>
+
+<p>字段含义如下:</p>
+<ul>
+<li>QNAME 域名被编码为一些labels序列，每个labels包含一个字节表示后续字符串长度，以及这个字符串，以0长度和空字符串来表示域名结束。注意这个字段可能为奇数字节，不需要进行边界填充对齐。</li>
+<li>QTYPE 2个字节表示查询类型，.取值可以为任何可用的类型值，以及通配码来表示所有的资源记录。</li>
+<li>QCLASS 2个字节表示查询的协议类，比如，IN代表Internet</li>
+</ul>
+<h1 id="3-其他"><a href="#3-其他" class="headerlink" title="3. 其他"></a>3. 其他</h1><h2 id="Non-authoritative-answer"><a href="#Non-authoritative-answer" class="headerlink" title="Non-authoritative answer"></a>Non-authoritative answer</h2><p>为加快 DNS 的查询速度，一般会在服务端缓存一段时间，所以有可能 DNS 会返回缓存在 Cache 中的内容，那么此时就会将 AA 响应设置为 0 ，也就是是这里显示的 Non-authoritative answer 。</p>
+<h1 id="4-参考"><a href="#4-参考" class="headerlink" title="4. 参考"></a>4. 参考</h1><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/915de89d070e">https://www.jianshu.com/p/915de89d070e</a><br><a target="_blank" rel="noopener" href="https://jin-yang.github.io/post/network-dns-protocol-details-introduce.html">https://jin-yang.github.io/post/network-dns-protocol-details-introduce.html</a><br>DNS 协议 <a target="_blank" rel="noopener" href="https://www.ietf.org/rfc/rfc1035.txt">RFC1035</a> 详细规定了 DNS 报文的格式，详见 <code>4. MESSAGES</code> 中的部分。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/dns-linux/">dns,linux</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/01DNS%E4%B8%ADRR%E4%BB%8B%E7%BB%8D/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/08/22/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/01%20suqid%20%E5%AD%98%E5%82%A8%E6%A8%A1%E5%9E%8B%E7%A0%94%E7%A9%B6/">
+                        <span class="hidden-mobile">suqid 存储模型研究</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
