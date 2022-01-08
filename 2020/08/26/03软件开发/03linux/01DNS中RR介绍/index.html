@@ -24,9 +24,10 @@
 <meta property="og:description" content="DNS资源记录（Resource Record，简称RR） DNS RR 简介DNS server 内的每一个域名都有自己的域文件(zone file)，zone file 是由多个记录组成的，每一个记录就被称为资源记录(Resource Record，简称RR)。 当在设定 DNS 域名解析、反向解析及其他的管理目的时，往往需要使用不同类型的RR，也就是我们常说的记录类型。 上述CloudXNS">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-08-26T13:10:15.000Z">
-<meta property="article:modified_time" content="2022-01-08T14:23:38.971Z">
+<meta property="article:modified_time" content="2022-01-08T23:29:21.776Z">
 <meta property="article:author" content="Fly542">
-<meta property="article:tag" content="dns,linux">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="dns">
 <meta name="twitter:card" content="summary_large_image">
   
   
@@ -898,7 +899,7 @@
 <figure class="highlight llvm"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><pre><code class="hljs llvm">@ IN SOA lv<span class="hljs-number">3</span>ns<span class="hljs-number">1</span>.ffdns.net. webmaster.ffdns.net. (<br>    <span class="hljs-number">2009092868</span> <span class="hljs-comment">; Serial</span><br>    <span class="hljs-number">604800</span> <span class="hljs-comment">; Refresh</span><br>    <span class="hljs-number">3600</span> <span class="hljs-comment">; Retry</span><br>    <span class="hljs-number">2419200</span> <span class="hljs-comment">; Expire</span><br>    <span class="hljs-number">3600</span> ) <span class="hljs-comment">; Minimum</span><br></code></pre></td></tr></table></figure>
 
 <blockquote>
-<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#119;&#101;&#98;&#109;&#x61;&#x73;&#116;&#x65;&#x72;&#x40;&#x66;&#x66;&#x64;&#110;&#x73;&#x2e;&#x6e;&#101;&#116;">&#119;&#101;&#98;&#109;&#x61;&#x73;&#116;&#x65;&#x72;&#x40;&#x66;&#x66;&#x64;&#110;&#x73;&#x2e;&#x6e;&#101;&#116;</a>)`，即该 zone 的管理者信箱。</p>
+<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#x77;&#101;&#x62;&#109;&#x61;&#115;&#x74;&#101;&#x72;&#x40;&#x66;&#x66;&#100;&#110;&#115;&#x2e;&#x6e;&#x65;&#116;">&#x77;&#101;&#x62;&#109;&#x61;&#115;&#x74;&#101;&#x72;&#x40;&#x66;&#x66;&#100;&#110;&#115;&#x2e;&#x6e;&#x65;&#116;</a>)`，即该 zone 的管理者信箱。</p>
 <p><strong>Serial：</strong>代表 zone file 的版本，每当 zone file 内容有变动，name server 管理者就应该增加这个号码，因为 slave 会将这个号码与其 copy 的那份比对以便决定是否要再 copy 一次（即进行 zone transfer ）。</p>
 <p><strong>Refresh：</strong> slave server 每隔这段时间(秒)，就去检查 master server 上的 serial number 。</p>
 <p><strong>Retry：</strong>当 slave server 无法和 master 进行 serial check 时，要每隔这段时间（秒） retry 一次。</p>
@@ -922,7 +923,9 @@
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/dns-linux/">dns,linux</a>
+                      <a class="hover-with-bg" href="/tags/linux/">linux</a>
+                    
+                      <a class="hover-with-bg" href="/tags/dns/">dns</a>
                     
                   </div>
                 
