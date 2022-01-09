@@ -16,22 +16,22 @@
   <meta name="author" content="Fly542">
   <meta name="keywords" content="">
   
-    <meta name="description" content="DNS资源记录（Resource Record，简称RR） DNS RR 简介DNS server 内的每一个域名都有自己的域文件(zone file)，zone file 是由多个记录组成的，每一个记录就被称为资源记录(Resource Record，简称RR)。 当在设定 DNS 域名解析、反向解析及其他的管理目的时，往往需要使用不同类型的RR，也就是我们常说的记录类型。 上述CloudXNS">
+    <meta name="description" content="报文格式整个报文的格式如下，包括了五部分组成。 1234567891011+---------------------+|        Header       | 报文头+---------------------+|       Question      | 查询请求+---------------------+|        Answer       | 应答+------------">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Fly542 技术沉淀">
-<meta property="og:url" content="http://fly542.cn/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/01DNS%E4%B8%ADRR%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:title" content="DNS协议介绍">
+<meta property="og:url" content="http://fly542.cn/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/01DNS%E5%8D%8F%E8%AE%AE/index.html">
 <meta property="og:site_name" content="Fly542 技术沉淀">
-<meta property="og:description" content="DNS资源记录（Resource Record，简称RR） DNS RR 简介DNS server 内的每一个域名都有自己的域文件(zone file)，zone file 是由多个记录组成的，每一个记录就被称为资源记录(Resource Record，简称RR)。 当在设定 DNS 域名解析、反向解析及其他的管理目的时，往往需要使用不同类型的RR，也就是我们常说的记录类型。 上述CloudXNS">
+<meta property="og:description" content="报文格式整个报文的格式如下，包括了五部分组成。 1234567891011+---------------------+|        Header       | 报文头+---------------------+|       Question      | 查询请求+---------------------+|        Answer       | 应答+------------">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-08-26T13:10:15.000Z">
-<meta property="article:modified_time" content="2022-01-08T23:29:21.776Z">
+<meta property="article:modified_time" content="2022-01-08T23:54:53.092Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="dns">
 <meta name="twitter:card" content="summary_large_image">
   
   
-  <title>Fly542 技术沉淀</title>
+  <title>DNS协议介绍 - Fly542 技术沉淀</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
 
@@ -177,7 +177,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="">
+            <span class="h2" id="subtitle" title="DNS协议介绍">
               
             </span>
 
@@ -198,7 +198,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      9.1k 字
+      11k 字
     </span>
   
 
@@ -207,7 +207,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      76 分钟
+      93 分钟
     </span>
   
 
@@ -236,11 +236,55 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none"></h1>
+            <h1 style="display: none">DNS协议介绍</h1>
             
             <div class="markdown-body">
-              <p>DNS资源记录（Resource Record，简称RR）</p>
-<h2 id="DNS-RR-简介"><a href="#DNS-RR-简介" class="headerlink" title="DNS RR 简介"></a>DNS RR 简介</h2><p>DNS server 内的每一个域名都有自己的域文件(zone file)，zone file 是由多个记录组成的，每一个记录就被称为资源记录(Resource Record，简称RR)。</p>
+              <h1 id="报文格式"><a href="#报文格式" class="headerlink" title="报文格式"></a>报文格式</h1><p>整个报文的格式如下，包括了五部分组成。</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">+---------------------+</span><br><span class="hljs-section">|        Header       | 报文头</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|       Question      | 查询请求</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|        Answer       | 应答</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|      Authority      | 授权应答</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|      Additional     | 附加信息</span><br><span class="hljs-section">+---------------------+</span><br></code></pre></td></tr></table></figure>
+
+<p>详细介绍如下。</p>
+<ul>
+<li>Header 必选，定义了报文是请求还是应答、错误码以及其它的一些标志位；</li>
+<li>Question 描述了查询的请求报文，包括查询类型(QTYPE)、查询类(QCLASS) 以及查询的域名(QNAME)；</li>
+</ul>
+<p>剩下的3个段包含相同的格式:一系列可能为空的资源记录(RRs)。 Answer段包含回答问题的RRs；授权段包含授权域名服务器的RRs； 附加段包含和请求相关的，但是不是必须回答的RRs。</p>
+<h2 id="报文头"><a href="#报文头" class="headerlink" title="报文头"></a>报文头</h2><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--+<br><span class="hljs-section">|                      ID                       |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|QR|  Opcode   |AA|TC|RD|RA|   Z    |   RCODE   |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    QDCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    ANCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    NSCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    ARCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></code></pre></td></tr></table></figure>
+
+<p>字段介绍如下。</p>
+<ul>
+<li>ID 16Bits 客户端设置，响应报文会原样带回，用于客户端区分不同的请求应答；</li>
+<li>QR 1Bits 区分是请求 (0 Question) 还是应答 (1 Response)；</li>
+<li>Opcode 4Bits 设置查询的种类，响应报文会原样带回，可以为：0 标准查询 QUERY；1 反向查询 IQUERY；2 服务器状态查询 STATUS；3~15 保留；</li>
+<li>AA 1Bits 授权应答 AuthoritativeAnswer，响应报文生效，用于标示服务器响应报文是否为授权服务器返回的结果，可能是在本地 Cache 的缓存；</li>
+<li>TC 1Bits 截断 TrunCation，报文因为超过了允许的长度，导致被截断；</li>
+<li>RD 1Bits 用于请求中，期望使用递归查询；</li>
+<li>RA 1Bits 用于响应中，如果服务器支持递归查询则设置为 1 ，否则设置为 0 ；</li>
+<li>RCODE 4Bits 应答码 ResponseCode，会在响应报文中设置，其代表的含义如下：<ul>
+<li>0 没有错误；</li>
+<li>1 报文格式错误(Format Error)，服务器解析请求报文时报错；</li>
+<li>2 服务器失败(Server Failure)，因为服务器的原因导致没办法处理这个请求；</li>
+<li>3 名字错误(Name Error)，只对授权域名解析服务器有意义，解析的域名不存在；</li>
+<li>4 没有实现(Not Implemented)，域名服务器不支持查询类型；</li>
+<li>5 拒绝(Refused)，由于服务器设置的策略拒绝给出应答，通常是安全的配置；</li>
+<li>6-15 保留值，暂未使用。</li>
+</ul>
+</li>
+<li>QDCOUNT 无符号16位整数表示报文请求段中的问题记录数；</li>
+<li>ANCOUNT 无符号16位整数表示报文回答段中的回答记录数；</li>
+<li>NSCOUNT 无符号16位整数表示报文授权段中的授权记录数；</li>
+<li>ARCOUNT 无符号16位整数表示报文附加段中的附加记录数。</li>
+</ul>
+<h2 id="查询请求"><a href="#查询请求" class="headerlink" title="查询请求"></a>查询请求</h2><p>用来标识，查询的请求参数，同时需要在头中设置 <code>QDCOUNT</code> 这个字段。</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--+<br>|                                               |<br>/                     QNAME                     /<br><span class="hljs-section">/                                               /</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                     QTYPE                     |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                     QCLASS                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></code></pre></td></tr></table></figure>
+
+<p>字段含义如下:</p>
+<ul>
+<li>QNAME 域名被编码为一些labels序列，每个labels包含一个字节表示后续字符串长度，以及这个字符串，以0长度和空字符串来表示域名结束。注意这个字段可能为奇数字节，不需要进行边界填充对齐。</li>
+<li>QTYPE 2个字节表示查询类型，.取值可以为任何可用的类型值，以及通配码来表示所有的资源记录。</li>
+<li>QCLASS 2个字节表示查询的协议类，比如，IN代表Internet</li>
+</ul>
+<h2 id="DNS-RR-简介"><a href="#DNS-RR-简介" class="headerlink" title="DNS RR 简介"></a>DNS RR 简介</h2><p>DNS资源记录（Resource Record，简称RR）</p>
+<p>DNS server 内的每一个域名都有自己的域文件(zone file)，zone file 是由多个记录组成的，每一个记录就被称为资源记录(Resource Record，简称RR)。</p>
 <p>当在设定 DNS 域名解析、反向解析及其他的管理目的时，往往需要使用不同类型的RR，也就是我们常说的<a target="_blank" rel="noopener" href="https://www.cloudxns.net/Support/detail/id/54.html">记录类型</a>。</p>
 <p>上述CloudXNS的记录类型列表中，除AX、CNAMEX、LINK、DR301X（301跳转）、DR302X（302跳转）以及DRHIDX（隐式跳转）为CloudXNS自研的<a target="_blank" rel="noopener" href="https://www.cloudxns.net/Index/Extend.html">扩展解析记录类型</a>之外，其余都是 DNS 体系中常见的标准RR类型。</p>
 <p>但除了我们系统中支持的这些类型外，事实上还有一些不太常用的目前CloudXNS暂不支持的其他RR类型。</p>
@@ -896,10 +940,10 @@
 <h2 id="什么是SOA？"><a href="#什么是SOA？" class="headerlink" title="什么是SOA？"></a>什么是SOA？</h2><p>SOA，即Start Of Authority，放在 zone file 中，用于描述这个 zone 负责的 name server，version number…等资料，以及当 slave server 要备份这个 zone 时的一些参数。</p>
 <p>每个 zone file 中必须有且仅有一条 SOARR ，并在 zone file 中作为第一条资源记录保存。</p>
 <p>举个栗子：</p>
-<figure class="highlight llvm"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><pre><code class="hljs llvm">@ IN SOA lv<span class="hljs-number">3</span>ns<span class="hljs-number">1</span>.ffdns.net. webmaster.ffdns.net. (<br>    <span class="hljs-number">2009092868</span> <span class="hljs-comment">; Serial</span><br>    <span class="hljs-number">604800</span> <span class="hljs-comment">; Refresh</span><br>    <span class="hljs-number">3600</span> <span class="hljs-comment">; Retry</span><br>    <span class="hljs-number">2419200</span> <span class="hljs-comment">; Expire</span><br>    <span class="hljs-number">3600</span> ) <span class="hljs-comment">; Minimum</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs llvm">@ IN SOA lv<span class="hljs-number">3</span>ns<span class="hljs-number">1</span>.ffdns.net. webmaster.ffdns.net. (<br>    <span class="hljs-number">2009092868</span> <span class="hljs-comment">; Serial</span><br>    <span class="hljs-number">604800</span> <span class="hljs-comment">; Refresh</span><br>    <span class="hljs-number">3600</span> <span class="hljs-comment">; Retry</span><br>    <span class="hljs-number">2419200</span> <span class="hljs-comment">; Expire</span><br>    <span class="hljs-number">3600</span> ) <span class="hljs-comment">; Minimum</span><br></code></pre></td></tr></table></figure>
 
 <blockquote>
-<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#x77;&#101;&#x62;&#109;&#x61;&#115;&#x74;&#101;&#x72;&#x40;&#x66;&#x66;&#100;&#110;&#115;&#x2e;&#x6e;&#x65;&#116;">&#x77;&#101;&#x62;&#109;&#x61;&#115;&#x74;&#101;&#x72;&#x40;&#x66;&#x66;&#100;&#110;&#115;&#x2e;&#x6e;&#x65;&#116;</a>)`，即该 zone 的管理者信箱。</p>
+<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#119;&#101;&#98;&#x6d;&#x61;&#115;&#x74;&#101;&#x72;&#64;&#102;&#x66;&#x64;&#x6e;&#x73;&#x2e;&#x6e;&#101;&#x74;">&#119;&#101;&#98;&#x6d;&#x61;&#115;&#x74;&#101;&#x72;&#64;&#102;&#x66;&#x64;&#x6e;&#x73;&#x2e;&#x6e;&#101;&#x74;</a>)`，即该 zone 的管理者信箱。</p>
 <p><strong>Serial：</strong>代表 zone file 的版本，每当 zone file 内容有变动，name server 管理者就应该增加这个号码，因为 slave 会将这个号码与其 copy 的那份比对以便决定是否要再 copy 一次（即进行 zone transfer ）。</p>
 <p><strong>Refresh：</strong> slave server 每隔这段时间(秒)，就去检查 master server 上的 serial number 。</p>
 <p><strong>Retry：</strong>当 slave server 无法和 master 进行 serial check 时，要每隔这段时间（秒） retry 一次。</p>
@@ -952,8 +996,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/00DNS%E5%8D%8F%E8%AE%AE/">
-                        <span class="hidden-mobile"></span>
+                      <a href="/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/00DNS%E5%9F%BA%E7%A1%80/">
+                        <span class="hidden-mobile">DNS基础</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
