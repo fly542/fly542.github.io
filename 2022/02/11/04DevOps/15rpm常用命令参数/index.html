@@ -16,19 +16,38 @@
   <meta name="author" content="Fly542">
   <meta name="keywords" content="">
   
-    <meta property="og:type" content="website">
-<meta property="og:title" content="归档">
-<meta property="og:url" content="http://fly542.cn/archives/2020/page/5/index.html">
+    <meta name="description" content="rpm –qf 的命令全称是 rpm --queryformat ,格式为rpm --queryformat [QUERYFMT] , 其中QUERYFMT是一系列rpm查询标志，可以通过rpm --querytags命令查询有哪些标志可以使用.  rpm -qa 的默认格式为 rpm -qa --qf &#39;%&amp;#123;name&amp;#125;-%&amp;#123;version&amp;#125;-%&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rpm 常用命令参数">
+<meta property="og:url" content="http://fly542.cn/2022/02/11/04DevOps/15rpm%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%8F%82%E6%95%B0/index.html">
 <meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="rpm –qf 的命令全称是 rpm --queryformat ,格式为rpm --queryformat [QUERYFMT] , 其中QUERYFMT是一系列rpm查询标志，可以通过rpm --querytags命令查询有哪些标志可以使用.  rpm -qa 的默认格式为 rpm -qa --qf &#39;%&amp;#123;name&amp;#125;-%&amp;#123;version&amp;#125;-%&amp;">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-11T02:09:15.000Z">
+<meta property="article:modified_time" content="2022-02-11T02:17:07.050Z">
 <meta property="article:author" content="Fly542">
 <meta name="twitter:card" content="summary_large_image">
   
   
-  <title>归档 - Fly542 技术沉淀</title>
+  <title>rpm 常用命令参数 - Fly542 技术沉淀</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
 
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
 
 
 <!-- 主题依赖的图标库，不要自行修改 -->
@@ -55,7 +74,7 @@
 
 
 <body>
-  <header style="height: 60vh;">
+  <header style="height: 70vh;">
     <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
@@ -156,9 +175,43 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="归档">
+            <span class="h2" id="subtitle" title="rpm 常用命令参数">
               
             </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-02-11 10:09" pubdate>
+        2022年2月11日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      328 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      3 分钟
+    </span>
+  
+
+  
+  
+</div>
 
             
           </div>
@@ -171,88 +224,87 @@
 
   <main>
     
-      <div class="container nopadding-x-md">
-        <div class="py-5" id="board"
-          >
-          
-          <div class="container">
-            <div class="row">
-              <div class="col-12 col-md-10 m-auto">
-                
-
-<div class="list-group">
-  <p class="h4">共计 67 篇文章</p>
-  <hr>
-  
-  
-    
       
-      <p class="h5">2020</p>
-    
-    <a href="/2020/07/27/01%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/02%E6%97%B6%E5%BA%8F%E5%9B%BE%E3%80%81%E6%B4%BB%E5%8A%A8%E5%9B%BE%E3%80%81%E7%8A%B6%E6%80%81%E5%9B%BE%E3%80%81%E5%8D%8F%E4%BD%9C%E5%9B%BE%E7%9A%84%E5%8C%BA%E5%88%AB/" class="list-group-item list-group-item-action">
-      <span class="archive-post-title">时序图、活动图、状态图、协作图的区别</span>
-      <time style="float: right;">07-27</time>
-    </a>
-  
-    
-    <a href="/2020/07/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/00%E5%AE%9A%E4%BD%8Dcpu%20100_p%E7%9A%84%E6%96%B9%E6%B3%95/" class="list-group-item list-group-item-action">
-      <span class="archive-post-title">定位程序cpu 100%方法</span>
-      <time style="float: right;">07-26</time>
-    </a>
-  
-    
-    <a href="/2020/07/26/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/00%20%E4%BC%A0%E7%BB%9F%E6%95%B0%E6%8D%AE%E5%BA%93/01%20sqlite/sqlite3%20%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/" class="list-group-item list-group-item-action">
-      <span class="archive-post-title">sqlite3 客户端操作命令</span>
-      <time style="float: right;">07-26</time>
-    </a>
-  
-    
-    <a href="/2020/07/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/02%E5%A4%A7%E7%AB%AF-%E5%B0%8F%E7%AB%AF%E5%AF%B9%E9%BD%90%E5%88%A4%E5%AE%9A%E5%87%BD%E6%95%B0/" class="list-group-item list-group-item-action">
-      <span class="archive-post-title">大端-小端对齐判定函数</span>
-      <time style="float: right;">07-26</time>
-    </a>
-  
-    
-    <a href="/2020/07/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/02Rust/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E6%8F%90%E7%A4%BA%E3%80%8Aremove%20this%20mut%E3%80%8B/" class="list-group-item list-group-item-action">
-      <span class="archive-post-title">为什么函数参数提示《remove this mut》</span>
-      <time style="float: right;">07-26</time>
-    </a>
-  
-    
-    <a href="/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/07linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/" class="list-group-item list-group-item-action">
-      <span class="archive-post-title">linux下IO应用详解</span>
-      <time style="float: right;">07-25</time>
-    </a>
-  
-    
-    <a href="/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/02Rust/rust-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%B0%86u32%E8%BD%AC%E6%8D%A2%E4%B8%BAchar%EF%BC%9F/" class="list-group-item list-group-item-action">
-      <span class="archive-post-title">rust - 为什么不能将u32转换为char</span>
-      <time style="float: right;">07-25</time>
-    </a>
-  
-    
-    <a href="/2020/07/25/01%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/00%E5%B8%B8%E8%A7%81%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F/" class="list-group-item list-group-item-action">
-      <span class="archive-post-title">常见架构模式</span>
-      <time style="float: right;">07-25</time>
-    </a>
-  
-</div>
 
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">rpm 常用命令参数</h1>
+            
+            <div class="markdown-body">
+              <ul>
+<li><p>rpm –qf 的命令全称是 <code>rpm --queryformat</code> ,格式为<code>rpm --queryformat [QUERYFMT]</code> , 其中QUERYFMT是一系列rpm查询标志，可以通过<code>rpm --querytags</code>命令查询有哪些标志可以使用.</p>
+</li>
+<li><p>rpm -qa 的默认格式为<code> rpm -qa --qf &#39;%&#123;name&#125;-%&#123;version&#125;-%&#123;release&#125;\n&#39;</code> 不带版本信息，可以使用<code>rpm -qa --qf &#39;%&#123;name&#125;-%&#123;version&#125;-%&#123;release&#125;.%&#123;arch&#125;\n&#39;</code> 输出带版本信息的数据格式</p>
+</li>
+</ul>
 
-  <nav aria-label="navigation">
-    <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/archives/2020/page/4/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/archives/2020/">1</a><span class="space">&hellip;</span><a class="page-number" href="/archives/2020/page/3/#board">3</a><a class="page-number" href="/archives/2020/page/4/#board">4</a><span class="page-number current">5</span>
-    </span>
-  </nav>
-
-
-
-
-              </div>
             </div>
-          </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/devops/">devops</a>
+                    
+                  </div>
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/01/27/04DevOps/14%E5%AE%9A%E4%BD%8D%E8%BF%9B%E7%A8%8B%E8%A2%ABkill%E6%88%96%E5%88%9B%E5%BB%BA%E7%9A%84%E7%88%B6%E8%BF%9B%E7%A8%8B%20-%20%E5%89%AF%E6%9C%AC/">
+                        <span class="hidden-mobile">定位进程被kill或创建的父进程</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
         </div>
       </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
     
 
     
@@ -335,6 +387,19 @@
   
 
 
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
 
 
 
