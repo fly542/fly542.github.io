@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://fly542.cn/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/01DNS%E5%8D%8F%E8%AE%AE/srv.png">
 <meta property="article:published_time" content="2020-08-26T13:10:15.000Z">
-<meta property="article:modified_time" content="2022-03-08T06:30:27.139Z">
+<meta property="article:modified_time" content="2022-03-08T06:49:57.075Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="dns">
@@ -1064,8 +1064,7 @@
 
 <p>这个域名的格式是<a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc2782">rfc-2782</a>中推荐的格式，_ldap表示LDAP服务，_tcp表示通过TCP协议访问LDAP服务。</p>
 <h4 id="SRV的记录格式"><a href="#SRV的记录格式" class="headerlink" title="SRV的记录格式:"></a>SRV的记录格式:</h4><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-section">  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br>|                                               |<br>/                                               /<br>/            _Service._Proto.Name               /<br><span class="hljs-section">|                                               |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                      33                       |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                     CLASS                     |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br>|                      TTL                      |<br><span class="hljs-section">|                                               |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br>|                   RDLENGTH                    |<br><span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--|<br>/                     RDATA                     /<br><span class="hljs-section">/                                               /</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></code></pre></td></tr></table></figure>
-<p>_Service._Proto.Name 格式说明</p>
-<table>
+<h5 id="Service-Proto-Name-格式说明"><a href="#Service-Proto-Name-格式说明" class="headerlink" title="_Service._Proto.Name 格式说明"></a>_Service._Proto.Name 格式说明</h5><table>
 <thead>
 <tr>
 <th>标签名</th>
@@ -1091,7 +1090,40 @@
 </tbody></table>
 <p>RDATA格式为:</p>
 <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-section">  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                  Priority                     |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    Weight                     |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    Port                       |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br>|                                               |<br>/                                               /<br>/                    Target                     /<br><span class="hljs-section">|                                               |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></code></pre></td></tr></table></figure>
-<p>RDATA字段含义如下：<br>字段名| 长度 | 类型|说明<br>—|—|—|—<br>Priority| 2字节|无符号整形|该记录的优先级，数值越小表示优先级越高，范围0-65535。<br>Weight| 2字节|无符号整形|该记录的权重，数值越高权重越高，范围0-65535。<br>Port| 2字节|无符号整形|服务端口号，0-65535。<br>Target| |标签字符串|目标地址对应的域名</p>
+<h5 id="RDATA字段含义如下："><a href="#RDATA字段含义如下：" class="headerlink" title="RDATA字段含义如下："></a>RDATA字段含义如下：</h5><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>长度</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Priority</td>
+<td>2字节</td>
+<td>无符号整形</td>
+<td>该记录的优先级，数值越小表示优先级越高，范围0-65535。</td>
+</tr>
+<tr>
+<td>Weight</td>
+<td>2字节</td>
+<td>无符号整形</td>
+<td>该记录的权重，数值越高权重越高，范围0-65535。</td>
+</tr>
+<tr>
+<td>Port</td>
+<td>2字节</td>
+<td>无符号整形</td>
+<td>服务端口号，0-65535。</td>
+</tr>
+<tr>
+<td>Target</td>
+<td></td>
+<td>标签字符串</td>
+<td>目标地址对应的域名</td>
+</tr>
+</tbody></table>
 <p>客户端查询到多条记录的时候，使用优先级最高的记录。</p>
 <p>对相同优先级的记录，按照权重选择，记录的权重越高，被选择的可能性越高。</p>
 <p>选择的时候，将所有记录的权重值累加，得到一个选择区间[0,sum]，每个记录在[0,sum]中占据一段连续的、长度为自身权重值区间。然后生成一个[0,sum]中的随机数，随机数落在的区间所属的记录就是被选择的记录。</p>
@@ -1154,7 +1186,7 @@
 <figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs llvm">@ IN SOA lv<span class="hljs-number">3</span>ns<span class="hljs-number">1</span>.ffdns.net. webmaster.ffdns.net. (<br>    <span class="hljs-number">2009092868</span> <span class="hljs-comment">; Serial</span><br>    <span class="hljs-number">604800</span> <span class="hljs-comment">; Refresh</span><br>    <span class="hljs-number">3600</span> <span class="hljs-comment">; Retry</span><br>    <span class="hljs-number">2419200</span> <span class="hljs-comment">; Expire</span><br>    <span class="hljs-number">3600</span> ) <span class="hljs-comment">; Minimum</span><br></code></pre></td></tr></table></figure>
 
 <blockquote>
-<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#119;&#x65;&#98;&#109;&#97;&#x73;&#116;&#101;&#x72;&#x40;&#x66;&#102;&#100;&#110;&#x73;&#x2e;&#110;&#101;&#x74;">&#119;&#x65;&#98;&#109;&#97;&#x73;&#116;&#101;&#x72;&#x40;&#x66;&#102;&#100;&#110;&#x73;&#x2e;&#110;&#101;&#x74;</a>)`，即该 zone 的管理者信箱。</p>
+<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#x77;&#x65;&#x62;&#109;&#97;&#115;&#x74;&#x65;&#114;&#x40;&#x66;&#x66;&#x64;&#110;&#115;&#x2e;&#x6e;&#x65;&#x74;">&#x77;&#x65;&#x62;&#109;&#97;&#115;&#x74;&#x65;&#114;&#x40;&#x66;&#x66;&#x64;&#110;&#115;&#x2e;&#x6e;&#x65;&#x74;</a>)`，即该 zone 的管理者信箱。</p>
 <p><strong>Serial：</strong>代表 zone file 的版本，每当 zone file 内容有变动，name server 管理者就应该增加这个号码，因为 slave 会将这个号码与其 copy 的那份比对以便决定是否要再 copy 一次（即进行 zone transfer ）。</p>
 <p><strong>Refresh：</strong> slave server 每隔这段时间(秒)，就去检查 master server 上的 serial number 。</p>
 <p><strong>Retry：</strong>当 slave server 无法和 master 进行 serial check 时，要每隔这段时间（秒） retry 一次。</p>
