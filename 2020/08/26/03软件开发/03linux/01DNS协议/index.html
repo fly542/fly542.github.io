@@ -23,12 +23,14 @@
 <meta property="og:site_name" content="Fly542 技术沉淀">
 <meta property="og:description" content="DNS报文格式整个报文的格式如下，包括了五部分组成。 1234567891011+---------------------+|        Header       | 报文头+---------------------+|       Question      | 查询请求+---------------------+|        Answer       | 应答+--------">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://fly542.cn/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/01DNS%E5%8D%8F%E8%AE%AE/srv.png">
 <meta property="article:published_time" content="2020-08-26T13:10:15.000Z">
-<meta property="article:modified_time" content="2022-02-23T08:06:51.256Z">
+<meta property="article:modified_time" content="2022-03-08T06:30:27.139Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="dns">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://fly542.cn/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/01DNS%E5%8D%8F%E8%AE%AE/srv.png">
   
   
   <title>DNS协议介绍 - Fly542 技术沉淀</title>
@@ -198,7 +200,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      16k 字
+      19k 字
     </span>
   
 
@@ -207,7 +209,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      138 分钟
+      158 分钟
     </span>
   
 
@@ -251,58 +253,163 @@
 <h2 id="报文头-Header"><a href="#报文头-Header" class="headerlink" title="报文头(Header)"></a>报文头(Header)</h2><p>DNS的报文头由固定的12个字节构成。</p>
 <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--+<br><span class="hljs-section">|                      ID                       |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|QR|  Opcode   |AA|TC|RD|RA|   Z    |   RCODE   |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    QDCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    ANCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    NSCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    ARCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></code></pre></td></tr></table></figure>
 
-<p>字段介绍如下。</p>
-<ul>
-<li>ID 16Bits 客户端设置，响应报文会原样带回，用于客户端区分不同的请求应答；</li>
-<li>QR 1Bits 区分是请求 (0 Question) 还是应答 (1 Response)；</li>
-<li>Opcode 4Bits 设置查询的种类，响应报文会原样带回，可以为：0 标准查询 QUERY；1 反向查询 IQUERY；2 服务器状态查询 STATUS；3~15 保留；</li>
-<li>AA 1Bits 授权应答 AuthoritativeAnswer，响应报文生效，用于标示服务器响应报文是否为授权服务器返回的结果，可能是在本地 Cache 的缓存；</li>
-<li>TC 1Bits 截断 TrunCation，报文因为超过了允许的长度，导致被截断；</li>
-<li>RD 1Bits 用于请求中，期望使用递归查询；</li>
-<li>RA 1Bits 用于响应中，如果服务器支持递归查询则设置为 1 ，否则设置为 0 ；</li>
-<li>RCODE 4Bits 应答码 ResponseCode，会在响应报文中设置，其代表的含义如下：<ul>
-<li>0 没有错误；</li>
-<li>1 报文格式错误(Format Error)，服务器解析请求报文时报错；</li>
-<li>2 服务器失败(Server Failure)，因为服务器的原因导致没办法处理这个请求；</li>
-<li>3 名字错误(Name Error)，只对授权域名解析服务器有意义，解析的域名不存在；</li>
-<li>4 没有实现(Not Implemented)，域名服务器不支持查询类型；</li>
-<li>5 拒绝(Refused)，由于服务器设置的策略拒绝给出应答，通常是安全的配置；</li>
-<li>6-15 保留值，暂未使用。</li>
-</ul>
-</li>
-<li>QDCOUNT 请求段中的RR数, 无符号16位整数；</li>
-<li>ANCOUNT 应答段中的RR数, 无符号16位整数；</li>
-<li>NSCOUNT 报文授权段中的授权记录数, 无符号16位整数；</li>
-<li>ARCOUNT 报文附加段中的附加记录数, 无符号16位整数。</li>
-</ul>
+<p>字段介绍如下：</p>
+<table>
+<thead>
+<tr>
+<th>字段简写</th>
+<th>字段长度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ID</td>
+<td>16 bits无符号整数</td>
+<td>客户端设置，响应报文会原样带回，用于客户端区分不同的请求应答；</td>
+</tr>
+<tr>
+<td>QR</td>
+<td>1 bit</td>
+<td>区分是请求还是应答<br>0 请求<br>1 应答</td>
+</tr>
+<tr>
+<td>Opcode</td>
+<td>4 bits</td>
+<td>设置查询的种类，响应报文会原样带回.<br> 0 标准查询 QUERY；<br> 1 反向查询 IQUERY；<br> 2 服务器状态查询 STATUS；<br> 3~15 保留；</td>
+</tr>
+<tr>
+<td>AA</td>
+<td>1bit</td>
+<td>授权应答 AuthoritativeAnswer，响应报文生效，用于标示服务器响应报文是否为授权服务器返回的结果，可能是在本地 Cache 的缓存；</td>
+</tr>
+<tr>
+<td>TC</td>
+<td>1bit</td>
+<td>截断 TrunCation，报文因为超过了允许的长度，导致被截断；</td>
+</tr>
+<tr>
+<td>RD</td>
+<td>1bit</td>
+<td>用于请求报文，代表期望是否使用递归查询；<br>0 不使用递归查询<br>1 使用递归查询</td>
+</tr>
+<tr>
+<td>RA</td>
+<td>1bit</td>
+<td>用于响应报文中，表示服务端是否支持递归查询<br>0 不支持递归<br>1 支持递归</td>
+</tr>
+<tr>
+<td>RCODE</td>
+<td>4 bits</td>
+<td>应答码 ResponseCode，会在响应报文中设置。<br> 0 没有错误；<br> 1 报文格式错误(Format Error)，服务器解析请求报文时报错<br> 2 服务器失败(Server Failure)，因为服务器的原因导致没办法处理这个请求<br> 3 名字错误(Name Error)，只对授权域名解析服务器有意义，解析的域名不存在<br>  4 没有实现(Not Implemented)，域名服务器不支持查询类型<br>  5 拒绝(Refused)，由于服务器设置的策略拒绝给出应答，通常是安全的配置；<br>  6-15 保留值，暂未使用。</td>
+</tr>
+<tr>
+<td>QDCOUNT</td>
+<td>16 bits 无符号整数</td>
+<td>请求段中的<a href="#rr">RR</a>数</td>
+</tr>
+<tr>
+<td>ANCOUNT</td>
+<td>16 bits 无符号整数</td>
+<td>应答段中的<a href="#rr">RR</a>数,</td>
+</tr>
+<tr>
+<td>NSCOUNT</td>
+<td>16 bits 无符号整数</td>
+<td>报文授权段中的授权<a href="#rr">RR</a>数</td>
+</tr>
+<tr>
+<td>ARCOUNT</td>
+<td>16 bits 无符号整数</td>
+<td>报文附加段中的附加<a href="#rr">RR</a>数</td>
+</tr>
+</tbody></table>
 <h2 id="查询请求-Question"><a href="#查询请求-Question" class="headerlink" title="查询请求(Question)"></a>查询请求(Question)</h2><p>用来标识，查询的请求参数，同时需要在头中设置 <code>QDCOUNT</code> 这个字段。</p>
 <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--+<br>|                                               |<br>/                     QNAME                     /<br><span class="hljs-section">/                                               /</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                     QTYPE                     |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                     QCLASS                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></code></pre></td></tr></table></figure>
 
 <p>字段含义如下:</p>
-<ul>
-<li>QNAME 域名被编码为一些labels序列，每个labels包含一个字节表示后续字符串长度，以及这个字符串，以0长度和空字符串来表示域名结束。注意这个字段可能为奇数字节，不需要进行边界填充对齐。</li>
-<li>QTYPE 2个字节表示查询类型, 取值可以为任何可用的类型值，该字段的值包括对TYPE字段有效的所有代码，以及一些更通用的代码，这些代码可以匹配一种以上的RR, 以及通配码来表示所有的资源记录。</li>
-<li>QCLASS 2个字节表示查询的协议类，比如，IN代表Internet</li>
-</ul>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>长度</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>QNAME</td>
+<td>最大255字节</td>
+<td>标签字符串</td>
+<td>域名被编码为一些labels序列，每个labels包含一个字节表示后续字符串长度，以及这个字符串，以0长度和空字符串来表示域名结束。注意这个字段可能为奇数字节，不需要进行边界填充对齐。</td>
+</tr>
+<tr>
+<td>QTYPE</td>
+<td>2字节</td>
+<td>无符号整数</td>
+<td>表示查询类型, 取值可以为任何可用的类型值，该字段的值包括对<a href="#rr_type">TYPE</a>字段有效的所有代码，以及一些更通用的代码，这些代码可以匹配一种以上的RR, 以及通配码来表示所有的RR记录。</td>
+</tr>
+<tr>
+<td>QCLASS</td>
+<td>2 字节</td>
+<td>无符号整数</td>
+<td>表示查询的协议类，<br> 0 保留 <br> 1 Internet (IN)<br> 2  未使用<br> 3 Chaos (CH) <br> 4 Hesiod (HS) <br> 5-253 未使用<br> 254 QCLASS NONE <br> 255 QCLASS * (ANY)</td>
+</tr>
+</tbody></table>
 <h1 id="DNS-RR介绍"><a href="#DNS-RR介绍" class="headerlink" title="DNS RR介绍"></a><span id="rr">DNS RR介绍</span></h1><p>DNS资源记录（Resource Record，简称RR）</p>
 <p>DNS server 内的每一个域名都有自己的域文件(zone file)，zone file 是由多个记录组成的，每一个记录就被称为资源记录(Resource Record，简称RR)。</p>
 <h2 id="RR-记录格式"><a href="#RR-记录格式" class="headerlink" title="RR 记录格式"></a><span id="rr_format">RR 记录格式</span></h2><p>所有的RR具有以下相同的格式</p>
 <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-section">  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br>|                                               |<br>/                                               /<br>/                      NAME                     /<br><span class="hljs-section">|                                               |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                      TYPE                     |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                     CLASS                     |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br>|                      TTL                      |<br><span class="hljs-section">|                                               |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br>|                   RDLENGTH                    |<br><span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--|<br>/                     RDATA                     /<br><span class="hljs-section">/                                               /</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></code></pre></td></tr></table></figure>
-<ul>
-<li><p>NAME：不定长与之前QNAME相同,这里会使用省略字段：前两bit为11表示压缩格式，而后面跟的14bit表示的是Name所在的位置相对于DNS首部的偏移值<br>如：之前的header数组中出现过3www6google3com0,且处的位置为12,这里就可以用192 12两个字节来省略(192是因为11000000,前两位为11)</p>
-</li>
-<li><p>TYPE：资源类型，是QTYPE的子集</p>
-</li>
-<li><p>CLASS：与之前的QCLASS相同</p>
-</li>
-<li><p>TTL: 一个32位带符号整数，它指定在再次查询信息源之前可以缓存资源记录的时间间隔。零值被解释为表示RR仅可用于进行中的事务，不应缓存。例如，SOA记录始终以零TTL分发，以禁止缓存。零值也可以用于易失性数据。</p>
-</li>
-<li><p>RDLENGTH: 后面跟随的RDATA的长度</p>
-</li>
-<li><p>RDATA: 真实的数据内容</p>
-</li>
-</ul>
-<h3 id="TYPE值说明"><a href="#TYPE值说明" class="headerlink" title="TYPE值说明"></a>TYPE值说明</h3><h4 id="标准RR类型介绍"><a href="#标准RR类型介绍" class="headerlink" title="标准RR类型介绍"></a>标准RR类型介绍</h4><table>
+<p>各个字段说明如下：</p>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>长度</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>NAME</td>
+<td>最大255字节</td>
+<td>标签字符串</td>
+<td>不定长与之前QNAME相同,这里会使用省略字段<br>为了压缩消息总长度此内容可能会采用<a href="#compress">消息压缩</a>方式存储。</td>
+</tr>
+<tr>
+<td>TYPE</td>
+<td>2字节</td>
+<td>无符号整数</td>
+<td>资源类型，是QTYPE的子集</td>
+</tr>
+<tr>
+<td>CLASS</td>
+<td>2字节</td>
+<td>无符号整数</td>
+<td>与之前的QCLASS相同</td>
+</tr>
+<tr>
+<td>TTL</td>
+<td>4字节</td>
+<td>有符号整数</td>
+<td>它指定在再次查询信息源之前可以缓存资源记录的时间间隔。零值被解释为表示RR仅可用于进行中的事务，不应缓存。例如，SOA记录始终以零TTL分发，以禁止缓存。零值也可以用于易失性数据。</td>
+</tr>
+<tr>
+<td>RDLENGTH</td>
+<td>2字节</td>
+<td>无符号整数</td>
+<td>后面跟随的RDATA的长度</td>
+</tr>
+<tr>
+<td>RDATA</td>
+<td></td>
+<td></td>
+<td>真实的数据内容</td>
+</tr>
+</tbody></table>
+<h3 id="消息压缩"><a href="#消息压缩" class="headerlink" title="消息压缩"></a><span id="compress">消息压缩</span></h3><p>为了减小dns消息的大小，dns协议中针对域名采用了一种压缩方案，消除了消息中重复的域名。压缩方式为：使用2个字节的指针来指向消息中已经存在相同域名的位置。</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--+<br><span class="hljs-section">| 1  1|                OFFSET                   |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></code></pre></td></tr></table></figure>
+<p>第一个字节的前2个bit为11时表示此域名采用的压缩格式，后面的OFFSET (14 bit) 是当前域名所在的位置相对于DNS消息开始的偏移量。<br>  如：之前的header数组中出现过3www6google3com0,且处的位置为12,这里就可以用1100 000c 两个字节来代替3www6google3com0表示的16个字节</p>
+<h3 id="TYPE值说明"><a href="#TYPE值说明" class="headerlink" title="TYPE值说明"></a><span id="rr_type">TYPE值说明</span></h3><h4 id="标准RR类型介绍"><a href="#标准RR类型介绍" class="headerlink" title="标准RR类型介绍"></a>标准RR类型介绍</h4><table>
 <thead>
 <tr>
 <th align="center">类型</th>
@@ -951,6 +1058,55 @@
 <td>Specified as part of the <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Sender_Policy_Framework">Sender Policy Framework</a> protocol as an alternative to storing SPF data in TXT records, using the same format. Support for it was discontinued in RFC 7208 due to widespread lack of support.[<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/List_of_DNS_record_types#cite_note-IETF-RFC6686-17">17]</a>[<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/List_of_DNS_record_types#cite_note-IETF-RFC7208-18">18]</a></td>
 </tr>
 </tbody></table>
+<h2 id="RR格式详解"><a href="#RR格式详解" class="headerlink" title="RR格式详解"></a>RR格式详解</h2><h3 id="SRV"><a href="#SRV" class="headerlink" title="SRV"></a>SRV</h3><p>DNS SRV是DNS记录中一种，用来指定服务地址。与常见的A记录、cname不同的是，SRV中除了记录<strong>服务器</strong>的地址，还记录了<strong>服务</strong>的端口，并且可以设置每个服务地址的优先级和权重。访问服务的时候，本地的DNS resolver从DNS服务器查询到一个地址列表，根据优先级和权重，从中选取一个地址作为本次请求的目标地址。</p>
+<h4 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h4><p>一个能够支持SRV的LDAP client可以通过查询域名，得知LDAP服务的IP地址和服务端口：</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs reasonml"><span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">_ldap</span>.</span><span class="hljs-module"><span class="hljs-identifier">_tcp</span>.</span></span>example.com<br></code></pre></td></tr></table></figure>
+
+<p>这个域名的格式是<a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc2782">rfc-2782</a>中推荐的格式，_ldap表示LDAP服务，_tcp表示通过TCP协议访问LDAP服务。</p>
+<h4 id="SRV的记录格式"><a href="#SRV的记录格式" class="headerlink" title="SRV的记录格式:"></a>SRV的记录格式:</h4><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-section">  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br>|                                               |<br>/                                               /<br>/            _Service._Proto.Name               /<br><span class="hljs-section">|                                               |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                      33                       |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                     CLASS                     |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br>|                      TTL                      |<br><span class="hljs-section">|                                               |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br>|                   RDLENGTH                    |<br><span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--|<br>/                     RDATA                     /<br><span class="hljs-section">/                                               /</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></code></pre></td></tr></table></figure>
+<p>_Service._Proto.Name 格式说明</p>
+<table>
+<thead>
+<tr>
+<th>标签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>_Service</td>
+<td>服务名称，前缀“_”是为防止与DNS Label（普通域名）冲突。</td>
+</tr>
+<tr>
+<td>_Proto</td>
+<td>服务使用的通信协议，_TCP、_UDP、其它标准协议或者自定义的协议。前缀“_”是为防止与DNS Label（普通域名）冲突</td>
+</tr>
+<tr>
+<td>Name</td>
+<td>提供服务的域名。</td>
+</tr>
+<tr>
+<td>TTL CLASS及RDLENGTH 参考<a href="#rr_format">《RR记录格式》</a>的标准含义</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>RDATA格式为:</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-section">  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                  Priority                     |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    Weight                     |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    Port                       |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br>|                                               |<br>/                                               /<br>/                    Target                     /<br><span class="hljs-section">|                                               |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></code></pre></td></tr></table></figure>
+<p>RDATA字段含义如下：<br>字段名| 长度 | 类型|说明<br>—|—|—|—<br>Priority| 2字节|无符号整形|该记录的优先级，数值越小表示优先级越高，范围0-65535。<br>Weight| 2字节|无符号整形|该记录的权重，数值越高权重越高，范围0-65535。<br>Port| 2字节|无符号整形|服务端口号，0-65535。<br>Target| |标签字符串|目标地址对应的域名</p>
+<p>客户端查询到多条记录的时候，使用优先级最高的记录。</p>
+<p>对相同优先级的记录，按照权重选择，记录的权重越高，被选择的可能性越高。</p>
+<p>选择的时候，将所有记录的权重值累加，得到一个选择区间[0,sum]，每个记录在[0,sum]中占据一段连续的、长度为自身权重值区间。然后生成一个[0,sum]中的随机数，随机数落在的区间所属的记录就是被选择的记录。</p>
+<h4 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h4><ol>
+<li><p>在使用DNS SRV的时候，要注意DNS Client是否按照预期的方式处理收到的SRV记录。当前DNS SRV只能够负责提供服务地址列表，对这个列表如何解读，完全取决于Client的实现。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc1035">rfc-1035</a>中规定，通过UDP协议传输DNS响应时，UDP报文的<strong>负载</strong>不能超过512字节，在添加SRV记录的时候，要特别注意。（通过TCP传输时没有512字节的限制）</p>
+</li>
+<li><p>当一个服务地址有多个相同优先级的SRV记录的时候，Client会按照这些SRV的权重分配请求。下一次向服务发起的请求可能是发送到了另一个地址。</p>
+</li>
+<li><p>在通过SRV记录的权重来分配请求的时候，使用的是本地缓存的DNS记录，所以不能实时地感知到服务的地址列表变化。除非将TTL设置的非常短暂，但这样将会频繁地查询DNS服务器。</p>
+</li>
+</ol>
+<h4 id="示例如下"><a href="#示例如下" class="headerlink" title="示例如下"></a>示例如下</h4><img src="/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/01DNS%E5%8D%8F%E8%AE%AE/srv.png" srcset="/img/loading.gif" lazyload class="" title="SRV应答">
+
 <h1 id="EDNS-DNS扩展机制"><a href="#EDNS-DNS扩展机制" class="headerlink" title="EDNS( DNS扩展机制)"></a>EDNS( DNS扩展机制)</h1><p>EDNS即Extension Mechanisms for DNS。最新定义在<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc6891">RFC 6891</a>(替换了RFC2671)向DNS添加了扩展机制。EDNS在遵循已有的<a href="#dformat">DNS报文格式</a>的基础上增加一些字段，来支持更多的DNS请求业务，许多新的DNS使用和协议扩展依赖于这些扩展的存在。</p>
 <p>需要注意的是，像DNS服务器这样一个大型且广泛应用的系统软件，新增加扩展协议的时候一定要考虑到向后兼容性(backward compatibility)，即你增加了你这个特性的消息传输给未支持该特性的服务器时，后者依然能正确处理。</p>
 <p>EDNS是DNS的逐跳( hop-by-hop )扩展。</p>
@@ -998,7 +1154,7 @@
 <figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs llvm">@ IN SOA lv<span class="hljs-number">3</span>ns<span class="hljs-number">1</span>.ffdns.net. webmaster.ffdns.net. (<br>    <span class="hljs-number">2009092868</span> <span class="hljs-comment">; Serial</span><br>    <span class="hljs-number">604800</span> <span class="hljs-comment">; Refresh</span><br>    <span class="hljs-number">3600</span> <span class="hljs-comment">; Retry</span><br>    <span class="hljs-number">2419200</span> <span class="hljs-comment">; Expire</span><br>    <span class="hljs-number">3600</span> ) <span class="hljs-comment">; Minimum</span><br></code></pre></td></tr></table></figure>
 
 <blockquote>
-<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#119;&#x65;&#98;&#109;&#x61;&#x73;&#116;&#101;&#114;&#64;&#x66;&#x66;&#100;&#110;&#115;&#46;&#110;&#x65;&#x74;">&#119;&#x65;&#98;&#109;&#x61;&#x73;&#116;&#101;&#114;&#64;&#x66;&#x66;&#100;&#110;&#115;&#46;&#110;&#x65;&#x74;</a>)`，即该 zone 的管理者信箱。</p>
+<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#119;&#x65;&#98;&#109;&#97;&#x73;&#116;&#101;&#x72;&#x40;&#x66;&#102;&#100;&#110;&#x73;&#x2e;&#110;&#101;&#x74;">&#119;&#x65;&#98;&#109;&#97;&#x73;&#116;&#101;&#x72;&#x40;&#x66;&#102;&#100;&#110;&#x73;&#x2e;&#110;&#101;&#x74;</a>)`，即该 zone 的管理者信箱。</p>
 <p><strong>Serial：</strong>代表 zone file 的版本，每当 zone file 内容有变动，name server 管理者就应该增加这个号码，因为 slave 会将这个号码与其 copy 的那份比对以便决定是否要再 copy 一次（即进行 zone transfer ）。</p>
 <p><strong>Refresh：</strong> slave server 每隔这段时间(秒)，就去检查 master server 上的 serial number 。</p>
 <p><strong>Retry：</strong>当 slave server 无法和 master 进行 serial check 时，要每隔这段时间（秒） retry 一次。</p>
@@ -1009,6 +1165,7 @@
 <p><a target="_blank" rel="noopener" href="https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-11">https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-11</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.iana.org/assignments/address-family-numbers/address-family-numbers.xhtml">https://www.iana.org/assignments/address-family-numbers/address-family-numbers.xhtml</a></p>
 <p><a target="_blank" rel="noopener" href="https://asutorufa.github.io/posts/668530ca/">https://asutorufa.github.io/posts/668530ca/</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.lijiaocn.com/%E6%8A%80%E5%B7%A7/2017/03/06/dns-srv.html">https://www.lijiaocn.com/%E6%8A%80%E5%B7%A7/2017/03/06/dns-srv.html</a></p>
 
             </div>
             <hr>
