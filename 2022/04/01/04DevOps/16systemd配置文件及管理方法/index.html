@@ -16,22 +16,21 @@
   <meta name="author" content="Fly542">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1. 概述参考123https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;143867739https:&#x2F;&#x2F;blog.csdn.net&#x2F;fly_yr&#x2F;article&#x2F;details&#x2F;43019601?utm_medium&#x3D;distribute.pc_relevant.none-task-blog-2~default~baidujs_title~default-4.pc_relevant_pay">
+    <meta name="description" content="systemd 配置systemd 配置文件存在于以下三个文件夹中：            &#x2F;etc&#x2F;systemd&#x2F;system  存放系统启动的默认级别及启动的unit的软连接，优先级最高。 &#x2F;run&#x2F;systemd&#x2F;system，系统执行过程中产生的服务脚本，优先级次之。 &#x2F;usr&#x2F;lib&#x2F;systemd&#x2F;system 存放系统上所有的启动文件。优先级最低  unit分类：unit的定义文件">
 <meta property="og:type" content="article">
-<meta property="og:title" content="yacc与lex">
-<meta property="og:url" content="http://fly542.cn/2022/03/16/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/%E5%BE%85%E5%AE%8C%E5%96%84/yacc%E4%B8%8Elex/index.html">
+<meta property="og:title" content="16systemd配置文件及管理方法">
+<meta property="og:url" content="http://fly542.cn/2022/04/01/04DevOps/16systemd%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%8F%8A%E7%AE%A1%E7%90%86%E6%96%B9%E6%B3%95/index.html">
 <meta property="og:site_name" content="Fly542 技术沉淀">
-<meta property="og:description" content="1. 概述参考123https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;143867739https:&#x2F;&#x2F;blog.csdn.net&#x2F;fly_yr&#x2F;article&#x2F;details&#x2F;43019601?utm_medium&#x3D;distribute.pc_relevant.none-task-blog-2~default~baidujs_title~default-4.pc_relevant_pay">
+<meta property="og:description" content="systemd 配置systemd 配置文件存在于以下三个文件夹中：            &#x2F;etc&#x2F;systemd&#x2F;system  存放系统启动的默认级别及启动的unit的软连接，优先级最高。 &#x2F;run&#x2F;systemd&#x2F;system，系统执行过程中产生的服务脚本，优先级次之。 &#x2F;usr&#x2F;lib&#x2F;systemd&#x2F;system 存放系统上所有的启动文件。优先级最低  unit分类：unit的定义文件">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-03-16T04:01:03.000Z">
-<meta property="article:modified_time" content="2022-03-16T05:57:05.727Z">
+<meta property="article:published_time" content="2022-04-01T02:49:50.000Z">
+<meta property="article:modified_time" content="2022-04-01T03:03:40.673Z">
 <meta property="article:author" content="Fly542">
-<meta property="article:tag" content="c">
-<meta property="article:tag" content="c++">
+<meta property="article:tag" content="linux">
 <meta name="twitter:card" content="summary_large_image">
   
   
-  <title>yacc与lex - Fly542 技术沉淀</title>
+  <title>16systemd配置文件及管理方法 - Fly542 技术沉淀</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
 
@@ -177,7 +176,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="yacc与lex">
+            <span class="h2" id="subtitle" title="16systemd配置文件及管理方法">
               
             </span>
 
@@ -187,8 +186,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2022-03-16 12:01" pubdate>
-        2022年3月16日 中午
+      <time datetime="2022-04-01 10:49" pubdate>
+        2022年4月1日 上午
       </time>
     </span>
   
@@ -198,7 +197,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      263 字
+      1.8k 字
     </span>
   
 
@@ -207,7 +206,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      3 分钟
+      16 分钟
     </span>
   
 
@@ -236,10 +235,58 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">yacc与lex</h1>
+            <h1 style="display: none">16systemd配置文件及管理方法</h1>
             
             <div class="markdown-body">
-              <h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><figure class="highlight apache"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">https</span>://zhuanlan.zhihu.com/p/<span class="hljs-number">143867739</span><br><span class="hljs-attribute">https</span>://blog.csdn.net/fly_yr/article/details/<span class="hljs-number">43019601</span>?utm_medium=distribute.pc_relevant.none-task-blog-<span class="hljs-number">2</span>~default~baidujs_title~default-<span class="hljs-number">4</span>.pc_relevant_paycolumn_v<span class="hljs-number">3</span>&amp;spm=<span class="hljs-number">1001</span>.<span class="hljs-number">2101</span>.<span class="hljs-number">3001</span>.<span class="hljs-number">4242</span>.<span class="hljs-number">3</span>&amp;utm_relevant_index=<span class="hljs-number">7</span><br><br></code></pre></td></tr></table></figure>
+              <h1 id="systemd-配置"><a href="#systemd-配置" class="headerlink" title="systemd 配置"></a>systemd 配置</h1><p>systemd 配置文件存在于以下三个文件夹中：          </p>
+<ul>
+<li>/etc/systemd/system  存放系统启动的默认级别及启动的unit的软连接，优先级最高。</li>
+<li>/run/systemd/system，系统执行过程中产生的服务脚本，优先级次之。</li>
+<li>/usr/lib/systemd/system 存放系统上所有的启动文件。优先级最低</li>
+</ul>
+<h2 id="unit分类："><a href="#unit分类：" class="headerlink" title="unit分类："></a>unit分类：</h2><p>unit的定义文件可以根据其后缀名称识别其定义的类型，可以使用systemctl -t help 查看。<br>文件后缀名|说明<br>—|—<br>.servicre| 定义了系统服务的启动<br>.target  |定义了系统启动的级别标签，systemd 没有运行级别的概念，创建标签只是为了兼容老版本。<br>.socket |定义了进程通信用到的套接字，套接字与进程是分离的<br>.device |定义了系统启动时内核识别的文件，systemd提供了设备的管理功能，/dev 下的设备由/etc/udev/下的配置文件与.device共同定制<br>.mount |定义了系统的文件系统的挂载点<br>.snapshop |系统快照<br>.swap |用于标识swap设备<br>.automount |文件系统的自动挂载点<br>.path|用于定义文件系统中的一个文件或目录使用。常用于文件系统发生变化时，延迟激活服务。</p>
+<h2 id="unit文件格式"><a href="#unit文件格式" class="headerlink" title="unit文件格式"></a>unit文件格式</h2><p>通常由3段组成：</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><pre><code class="hljs angelscript"><span class="hljs-string">[Unit]</span><br>	xxx=<br><span class="hljs-string">[Unit类型]</span> 如Service、Path等，和unit分类中的后缀名对应<br><span class="hljs-string">[Install]</span><br></code></pre></td></tr></table></figure>
+<h3 id="Unit段"><a href="#Unit段" class="headerlink" title="Unit段"></a>Unit段</h3><p>[Unit] :不属于第二个标签的定义都放在这里，或存放不属于unit类型的定义，描述信息，依赖的unit<br>关键字|说明<br>—|—<br>Description|描述信息<br>After|表明需要依赖的服务，作用决定启动顺序<br>Before|表明被依赖的服务<br>Requles|依赖到的其他unit ，强依赖，即依赖的unit启动失败。该unit不启动。<br>Wants|依赖到的其他unit，弱依赖，即依赖的unit 启动失败。该unit继续启动<br>Conflicts|定义冲突关系</p>
+<h3 id="Unit-类型-段："><a href="#Unit-类型-段：" class="headerlink" title="[Unit 类型] 段："></a>[Unit 类型] 段：</h3><p><font color=#ff0000>相关关键字需进一步确定??</font></p>
+<h3 id="Install-段："><a href="#Install-段：" class="headerlink" title="[Install] 段："></a>[Install] 段：</h3><p>服务启动或禁用时的一些选项，有以下配置选项<br>关键字|说明<br>—|—<br>Alias|<br>RequlredBy|被那些unit所依赖，<br>WanteBy|被那些unit所依赖</p>
+<blockquote>
+<p>注意：修改了的unit文件 需要重载。systemctl daemon-reload</p>
+</blockquote>
+<h1 id="管理工具systemctl"><a href="#管理工具systemctl" class="headerlink" title="管理工具systemctl"></a>管理工具systemctl</h1><p>centos7 的程序管理基本上都是由工具systemctl完成，systemctl的控制命令是固定不变的。systemd 兼容init文件夹下的启动脚本。</p>
+<p>systemctl的管理服务通过的service的unit文件实现的。</p>
+<p>.service 的配置文件对应的服务提供一下服务命令</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>systemctl start name.service</td>
+<td>启动服务：</td>
+</tr>
+<tr>
+<td>systemctl stop name.service</td>
+<td>停止服务</td>
+</tr>
+<tr>
+<td>systemctl restart name.service</td>
+<td>重启服务</td>
+</tr>
+<tr>
+<td>systemctl status name.service</td>
+<td>查看状态</td>
+</tr>
+</tbody></table>
+<div class="code-wrapper"><pre><code class="hljs">systemctl try-restart name.service| 条件式重启，即服务之前是启动的则进行重启，如果服务没有启动则不进行操作
+</code></pre></div>
+<p>systemctl reload-or-restart name.service| 重载或重启，首先进行重载，如果重载不成功则进行重启<br>systemctl reload-or-try-restart name.service|重载或条件式重启:<br>systemctl unmask name.service |设置服务可以被用户设置开机启动状态<br>systemctl mask name.service| 禁止服务可以被用户设置开机启动状态<br>systemctl is-active name.service|查看服务的当前激活状态<br>0 服务已经启动 <br> 非0 命令未启动<br>systemctl disable 服务名称unit |设置服务开机不启动<br>systemctl is-enabled name.service | 查看服务是否开机自启<br>systemctl list-dependencies name.service |察看服务的依赖关系<br>systemctl list-depebdencies|察看服务的依赖关系<br>systemctl daemon-reload |重载服务：<br>systemctl kill 进程名 | 杀掉进程：</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://blog.51cto.com/arm2012/1963238">https://blog.51cto.com/arm2012/1963238</a></li>
+</ul>
+
             </div>
             <hr>
             <div>
@@ -248,7 +295,7 @@
                   <div class="post-meta mr-3">
                     <i class="iconfont icon-category"></i>
                     
-                      <a class="hover-with-bg" href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+                      <a class="hover-with-bg" href="/categories/devops/">devops</a>
                     
                   </div>
                 
@@ -256,9 +303,7 @@
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/c/">c</a>
-                    
-                      <a class="hover-with-bg" href="/tags/c/">c++</a>
+                      <a class="hover-with-bg" href="/tags/linux/">linux</a>
                     
                   </div>
                 
@@ -275,18 +320,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/04/01/04DevOps/16systemd%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%8F%8A%E7%AE%A1%E7%90%86%E6%96%B9%E6%B3%95/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">16systemd配置文件及管理方法</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2022/03/11/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/%E5%BE%85%E5%AE%8C%E5%96%84/13%E6%8E%A7%E5%88%B6coredump/">
-                        <span class="hidden-mobile">控制coredump</span>
+                      <a href="/2022/03/16/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/%E5%BE%85%E5%AE%8C%E5%96%84/yacc%E4%B8%8Elex/">
+                        <span class="hidden-mobile">yacc与lex</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
