@@ -24,7 +24,7 @@
 <meta property="og:description" content="systemd 配置systemd 配置文件存在于以下三个文件夹中：            &#x2F;etc&#x2F;systemd&#x2F;system  存放系统启动的默认级别及启动的unit的软连接，优先级最高。 &#x2F;run&#x2F;systemd&#x2F;system，系统执行过程中产生的服务脚本，优先级次之。 &#x2F;usr&#x2F;lib&#x2F;systemd&#x2F;system 存放系统上所有的启动文件。优先级最低  unit分类：unit的定义文件">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-04-01T02:49:50.000Z">
-<meta property="article:modified_time" content="2022-04-02T06:16:52.720Z">
+<meta property="article:modified_time" content="2022-04-02T06:19:18.072Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
 <meta name="twitter:card" content="summary_large_image">
@@ -206,7 +206,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      16 分钟
+      15 分钟
     </span>
   
 
@@ -244,10 +244,86 @@
 <li>/run/systemd/system，系统执行过程中产生的服务脚本，优先级次之。</li>
 <li>/usr/lib/systemd/system 存放系统上所有的启动文件。优先级最低</li>
 </ul>
-<h2 id="unit分类："><a href="#unit分类：" class="headerlink" title="unit分类："></a>unit分类：</h2><p>unit的定义文件可以根据其后缀名称识别其定义的类型，可以使用systemctl -t help 查看。<br>文件后缀名|说明<br>—|—<br>.servicre| 定义了系统服务的启动<br>.target  |定义了系统启动的级别标签，systemd 没有运行级别的概念，创建标签只是为了兼容老版本。<br>.socket |定义了进程通信用到的套接字，套接字与进程是分离的<br>.device |定义了系统启动时内核识别的文件，systemd提供了设备的管理功能，/dev 下的设备由/etc/udev/下的配置文件与.device共同定制<br>.mount |定义了系统的文件系统的挂载点<br>.snapshop |系统快照<br>.swap |用于标识swap设备<br>.automount |文件系统的自动挂载点<br>.path|用于定义文件系统中的一个文件或目录使用。常用于文件系统发生变化时，延迟激活服务。</p>
+<h2 id="unit分类："><a href="#unit分类：" class="headerlink" title="unit分类："></a>unit分类：</h2><p>unit的定义文件可以根据其后缀名称识别其定义的类型，可以使用systemctl -t help 查看。</p>
+<table>
+<thead>
+<tr>
+<th>文件后缀名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>.servicre</td>
+<td>定义了系统服务的启动</td>
+</tr>
+<tr>
+<td>.target</td>
+<td>定义了系统启动的级别标签，systemd 没有运行级别的概念，创建标签只是为了兼容老版本。</td>
+</tr>
+<tr>
+<td>.socket</td>
+<td>定义了进程通信用到的套接字，套接字与进程是分离的</td>
+</tr>
+<tr>
+<td>.device</td>
+<td>定义了系统启动时内核识别的文件，systemd提供了设备的管理功能，/dev 下的设备由/etc/udev/下的配置文件与.device共同定制</td>
+</tr>
+<tr>
+<td>.mount</td>
+<td>定义了系统的文件系统的挂载点</td>
+</tr>
+<tr>
+<td>.snapshop</td>
+<td>系统快照</td>
+</tr>
+<tr>
+<td>.swap</td>
+<td>用于标识swap设备</td>
+</tr>
+<tr>
+<td>.automount</td>
+<td>文件系统的自动挂载点</td>
+</tr>
+<tr>
+<td>.path</td>
+<td>用于定义文件系统中的一个文件或目录使用。常用于文件系统发生变化时，延迟激活服务。</td>
+</tr>
+</tbody></table>
 <h2 id="unit文件格式"><a href="#unit文件格式" class="headerlink" title="unit文件格式"></a>unit文件格式</h2><p>通常由3段组成：</p>
 <figure class="highlight angelscript"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><pre><code class="hljs angelscript"><span class="hljs-string">[Unit]</span><br>	xxx=<br><span class="hljs-string">[Unit类型]</span> 如Service、Path等，和unit分类中的后缀名对应<br><span class="hljs-string">[Install]</span><br></code></pre></td></tr></table></figure>
-<h3 id="Unit段"><a href="#Unit段" class="headerlink" title="Unit段"></a>Unit段</h3><p>[Unit] :不属于第二个标签的定义都放在这里，或存放不属于unit类型的定义，描述信息，依赖的unit<br>关键字|说明<br>—|—<br>Description|描述信息<br>After|表明需要依赖的服务，作用决定启动顺序<br>Before|表明被依赖的服务<br>Requles|依赖到的其他unit ，强依赖，即依赖的unit启动失败。该unit不启动。<br>Wants|依赖到的其他unit，弱依赖，即依赖的unit 启动失败。该unit继续启动<br>Conflicts|定义冲突关系</p>
+<h3 id="Unit段"><a href="#Unit段" class="headerlink" title="Unit段"></a>Unit段</h3><p>[Unit] :不属于第二个标签的定义都放在这里，或存放不属于unit类型的定义，描述信息，依赖的unit</p>
+<table>
+<thead>
+<tr>
+<th>关键字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Description</td>
+<td>描述信息</td>
+</tr>
+<tr>
+<td>After</td>
+<td>表明需要依赖的服务，作用决定启动顺序</td>
+</tr>
+<tr>
+<td>Before</td>
+<td>表明被依赖的服务</td>
+</tr>
+<tr>
+<td>Requles</td>
+<td>依赖到的其他unit ，强依赖，即依赖的unit启动失败。该unit不启动。</td>
+</tr>
+<tr>
+<td>Wants</td>
+<td>依赖到的其他unit，弱依赖，即依赖的unit 启动失败。该unit继续启动</td>
+</tr>
+<tr>
+<td>Conflicts</td>
+<td>定义冲突关系</td>
+</tr>
+</tbody></table>
 <h3 id="Unit-类型-段："><a href="#Unit-类型-段：" class="headerlink" title="[Unit 类型] 段："></a>[Unit 类型] 段：</h3><p><font color=#ff0000>相关关键字需进一步确定??</font></p>
 <h3 id="Install-段："><a href="#Install-段：" class="headerlink" title="[Install] 段："></a>[Install] 段：</h3><p>服务启动或禁用时的一些选项，有以下配置选项</p>
 <table>
