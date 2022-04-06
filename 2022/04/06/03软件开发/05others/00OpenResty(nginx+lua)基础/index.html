@@ -16,18 +16,21 @@
   <meta name="author" content="Fly542">
   <meta name="keywords" content="">
   
-    <meta name="description" content="本文转载自《https:&#x2F;&#x2F;www.cnblogs.com&#x2F;digdeep&#x2F;p&#x2F;4859575.html》 OpenResty 介绍OpenResty 官网：http:&#x2F;&#x2F;openresty.org&#x2F; OpenResty是一个nginx和它的各种三方模块的一个打包而成的软件平台。最重要的一点是它将lua&#x2F;luajit打包了进来，使得我们可以使用lua脚本来进行web的开发。有了lua，我们可以借助">
+    <meta name="description" content="本文转载自《https:&#x2F;&#x2F;www.cnblogs.com&#x2F;digdeep&#x2F;p&#x2F;4859575.html》 OpenResty 介绍OpenResty 官网：http:&#x2F;&#x2F;openresty.org&#x2F; OpenResty 是一个nginx和它的各种三方模块的一个打包而成的软件平台。最重要的一点是它将lua&#x2F;luajit打包了进来，使得我们可以使用lua脚本来进行web的开发。有了lua，我们可以借">
 <meta property="og:type" content="article">
 <meta property="og:title" content="OpenResty(nginx+lua)基础 (转载)">
 <meta property="og:url" content="http://fly542.cn/2022/04/06/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/05others/00OpenResty(nginx+lua)%E5%9F%BA%E7%A1%80/index.html">
 <meta property="og:site_name" content="Fly542 技术沉淀">
-<meta property="og:description" content="本文转载自《https:&#x2F;&#x2F;www.cnblogs.com&#x2F;digdeep&#x2F;p&#x2F;4859575.html》 OpenResty 介绍OpenResty 官网：http:&#x2F;&#x2F;openresty.org&#x2F; OpenResty是一个nginx和它的各种三方模块的一个打包而成的软件平台。最重要的一点是它将lua&#x2F;luajit打包了进来，使得我们可以使用lua脚本来进行web的开发。有了lua，我们可以借助">
+<meta property="og:description" content="本文转载自《https:&#x2F;&#x2F;www.cnblogs.com&#x2F;digdeep&#x2F;p&#x2F;4859575.html》 OpenResty 介绍OpenResty 官网：http:&#x2F;&#x2F;openresty.org&#x2F; OpenResty 是一个nginx和它的各种三方模块的一个打包而成的软件平台。最重要的一点是它将lua&#x2F;luajit打包了进来，使得我们可以使用lua脚本来进行web的开发。有了lua，我们可以借">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://fly542.cn/2022/04/06/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/05others/00OpenResty(nginx+lua)%E5%9F%BA%E7%A1%80/1.png">
 <meta property="article:published_time" content="2022-04-06T03:15:11.000Z">
-<meta property="article:modified_time" content="2022-04-06T03:42:54.730Z">
+<meta property="article:modified_time" content="2022-04-06T03:48:15.518Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
+<meta property="article:tag" content="nginx">
+<meta property="article:tag" content="lua">
+<meta property="article:tag" content="openresty">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="http://fly542.cn/2022/04/06/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/05others/00OpenResty(nginx+lua)%E5%9F%BA%E7%A1%80/1.png">
   
@@ -242,7 +245,7 @@
             <div class="markdown-body">
               <p>本文转载自《<a target="_blank" rel="noopener" href="https://www.cnblogs.com/digdeep/p/4859575.html%E3%80%8B">https://www.cnblogs.com/digdeep/p/4859575.html》</a></p>
 <h1 id="OpenResty-介绍"><a href="#OpenResty-介绍" class="headerlink" title="OpenResty 介绍"></a>OpenResty 介绍</h1><p>OpenResty 官网：<a target="_blank" rel="noopener" href="http://openresty.org/">http://openresty.org/</a></p>
-<p>OpenResty是一个nginx和它的各种三方模块的一个打包而成的软件平台。最重要的一点是它将lua/luajit打包了进来，使得我们可以使用lua脚本来进行web的开发。有了lua，我们可以借助于nginx的异步非阻塞的功能，达到使用 lua 异步并发访问后端的 MySQL, PostgreSQL, Memcached, Redis等等服务。特别是特有的 ngx.location.capture_multi 功能让人印象深刻，其可以达到极大的减少浏览器的http连接数量，并且可以异步并发的访问后台 Java/PHP/Python 等等接口。OpenResty 架构的web可以轻松超越Node.js的性能，并且对后端语言没有限制，你可以使用Java/PHP/Python等等各种语言。OpenResty(nginx+lua)可以替代node.js的前端渲染的功能。</p>
+<p>OpenResty 是一个nginx和它的各种三方模块的一个打包而成的软件平台。最重要的一点是它将lua/luajit打包了进来，使得我们可以使用lua脚本来进行web的开发。有了lua，我们可以借助于nginx的异步非阻塞的功能，达到使用 lua 异步并发访问后端的 MySQL, PostgreSQL, Memcached, Redis等等服务。特别是特有的 ngx.location.capture_multi 功能让人印象深刻，其可以达到极大的减少浏览器的http连接数量，并且可以异步并发的访问后台 Java/PHP/Python 等等接口。OpenResty 架构的web可以轻松超越Node.js的性能，并且对后端语言没有限制，你可以使用Java/PHP/Python等等各种语言。OpenResty(nginx+lua)可以替代node.js的前端渲染的功能。</p>
 <h1 id="安装OpenResty"><a href="#安装OpenResty" class="headerlink" title="安装OpenResty"></a>安装OpenResty</h1><p>先安装依赖：yum install readline-devel pcre-devel openssl-devel gcc</p>
 <p>解压： tar zxvf ngx_openresty-1.9.3.1.tar.gz</p>
 <p>建立一个软连接：ln -s ngx_openresty-1.9.3.1 openresty</p>
@@ -359,7 +362,7 @@
                   <div class="post-meta mr-3">
                     <i class="iconfont icon-category"></i>
                     
-                      <a class="hover-with-bg" href="/categories/devops/">devops</a>
+                      <a class="hover-with-bg" href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
                     
                   </div>
                 
@@ -368,6 +371,12 @@
                     <i class="iconfont icon-tags"></i>
                     
                       <a class="hover-with-bg" href="/tags/linux/">linux</a>
+                    
+                      <a class="hover-with-bg" href="/tags/nginx/">nginx</a>
+                    
+                      <a class="hover-with-bg" href="/tags/lua/">lua</a>
+                    
+                      <a class="hover-with-bg" href="/tags/openresty/">openresty</a>
                     
                   </div>
                 
