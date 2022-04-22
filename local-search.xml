@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>stl严格弱序(stick weak ordering)</title>
+    <link href="/2022/04/22/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/13stl%E4%B8%A5%E6%A0%BC%E5%BC%B1%E5%BA%8F(stick%20weak%20ordering)/"/>
+    <url>/2022/04/22/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/13stl%E4%B8%A5%E6%A0%BC%E5%BC%B1%E5%BA%8F(stick%20weak%20ordering)/</url>
+    
+    <content type="html"><![CDATA[<p>STL有序容器对元素关键字的类型有要求，元素关键字的类型必须定义了严格弱序（stick weak ordering）</p><h1 id="什么是严格弱序"><a href="#什么是严格弱序" class="headerlink" title="什么是严格弱序"></a>什么是严格弱序</h1><h1 id="STL严格弱序实现方式"><a href="#STL严格弱序实现方式" class="headerlink" title="STL严格弱序实现方式"></a>STL严格弱序实现方式</h1><p>对于STL中的容器实现<code>&lt;</code>操作符，这就是一个严格弱序;而<code>&lt;=</code>不是一个严格弱序</p><p>在自定义比较函数(self_compare )的时候需要注意在相等时要返回false， 不能返回true.</p><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><figure class="highlight awk"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><pre><code class="hljs awk">https:<span class="hljs-regexp">//</span>zh.cppreference.com<span class="hljs-regexp">/w/</span>cpp<span class="hljs-regexp">/named_req/</span>Compare<br>https:<span class="hljs-regexp">//</span>blog.csdn.net<span class="hljs-regexp">/River_Lethe/</span>article<span class="hljs-regexp">/details/</span><span class="hljs-number">78618788</span><br><br></code></pre></td></tr></table></figure>]]></content>
+    
+    
+    <categories>
+      
+      <category>软件开发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>c</tag>
+      
+      <tag>c++</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>OpenResty(nginx+lua)基础 (转载)</title>
     <link href="/2022/04/06/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/05others/00OpenResty(nginx+lua)%E5%9F%BA%E7%A1%80/"/>
     <url>/2022/04/06/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/05others/00OpenResty(nginx+lua)%E5%9F%BA%E7%A1%80/</url>
