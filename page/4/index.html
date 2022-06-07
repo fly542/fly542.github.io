@@ -191,6 +191,55 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2020/08/28/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/03Linux%E4%B8%AD%E7%BA%BF%E7%A8%8B%E4%B8%8ECPU%E6%A0%B8%E7%9A%84%E7%BB%91%E5%AE%9A/" target="_self">
+          Linux中线程与CPU核的绑定
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/08/28/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/03Linux%E4%B8%AD%E7%BA%BF%E7%A8%8B%E4%B8%8ECPU%E6%A0%B8%E7%9A%84%E7%BB%91%E5%AE%9A/" target="_self">
+          
+          不管是线程还是进程，都是通过设置亲和性(affinity)来达到目的。对于进程一般是使用 sched_setaffinity 这个函数来实现. 与进程的情况相似，线程亲和性的设置和获取主要通过下面两个函数来实现： 12int pthread_setaffinity_np(pthread_t thread, size_t cpusetsize， const cpu_set_t *cpuset);in
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-08-28 11:45" pubdate>
+              2020-08-28
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/c/">c</a>
+            
+              <a href="/tags/c/">c++</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2020/08/27/04DevOps/08%20Python%20%E5%86%85%E7%BD%AE%E7%9A%84SimpleHTTPServer%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" target="_self">
           Python 内置的SimpleHTTPServer使用指南
         </a>
@@ -597,53 +646,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/c/">c++</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/08/16/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/00%20squid%20%E5%86%85%E5%AD%98%E6%B1%A0%E7%A0%94%E7%A9%B6/" target="_self">
-          00 squid 内存池研究
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/08/16/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/00%20squid%20%E5%86%85%E5%AD%98%E6%B1%A0%E7%A0%94%E7%A9%B6/" target="_self">
-          
-          1. 概述本文的squid原理及代码基于squid 4.12版的源码，主要阐述及分析了squid的内存池原理及响应的代码实现。squid的内存池有两种模式，一种是poolmalloc模式，另外一种是poolchunked模式 2. 原理分析从总体上来看，squid的内存池是通过按照不同大小的固定尺寸内存链来处理的。应用向内存池申请内存时，先找到应用需要的内存对应的内存链，再从内存链中获取一个可用的
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-08-16 08:09" pubdate>
-              2020-08-16
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BB%A3%E7%90%86%E8%BD%AF%E4%BB%B6/">高性能代理软件</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/squid/">squid</a>
             
           </div>
         

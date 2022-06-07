@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://fly542.cn/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/01DNS%E5%8D%8F%E8%AE%AE/srv.png">
 <meta property="article:published_time" content="2020-08-26T13:10:15.000Z">
-<meta property="article:modified_time" content="2022-03-09T10:51:43.895Z">
+<meta property="article:modified_time" content="2022-06-07T02:26:06.384Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="dns">
@@ -1143,9 +1143,12 @@
 <p>EDNS是DNS的逐跳( hop-by-hop )扩展。</p>
 <h2 id="为什么要有EDNS？"><a href="#为什么要有EDNS？" class="headerlink" title="为什么要有EDNS？"></a>为什么要有EDNS？</h2><p>RFC2671中指出EDNS被提出来的几个理由：</p>
 <ul>
-<li>DNS协议头部的第二个16字节中都已经被用的差不多了，需要添加新的返回类型(RCODE)和标记(FLAGS)来支持其他需求；</li>
-<li>只为标示domain类型的标签分配了两位，现在已经用掉了两位（00标示字符串类型，11表示压缩类型），后面如果有更多的标签类型则无法支持；</li>
-<li>当初DNS协议中设计的用UDP包传输时包大小限制为512字节，现在很多主机已经具备重组大数据包的能力，所以要有一种机制来允许DNS请求方通知DNS服务器让其返回大包；</li>
+<li><p>DNS协议头部的第二个16字节中都已经被用的差不多了，需要添加新的返回类型(RCODE)和标记(FLAGS)来支持其他需求；</p>
+</li>
+<li><p>只为标示domain类型的标签分配了两位，现在已经用掉了两位（00标示字符串类型，11表示压缩类型），后面如果有更多的标签类型则无法支持；</p>
+</li>
+<li><p>当初DNS协议中设计的用UDP包传输时包大小限制为512字节，现在很多主机已经具备重组大数据包的能力，所以要有一种机制来允许DNS请求方通知DNS服务器让其返回大包；</p>
+</li>
 </ul>
 <p>以后我们会看到，<a href="#dnssec">DNSSEC机制(DNS Security Extensions)</a>和<a href="#ecs">ECS(edns-client-subnet)机制</a>等都需要有EDNS的支持。</p>
 <h2 id="EDNS的内容是什么"><a href="#EDNS的内容是什么" class="headerlink" title="EDNS的内容是什么"></a>EDNS的内容是什么</h2><p>怎样在DNS消息协议的基础上再增加一些字段呢？为了保持向后兼容性，更改已有的DNS协议格式是不可能的，所以只能在DNS协议的数据部分中做文章。</p>
@@ -1175,7 +1178,7 @@
 <li>OPTION-LENGTH：长度为2个字节，代表了后续的FAMILY、 SOURCE PREFIX-LENGTH 、SCOPE PREFIX-LENGTH  、ADDRESS等内容的总长度。</li>
 <li>FAMILY：2个字节，标识ADDRESS的地址族，由<a target="_blank" rel="noopener" href="https://www.iana.org/assignments/address-family-numbers/address-family-numbers.xhtml">IANA</a>统一确定地址族编码序号，ipv4为1，ipv6为2</li>
 <li>SOURCE PREFIX-LENGTH：1个字节，查询中位置偏移(就是CIDR中的mask),具体请了解CIDR</li>
-<li> SCOPE PREFIX-LENGTH ：响应返回的位置偏移,在查询中应为0</li>
+<li>SCOPE PREFIX-LENGTH ：响应返回的位置偏移,在查询中应为0</li>
 <li>ADDRESS：就是设置的SubNet的IP地址,依据上面的FAMILY</li>
 </ul>
 <h3 id="DNSSEC"><a href="#DNSSEC" class="headerlink" title="DNSSEC"></a><span id=dnssec>DNSSEC</span></h3><p>DNSSEC( DNS Security Extensions) 即DNS安全扩展</p>
@@ -1185,7 +1188,7 @@
 <figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs llvm">@ IN SOA lv<span class="hljs-number">3</span>ns<span class="hljs-number">1</span>.ffdns.net. webmaster.ffdns.net. (<br>    <span class="hljs-number">2009092868</span> <span class="hljs-comment">; Serial</span><br>    <span class="hljs-number">604800</span> <span class="hljs-comment">; Refresh</span><br>    <span class="hljs-number">3600</span> <span class="hljs-comment">; Retry</span><br>    <span class="hljs-number">2419200</span> <span class="hljs-comment">; Expire</span><br>    <span class="hljs-number">3600</span> ) <span class="hljs-comment">; Minimum</span><br></code></pre></td></tr></table></figure>
 
 <blockquote>
-<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#119;&#101;&#98;&#x6d;&#97;&#x73;&#x74;&#x65;&#114;&#x40;&#x66;&#x66;&#100;&#x6e;&#x73;&#46;&#x6e;&#x65;&#x74;">&#119;&#101;&#98;&#x6d;&#97;&#x73;&#x74;&#x65;&#114;&#x40;&#x66;&#x66;&#100;&#x6e;&#x73;&#46;&#x6e;&#x65;&#x74;</a>)`，即该 zone 的管理者信箱。</p>
+<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#119;&#101;&#98;&#109;&#x61;&#x73;&#x74;&#101;&#114;&#x40;&#x66;&#102;&#100;&#x6e;&#x73;&#x2e;&#x6e;&#x65;&#x74;">&#119;&#101;&#98;&#109;&#x61;&#x73;&#x74;&#101;&#114;&#x40;&#x66;&#102;&#100;&#x6e;&#x73;&#x2e;&#x6e;&#x65;&#x74;</a>)`，即该 zone 的管理者信箱。</p>
 <p><strong>Serial：</strong>代表 zone file 的版本，每当 zone file 内容有变动，name server 管理者就应该增加这个号码，因为 slave 会将这个号码与其 copy 的那份比对以便决定是否要再 copy 一次（即进行 zone transfer ）。</p>
 <p><strong>Refresh：</strong> slave server 每隔这段时间(秒)，就去检查 master server 上的 serial number 。</p>
 <p><strong>Retry：</strong>当 slave server 无法和 master 进行 serial check 时，要每隔这段时间（秒） retry 一次。</p>
