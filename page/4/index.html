@@ -191,6 +191,86 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2020/08/31/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&amp;&amp;cassandra/00%20scylladb/" target="_self">
+          scylladb 介绍
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/08/31/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&amp;&amp;cassandra/00%20scylladb/" target="_self">
+          
+          介绍ScyllaDB是用C++重写的Cassandra，其官网宣称其每节点每秒可处理100万TPS。ScyllaDB完全兼容Apache Cassandra，拥有比Cassandra多10X倍的吞吐量，并降低了延迟。ScyllaDB是性能优异的NoSQL列存储数据库。 ScyllaDB在垃圾收集或者Compaction的时候不需要暂停（但是通过压测和Longevity测试发现Compaction的
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-08-31 12:32" pubdate>
+              2020-08-31
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+            
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/08/31/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&amp;&amp;cassandra/01%20scylladb%20%E9%A9%B1%E5%8A%A8%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" target="_self">
+          scylladb 驱动使用方法
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/08/31/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&amp;&amp;cassandra/01%20scylladb%20%E9%A9%B1%E5%8A%A8%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" target="_self">
+          
+          本文主要总结下 scylladb 的c&#x2F;c++驱动使用详细方法与步骤，便于快速进行开发。 1. 基本使用步骤创建 cluster 创建方法： CassCluster * cluster &#x3D; cass_cluster_new(); cass_cluster_free(cluster); &#x2F;&#x2F;不用时释放申请的资源 对cluster进行参数设置  根据需要对cluster 进行各种相关参数的设置，主要进
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-08-31 12:32" pubdate>
+              2020-08-31
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+            
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2020/08/29/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/04typedef%20%E7%B2%BE%E9%AB%93/" target="_self">
           typedef 精髓
         </a>
@@ -559,95 +639,6 @@
               <a href="/tags/linux/">linux</a>
             
               <a href="/tags/tools/">tools</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/08/20/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/04lsof%20%E4%B8%80%E5%88%87%E7%9A%86%E6%96%87%E4%BB%B6/" target="_self">
-          lsof 一切皆文件
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/08/20/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/04lsof%20%E4%B8%80%E5%88%87%E7%9A%86%E6%96%87%E4%BB%B6/" target="_self">
-          
-          lsof（list open files）是一个查看当前系统文件的工具。在linux环境下，任何事物都以文件的形式存在，通过文件不仅仅可以访问常规数据，还可以访问网络连接和硬件。如传输控制协议 (TCP) 和用户数据报协议 (UDP) 套接字等，系统在后台都为该应用程序分配了一个文件描述符，该文件描述符提供了大量关于这个应用程序本身的信息。 lsof打开的文件可以是：  普通文件 目录 网络文件系
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-08-20 12:25" pubdate>
-              2020-08-20
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/linux/">linux</a>
-            
-              <a href="/tags/tools/">tools</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/08/20/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/00objdump%20%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6%E5%88%86%E6%9E%90/" target="_self">
-          00 objdump 二进制文件分析
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/08/20/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/00objdump%20%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6%E5%88%86%E6%9E%90/" target="_self">
-          
-          objdump工具用来显示二进制文件的信息，就是以一种可阅读的格式让你更多地了解二进制文件可能带有的附加信息。 1. 常用参数说明-f 显示文件头信息-D 反汇编所有section (-d反汇编特定section)-h 显示目标文件各个section的头部摘要信息-x 显示所有可用的头信息，包括符号表、重定位入口。-x 等价于 -a -f -h -r -t 同时指定。-i 显示对于 -b 或者 -
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-08-20 12:21" pubdate>
-              2020-08-20
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/tools-linux/">tools,linux</a>
             
           </div>
         

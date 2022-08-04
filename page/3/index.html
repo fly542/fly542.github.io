@@ -191,6 +191,102 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2021/02/24/04DevOps/11%20makefile%E5%8F%8A%E7%BC%96%E8%AF%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%B1%87%E6%80%BB/" target="_self">
+          makefile及编译相关知识汇总
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/02/24/04DevOps/11%20makefile%E5%8F%8A%E7%BC%96%E8%AF%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%B1%87%E6%80%BB/" target="_self">
+          
+          1. 语法makefile 的详细语法可参考 跟我一起写Makefile 2. gcc 编译参数以-g，-f，-m，-O，-W或–param开头的选项是自动的传递给gcc调用的各个子流程。为了将其他选项传递给这些进程，必须使用-W 选项。 执行 “ gcc -v –help” 可显示所有子流程的命令行选项  3. 注意事项Bstatic 及 Bdynamic 使用注意事项 使用-Wl,-Bstat
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-02-24 10:24" pubdate>
+              2021-02-24
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/devops/">devops</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/makeifle/">makeifle</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/02/22/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/09Linux%E4%B8%ADerrno%E8%AF%B4%E6%98%8E/" target="_self">
+          Linux中errno说明
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/02/22/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/09Linux%E4%B8%ADerrno%E8%AF%B4%E6%98%8E/" target="_self">
+          
+          linux下errno的对应数值位于&#x2F;usr&#x2F;include&#x2F;asm-generic&#x2F;errno-base.h 和&#x2F;usr&#x2F;include&#x2F;asm-generic&#x2F;errno.h 中 errno-base.h的内容如下： 12345678910111213141516171819202122232425262728293031323334353637383940#ifndef _ASM_GENER
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-02-22 11:45" pubdate>
+              2021-02-22
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/c/">c</a>
+            
+              <a href="/tags/c/">c++</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2021/01/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/08%E5%90%84%E7%B1%BBconst%20%E6%8C%87%E9%92%88%E7%9A%84%E5%8C%BA%E5%88%AB/" target="_self">
           const char*, char const*, char*const 的区别
         </a>
@@ -557,86 +653,6 @@
               <a href="/tags/kafka/">kafka</a>
             
           </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/08/31/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&amp;&amp;cassandra/00%20scylladb/" target="_self">
-          scylladb 介绍
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/08/31/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&amp;&amp;cassandra/00%20scylladb/" target="_self">
-          
-          介绍ScyllaDB是用C++重写的Cassandra，其官网宣称其每节点每秒可处理100万TPS。ScyllaDB完全兼容Apache Cassandra，拥有比Cassandra多10X倍的吞吐量，并降低了延迟。ScyllaDB是性能优异的NoSQL列存储数据库。 ScyllaDB在垃圾收集或者Compaction的时候不需要暂停（但是通过压测和Longevity测试发现Compaction的
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-08-31 12:32" pubdate>
-              2020-08-31
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
-            
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/08/31/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&amp;&amp;cassandra/01%20scylladb%20%E9%A9%B1%E5%8A%A8%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" target="_self">
-          scylladb 驱动使用方法
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/08/31/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/04%20scylladb&amp;&amp;cassandra/01%20scylladb%20%E9%A9%B1%E5%8A%A8%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" target="_self">
-          
-          本文主要总结下 scylladb 的c&#x2F;c++驱动使用详细方法与步骤，便于快速进行开发。 1. 基本使用步骤创建 cluster 创建方法： CassCluster * cluster &#x3D; cass_cluster_new(); cass_cluster_free(cluster); &#x2F;&#x2F;不用时释放申请的资源 对cluster进行参数设置  根据需要对cluster 进行各种相关参数的设置，主要进
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-08-31 12:32" pubdate>
-              2020-08-31
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
-            
-          </div>
-        
         
       </div>
     </article>

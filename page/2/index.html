@@ -191,6 +191,86 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2022/01/27/04DevOps/14%E5%AE%9A%E4%BD%8D%E8%BF%9B%E7%A8%8B%E8%A2%ABkill%E6%88%96%E5%88%9B%E5%BB%BA%E7%9A%84%E7%88%B6%E8%BF%9B%E7%A8%8B/" target="_self">
+          定位进程被kill或创建的父进程
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2022/01/27/04DevOps/14%E5%AE%9A%E4%BD%8D%E8%BF%9B%E7%A8%8B%E8%A2%ABkill%E6%88%96%E5%88%9B%E5%BB%BA%E7%9A%84%E7%88%B6%E8%BF%9B%E7%A8%8B/" target="_self">
+          
+          有时进程会被其他服务或监控脚本莫名其妙的kill，为了找到真正发出kill或pkill信号的进程，我们可以使用linux下的audit工具来捕获发出创建或kill进程的父进程信息。 审核系统(audit)包含两个主要部分：用户空间的应用程序、实用程序，以及 kernel-side 系统调用处理。Kernel 的组件从用户空间的应用程序接受系统调用，并且通过三个过滤器中的一个过滤器来进行筛选： us
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-01-27 11:57" pubdate>
+              2022-01-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/devops/">devops</a>
+            
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/01/08/06%E6%9D%82%E9%A1%B9/00%E7%A6%BB%E8%81%8C%E9%A1%B9%E7%9B%AE%E4%BA%A4%E6%8E%A5%E6%A8%A1%E6%9D%BF/" target="_self">
+          离职项目交接模板
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2022/01/08/06%E6%9D%82%E9%A1%B9/00%E7%A6%BB%E8%81%8C%E9%A1%B9%E7%9B%AE%E4%BA%A4%E6%8E%A5%E6%A8%A1%E6%9D%BF/" target="_self">
+          
+          项目交接内容整理   交接内容 交接结果 其他    项目文档 协议说明等内容    项目源码地址     项目权限     编译环境  特殊说明：   上线步骤     上线注意事项          待完善或待完成工作内容     当前存在的问题及风险     至少保证程序编译后上线一次
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-01-08 22:23" pubdate>
+              2022-01-08
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%9D%82%E9%A1%B9/">杂项</a>
+            
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2022/01/07/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/00%20%E4%B8%AA%E4%BA%BA%E5%BC%80%E5%8F%91%E5%9F%BA%E6%9C%AC%E5%8E%9F%E5%88%99/" target="_self">
           个人开发基本原则
         </a>
@@ -543,102 +623,6 @@
             
           </div>
         
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/02/24/04DevOps/11%20makefile%E5%8F%8A%E7%BC%96%E8%AF%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%B1%87%E6%80%BB/" target="_self">
-          makefile及编译相关知识汇总
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/02/24/04DevOps/11%20makefile%E5%8F%8A%E7%BC%96%E8%AF%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%B1%87%E6%80%BB/" target="_self">
-          
-          1. 语法makefile 的详细语法可参考 跟我一起写Makefile 2. gcc 编译参数以-g，-f，-m，-O，-W或–param开头的选项是自动的传递给gcc调用的各个子流程。为了将其他选项传递给这些进程，必须使用-W 选项。 执行 “ gcc -v –help” 可显示所有子流程的命令行选项  3. 注意事项Bstatic 及 Bdynamic 使用注意事项 使用-Wl,-Bstat
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-02-24 10:24" pubdate>
-              2021-02-24
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/devops/">devops</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/makeifle/">makeifle</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/02/22/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/09Linux%E4%B8%ADerrno%E8%AF%B4%E6%98%8E/" target="_self">
-          Linux中errno说明
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/02/22/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01C&amp;C++/09Linux%E4%B8%ADerrno%E8%AF%B4%E6%98%8E/" target="_self">
-          
-          linux下errno的对应数值位于&#x2F;usr&#x2F;include&#x2F;asm-generic&#x2F;errno-base.h 和&#x2F;usr&#x2F;include&#x2F;asm-generic&#x2F;errno.h 中 errno-base.h的内容如下： 12345678910111213141516171819202122232425262728293031323334353637383940#ifndef _ASM_GENER
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-02-22 11:45" pubdate>
-              2021-02-22
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/c/">c</a>
-            
-              <a href="/tags/c/">c++</a>
-            
-          </div>
         
       </div>
     </article>
