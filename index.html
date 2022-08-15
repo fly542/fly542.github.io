@@ -191,6 +191,53 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2022/08/15/04DevOps/19%E6%8C%87%E5%AE%9Acore%E6%96%87%E4%BB%B6%E7%94%9F%E6%88%90%E4%BD%8D%E7%BD%AE/" target="_self">
+          指定core文件生成位置
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2022/08/15/04DevOps/19%E6%8C%87%E5%AE%9Acore%E6%96%87%E4%BB%B6%E7%94%9F%E6%88%90%E4%BD%8D%E7%BD%AE/" target="_self">
+          
+          针对各个程序可能产生core文件的问题，可以采用设置系统统一的core文件目录，所有程序均将core文件生成到指定目录的方式，具体方法如下： 1. 创建存放core文件的目录并添加写入权限以root用户执行如下命令 123mkdir &#x2F;corefilechown -R root:xmail &#x2F;corefile #改变目录属组为xmail组chmod g+w &#x2F;corefile #赋予属组用户写权限
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-08-15 09:42" pubdate>
+              2022-08-15
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/devops/">devops</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/linux/">linux</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2022/08/04/04DevOps/18nginx%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E6%96%B9%E6%B3%95/" target="_self">
           使用nginx作为上传/下载服务器
         </a>
@@ -619,46 +666,6 @@
               <a href="/tags/c/">c++</a>
             
           </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/02/11/04DevOps/15rpm%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%8F%82%E6%95%B0/" target="_self">
-          rpm 常用命令参数
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2022/02/11/04DevOps/15rpm%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%8F%82%E6%95%B0/" target="_self">
-          
-          rpm –qf 的命令全称是 rpm --queryformat ,格式为rpm --queryformat [QUERYFMT] , 其中QUERYFMT是一系列rpm查询标志，可以通过rpm --querytags命令查询有哪些标志可以使用.  rpm -qa 的默认格式为 rpm -qa --qf &#39;%&amp;#123;name&amp;#125;-%&amp;#123;version&amp;#125;-%&amp;
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-02-11 10:09" pubdate>
-              2022-02-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/devops/">devops</a>
-            
-          </div>
-        
         
       </div>
     </article>

@@ -1,0 +1,456 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="针对各个程序可能产生core文件的问题，可以采用设置系统统一的core文件目录，所有程序均将core文件生成到指定目录的方式，具体方法如下： 1. 创建存放core文件的目录并添加写入权限以root用户执行如下命令 123mkdir &#x2F;corefilechown -R root:xmail &#x2F;corefile #改变目录属组为xmail组chmod g+w &#x2F;corefile #赋予属组用户写权限">
+<meta property="og:type" content="article">
+<meta property="og:title" content="指定core文件生成位置">
+<meta property="og:url" content="http://fly542.cn/2022/08/15/04DevOps/19%E6%8C%87%E5%AE%9Acore%E6%96%87%E4%BB%B6%E7%94%9F%E6%88%90%E4%BD%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="针对各个程序可能产生core文件的问题，可以采用设置系统统一的core文件目录，所有程序均将core文件生成到指定目录的方式，具体方法如下： 1. 创建存放core文件的目录并添加写入权限以root用户执行如下命令 123mkdir &#x2F;corefilechown -R root:xmail &#x2F;corefile #改变目录属组为xmail组chmod g+w &#x2F;corefile #赋予属组用户写权限">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-15T01:42:54.000Z">
+<meta property="article:modified_time" content="2022-08-15T01:45:29.110Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>指定core文件生成位置 - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="指定core文件生成位置">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-08-15 09:42" pubdate>
+        2022年8月15日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.2k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      11 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">指定core文件生成位置</h1>
+            
+            <div class="markdown-body">
+              <p>针对各个程序可能产生core文件的问题，可以采用设置系统统一的core文件目录，所有程序均将core文件生成到指定目录的方式，具体方法如下：</p>
+<h2 id="1-创建存放core文件的目录并添加写入权限"><a href="#1-创建存放core文件的目录并添加写入权限" class="headerlink" title="1. 创建存放core文件的目录并添加写入权限"></a>1. 创建存放core文件的目录并添加写入权限</h2><p>以root用户执行如下命令</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><pre><code class="hljs jboss-cli">mkdir <span class="hljs-string">/corefile</span><br>chown -R root<span class="hljs-function">:xmail</span> <span class="hljs-string">/corefile</span> <span class="hljs-comment">#改变目录属组为xmail组</span><br>chmod g+w <span class="hljs-string">/corefile</span> <span class="hljs-comment">#赋予属组用户写权限</span><br></code></pre></td></tr></table></figure>
+<h2 id="2-打开所有用户下的-ulimit-c-unlimited"><a href="#2-打开所有用户下的-ulimit-c-unlimited" class="headerlink" title="2. 打开所有用户下的 ulimit -c unlimited"></a>2. 打开所有用户下的 ulimit -c unlimited</h2><p>以root用户执行如下命令你个，</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">vi <span class="hljs-regexp">/etc/</span>profile<br></code></pre></td></tr></table></figure>
+<p>在文件的最后添加如下代码，确保各个用户均可产生core文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">ulimit</span> -c unlimited<br></code></pre></td></tr></table></figure>
+
+<h2 id="3-将所有core文件生成路径指向固定位置"><a href="#3-将所有core文件生成路径指向固定位置" class="headerlink" title="3. 将所有core文件生成路径指向固定位置"></a>3. 将所有core文件生成路径指向固定位置</h2><p>以root用户执行如下命令，将所有生成的core文件放到/corefile/目录下，以core-命令名-pid-unix时间戳来命名产生的core文件，其中/corefile目录需所有用户均有写入权限</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs awk">echo <span class="hljs-string">&quot;/tmp/core-%e-%p-%t&quot;</span> &gt;<span class="hljs-regexp">/proc/</span>sys<span class="hljs-regexp">/kernel/</span>core_pattern<br>echo <span class="hljs-string">&quot;1&quot;</span> &gt; <span class="hljs-regexp">/proc/</span>sys<span class="hljs-regexp">/kernel/</span>core_uses_pid <br></code></pre></td></tr></table></figure>
+<p>以下是core-后的参数列表:</p>
+<figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs sas"><span class="hljs-name">%p</span> - <span class="hljs-meta">insert</span> pid <span class="hljs-meta">into</span> <span class="hljs-meta">filename</span> 添加pid<br><span class="hljs-name">%u</span> - <span class="hljs-meta">insert</span> current uid <span class="hljs-meta">into</span> <span class="hljs-meta">filename</span> 添加当前uid<br><span class="hljs-name">%g</span> - <span class="hljs-meta">insert</span> current gid <span class="hljs-meta">into</span> <span class="hljs-meta">filename</span> 添加当前gid<br><span class="hljs-name">%s</span> - <span class="hljs-meta">insert</span> signal that caused the coredump <span class="hljs-meta">into</span> the <span class="hljs-meta">filename</span> 添加导致产生core的信号<br><span class="hljs-name">%t</span> - <span class="hljs-meta">insert</span> UNIX time that the coredump occurred <span class="hljs-meta">into</span> <span class="hljs-meta">filename</span> 添加core文件生成时的unix时间<br><span class="hljs-name">%h</span> - <span class="hljs-meta">insert</span> hostname <span class="hljs-meta">where</span> the coredump happened <span class="hljs-meta">into</span> <span class="hljs-meta">filename</span> 添加主机名<br><span class="hljs-name">%e</span> - <span class="hljs-meta">insert</span> coredumping executable name <span class="hljs-meta">into</span> <span class="hljs-meta">filename</span> 添加命令名<br>nagios通过扫描core文件目录是否有新的core文件来决定是否发邮件通知<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-说明："><a href="#4-说明：" class="headerlink" title="4. 说明："></a>4. 说明：</h2><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-number">1</span>、如果系统在修改<span class="hljs-regexp">/etc/</span>profile前已经重启了一些服务，那么ulimit -c unlimited对已经在ulimit -c 为的<span class="hljs-number">0</span>的情况下启动的服务无效，<br><span class="hljs-number">2</span>、如果服务在ulimit -c unlimited情况下启动，则设置<span class="hljs-regexp">/proc/</span>sys<span class="hljs-regexp">/kernel/</span>core_pattern即时生效<br></code></pre></td></tr></table></figure>
+<h2 id="5-备注"><a href="#5-备注" class="headerlink" title="5. 备注"></a>5. 备注</h2><p>以下方式将core文件生成到当前目录下</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs perl">echo <span class="hljs-string">&quot;|/usr/libexec/abrt-hook-ccpp %s %c %p %u %g %t e&quot;</span> &gt;<span class="hljs-regexp">/proc/s</span>ys/kernel/core_pattern  <br></code></pre></td></tr></table></figure>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/devops/">devops</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/linux/">linux</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/08/04/04DevOps/18nginx%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E6%96%B9%E6%B3%95/">
+                        <span class="hidden-mobile">使用nginx作为上传/下载服务器</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
