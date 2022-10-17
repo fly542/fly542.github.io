@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title></title>
+    <link href="/2022/10/17/04DevOps/100%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%8F%8A%E5%A4%84%E7%90%86/"/>
+    <url>/2022/10/17/04DevOps/100%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%8F%8A%E5%A4%84%E7%90%86/</url>
+    
+    <content type="html"><![CDATA[<h3 id="rm-删除时报错’Argument-list-too-long’"><a href="#rm-删除时报错’Argument-list-too-long’" class="headerlink" title="rm 删除时报错’Argument list too long’"></a>rm 删除时报错’Argument list too long’</h3><figure class="highlight powershell"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-comment">#替换rm -rf  命令，改用xargs 即可</span><br><span class="hljs-built_in">ls</span> | xargs <span class="hljs-built_in">rm</span> <span class="hljs-literal">-rf</span><br></code></pre></td></tr></table></figure>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>指定core文件生成位置</title>
     <link href="/2022/08/15/04DevOps/19%E6%8C%87%E5%AE%9Acore%E6%96%87%E4%BB%B6%E7%94%9F%E6%88%90%E4%BD%8D%E7%BD%AE/"/>
     <url>/2022/08/15/04DevOps/19%E6%8C%87%E5%AE%9Acore%E6%96%87%E4%BB%B6%E7%94%9F%E6%88%90%E4%BD%8D%E7%BD%AE/</url>
