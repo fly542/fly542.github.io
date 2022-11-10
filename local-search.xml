@@ -4,6 +4,31 @@
   
   
   <entry>
+    <title>常见问题处理方法</title>
+    <link href="/2022/11/10/04DevOps/100%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%8F%8A%E5%A4%84%E7%90%86/"/>
+    <url>/2022/11/10/04DevOps/100%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%8F%8A%E5%A4%84%E7%90%86/</url>
+    
+    <content type="html"><![CDATA[<h3 id="rm-删除时报错’Argument-list-too-long’"><a href="#rm-删除时报错’Argument-list-too-long’" class="headerlink" title="rm 删除时报错’Argument list too long’"></a>rm 删除时报错’Argument list too long’</h3><figure class="highlight powershell"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-comment">#替换rm -rf  命令，改用xargs 即可</span><br><span class="hljs-built_in">ls</span> | xargs <span class="hljs-built_in">rm</span> <span class="hljs-literal">-rf</span><br></code></pre></td></tr></table></figure>]]></content>
+    
+    
+    <categories>
+      
+      <category>devops</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>linux</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>tcpdump实用方法总结</title>
     <link href="/2022/11/10/04DevOps/21%20tcpdump%E5%AE%9E%E7%94%A8%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/"/>
     <url>/2022/11/10/04DevOps/21%20tcpdump%E5%AE%9E%E7%94%A8%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/</url>
@@ -48,19 +73,6 @@
       <tag>linux</tag>
       
     </tags>
-    
-  </entry>
-  
-  
-  
-  <entry>
-    <title></title>
-    <link href="/2022/10/17/04DevOps/100%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%8F%8A%E5%A4%84%E7%90%86/"/>
-    <url>/2022/10/17/04DevOps/100%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%8F%8A%E5%A4%84%E7%90%86/</url>
-    
-    <content type="html"><![CDATA[<h3 id="rm-删除时报错’Argument-list-too-long’"><a href="#rm-删除时报错’Argument-list-too-long’" class="headerlink" title="rm 删除时报错’Argument list too long’"></a>rm 删除时报错’Argument list too long’</h3><figure class="highlight powershell"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-comment">#替换rm -rf  命令，改用xargs 即可</span><br><span class="hljs-built_in">ls</span> | xargs <span class="hljs-built_in">rm</span> <span class="hljs-literal">-rf</span><br></code></pre></td></tr></table></figure>]]></content>
-    
-    
     
   </entry>
   
