@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://fly542.cn/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/01DNS%E5%8D%8F%E8%AE%AE/srv.png">
 <meta property="article:published_time" content="2020-08-26T13:10:15.000Z">
-<meta property="article:modified_time" content="2022-06-07T02:26:06.384Z">
+<meta property="article:modified_time" content="2022-11-14T06:23:09.451Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="dns">
@@ -1177,8 +1177,8 @@
 <li>OPTION-CODE： 长度为2个字节，固定为 8 (0x00 0x80)由 <a target="_blank" rel="noopener" href="https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-11">IANA</a> 统一规定对应的编码序号。</li>
 <li>OPTION-LENGTH：长度为2个字节，代表了后续的FAMILY、 SOURCE PREFIX-LENGTH 、SCOPE PREFIX-LENGTH  、ADDRESS等内容的总长度。</li>
 <li>FAMILY：2个字节，标识ADDRESS的地址族，由<a target="_blank" rel="noopener" href="https://www.iana.org/assignments/address-family-numbers/address-family-numbers.xhtml">IANA</a>统一确定地址族编码序号，ipv4为1，ipv6为2</li>
-<li>SOURCE PREFIX-LENGTH：1个字节，查询中位置偏移(就是CIDR中的mask),具体请了解CIDR</li>
-<li>SCOPE PREFIX-LENGTH ：响应返回的位置偏移,在查询中应为0</li>
+<li>SOURCE PREFIX-LENGTH：1个字节，标识要查找的<code>ADDRESS</code>数据的最左边的有效位数即IP地址<code>ADDRESS </code>宏的网络号的位数,ipv4最大32，ipv6最大128。在应答结果中返回请求时指定的网络号的位数</li>
+<li>SCOPE PREFIX-LENGTH ：在查询请求中固定为0；在应答数据中标识应答数据<code>ADDRESS</code>的最左边的有效位数即IP地址<code>ADDRESS </code>的网络号的位数</li>
 <li>ADDRESS：就是设置的SubNet的IP地址,依据上面的FAMILY</li>
 </ul>
 <h3 id="DNSSEC"><a href="#DNSSEC" class="headerlink" title="DNSSEC"></a><span id=dnssec>DNSSEC</span></h3><p>DNSSEC( DNS Security Extensions) 即DNS安全扩展</p>
@@ -1188,7 +1188,7 @@
 <figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs llvm">@ IN SOA lv<span class="hljs-number">3</span>ns<span class="hljs-number">1</span>.ffdns.net. webmaster.ffdns.net. (<br>    <span class="hljs-number">2009092868</span> <span class="hljs-comment">; Serial</span><br>    <span class="hljs-number">604800</span> <span class="hljs-comment">; Refresh</span><br>    <span class="hljs-number">3600</span> <span class="hljs-comment">; Retry</span><br>    <span class="hljs-number">2419200</span> <span class="hljs-comment">; Expire</span><br>    <span class="hljs-number">3600</span> ) <span class="hljs-comment">; Minimum</span><br></code></pre></td></tr></table></figure>
 
 <blockquote>
-<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#119;&#101;&#98;&#109;&#x61;&#x73;&#x74;&#101;&#114;&#x40;&#x66;&#102;&#100;&#x6e;&#x73;&#x2e;&#x6e;&#x65;&#x74;">&#119;&#101;&#98;&#109;&#x61;&#x73;&#x74;&#101;&#114;&#x40;&#x66;&#102;&#100;&#x6e;&#x73;&#x2e;&#x6e;&#x65;&#x74;</a>)`，即该 zone 的管理者信箱。</p>
+<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#x77;&#101;&#x62;&#109;&#x61;&#115;&#x74;&#101;&#x72;&#x40;&#x66;&#102;&#x64;&#x6e;&#115;&#x2e;&#x6e;&#x65;&#x74;">&#x77;&#101;&#x62;&#109;&#x61;&#115;&#x74;&#101;&#x72;&#x40;&#x66;&#102;&#x64;&#x6e;&#115;&#x2e;&#x6e;&#x65;&#x74;</a>)`，即该 zone 的管理者信箱。</p>
 <p><strong>Serial：</strong>代表 zone file 的版本，每当 zone file 内容有变动，name server 管理者就应该增加这个号码，因为 slave 会将这个号码与其 copy 的那份比对以便决定是否要再 copy 一次（即进行 zone transfer ）。</p>
 <p><strong>Refresh：</strong> slave server 每隔这段时间(秒)，就去检查 master server 上的 serial number 。</p>
 <p><strong>Retry：</strong>当 slave server 无法和 master 进行 serial check 时，要每隔这段时间（秒） retry 一次。</p>
