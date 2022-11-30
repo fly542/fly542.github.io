@@ -16,16 +16,16 @@
   <meta name="author" content="Fly542">
   <meta name="keywords" content="">
   
-    <meta name="description" content="DNS报文格式整个报文的格式如下，包括了五部分组成。 1234567891011+---------------------+|        Header       | 报文头+---------------------+|       Question      | 查询请求+---------------------+|        Answer       | 应答+--------">
+    <meta name="description" content="惯例首选name语法DNS规范试图使构建的域名规则尽可能通用。这一想法的精髓是任何现有对象的名称经过尽量小的改变都能表示为域名。但是在为对象分配域名时，谨慎的用户将选择即满足域名系统规则，又满足对象任何现有规则的名称，无论这些规则是公开出版的还是由现有程序暗示的。如：当命名邮件域时，用于应当即满足本备忘录的规则，又满足RFC-822宏的规则。创建新的主机名时，应当遵守旧的HOSTS.TXT规则。这">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DNS协议介绍">
 <meta property="og:url" content="http://fly542.cn/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/01DNS%E5%8D%8F%E8%AE%AE/index.html">
 <meta property="og:site_name" content="Fly542 技术沉淀">
-<meta property="og:description" content="DNS报文格式整个报文的格式如下，包括了五部分组成。 1234567891011+---------------------+|        Header       | 报文头+---------------------+|       Question      | 查询请求+---------------------+|        Answer       | 应答+--------">
+<meta property="og:description" content="惯例首选name语法DNS规范试图使构建的域名规则尽可能通用。这一想法的精髓是任何现有对象的名称经过尽量小的改变都能表示为域名。但是在为对象分配域名时，谨慎的用户将选择即满足域名系统规则，又满足对象任何现有规则的名称，无论这些规则是公开出版的还是由现有程序暗示的。如：当命名邮件域时，用于应当即满足本备忘录的规则，又满足RFC-822宏的规则。创建新的主机名时，应当遵守旧的HOSTS.TXT规则。这">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://fly542.cn/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/01DNS%E5%8D%8F%E8%AE%AE/srv.png">
 <meta property="article:published_time" content="2020-08-26T13:10:15.000Z">
-<meta property="article:modified_time" content="2022-11-14T06:23:09.451Z">
+<meta property="article:modified_time" content="2022-11-22T10:12:22.927Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="dns">
@@ -200,7 +200,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      19k 字
+      20k 字
     </span>
   
 
@@ -209,7 +209,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      159 分钟
+      165 分钟
     </span>
   
 
@@ -241,8 +241,10 @@
             <h1 style="display: none">DNS协议介绍</h1>
             
             <div class="markdown-body">
-              <h1 id="DNS报文格式"><a href="#DNS报文格式" class="headerlink" title=" DNS报文格式"></a><span id=dformat> DNS报文格式</span></h1><p>整个报文的格式如下，包括了五部分组成。</p>
-<figure class="highlight asciidoc"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">+---------------------+</span><br><span class="hljs-section">|        Header       | 报文头</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|       Question      | 查询请求</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|        Answer       | 应答</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|      Authority      | 授权应答</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|      Additional     | 附加信息</span><br><span class="hljs-section">+---------------------+</span><br></code></pre></td></tr></table></figure>
+              <h1 id="惯例"><a href="#惯例" class="headerlink" title="惯例"></a>惯例</h1><h2 id="首选name语法"><a href="#首选name语法" class="headerlink" title="首选name语法"></a>首选name语法</h2><p>DNS规范试图使构建的域名规则尽可能通用。这一想法的精髓是任何现有对象的名称经过尽量小的改变都能表示为域名。<br>但是在为对象分配域名时，谨慎的用户将选择即满足域名系统规则，又满足对象任何现有规则的名称，无论这些规则是公开出版的还是由现有程序暗示的。<br>如：当命名邮件域时，用于应当即满足本备忘录的规则，又满足RFC-822宏的规则。创建新的主机名时，应当遵守旧的HOSTS.TXT规则。这可避免当旧软件被转换为使用域名时出现问题<br>以下语法(BNF范式)将减少许多使用域名的应用程序（例如邮件，TELNET）的问题。</p>
+<figure class="highlight bnf"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></div></td><td class="code"><pre><code class="hljs bnf"><span class="hljs-attribute">&lt;domain&gt;</span> ::= &lt;subdomain&gt; | <span class="hljs-string">&quot; &quot;</span><br><span class="hljs-attribute">&lt;subdomain&gt;</span> ::= &lt;label&gt; | &lt;subdomain&gt;<span class="hljs-string">&quot;.&quot;</span> &lt;label&gt;<br><span class="hljs-attribute">&lt;label&gt;</span> ::= &lt;letter&gt; [[&lt;ldh-str&gt;] &lt;let-dig&gt;]<br><span class="hljs-attribute">&lt;ldh-str&gt;</span> ::= &lt;let-dig-hyp&gt; | &lt;let-dig-hyp&gt; &lt;ldh-str&gt;<br><span class="hljs-attribute">&lt;let-dig-hyp&gt;</span> ::= &lt;let-dig&gt; “-”<br><span class="hljs-attribute">&lt;let-dig&gt;</span> ::= &lt;letter&gt; | &lt;digit&gt;<br><span class="hljs-attribute">&lt;letter&gt;</span> ::= 52个字母字符A到Z中的任何一个（大写）和a到z中的小写<br><span class="hljs-attribute">&lt;digit&gt;</span> ::= 十个数字0到9中的任何一个<br></code></pre></td></tr></table></figure>
+<h1 id="DNS报文格式"><a href="#DNS报文格式" class="headerlink" title=" DNS报文格式"></a><span id=dformat> DNS报文格式</span></h1><p>整个报文的格式如下，包括了五部分组成。</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">+---------------------+</span><br><span class="hljs-section">|        Header       | 报文头</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|       Question      | 查询请求</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|        Answer       | 应答</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|      Authority      | 授权应答</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|      Additional     | 附加信息</span><br><span class="hljs-section">+---------------------+</span><br></code></pre></td></tr></table></figure>
 
 <p>详细介绍如下。</p>
 <ul>
@@ -1188,7 +1190,7 @@
 <figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs llvm">@ IN SOA lv<span class="hljs-number">3</span>ns<span class="hljs-number">1</span>.ffdns.net. webmaster.ffdns.net. (<br>    <span class="hljs-number">2009092868</span> <span class="hljs-comment">; Serial</span><br>    <span class="hljs-number">604800</span> <span class="hljs-comment">; Refresh</span><br>    <span class="hljs-number">3600</span> <span class="hljs-comment">; Retry</span><br>    <span class="hljs-number">2419200</span> <span class="hljs-comment">; Expire</span><br>    <span class="hljs-number">3600</span> ) <span class="hljs-comment">; Minimum</span><br></code></pre></td></tr></table></figure>
 
 <blockquote>
-<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#x77;&#101;&#x62;&#109;&#x61;&#115;&#x74;&#101;&#x72;&#x40;&#x66;&#102;&#x64;&#x6e;&#115;&#x2e;&#x6e;&#x65;&#x74;">&#x77;&#101;&#x62;&#109;&#x61;&#115;&#x74;&#101;&#x72;&#x40;&#x66;&#102;&#x64;&#x6e;&#115;&#x2e;&#x6e;&#x65;&#x74;</a>)`，即该 zone 的管理者信箱。</p>
+<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#119;&#x65;&#98;&#109;&#97;&#x73;&#x74;&#x65;&#x72;&#x40;&#102;&#102;&#x64;&#x6e;&#x73;&#x2e;&#x6e;&#101;&#x74;">&#119;&#x65;&#98;&#109;&#97;&#x73;&#x74;&#x65;&#x72;&#x40;&#102;&#102;&#x64;&#x6e;&#x73;&#x2e;&#x6e;&#101;&#x74;</a>)`，即该 zone 的管理者信箱。</p>
 <p><strong>Serial：</strong>代表 zone file 的版本，每当 zone file 内容有变动，name server 管理者就应该增加这个号码，因为 slave 会将这个号码与其 copy 的那份比对以便决定是否要再 copy 一次（即进行 zone transfer ）。</p>
 <p><strong>Refresh：</strong> slave server 每隔这段时间(秒)，就去检查 master server 上的 serial number 。</p>
 <p><strong>Retry：</strong>当 slave server 无法和 master 进行 serial check 时，要每隔这段时间（秒） retry 一次。</p>
@@ -1199,7 +1201,7 @@
 <p><a target="_blank" rel="noopener" href="https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-11">https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-11</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.iana.org/assignments/address-family-numbers/address-family-numbers.xhtml">https://www.iana.org/assignments/address-family-numbers/address-family-numbers.xhtml</a></p>
 <p><a target="_blank" rel="noopener" href="https://asutorufa.github.io/posts/668530ca/">https://asutorufa.github.io/posts/668530ca/</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.lijiaocn.com/%E6%8A%80%E5%B7%A7/2017/03/06/dns-srv.html">https://www.lijiaocn.com/%E6%8A%80%E5%B7%A7/2017/03/06/dns-srv.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.lijiaocn.com/%E6%8A%80%E5%B7%A7/2017/03/06/dns-srv.html">https://www.lijiaocn.com/%E6%8A%80%E5%B7%A7/2017/03/06/dns-srv.html</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/27c3f95e7509">https://www.jianshu.com/p/27c3f95e7509</a></p>
 
             </div>
             <hr>
