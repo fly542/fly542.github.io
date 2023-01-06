@@ -1,0 +1,530 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="本文转载自《https:&#x2F;&#x2F;blog.csdn.net&#x2F;WUDAIJUN&#x2F;article&#x2F;details&#x2F;9273339》 本文主要讲述C++ new关键字和operator new, placement new之间的种种关联，new的底层实现，以及operator new的重载和一些在内存池，STL中的应用。 一. new operator 和 operator newnew operator：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(转载)C++ 内存分配(new，operator new)详解">
+<meta property="og:url" content="http://fly542.cn/2020/08/16/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/00c++%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="本文转载自《https:&#x2F;&#x2F;blog.csdn.net&#x2F;WUDAIJUN&#x2F;article&#x2F;details&#x2F;9273339》 本文主要讲述C++ new关键字和operator new, placement new之间的种种关联，new的底层实现，以及operator new的重载和一些在内存池，STL中的应用。 一. new operator 和 operator newnew operator：">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-16T12:03:15.000Z">
+<meta property="article:modified_time" content="2022-12-30T03:33:01.327Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="c++">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>(转载)C++ 内存分配(new，operator new)详解 - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="(转载)C++ 内存分配(new，operator new)详解">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-08-16 20:03" pubdate>
+        2020年8月16日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      14k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      120 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">(转载)C++ 内存分配(new，operator new)详解</h1>
+            
+            <div class="markdown-body">
+              <p>本文转载自《<a target="_blank" rel="noopener" href="https://blog.csdn.net/WUDAIJUN/article/details/9273339%E3%80%8B">https://blog.csdn.net/WUDAIJUN/article/details/9273339》</a></p>
+<p>本文主要讲述C++ new关键字和operator new, placement new之间的种种关联，new的底层实现，以及operator new的重载和一些在内存池，STL中的应用。</p>
+<h1 id="一-new-operator-和-operator-new"><a href="#一-new-operator-和-operator-new" class="headerlink" title="一. new operator 和 operator new"></a>一. new operator 和 operator new</h1><p>new operator：指我们在C++里通常用到的关键字，比如A* a = new A;<br>operator new：它是一个操作符，并且可被重载(类似加减乘除的操作符重载)<br>关于这两者的关系，我找到一段比较经典的描述（来自于<a target="_blank" rel="noopener" href="http://www.cplusplus.com/">www.cplusplus.com</a> 见参考文献：</p>
+<p><code> operator new can be called explicitly as a regular function, but in C++, new is an operator with a very specific behavior: An expression with the new operator, first calls function operator new (i.e., this function) with the size of its type specifier as first argument, and if this is successful, it then automatically initializes or constructs the object (if needed). Finally, the expression evaluates as a pointer to the appropriate type.</code></p>
+<p>比如我们写如下代码：</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><pre><code class="hljs dns"><span class="hljs-keyword">A</span>* a = new <span class="hljs-keyword">A</span>；<br></code></pre></td></tr></table></figure>
+<p>我们知道这里分为三步：1.分配内存，2.调用A()构造对象，3. 返回分配指针。事实上，分配内存这一操作就是由operator new(size_t)来完成的，如果类A重载了operator new，那么将调用A::operator new(size_t )，否则调用全局::operator new(size_t )，后者由C++默认提供。因此前面的步骤也就是：</p>
+<p>调用operator new (sizeof(A))<br>调用A:A()<br>返回指针<br>这里再一次提出来是因为后面关于这两步会有一些变形，在关于placement new那里会讲到。先举个简单例子</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">A</span></span><br><span class="hljs-class">&#123;</span><br><span class="hljs-keyword">public</span>:<br>     <span class="hljs-built_in">A</span>()&#123;<br>          std::cout&lt;&lt;<span class="hljs-string">&quot;call A constructor&quot;</span>&lt;&lt;std::endl;<br>     &#125;<br> <br>     ~<span class="hljs-built_in">A</span>()&#123;<br>          std::cout&lt;&lt;<span class="hljs-string">&quot;call A destructor&quot;</span>&lt;&lt;std::endl;<br>     &#125;<br>&#125;<br><br><span class="hljs-keyword">int</span> _tmain(<span class="hljs-keyword">int</span> argc, _TCHAR* argv[])<br>&#123;<br> <br>     A* a = <span class="hljs-keyword">new</span> A;<br>     <span class="hljs-keyword">delete</span> a;<br> <br>     <span class="hljs-built_in">system</span>(<span class="hljs-string">&quot;pause&quot;</span>);<br>     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>下面我们跟踪一下A反汇编代码，由于Debug版本反汇编跳转太多，因此此处通过Release版本在A* a = new A;处设断点反汇编：<br>在Release版本中，构造函数和析构函数都是直接展开的。</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs x86asm">A* a = new A<span class="hljs-comment">;</span><br><span class="hljs-number">01301022</span>  <span class="hljs-keyword">push</span>        <span class="hljs-number">1</span>    <span class="hljs-comment">;不含数据成员的类占用一字节空间，此处压入sizeof(A)</span><br><span class="hljs-number">01301024</span>  <span class="hljs-keyword">call</span>        operator new (<span class="hljs-number">13013C2h</span>) <span class="hljs-comment">;调用operator new(size_t size)</span><br><span class="hljs-number">01301029</span>  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">esi</span>,<span class="hljs-built_in">eax</span> <span class="hljs-comment">;返回值保存到esi</span><br>0130102B  <span class="hljs-keyword">add</span>         <span class="hljs-built_in">esp</span>,<span class="hljs-number">4</span> <span class="hljs-comment">;平衡栈</span><br>0130102E  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [<span class="hljs-built_in">esp</span>+<span class="hljs-number">8</span>],<span class="hljs-built_in">esi</span> <span class="hljs-comment">;</span><br><span class="hljs-number">01301032</span>  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [<span class="hljs-built_in">esp</span>+<span class="hljs-number">14h</span>],<span class="hljs-number">0</span> <br>0130103A  <span class="hljs-keyword">test</span>        <span class="hljs-built_in">esi</span>,<span class="hljs-built_in">esi</span> <span class="hljs-comment">;在operator new之后，检查其返回值，如果为空(分配失败)，则不调用A()构造函数</span><br>0130103C  <span class="hljs-keyword">je</span>          wmain+<span class="hljs-number">62h</span> (<span class="hljs-number">1301062h</span>) <span class="hljs-comment">;为空 跳过构造函数部分</span><br>0130103E  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">eax</span>,<span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [__imp_std::endl (<span class="hljs-number">1302038h</span>)] <span class="hljs-comment">;构造函数内部，输出字符串</span><br><span class="hljs-number">01301043</span>  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">ecx</span>,<span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [__imp_std::cout (<span class="hljs-number">1302050h</span>)] <br><span class="hljs-number">01301049</span>  <span class="hljs-keyword">push</span>        <span class="hljs-built_in">eax</span>  <br>0130104A  <span class="hljs-keyword">push</span>        offset string <span class="hljs-string">&quot;call A constructor&quot;</span> (<span class="hljs-number">1302134h</span>) <br>0130104F  <span class="hljs-keyword">push</span>        <span class="hljs-built_in">ecx</span>  <br><span class="hljs-number">01301050</span>  <span class="hljs-keyword">call</span>        <span class="hljs-keyword">std</span>::operator&lt;&lt;&lt;<span class="hljs-keyword">std</span>::char_traits&lt;char&gt; &gt; (<span class="hljs-number">13011F0h</span>) <br><span class="hljs-number">01301055</span>  <span class="hljs-keyword">add</span>         <span class="hljs-built_in">esp</span>,<span class="hljs-number">8</span> <br><span class="hljs-number">01301058</span>  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">ecx</span>,<span class="hljs-built_in">eax</span> <br>0130105A  <span class="hljs-keyword">call</span>        <span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [__imp_std::basic_ostream&lt;char,<span class="hljs-keyword">std</span>::char_traits&lt;char&gt; &gt;::operator&lt;&lt; (<span class="hljs-number">1302040h</span>)] <br><span class="hljs-number">01301060</span>  <span class="hljs-keyword">jmp</span>         wmain+<span class="hljs-number">64h</span> (<span class="hljs-number">1301064h</span>) <span class="hljs-comment">;构造完成，跳过下一句</span><br><span class="hljs-number">01301062</span>  <span class="hljs-keyword">xor</span>         <span class="hljs-built_in">esi</span>,<span class="hljs-built_in">esi</span> <span class="hljs-comment">;将esi置空，这里的esi即为new A的返回值</span><br><span class="hljs-number">01301064</span>  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [<span class="hljs-built_in">esp</span>+<span class="hljs-number">14h</span>],<span class="hljs-number">0FFFFFFFFh</span> <br>    delete a<span class="hljs-comment">;</span><br>0130106C  <span class="hljs-keyword">test</span>        <span class="hljs-built_in">esi</span>,<span class="hljs-built_in">esi</span> <span class="hljs-comment">;检查a是否为空</span><br>0130106E  <span class="hljs-keyword">je</span>          wmain+<span class="hljs-number">9Bh</span> (<span class="hljs-number">130109Bh</span>) <span class="hljs-comment">;如果为空，跳过析构函数和operator delete</span><br><span class="hljs-number">01301070</span>  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">edx</span>,<span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [__imp_std::endl (<span class="hljs-number">1302038h</span>)] <span class="hljs-comment">;析构函数 输出字符串</span><br><span class="hljs-number">01301076</span>  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">eax</span>,<span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [__imp_std::cout (<span class="hljs-number">1302050h</span>)] <br>0130107B  <span class="hljs-keyword">push</span>        <span class="hljs-built_in">edx</span>  <br>0130107C  <span class="hljs-keyword">push</span>        offset string <span class="hljs-string">&quot;call A destructor&quot;</span> (<span class="hljs-number">1302148h</span>) <br><span class="hljs-number">01301081</span>  <span class="hljs-keyword">push</span>        <span class="hljs-built_in">eax</span>  <br><span class="hljs-number">01301082</span>  <span class="hljs-keyword">call</span>        <span class="hljs-keyword">std</span>::operator&lt;&lt;&lt;<span class="hljs-keyword">std</span>::char_traits&lt;char&gt; &gt; (<span class="hljs-number">13011F0h</span>) <br><span class="hljs-number">01301087</span>  <span class="hljs-keyword">add</span>         <span class="hljs-built_in">esp</span>,<span class="hljs-number">8</span> <br>0130108A  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">ecx</span>,<span class="hljs-built_in">eax</span> <br>0130108C  <span class="hljs-keyword">call</span>        <span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [__imp_std::basic_ostream&lt;char,<span class="hljs-keyword">std</span>::char_traits&lt;char&gt; &gt;::operator&lt;&lt; (<span class="hljs-number">1302040h</span>)] <br><span class="hljs-number">01301092</span>  <span class="hljs-keyword">push</span>        <span class="hljs-built_in">esi</span>  <span class="hljs-comment">;压入a </span><br><span class="hljs-number">01301093</span>  <span class="hljs-keyword">call</span>        operator delete (<span class="hljs-number">13013BCh</span>) <span class="hljs-comment">;调用operator delete </span><br><span class="hljs-number">01301098</span>  <span class="hljs-keyword">add</span>         <span class="hljs-built_in">esp</span>,<span class="hljs-number">4</span> <br></code></pre></td></tr></table></figure>
+<p>通过反汇编可以确认A* = new A的三个步骤，delete a类似<br>，包含了~A()和operator delete(a)两个步骤。</p>
+<h1 id="二-operator-new的三种形式"><a href="#二-operator-new的三种形式" class="headerlink" title="二. operator new的三种形式"></a>二. operator new的三种形式</h1><p>operator new有三种形式：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-built_in">throwing</span> (<span class="hljs-number">1</span>)    <br><span class="hljs-function"><span class="hljs-keyword">void</span>* <span class="hljs-keyword">operator</span> <span class="hljs-title">new</span> <span class="hljs-params">(std::<span class="hljs-keyword">size_t</span> size)</span> <span class="hljs-title">throw</span> <span class="hljs-params">(std::bad_alloc)</span></span>;<br><span class="hljs-built_in">nothrow</span> (<span class="hljs-number">2</span>) <br><span class="hljs-function"><span class="hljs-keyword">void</span>* <span class="hljs-keyword">operator</span> <span class="hljs-title">new</span> <span class="hljs-params">(std::<span class="hljs-keyword">size_t</span> size, <span class="hljs-keyword">const</span> std::<span class="hljs-keyword">nothrow_t</span>&amp; nothrow_value)</span> <span class="hljs-title">throw</span><span class="hljs-params">()</span></span>;<br><span class="hljs-built_in">placement</span> (<span class="hljs-number">3</span>)   <br><span class="hljs-function"><span class="hljs-keyword">void</span>* <span class="hljs-keyword">operator</span> <span class="hljs-title">new</span> <span class="hljs-params">(std::<span class="hljs-keyword">size_t</span> size, <span class="hljs-keyword">void</span>* ptr)</span> <span class="hljs-title">throw</span><span class="hljs-params">()</span></span>;<br></code></pre></td></tr></table></figure>
+<p>(1)(2)的区别仅是是否抛出异常，当分配失败时，前者会抛出bad_alloc异常，后者返回null，不会抛出异常。它们都分配一个固定大小的连续内存。</p>
+<p>A* a = new A; //调用throwing(1)<br>A* a = new(std::nothrow) A; //调用nothrow(2)<br>(3)是<code>placement new</code>，它也是对<code>operator new</code>的一个重载，定义于#include <new>中，它多接收一个ptr参数，但它只是简单地返回ptr。其在new.h下的源代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">ifndef</span> __PLACEMENT_NEW_INLINE</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> __PLACEMENT_NEW_INLINE</span><br><span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-keyword">void</span> *__cdecl <span class="hljs-keyword">operator</span> <span class="hljs-title">new</span><span class="hljs-params">(<span class="hljs-keyword">size_t</span>, <span class="hljs-keyword">void</span> *_P)</span></span><br><span class="hljs-function">        </span>&#123;<span class="hljs-keyword">return</span> (_P); &#125;<br><span class="hljs-meta">#<span class="hljs-meta-keyword">if</span>     _MSC_VER &gt;= 1200</span><br><span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-keyword">void</span> __cdecl <span class="hljs-keyword">operator</span> <span class="hljs-title">delete</span><span class="hljs-params">(<span class="hljs-keyword">void</span> *, <span class="hljs-keyword">void</span> *)</span></span><br><span class="hljs-function">    </span>&#123;<span class="hljs-keyword">return</span>; &#125;<br><span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span><br></code></pre></td></tr></table></figure>
+<p>那么它究竟有什么用呢？事实上，它可以实现在ptr所指地址上构建一个对象(通过调用其构造函数)，这在内存池技术上有广泛应用。<br>它的调用形式为：</p>
+<p>new(p) A(); //也可用A(5)等有参构造函数<br>placement new本身只是返回指针p，new(p) A()调用placement new之后，还会在p上调用A:A()，这里的p可以是动态分配的内存，也可以是栈中缓冲，如char buf[100]; new(buf) A(); </p>
+<p>我们仍然可以通过一个例子来验证：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">A</span></span><br><span class="hljs-class">&#123;</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">A</span>() &#123;<br>        std::cout&lt;&lt;<span class="hljs-string">&quot;call A constructor&quot;</span>&lt;&lt;std::endl;<br>    &#125;<br> <br>    ~<span class="hljs-built_in">A</span>() &#123;<br>        std::cout&lt;&lt;<span class="hljs-string">&quot;call A destructor&quot;</span>&lt;&lt;std::endl;<br>    &#125;<br>&#125;;<br><br><span class="hljs-keyword">int</span> _tmain(<span class="hljs-keyword">int</span> argc, _TCHAR* argv[]) &#123;<br> <br>    A* p = (A*)::<span class="hljs-keyword">operator</span> <span class="hljs-built_in"><span class="hljs-keyword">new</span></span>(<span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(A)); <span class="hljs-comment">//分配</span><br>    <span class="hljs-keyword">new</span>(p) <span class="hljs-built_in">A</span>(); <span class="hljs-comment">//构造</span><br>    p-&gt;~<span class="hljs-built_in">A</span>();   <span class="hljs-comment">//析构</span><br>    ::<span class="hljs-function"><span class="hljs-keyword">operator</span> <span class="hljs-title">delete</span><span class="hljs-params">(p)</span></span>; <span class="hljs-comment">//释放</span><br>    <span class="hljs-built_in">system</span>(<span class="hljs-string">&quot;pause&quot;</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>上面的代码将对象的分配，构造，析构和释放分离开来，这也是new和delete关键字两句就能完成的操作。<br>先直接运行可以看到程序输出：</p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs delphi">call A <span class="hljs-function"><span class="hljs-keyword">constructor</span></span><br><span class="hljs-function"><span class="hljs-title">call</span> <span class="hljs-title">A</span> <span class="hljs-title">destructor</span></span><br></code></pre></td></tr></table></figure>
+<p>再分别注释掉new(a) A();和a-&gt;~A();两句，可以看到对应的构造和析构函数将不会被调用。</p>
+<p>然后查看反汇编：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs x86asm">//平台: Visual Studio <span class="hljs-number">2008</span> Debug版<br>    A* a = (A*)::operator new(sizeof(A))<span class="hljs-comment">; //分配</span><br>00F9151D  <span class="hljs-keyword">push</span>        <span class="hljs-number">1</span>    <br>00F9151F  <span class="hljs-keyword">call</span>        operator new (<span class="hljs-number">0F91208h</span>) <span class="hljs-comment">;调用::operator new(size_t size)也就是throwing(1)版本</span><br>00F91524  <span class="hljs-keyword">add</span>         <span class="hljs-built_in">esp</span>,<span class="hljs-number">4</span> <br>00F91527  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [<span class="hljs-built_in">ebp</span>-<span class="hljs-number">14h</span>],<span class="hljs-built_in">eax</span> <span class="hljs-comment">;返回地址放入[ebp-14h] 即为p</span><br> <br>    new(a) A()<span class="hljs-comment">; //构造</span><br>00F9152A  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">eax</span>,<span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [<span class="hljs-built_in">ebp</span>-<span class="hljs-number">14h</span>] <br>00F9152D  <span class="hljs-keyword">push</span>        <span class="hljs-built_in">eax</span>  <br>00F9152E  <span class="hljs-keyword">push</span>        <span class="hljs-number">1</span>    <span class="hljs-comment">;压入p</span><br>00F91530  <span class="hljs-keyword">call</span>        operator new (<span class="hljs-number">0F91280h</span>)<span class="hljs-comment">;调用operator new(size_t, void* p)即placement(3)版本 只是简单返回p</span><br>00F91535  <span class="hljs-keyword">add</span>         <span class="hljs-built_in">esp</span>,<span class="hljs-number">8</span> <br>00F91538  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [<span class="hljs-built_in">ebp</span>-<span class="hljs-number">0E0h</span>],<span class="hljs-built_in">eax</span> <span class="hljs-comment">;将p放入[ebp-0E0h]</span><br>00F9153E  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [<span class="hljs-built_in">ebp</span>-<span class="hljs-number">4</span>],<span class="hljs-number">0</span> <br>00F91545  <span class="hljs-keyword">cmp</span>         <span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [<span class="hljs-built_in">ebp</span>-<span class="hljs-number">0E0h</span>],<span class="hljs-number">0</span>   <span class="hljs-comment">;判断p是否为空</span><br>00F9154C  <span class="hljs-keyword">je</span>          wmain+<span class="hljs-number">81h</span> (<span class="hljs-number">0F91561h</span>)     <span class="hljs-comment">;如果为空 跳过构造函数</span><br>00F9154E  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">ecx</span>,<span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [<span class="hljs-built_in">ebp</span>-<span class="hljs-number">0E0h</span>] <span class="hljs-comment">;取出p到ecx</span><br>00F91554  <span class="hljs-keyword">call</span>        A::A (<span class="hljs-number">0F91285h</span>)          <span class="hljs-comment">;调用构造函数 根据_thiscall调用约定 this指针通过ecx寄存器传递</span><br>00F91559  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [<span class="hljs-built_in">ebp</span>-<span class="hljs-number">0F4h</span>],<span class="hljs-built_in">eax</span> <span class="hljs-comment">;将返回值(this指针)放入[ebp-0F4h]中</span><br>00F9155F  <span class="hljs-keyword">jmp</span>         wmain+<span class="hljs-number">8Bh</span> (<span class="hljs-number">0F9156Bh</span>)     <span class="hljs-comment">;跳过下一句</span><br>00F91561  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [<span class="hljs-built_in">ebp</span>-<span class="hljs-number">0F4h</span>],<span class="hljs-number">0</span>   <span class="hljs-comment">;将[ebp-0F4h]置空 当前面判断p为空时执行此语句</span><br>00F9156B  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">ecx</span>,<span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [<span class="hljs-built_in">ebp</span>-<span class="hljs-number">0F4h</span>] <span class="hljs-comment">;[ebp-0F4h]为最终构造完成后的this指针(或者为空) 放入ecx</span><br>00F91571  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [<span class="hljs-built_in">ebp</span>-<span class="hljs-number">0ECh</span>],<span class="hljs-built_in">ecx</span> <span class="hljs-comment">;又将this放入[ebp-0ECh] 这些都是调试所用</span><br>00F91577  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [<span class="hljs-built_in">ebp</span>-<span class="hljs-number">4</span>],<span class="hljs-number">0FFFFFFFFh</span> <br> <br>    a-&gt;~A()<span class="hljs-comment">;   //析构</span><br>00F9157E  <span class="hljs-keyword">push</span>        <span class="hljs-number">0</span>    <br>00F91580  <span class="hljs-keyword">mov</span>         <span class="hljs-built_in">ecx</span>,<span class="hljs-built_in">dword</span> <span class="hljs-built_in">ptr</span> [<span class="hljs-built_in">ebp</span>-<span class="hljs-number">14h</span>] <span class="hljs-comment">;从[ebp-14h]中取出p</span><br>00F91583  <span class="hljs-keyword">call</span>        A::<span class="hljs-string">`scalar deleting destructor&#x27; (0F91041h) ;调用析构函数(跟踪进去比较复杂 如果在Release下，构造析构函数都是直接展开的)</span><br><span class="hljs-string"> </span><br><span class="hljs-string">    ::operator delete(a); //释放</span><br><span class="hljs-string">00F91588  mov         eax,dword ptr [ebp-14h]   ;将p放入eax</span><br><span class="hljs-string">00F9158B  push        eax           ;压入p</span><br><span class="hljs-string">00F9158C  call        operator delete (0F910B9h);调用operator delete(void* )</span><br><span class="hljs-string">00F91591  add         esp,4</span><br></code></pre></td></tr></table></figure>
+<p>从反汇编中可以看出，其实operator new调用了两次，只不过每一次调用不同的重载函数，并且placement new的主要作用只是将p放入ecx，并且调用其构造函数。<br>事实上，在指定地址上构造对象还有另一种方法，即手动调用构造函数：p-&gt;A::A(); 这里要加上A::作用域，用p-&gt;A::A();替换掉new(p) A();仍然能达到同样的效果，反汇编：</p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs delphi">    A* a = (A*)::<span class="hljs-keyword">operator</span> new(sizeof(A)); <span class="hljs-comment">//分配</span><br><span class="hljs-number">010614</span>FE  push        <span class="hljs-number">1</span>    <br><span class="hljs-number">01061500</span>  call        <span class="hljs-keyword">operator</span> new (<span class="hljs-number">1061208</span>h) <br><span class="hljs-number">01061505</span>  add         esp,<span class="hljs-number">4</span> <br><span class="hljs-number">01061508</span>  mov         dword ptr [a],eax <br>    <span class="hljs-comment">//new(a) A();   //构造</span><br>    a-&gt;A::A();<br><span class="hljs-number">0106150</span>B  mov         ecx,dword ptr [a] <br><span class="hljs-number">0106150</span>E  call        <span class="hljs-keyword">operator</span> new (<span class="hljs-number">1061285</span>h) <br> <br>    a-&gt;~A();   <span class="hljs-comment">//析构</span><br><span class="hljs-number">01061513</span>  push        <span class="hljs-number">0</span>    <br><span class="hljs-number">01061515</span>  mov         ecx,dword ptr [a] <br><span class="hljs-number">01061518</span>  call        A::`scalar deleting <span class="hljs-function"><span class="hljs-keyword">destructor</span>&#x27; <span class="hljs-params">(1061041h)</span> </span><br><span class="hljs-function"> </span><br><span class="hljs-function">    :</span>:<span class="hljs-keyword">operator</span> delete(a); <span class="hljs-comment">//释放</span><br><span class="hljs-number">0106151</span>D  mov         eax,dword ptr [a] <br><span class="hljs-number">01061520</span>  push        eax  <br><span class="hljs-number">01061521</span>  call        <span class="hljs-keyword">operator</span> delete (<span class="hljs-number">10610</span>B9h) <br><span class="hljs-number">01061526</span>  add         esp,<span class="hljs-number">4</span><br></code></pre></td></tr></table></figure>
+<p>比之前的方法更加简洁高效(不需要调用placement new)。不知道手动调用构造函数是否有违C++标准或有什么隐晦，我在其他很多有名的内存池(包括SGI STL alloc)实现上看到都是用的placement new，而不是手动调用构造函数。</p>
+<h1 id="三-operator-new重载"><a href="#三-operator-new重载" class="headerlink" title="三. operator new重载"></a>三. operator new重载</h1><p>前面简单提到过A* p = new A;所发生的事情：先调用operator new，如果类A重载了operator new，那么就使用该重载版本，否则使用全局版本::operatro new(size_t size)。</p>
+<p>上面提到的throwing(1)和nothrow(2)的operator new是可以被重载的，比如：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">A</span></span><br><span class="hljs-class">&#123;</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">A</span>() &#123;<br>        std::cout&lt;&lt;<span class="hljs-string">&quot;call A constructor&quot;</span>&lt;&lt;std::endl;<br>    &#125;<br> <br>    ~<span class="hljs-built_in">A</span>() &#123;<br>        std::cout&lt;&lt;<span class="hljs-string">&quot;call A destructor&quot;</span>&lt;&lt;std::endl;<br>    &#125;<br>    <span class="hljs-function"><span class="hljs-keyword">void</span>* <span class="hljs-keyword">operator</span> <span class="hljs-title">new</span><span class="hljs-params">(<span class="hljs-keyword">size_t</span> size)</span> </span>&#123;<br>        std::cout&lt;&lt;<span class="hljs-string">&quot;call A::operator new&quot;</span>&lt;&lt;std::endl;<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">malloc</span>(size);<br>    &#125;<br> <br>    <span class="hljs-function"><span class="hljs-keyword">void</span>* <span class="hljs-keyword">operator</span> <span class="hljs-title">new</span><span class="hljs-params">(<span class="hljs-keyword">size_t</span> size, <span class="hljs-keyword">const</span> std::<span class="hljs-keyword">nothrow_t</span>&amp; nothrow_value)</span> </span>&#123;<br>        std::cout&lt;&lt;<span class="hljs-string">&quot;call A::operator new nothrow&quot;</span>&lt;&lt;std::endl;<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">malloc</span>(size);<br>    &#125;<br>&#125;;<br><br><span class="hljs-keyword">int</span> _tmain(<span class="hljs-keyword">int</span> argc, _TCHAR* argv[]) &#123;<br>    A* p1 = <span class="hljs-keyword">new</span> A;<br>    <span class="hljs-keyword">delete</span> p1;<br> <br>    A* p2 = <span class="hljs-built_in"><span class="hljs-keyword">new</span></span>(std::nothrow) A;<br>    <span class="hljs-keyword">delete</span> p2;<br> <br>    <span class="hljs-built_in">system</span>(<span class="hljs-string">&quot;pause&quot;</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs oxygene">call A::<span class="hljs-keyword">operator</span> <span class="hljs-keyword">new</span><br>call A <span class="hljs-function"><span class="hljs-keyword">constructor</span></span><br><span class="hljs-function"><span class="hljs-title">call</span> <span class="hljs-title">A</span> <span class="hljs-title">destructor</span></span><br><span class="hljs-function"><span class="hljs-title">call</span> <span class="hljs-title">A</span>:</span>:<span class="hljs-keyword">operator</span> <span class="hljs-keyword">new</span> nothrow<br>call A <span class="hljs-function"><span class="hljs-keyword">constructor</span></span><br><span class="hljs-function"><span class="hljs-title">call</span> <span class="hljs-title">A</span> <span class="hljs-title">destructor</span></span><br></code></pre></td></tr></table></figure>
+<p>如果类A中没有对operator new的重载，那么new A和new(std::nothrow) A; 都将会使用全局operator new(size_t size)。可将A中两个operator new注释掉，并且在A外添加一个全局operator new重载：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-keyword">void</span>* ::<span class="hljs-function"><span class="hljs-keyword">operator</span> <span class="hljs-title">new</span><span class="hljs-params">(<span class="hljs-keyword">size_t</span> size)</span></span><br><span class="hljs-function"></span>&#123;<br>    std::cout&lt;&lt;<span class="hljs-string">&quot;call global operator new&quot;</span>&lt;&lt;std::endl;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">malloc</span>(size);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>程序输出：</p>
+<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs oxygene">call <span class="hljs-keyword">global</span> <span class="hljs-keyword">operator</span> <span class="hljs-keyword">new</span><br>call A <span class="hljs-function"><span class="hljs-keyword">constructor</span></span><br><span class="hljs-function"><span class="hljs-title">call</span> <span class="hljs-title">A</span> <span class="hljs-title">destructor</span></span><br><span class="hljs-function"><span class="hljs-title">call</span> <span class="hljs-title">global</span> <span class="hljs-title">operator</span> <span class="hljs-title">new</span></span><br><span class="hljs-function"><span class="hljs-title">call</span> <span class="hljs-title">A</span> <span class="hljs-title">constructor</span></span><br><span class="hljs-function"><span class="hljs-title">call</span> <span class="hljs-title">A</span> <span class="hljs-title">destructor</span></span><br></code></pre></td></tr></table></figure>
+<p>注意，这里的重载遵循作用域覆盖原则，即在里向外寻找operator new的重载时，只要找到operator new()函数就不再向外查找，如果参数符合则通过，如果参数不符合则报错，而不管全局是否还有相匹配的函数原型。比如如果这里只将A中operator new(size_t, const std::nothrow_t&amp;)删除掉，就会报错：</p>
+<p>error C2660: “A::operator new”: 函数不接受 2 个参数。<br>对operator new的重载还可以添加自定义参数，如在类A中添加</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-function"><span class="hljs-keyword">void</span>* <span class="hljs-keyword">operator</span> <span class="hljs-title">new</span><span class="hljs-params">(<span class="hljs-keyword">size_t</span> size, <span class="hljs-keyword">int</span> x, <span class="hljs-keyword">int</span> y, <span class="hljs-keyword">int</span> z)</span></span><br><span class="hljs-function"></span>&#123;<br>    std::cout&lt;&lt;<span class="hljs-string">&quot;X=&quot;</span>&lt;&lt;x&lt;&lt;<span class="hljs-string">&quot;  Y=&quot;</span>&lt;&lt;y&lt;&lt;<span class="hljs-string">&quot; Z=&quot;</span>&lt;&lt;z&lt;&lt;std::endl;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">malloc</span>(size);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这种重载看起来没有什么大作用，因为它operator new需要完成的任务只是分配内存，但是通过对这类重载的巧妙应用，可以让它在动态分配内存调试和检测中大展身手。这将在后面operator new重载运用技巧中展现。</p>
+<p>至于placement new，它本身就是operator new的一个重载，不需也尽量不要对它进行改写，因为它一般是搭配 new(p) A(); 工作的，它的职责只需简单返回指针。</p>
+<h1 id="四-operator-new运用技巧和一些实例探索"><a href="#四-operator-new运用技巧和一些实例探索" class="headerlink" title="四. operator new运用技巧和一些实例探索"></a>四. operator new运用技巧和一些实例探索</h1><h2 id="4-1-operator-new重载运用于调试："><a href="#4-1-operator-new重载运用于调试：" class="headerlink" title="4.1. operator new重载运用于调试："></a>4.1. operator new重载运用于调试：</h2><p>前面提到如何operator new的重载是可以有自定义参数的，那么我们如何利用自定义参数获取更多的信息呢，这里一个很有用的做法就是给operator new添加两个参数:char* file, int line,这两个参数记录new关键字的位置，然后再在new时将文件名和行号传入，这样我们就能在分配内存失败时给出提示：输出文件名和行号。</p>
+<p>那么如何获取当前语句所在文件名和行号呢，windows提供两个宏：__FILE__和__LINE__。利用它们可以直接获取到文件名和行号，也就是 new(<strong>FILE</strong>, <strong>LINE</strong>) 由于这些都是不变的，因此可以再定义一个宏：#define new new(<strong>FILE</strong>, <strong>LINE</strong>)。这样我们就只需要定义这个宏，然后重载operator new即可。</p>
+<p>源代码如下，这里只是简单输出new的文件名和行号。</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-comment">//A.h</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">A</span></span><br><span class="hljs-class">&#123;</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">A</span>() &#123;<br>        std::cout&lt;&lt;<span class="hljs-string">&quot;call A constructor&quot;</span>&lt;&lt;std::endl;<br>    &#125;<br> <br>    ~<span class="hljs-built_in">A</span>() &#123;<br>        std::cout&lt;&lt;<span class="hljs-string">&quot;call A destructor&quot;</span>&lt;&lt;std::endl;<br>    &#125;<br> <br>    <span class="hljs-function"><span class="hljs-keyword">void</span>* <span class="hljs-keyword">operator</span> <span class="hljs-title">new</span><span class="hljs-params">(<span class="hljs-keyword">size_t</span> size, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* file, <span class="hljs-keyword">int</span> line)</span> </span>&#123;<br>        std::cout&lt;&lt;<span class="hljs-string">&quot;call A::operator new on file:&quot;</span>&lt;&lt;file&lt;&lt;<span class="hljs-string">&quot;  line:&quot;</span>&lt;&lt;line&lt;&lt;std::endl;<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">malloc</span>(size);<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>    &#125;<br> <br>&#125;;<br><span class="hljs-comment">//Test.cpp</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&quot;A.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> new new(__FILE__, __LINE__)</span><br> <br><span class="hljs-keyword">int</span> _tmain(<span class="hljs-keyword">int</span> argc, _TCHAR* argv[]) &#123;<br>    A* p1 = <span class="hljs-keyword">new</span> A;<br>    <span class="hljs-keyword">delete</span> p1;<br> <br>    <span class="hljs-built_in">system</span>(<span class="hljs-string">&quot;pause&quot;</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs delphi">call A::<span class="hljs-keyword">operator</span> new <span class="hljs-keyword">on</span> <span class="hljs-keyword">file</span>:d:\desktop\test\test.cpp line:<span class="hljs-number">8</span><br>call A <span class="hljs-function"><span class="hljs-keyword">constructor</span></span><br><span class="hljs-function"><span class="hljs-title">call</span> <span class="hljs-title">A</span> <span class="hljs-title">destructor</span></span><br></code></pre></td></tr></table></figure>
+<p>注意：需要将类的声明实现与new的使用隔离开来。并且将类头文件放在宏定义之前。否则在类A中的operator new重载中的new会被宏替换，整个函数就变成了：void* operator new(<strong>FILE</strong>, <strong>LINE</strong>)(size_t size, char* file, int line)，编译器自然会报错。</p>
+<h2 id="4-2-内存池优化"><a href="#4-2-内存池优化" class="headerlink" title="4.2. 内存池优化"></a>4.2. 内存池优化</h2><p>operator new的另一个大用处就是内存池优化，内存池的一个常见策略就是分配一次性分配一块大的内存作为内存池(buffer或pool)，然后重复利用该内存块，每次分配都从内存池中取出，释放则将内存块放回内存池。在我们客户端调用的是new关键字，我们可以改写operator new函数，让它从内存池中取出(当内存池不够时，再从系统堆中一次性分配一块大的)，至于构造和析构则在取出的内存上进行，然后再重载operator delete，它将内存块放回内存池。关于内存池和operator new在参考文献中有一篇很好的文章。这里就不累述了。</p>
+<h2 id="4-3-STL中的new"><a href="#4-3-STL中的new" class="headerlink" title="4.3. STL中的new"></a>4.3. STL中的new</h2><p>在SGI STL源码中,defalloc.h和stl_construct.h中提供了最简单的空间配置器(allocator)封装，见《STL源码剖析》P48。它将对象的空间分配和构造分离开来，虽然在defalloc.h中仅仅是对::operator new和::operator delete的一层封装，但是它仍然给STL容器提供了更加灵活的接口。SGI STL真正使用的并不是defalloc.h中的分配器，而是stl_alloc.h中的SGI精心打造的”双层级配置器”，它将内存池技术演绎得淋漓尽致，值得细细琢磨。顺便提一下，在stl_alloc.h中并没有使用::operator new/delete 而直接使用malloc和free。具体缘由均可参见《STL源码剖析》。</p>
+<h1 id="五-delete的使用"><a href="#五-delete的使用" class="headerlink" title="五. delete的使用"></a>五. delete的使用</h1><p>delete的使用基本和new一致，包括operator delete的重载方式这些都相似，只不过它的参数是void*，返回值为void。但是有一点需要注意，operator delete的自定义参数重载并不能手动调用。比如</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-function"><span class="hljs-keyword">void</span>* <span class="hljs-keyword">operator</span> <span class="hljs-title">new</span><span class="hljs-params">(<span class="hljs-keyword">size_t</span> size, <span class="hljs-keyword">int</span> x)</span></span><br><span class="hljs-function"></span>&#123;<br>    cout&lt;&lt;<span class="hljs-string">&quot; x = &quot;</span>&lt;&lt;x&lt;&lt;endl;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">malloc</span>(size);    <br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-keyword">operator</span> <span class="hljs-title">delete</span><span class="hljs-params">(<span class="hljs-keyword">void</span>* p, <span class="hljs-keyword">int</span> x)</span></span><br><span class="hljs-function"></span>&#123;<br>    cout&lt;&lt;<span class="hljs-string">&quot; x = &quot;</span>&lt;&lt;x&lt;&lt;endl;<br>    <span class="hljs-built_in">free</span>(p);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>如下调用是无法通过的：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs awk">A* p = new(<span class="hljs-number">3</span>) A;<span class="hljs-regexp">//</span>ok<br><span class="hljs-keyword">delete</span>(<span class="hljs-number">3</span>) p;<span class="hljs-regexp">//</span>error C2541: “<span class="hljs-keyword">delete</span>”: 不能删除不是指针的对象<br></code></pre></td></tr></table></figure>
+<p>那么重载operator delete有什么作用？如何调用？事实上以上自定义参数operator delete 只在一种情况下被调用：当new关键字抛出异常时。</p>
+<p>可以这样理解，只有在new关键字中，编译器才知道你调用的operator new形式，然后它会调用对应的operator delete。一旦出了new关键字，编译器对于这块内存是如何分配的一无所知，因此它只会调用默认的operator delete，而至于为什么不能主动调用自定义delete(而只能老老实实delete p)，这个就不知道了。</p>
+<p>细心观察的话，上面operator new用于调试的例子代码中，由于我们没有给出operator new对应的operator delete。在VS2008下会有如下警告：</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs aspectj"><span class="hljs-keyword">warning</span> C4291: “<span class="hljs-keyword">void</span> *A::operator <span class="hljs-keyword">new</span>(size_t,<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *,<span class="hljs-keyword">int</span>)”: 未找到匹配的删除运算符；如果初始化引发异常，则不会释放内存<br></code></pre></td></tr></table></figure>
+
+<h1 id="六-关于new和内存分配的其他"><a href="#六-关于new和内存分配的其他" class="headerlink" title="六. 关于new和内存分配的其他"></a>六. 关于new和内存分配的其他</h1><ol>
+<li><p>set_new_handler<br>还有一些零散的东西没有介绍到，比如set_new_handler可以在malloc(需要调用set_new_mode(1))或operator new内存分配失败时指定一个入口函数new_handler，这个函数完成自定义处理(继续尝试分配，抛出异常，或终止程序)，如果new_handler返回，那么系统将继续尝试分配内存，如果失败，将继续重复调用它，直到内存分配完毕或new_handler不再返回(抛出异常，终止)。下面这段程序完成这个测试：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;new.h&gt;</span><span class="hljs-comment">// 使用_set_new_mode和set_new_handler</span></span><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">nomem_handler</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    std::cout&lt;&lt;<span class="hljs-string">&quot;call nomem_handler&quot;</span>&lt;&lt;std::endl;<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    _set_new_mode(<span class="hljs-number">1</span>);  <span class="hljs-comment">//使new_handler有效</span><br>    <span class="hljs-built_in">set_new_handler</span>(nomem_handler);<span class="hljs-comment">//指定入口函数 函数原型void f();</span><br>    std::cout&lt;&lt;<span class="hljs-string">&quot;try to alloc 2GB memory....&quot;</span>&lt;&lt;std::endl;<br>    <span class="hljs-keyword">char</span>* a = (<span class="hljs-keyword">char</span>*)<span class="hljs-built_in">malloc</span>(<span class="hljs-number">2</span>*<span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>);<br>    <span class="hljs-keyword">if</span>(a)<br>        std::cout&lt;&lt;<span class="hljs-string">&quot;ok...I got it&quot;</span>&lt;&lt;std::endl;<br>    <span class="hljs-built_in">free</span>(a);<br>    <span class="hljs-built_in">system</span>(<span class="hljs-string">&quot;pause&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>程序运行后会一直输出call nomem_handler 因为函数里面只是简单输出，返回，系统尝试分配失败后，调用nomem_handler函数，由于该函数并没有起到实际作用(让可分配内存增大)，因此返回后系统再次尝试分配失败，再调用nomem_handler，循环下去。<br>在SGI STL中的也有个仿new_handler函数:oom_malloc</p>
+</li>
+<li><p>new分配数组<br>new[]和new类似，仍然会优先调用类中重载的operator new[]。另外还要注意的是，在operator new[](size_t size)中传入的并不是sizeof(A)*3。而要在对象数组的大小上加上一个额外数据，用于编译器区分对象数组指针和对象指针以及对象数组大小。在VS2008(32 bit)下这个额外数据占4个字节，一个int大小。测试代码如下</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-comment">//A.h</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">A</span></span><br><span class="hljs-class">&#123;</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">A</span>() &#123;<br>        std::cout&lt;&lt;<span class="hljs-string">&quot;call A constructor&quot;</span>&lt;&lt;std::endl;<br>    &#125;<br> <br>    ~<span class="hljs-built_in">A</span>() &#123;<br>        std::cout&lt;&lt;<span class="hljs-string">&quot;call A destructor&quot;</span>&lt;&lt;std::endl;<br>    &#125;<br> <br>    <span class="hljs-keyword">void</span>* <span class="hljs-keyword">operator</span> <span class="hljs-keyword">new</span>[](<span class="hljs-keyword">size_t</span> size) &#123;<br>        std::cout&lt;&lt;<span class="hljs-string">&quot;call A::operator new[] size:&quot;</span>&lt;&lt;size&lt;&lt;std::endl;<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">malloc</span>(size);<br>    &#125;<br>    <span class="hljs-keyword">void</span> <span class="hljs-keyword">operator</span> <span class="hljs-keyword">delete</span>[](<span class="hljs-keyword">void</span>* p) &#123;<br>        std::cout&lt;&lt;<span class="hljs-string">&quot;call A::operator delete[]&quot;</span>&lt;&lt;std::endl;<br>        <span class="hljs-built_in">free</span>(p);<br>    &#125; <br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-keyword">operator</span> <span class="hljs-title">delete</span><span class="hljs-params">(<span class="hljs-keyword">void</span>* p)</span> </span>&#123;<br>        <span class="hljs-built_in">free</span>(p);<br>    &#125; <br>&#125;;<br><span class="hljs-comment">//Test.cpp</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&quot;A.h&quot;</span></span><br> <br><span class="hljs-keyword">void</span>* <span class="hljs-keyword">operator</span> <span class="hljs-keyword">new</span>[](<span class="hljs-keyword">size_t</span> size) &#123;<br>    std::cout&lt;&lt;<span class="hljs-string">&quot;call global new[] size: &quot;</span>&lt;&lt;size&lt;&lt;std::endl;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">malloc</span>(size);<br>&#125;<br> <br><span class="hljs-keyword">void</span> <span class="hljs-keyword">operator</span> <span class="hljs-keyword">delete</span>[](<span class="hljs-keyword">void</span>* p) &#123;<br>    std::cout&lt;&lt;<span class="hljs-string">&quot;call global delete[] &quot;</span>&lt;&lt;std::endl;<br>&#125;<br><br><span class="hljs-keyword">int</span> _tmain(<span class="hljs-keyword">int</span> argc, _TCHAR* argv[]) &#123;<br>    std::cout&lt;&lt;<span class="hljs-string">&quot;sizeof A &quot;</span>&lt;&lt;<span class="hljs-built_in"><span class="hljs-keyword">sizeof</span></span>(A)&lt;&lt;std::endl;<br>    A* p1 = <span class="hljs-keyword">new</span> A[<span class="hljs-number">3</span>];<br>    <span class="hljs-keyword">delete</span> []p1;<br> <br>    <span class="hljs-built_in">system</span>(<span class="hljs-string">&quot;pause&quot;</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs oxygene">sizeof A <span class="hljs-number">1</span><br>call <span class="hljs-keyword">global</span> <span class="hljs-keyword">new</span>[] size: <span class="hljs-number">7</span><br>call A <span class="hljs-function"><span class="hljs-keyword">constructor</span></span><br><span class="hljs-function"><span class="hljs-title">call</span> <span class="hljs-title">A</span> <span class="hljs-title">constructor</span></span><br><span class="hljs-function"><span class="hljs-title">call</span> <span class="hljs-title">A</span> <span class="hljs-title">constructor</span></span><br><span class="hljs-function"><span class="hljs-title">call</span> <span class="hljs-title">A</span> <span class="hljs-title">destructor</span></span><br><span class="hljs-function"><span class="hljs-title">call</span> <span class="hljs-title">A</span> <span class="hljs-title">destructor</span></span><br><span class="hljs-function"><span class="hljs-title">call</span> <span class="hljs-title">A</span> <span class="hljs-title">destructor</span></span><br><span class="hljs-function"><span class="hljs-title">call</span> <span class="hljs-title">A</span>:</span>:<span class="hljs-keyword">operator</span> delete[]<br></code></pre></td></tr></table></figure>
+<p>简单跟踪了一下，operator new[]返回的是0x005b668 而最后new关键字返回给p的是0x005b66c。也就是说p就是数组的起始地址，这样程序看到的内存就是线性的，不包括前面的额外数据。</p>
+</li>
+</ol>
+<p>在内存中，可以看到前面的四个字节额外数据是0x00000003 也就是3，代表数组元素个数。后面三个cd是堆在Debug中的默认值(中文的cdcd就是”屯”，栈的初始值为cc，0xcccc中文”烫”)。再后面的0xfdfdfdfd应该是堆块的结束标志，前面我有博客专门跟踪过。</p>
+<p>注：其实在malloc源码中也有内存池的运用，而且也比较复杂。最近在参考dlmalloc版本和STL空间适配器，真没有想到一个内存分配能涉及这么多的东西。</p>
+<h1 id="七-参考文献"><a href="#七-参考文献" class="headerlink" title="七. 参考文献:"></a>七. 参考文献:</h1><ol>
+<li><a target="_blank" rel="noopener" href="http://www.cplusplus.com/reference/new/operator%20new/?kw=operator%25">http://www.cplusplus.com/reference/new/operator%20new/?kw=operator%</a> operator new的三种形式 </li>
+<li><a target="_blank" rel="noopener" href="http://www.relisoft.com/book/tech/9new.html">http://www.relisoft.com/book/tech/9new.html</a> c++ operator new重载和内存池技术 </li>
+<li>《STL源码剖析》 空间配置器 </li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/songthin/article/details/1703966">http://blog.csdn.net/songthin/article/details/1703966</a> 一篇关于理解C++ New的好文 </li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/solstice/article/details/6198937">http://blog.csdn.net/solstice/article/details/6198937</a> 陈硕的Blog</li>
+</ol>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/c/">c++</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/08/20/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/00objdump%20%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6%E5%88%86%E6%9E%90/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">00 objdump 二进制文件分析</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/08/16/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/00%20squid%20%E5%86%85%E5%AD%98%E6%B1%A0%E7%A0%94%E7%A9%B6/">
+                        <span class="hidden-mobile">00 squid 内存池研究</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

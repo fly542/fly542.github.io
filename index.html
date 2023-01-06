@@ -191,6 +191,53 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2023/01/06/04DevOps/23diskpart/" target="_self">
+          windows diskpart 工具弹出顽固硬盘
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2023/01/06/04DevOps/23diskpart/" target="_self">
+          
+          使用移动盘时经常弹出设备无法删除的问题, 很多时候发现是被system进程占用，所以不能通过杀掉进程id的方式来弹出设备。经验证使用系统自带的dispart工具的offline 命令可以完美弹出设备。 具体操作步骤如下： 打开 diskpart 工具win+r 直接输入dispark命令， 回车弹出diskpart 操作命令行   选择并 offline 磁盘12345678# 显示挂载的磁盘li
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-01-06 11:42" pubdate>
+              2023-01-06
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/devops/">devops</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/windows/">windows</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2022/12/30/06%E6%9D%82%E9%A1%B9/00%E7%A6%BB%E8%81%8C%E9%A1%B9%E7%9B%AE%E4%BA%A4%E6%8E%A5%E6%A8%A1%E6%9D%BF/" target="_self">
           离职项目交接模板
         </a>
@@ -207,7 +254,7 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-12-30 11:27" pubdate>
+            <time datetime="2022-12-30 11:33" pubdate>
               2022-12-30
             </time>
           </div>
@@ -419,13 +466,13 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/11/10/04DevOps/21%20tcpdump%E5%AE%9E%E7%94%A8%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/" target="_self">
+        <a href="/2022/11/10/04DevOps/21tcpdump%E5%AE%9E%E7%94%A8%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/" target="_self">
           tcpdump实用方法总结
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2022/11/10/04DevOps/21%20tcpdump%E5%AE%9E%E7%94%A8%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/" target="_self">
+        <a href="/2022/11/10/04DevOps/21tcpdump%E5%AE%9E%E7%94%A8%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/" target="_self">
           
           要用tcpdump 抓包，一定要切换到root账户，只有root才有权限将网卡变更为混杂模式。 tcpdump可以分为三大部分内容，第一是选项，第二是过滤表达式，第三是输出信息 基本格式为 tcpdump 选项 &#39;过滤表达式&#39; 实用选项参数说明   参数名 说明    -i 即interface，指定要监听的网卡名,默认为eth0，内核版本&gt;2.2时可用any指定所有网卡
         </a>
@@ -577,53 +624,6 @@
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
             <time datetime="2022-08-04 15:00" pubdate>
-              2022-08-04
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/devops/">devops</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/linux/">linux</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/08/04/04DevOps/17curl%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" target="_self">
-          curl常用方法
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2022/08/04/04DevOps/17curl%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" target="_self">
-          
-          1. 请求数据1curl -v -r 4194304-6291455 &quot;http:&#x2F;&#x2F;127.0.0.1:7001&#x2F;videos&#x2F;v0&#x2F;20190602&#x2F;d0&#x2F;3d&#x2F;04b40bb692090ef98c91e4027774ce59.265ts&quot;  2. 发送带json内容的请求1curl -v &quot;http:&#x2F;&#x2F;10.63.9.23&#x2F;md?s&#x3D;1&amp;net&#x3D;1&amp;q
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-08-04 09:18" pubdate>
               2022-08-04
             </time>
           </div>
