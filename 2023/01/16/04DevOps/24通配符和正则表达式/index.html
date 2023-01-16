@@ -16,24 +16,21 @@
   <meta name="author" content="Fly542">
   <meta name="keywords" content="">
   
-    <meta name="description" content="使用移动盘时经常弹出设备无法删除的问题, 很多时候发现是被system进程占用，所以不能通过杀掉进程id的方式来弹出设备。经验证使用系统自带的dispart工具的offline 命令可以完美弹出设备。 具体操作步骤如下： 打开 diskpart 工具win+r 直接输入dispark命令， 回车弹出diskpart 操作命令行   选择并 offline 磁盘12345678# 显示挂载的磁盘li">
+    <meta name="description" content="通配符语法比正则表达式简单很多  通配符一般用于文件路径名匹配 正则表达式一般用于字符串匹配  所以在命令行中，与路径相关的命令，比如 cp, ls, find 等，都使用通配符；而与字符串匹配相关的命令，比如 grep，使用正则表达式。 注意：在通配符和正则表达式中有其不一样的地方，在通配符中可以匹配任意的0个或多个字符，而在正则表达式中他是重复之前的一个或者多个字符，不能独立使用的。比如通配符">
 <meta property="og:type" content="article">
-<meta property="og:title" content="windows diskpart 工具弹出顽固硬盘">
-<meta property="og:url" content="http://fly542.cn/2023/01/06/04DevOps/23diskpart/index.html">
+<meta property="og:title" content="通配符和正则表达式的区别">
+<meta property="og:url" content="http://fly542.cn/2023/01/16/04DevOps/24%E9%80%9A%E9%85%8D%E7%AC%A6%E5%92%8C%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">
 <meta property="og:site_name" content="Fly542 技术沉淀">
-<meta property="og:description" content="使用移动盘时经常弹出设备无法删除的问题, 很多时候发现是被system进程占用，所以不能通过杀掉进程id的方式来弹出设备。经验证使用系统自带的dispart工具的offline 命令可以完美弹出设备。 具体操作步骤如下： 打开 diskpart 工具win+r 直接输入dispark命令， 回车弹出diskpart 操作命令行   选择并 offline 磁盘12345678# 显示挂载的磁盘li">
+<meta property="og:description" content="通配符语法比正则表达式简单很多  通配符一般用于文件路径名匹配 正则表达式一般用于字符串匹配  所以在命令行中，与路径相关的命令，比如 cp, ls, find 等，都使用通配符；而与字符串匹配相关的命令，比如 grep，使用正则表达式。 注意：在通配符和正则表达式中有其不一样的地方，在通配符中可以匹配任意的0个或多个字符，而在正则表达式中他是重复之前的一个或者多个字符，不能独立使用的。比如通配符">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://fly542.cn/2023/01/06/04DevOps/23diskpart/1.png">
-<meta property="og:image" content="http://fly542.cn/2023/01/06/04DevOps/23diskpart/2.png">
-<meta property="article:published_time" content="2023-01-06T03:42:39.000Z">
-<meta property="article:modified_time" content="2023-01-06T05:14:59.794Z">
+<meta property="article:published_time" content="2023-01-16T00:56:41.000Z">
+<meta property="article:modified_time" content="2023-01-16T01:14:40.680Z">
 <meta property="article:author" content="Fly542">
-<meta property="article:tag" content="windows">
+<meta property="article:tag" content="linux">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://fly542.cn/2023/01/06/04DevOps/23diskpart/1.png">
   
   
-  <title>windows diskpart 工具弹出顽固硬盘 - Fly542 技术沉淀</title>
+  <title>通配符和正则表达式的区别 - Fly542 技术沉淀</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
 
@@ -179,7 +176,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="windows diskpart 工具弹出顽固硬盘">
+            <span class="h2" id="subtitle" title="通配符和正则表达式的区别">
               
             </span>
 
@@ -189,8 +186,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2023-01-06 11:42" pubdate>
-        2023年1月6日 中午
+      <time datetime="2023-01-16 08:56" pubdate>
+        2023年1月16日 早上
       </time>
     </span>
   
@@ -200,7 +197,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      289 字
+      1.8k 字
     </span>
   
 
@@ -209,7 +206,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      3 分钟
+      15 分钟
     </span>
   
 
@@ -238,18 +235,58 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">windows diskpart 工具弹出顽固硬盘</h1>
+            <h1 style="display: none">通配符和正则表达式的区别</h1>
             
             <div class="markdown-body">
-              <p>使用移动盘时经常弹出设备无法删除的问题, 很多时候发现是被system进程占用，所以不能通过杀掉进程id的方式来弹出设备。经验证使用系统自带的dispart工具的offline 命令可以完美弹出设备。</p>
-<p>具体操作步骤如下：</p>
-<h1 id="打开-diskpart-工具"><a href="#打开-diskpart-工具" class="headerlink" title="打开 diskpart 工具"></a>打开 diskpart 工具</h1><p>win+r 直接输入dispark命令， 回车弹出diskpart 操作命令行</p>
-<img src="/2023/01/06/04DevOps/23diskpart/1.png" srcset="/img/loading.gif" lazyload class="">
+              <p>通配符语法比正则表达式简单很多</p>
+<ul>
+<li>通配符一般用于文件路径名匹配</li>
+<li>正则表达式一般用于字符串匹配</li>
+</ul>
+<p>所以在命令行中，与路径相关的命令，比如 cp, ls, find 等，都使用通配符；而与字符串匹配相关的命令，比如 grep，使用正则表达式。</p>
+<p>注意：<em>在通配符和正则表达式中有其不一样的地方，在通配符中</em>可以匹配任意的0个或多个字符，而在正则表达式中他是重复之前的一个或者多个字符，不能独立使用的。比如通配符可以用*来匹配任意字符，而正则表达式不行，他只匹配任意长度的前面的字符。</p>
+<h1 id="通配符规则"><a href="#通配符规则" class="headerlink" title="通配符规则"></a>通配符规则</h1><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>内容</th>
+</tr>
+</thead>
+</table>
+<ul>
+<li>   | 万用字元，代表 0 个或多个字元（或数字）<br>?    | 万用字元，代表『一定有』一个字母<h1 id="注解，这个最常被使用在-script-当中，视为说明！"><a href="#注解，这个最常被使用在-script-当中，视为说明！" class="headerlink" title="| 注解，这个最常被使用在 script 当中，视为说明！"></a>| 注解，这个最常被使用在 script 当中，视为说明！</h1>/    | 跳脱符号，将『特殊字元或万用字元』还原成一般字元<br>|    | 分隔两个管线命令的界定；<br>;    | 连续性命令的界定（注意！与管线命令并不相同）<br>~    | 使用者的家目录<br>$    | 亦即是变数之前需要加的变数取代值<br>&amp;    | 将指令变成背景下工作<br>!    | 逻辑运算意义上的『非』 not 的意思！<br>/    | 路径分隔的符号<blockquote>
+<p>, &gt;&gt;    | 输出导向，分别是『取代』与『累加』<br>‘    | 单引号，不具有变数置换的功能<br>“    | 具有变数置换的功能！<br><code> </code>    | 两个『 ` 』中间为可以先执行的指令！<br>( )    | 在中间为子 shell 的起始与结束<br>[ ]    | 在中间为字元的组合<br>{ }    | 在中间为命令区块的组合！</p>
+</blockquote>
+</li>
+</ul>
+<h1 id="正则表达式规则"><a href="#正则表达式规则" class="headerlink" title="正则表达式规则"></a>正则表达式规则</h1><table>
+<thead>
+<tr>
+<th>正则字符</th>
+<th>意义与范例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>^word</td>
+<td>待搜寻的字串(word)在行首！ <br><br> grep -n ‘^#’ regular_express.txt <br> 搜寻行首为 # 开始的那一行！</td>
+</tr>
+<tr>
+<td>word$</td>
+<td>待搜寻的字串(word)在行尾！  <br><br>  grep -n ‘!$’ regular_express.txt <br> 将行尾为 ! 的那一行列印出来！</td>
+</tr>
+<tr>
+<td>.</td>
+<td>代表『任意一个』字符，一定是一个任意字符！ <br><br> grep -n ‘e.e’ regular_express.txt <br>搜寻的字串可以是 (eve) (eae) (eee) (e e)， 但不能仅有 (ee) ！亦即 e 与 e 中间『一定』仅有一个字元，而空白字元也是字元！</td>
+</tr>
+<tr>
+<td>/</td>
+<td>跳脱字符，将特殊符号的特殊意义去除！  <br><br>  grep -n /‘ regular_express.txt <br> 搜寻含有单引号 ‘ 的那一行！</td>
+</tr>
+</tbody></table>
+<ul>
+<li>   | 重复零个或多个的前一个 RE 字符  <br><br> grep -n ‘ess*’ regular_express.txt <br>找出含有 (es) (ess) (esss) 等等的字串，注意，因为 * 可以是 0 个，所以 es 也是符合带搜寻字串。另外，因为 * 为重复『前一个 RE 字符』的符号， 因此，在 * 之前必须要紧接着一个 RE 字符喔！例如任意字元则为 『.*』 ！<br>/{n,m/}    | 连续 n 到 m 个的『前一个 RE 字符』<br>若为 /{n/} 则是连续 n 个的前一个 RE 字符，<br>若是 /{n,/} 则是连续 n 个以上的前一个 RE 字符！  <br><br>  grep -n ‘Go/{2,3/}g’ regular_express.txt <br>在 g 与 g 之间有 2 个到 3 个的 o 存在的字串，亦即 (goog)(gooog)<br>[]    | 字元集合的 RE 特殊字符的符号  <br><br>  [list] <br>范例: grep -n ‘g[ld]’ regular_express.txt<br>搜寻含有 (gl) 或 (gd) 的那一行～,需要特别留意的是，在 [] 当中『谨代表一个待搜寻的字元』，<br>如：a[afl]y 代表搜寻的字串可以是 aay, afy, aly 亦即 [afl] 代表 a 或 f 或 l 的意思！<br><br>[ch1-ch2]<br>范例：grep -n ‘[0-9]’ regular_express.txt<br>搜寻含有任意数字的那一行！需特别留意，在字元集合 [] 中的减号 - 是有特殊意义的，他代表两个字元之间的所有连续字元！但这个连续与否与 ASCII 编码有关， 因此，您的编码需要设定正确(在 bash 当中，需要确定 LANG 与 LANGUAGE 的变数是否正确！) 例如所有大写字元则为 [A-Z]<br><br>[^]<br>范例：grep -n ‘oo[^t]’ regular_express.txt<br>搜寻的字串可以是 (oog) (ood) 但不能是 (oot) ，那个 ^ 在 [] 内时， 代表的意义是『反向选择』的意思～例如，我不要大写字元，则为[^A-Z] ～ 但是，需要特别注意的是，如果以 grep -n [^A-Z] regular_express.txt 来搜寻， 却发现该档案内的所有行都被列出，为什么？因为这个 [^A-Z] 是『非大写字元』的意思， 因为每一行均有非大写字元，例如第一行的 “Open Source” 就有 p,e,n,o…. 等等的小写字元， 以及双引号 (“) 等字元，所以当然符合 [^A-Z] 的搜寻！ </li>
+</ul>
 
-<h1 id="选择并-offline-磁盘"><a href="#选择并-offline-磁盘" class="headerlink" title="选择并 offline 磁盘"></a>选择并 offline 磁盘</h1><figure class="highlight vala"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></div></td><td class="code"><pre><code class="hljs vala"><span class="hljs-meta"># 显示挂载的磁盘</span><br>list disk<br><span class="hljs-meta"># 选择当前要操作的磁盘</span><br>select disk <span class="hljs-number">1</span><br><span class="hljs-meta"># 脱机磁盘</span><br>offline disk<br><span class="hljs-meta"># 让当前选择的脱机磁盘上线</span><br>online disk<br></code></pre></td></tr></table></figure>
-<p>执行完<code>offline disk</code> 命令后就可以<code>安全删除硬件并弹出媒体</code>了</p>
-<p>操作如下:</p>
-<img src="/2023/01/06/04DevOps/23diskpart/2.png" srcset="/img/loading.gif" lazyload class="">
             </div>
             <hr>
             <div>
@@ -266,7 +303,7 @@
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/windows/">windows</a>
+                      <a class="hover-with-bg" href="/tags/linux/">linux</a>
                     
                   </div>
                 
@@ -283,18 +320,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/01/16/04DevOps/24%E9%80%9A%E9%85%8D%E7%AC%A6%E5%92%8C%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">通配符和正则表达式的区别</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2022/12/30/06%E6%9D%82%E9%A1%B9/00%E7%A6%BB%E8%81%8C%E9%A1%B9%E7%9B%AE%E4%BA%A4%E6%8E%A5%E6%A8%A1%E6%9D%BF/">
-                        <span class="hidden-mobile">离职项目交接模板</span>
+                      <a href="/2023/01/06/04DevOps/23diskpart/">
+                        <span class="hidden-mobile">windows diskpart 工具弹出顽固硬盘</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
