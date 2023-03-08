@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://fly542.cn/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/01DNS%E5%8D%8F%E8%AE%AE/srv.png">
 <meta property="article:published_time" content="2020-08-26T13:10:15.000Z">
-<meta property="article:modified_time" content="2022-12-30T03:33:01.389Z">
+<meta property="article:modified_time" content="2023-03-08T06:31:31.048Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="dns">
@@ -209,7 +209,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      165 分钟
+      170 分钟
     </span>
   
 
@@ -1143,6 +1143,7 @@
 <h1 id="EDNS-DNS扩展机制"><a href="#EDNS-DNS扩展机制" class="headerlink" title="EDNS( DNS扩展机制)"></a>EDNS( DNS扩展机制)</h1><p>EDNS即Extension Mechanisms for DNS。最新定义在<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc6891">RFC 6891</a>(替换了RFC2671)向DNS添加了扩展机制。EDNS在遵循已有的<a href="#dformat">DNS报文格式</a>的基础上增加一些字段，来支持更多的DNS请求业务，许多新的DNS使用和协议扩展依赖于这些扩展的存在。</p>
 <p>需要注意的是，像DNS服务器这样一个大型且广泛应用的系统软件，新增加扩展协议的时候一定要考虑到向后兼容性(backward compatibility)，即你增加了你这个特性的消息传输给未支持该特性的服务器时，后者依然能正确处理。</p>
 <p>EDNS是DNS的逐跳( hop-by-hop )扩展。</p>
+<p>EDNS0是第一个被广泛使用的EDNS协议版本。它提供了DNS消息的扩展格式，允许DNS协议支持更大的消息长度和更多的资源记录类型. EDNS(1)也是一种DNS协议扩展，用于增加DNS消息中的额外信息字段，与EDNS(0)相比，EDNS(1)的扩展性能更强</p>
 <h2 id="为什么要有EDNS？"><a href="#为什么要有EDNS？" class="headerlink" title="为什么要有EDNS？"></a>为什么要有EDNS？</h2><p>RFC2671中指出EDNS被提出来的几个理由：</p>
 <ul>
 <li><p>DNS协议头部的第二个16字节中都已经被用的差不多了，需要添加新的返回类型(RCODE)和标记(FLAGS)来支持其他需求；</p>
@@ -1170,7 +1171,7 @@
 <p>OPTION-CODE ：由IANA分配，<a target="_blank" rel="noopener" href="https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-11">参考</a></p>
 <p>OPTION-LENGTH: OPTION-DATA的长度</p>
 <p>OPTION-DATA: OPTION-CODE对应的内容, 具体实现依赖于具体RFC定义，如<a href="#ecs_option">ECS</a></p>
-<h2 id="EDNS-应用实现"><a href="#EDNS-应用实现" class="headerlink" title="EDNS 应用实现"></a>EDNS 应用实现</h2><h3 id="ECS"><a href="#ECS" class="headerlink" title="ECS "></a><span id=ecs>ECS </span></h3><p>ECS即ENS Client Subnet。 是EDNS中的一个OPT，它允许递归 DNS 解析器为其代表进行DNS查询的主机或客户端指定子网。这通常旨在通过允许更好地使用基于 DNS 的负载平衡来在客户端计算机不一定靠近递归解析器时选择客户端附近的服务地址，从而帮助加快从内容传递网络传递数据的速度。</p>
+<h2 id="EDNS-应用实现"><a href="#EDNS-应用实现" class="headerlink" title="EDNS 应用实现"></a>EDNS 应用实现</h2><h3 id="ECS"><a href="#ECS" class="headerlink" title="ECS "></a><span id=ecs>ECS </span></h3><p>ECS即ENS Client Subnet。 是EDNS(0)中的一个OPT，它允许递归 DNS 解析器为其代表进行DNS查询的主机或客户端指定子网。这通常旨在通过允许更好地使用基于 DNS 的负载平衡来在客户端计算机不一定靠近递归解析器时选择客户端附近的服务地址，从而帮助加快从内容传递网络传递数据的速度。</p>
 <p>ECS 的详细内容可参考<a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc7871">RFC7871</a>。</p>
 <h4 id="ECS-option-数据格式"><a href="#ECS-option-数据格式" class="headerlink" title="ECS option 数据格式"></a><span id=ecs_option>ECS option 数据格式</span></h4><p>ECS基于设置<a href="#opt_rdata">OPT伪RR的RDATA</a>来实现的。</p>
 <figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli">             +0 <span class="hljs-params">(MSB)</span>                            +1 <span class="hljs-params">(LSB)</span><br>   +<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<br>0: |                          OPTION-CODE                          |<br>   +<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<br>2: |                         OPTION-LENGTH                         |<br>   +<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<br>4: |                            FAMILY                             |<br>   +<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<br>6: |     SOURCE PREFIX-LENGTH      |     SCOPE PREFIX-LENGTH       |<br>   +<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<br>8: |                           ADDRESS.<span class="hljs-string">..</span>                          /<br>   +<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<span class="hljs-params">---</span>+<br></code></pre></td></tr></table></figure>
@@ -1183,20 +1184,32 @@
 <li>SCOPE PREFIX-LENGTH ：在查询请求中固定为0；在应答数据中标识应答数据<code>ADDRESS</code>的最左边的有效位数即IP地址<code>ADDRESS </code>的网络号的位数</li>
 <li>ADDRESS：就是设置的SubNet的IP地址,依据上面的FAMILY</li>
 </ul>
-<h3 id="DNSSEC"><a href="#DNSSEC" class="headerlink" title="DNSSEC"></a><span id=dnssec>DNSSEC</span></h3><p>DNSSEC( DNS Security Extensions) 即DNS安全扩展</p>
+<h3 id="DNSSEC"><a href="#DNSSEC" class="headerlink" title="DNSSEC"></a><span id=dnssec>DNSSEC</span></h3><p>DNSSEC( DNS Security Extensions) 即DNS安全扩展.DNSSEC是一种基于EDNS0的协议扩展，用于提供DNS域名解析的安全性和完整性。DNSSEC可以保护DNS查询和响应的完整性，防止DNS欺骗攻击和DNS污染攻击</p>
 <h1 id="什么是SOA？"><a href="#什么是SOA？" class="headerlink" title="什么是SOA？"></a>什么是SOA？</h1><p>SOA，即Start Of Authority，放在 zone file 中，用于描述这个 zone 负责的 name server，version number…等资料，以及当 slave server 要备份这个 zone 时的一些参数。</p>
 <p>每个 zone file 中必须有且仅有一条 SOARR ，并在 zone file 中作为第一条资源记录保存。</p>
 <p>举个栗子：</p>
 <figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs llvm">@ IN SOA lv<span class="hljs-number">3</span>ns<span class="hljs-number">1</span>.ffdns.net. webmaster.ffdns.net. (<br>    <span class="hljs-number">2009092868</span> <span class="hljs-comment">; Serial</span><br>    <span class="hljs-number">604800</span> <span class="hljs-comment">; Refresh</span><br>    <span class="hljs-number">3600</span> <span class="hljs-comment">; Retry</span><br>    <span class="hljs-number">2419200</span> <span class="hljs-comment">; Expire</span><br>    <span class="hljs-number">3600</span> ) <span class="hljs-comment">; Minimum</span><br></code></pre></td></tr></table></figure>
 
 <blockquote>
-<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#x77;&#x65;&#98;&#x6d;&#97;&#115;&#116;&#101;&#114;&#x40;&#x66;&#102;&#100;&#x6e;&#115;&#x2e;&#x6e;&#101;&#116;">&#x77;&#x65;&#98;&#x6d;&#97;&#115;&#116;&#101;&#114;&#x40;&#x66;&#102;&#100;&#x6e;&#115;&#x2e;&#x6e;&#101;&#116;</a>)`，即该 zone 的管理者信箱。</p>
+<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#119;&#101;&#98;&#109;&#97;&#x73;&#x74;&#x65;&#x72;&#x40;&#102;&#102;&#x64;&#x6e;&#115;&#46;&#110;&#101;&#x74;">&#119;&#101;&#98;&#109;&#97;&#x73;&#x74;&#x65;&#x72;&#x40;&#102;&#102;&#x64;&#x6e;&#115;&#46;&#110;&#101;&#x74;</a>)`，即该 zone 的管理者信箱。</p>
 <p><strong>Serial：</strong>代表 zone file 的版本，每当 zone file 内容有变动，name server 管理者就应该增加这个号码，因为 slave 会将这个号码与其 copy 的那份比对以便决定是否要再 copy 一次（即进行 zone transfer ）。</p>
 <p><strong>Refresh：</strong> slave server 每隔这段时间(秒)，就去检查 master server 上的 serial number 。</p>
 <p><strong>Retry：</strong>当 slave server 无法和 master 进行 serial check 时，要每隔这段时间（秒） retry 一次。</p>
 <p><strong>Expire：</strong>当时间超过 Expire 所定的秒数而 slave server 都无法和 master 取得连络，那么 slave 会删除自己的这份 copy 。</p>
 <p><strong>Minimum：</strong>代表这个 zone file 中所有 record 的内定的 TTL 值，也就是其它的 DNS server cache 这笔 record 时，最长不应该超过这个时间。</p>
 </blockquote>
+<h1 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h1><table>
+<thead>
+<tr>
+<th>名词</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>逐跳扩展</td>
+<td>是一种网络协议设计中的扩展方式，它允许协议在数据包中添加自定义的扩展选项，而这些选项会在每一跳节点上进行处理和解析。<br>在逐跳扩展中，数据包会携带一个或多个扩展选项，这些选项在每一个跳的节点上被处理，然后转发到下一个节点。每一个节点只负责处理自己的扩展选项，而不影响其他选项或者原始数据包的内容。因此，逐跳扩展是一种比较灵活的扩展方式，能够让协议在不影响基本功能的情况下，添加额外的功能和特性。<br>逐跳扩展常常用于一些底层协议中，如IP协议、IPv6协议等。在这些协议中，逐跳扩展可以用来添加一些新的路由或者策略信息，或者用于网络诊断和测试等用途。另外，在一些应用层协议中，也可能会采用逐跳扩展，如DNS协议中的EDNS扩展就是一种基于逐跳扩展的设计。</td>
+</tr>
+</tbody></table>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/cobbliu/p/3188632.html">https://www.cnblogs.com/cobbliu/p/3188632.html</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-11">https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-11</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.iana.org/assignments/address-family-numbers/address-family-numbers.xhtml">https://www.iana.org/assignments/address-family-numbers/address-family-numbers.xhtml</a></p>
