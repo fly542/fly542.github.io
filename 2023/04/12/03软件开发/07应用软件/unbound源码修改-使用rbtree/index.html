@@ -16,34 +16,25 @@
   <meta name="author" content="Fly542">
   <meta name="keywords" content="">
   
-    <meta name="description" content="unbound配置文件增加新的变量大概经过以下4个步骤即可 12341. 在util&#x2F;config_file.h的struct config_file中增加变量名2. 在util&#x2F;config_file.c中初始化相关变量并解析3. 在util&#x2F;configparser.y中增加对应的变量赋值语句4. 在util&#x2F;configlexer.lex 中引用上一步中的变量  在util&#x2F;config_f">
+    <meta name="description" content="unbound中大量使用rbtree, 相关用法如下  定义rbtree存储节点数据结构 12345678910111213141516struct ipset_domain_node &amp;#123;    rbnode_type node;    char * domain;    char * name;&amp;#125;;struct ipset_env &amp;#123;    void* mnl;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="unbound源码修改---配置文件增加变量">
-<meta property="og:url" content="http://fly542.cn/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/index.html">
+<meta property="og:title" content="unbound源码修改---rbtree用法总结">
+<meta property="og:url" content="http://fly542.cn/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E4%BD%BF%E7%94%A8rbtree/index.html">
 <meta property="og:site_name" content="Fly542 技术沉淀">
-<meta property="og:description" content="unbound配置文件增加新的变量大概经过以下4个步骤即可 12341. 在util&#x2F;config_file.h的struct config_file中增加变量名2. 在util&#x2F;config_file.c中初始化相关变量并解析3. 在util&#x2F;configparser.y中增加对应的变量赋值语句4. 在util&#x2F;configlexer.lex 中引用上一步中的变量  在util&#x2F;config_f">
+<meta property="og:description" content="unbound中大量使用rbtree, 相关用法如下  定义rbtree存储节点数据结构 12345678910111213141516struct ipset_domain_node &amp;#123;    rbnode_type node;    char * domain;    char * name;&amp;#125;;struct ipset_env &amp;#123;    void* mnl;">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://fly542.cn/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_0.png">
-<meta property="og:image" content="http://fly542.cn/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_1.png">
-<meta property="og:image" content="http://fly542.cn/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_4.png">
-<meta property="og:image" content="http://fly542.cn/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_2.png">
-<meta property="og:image" content="http://fly542.cn/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_3.png">
-<meta property="og:image" content="http://fly542.cn/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_5.png">
-<meta property="og:image" content="http://fly542.cn/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_6.png">
-<meta property="og:image" content="http://fly542.cn/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_7.png">
-<meta property="og:image" content="http://fly542.cn/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_8.png">
-<meta property="og:image" content="http://fly542.cn/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_9.png">
-<meta property="article:published_time" content="2023-04-12T03:42:05.000Z">
-<meta property="article:modified_time" content="2023-04-12T06:05:09.645Z">
+<meta property="og:image" content="http://fly542.cn/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E4%BD%BF%E7%94%A8rbtree/rbtree_0.png">
+<meta property="article:published_time" content="2023-04-12T06:07:18.000Z">
+<meta property="article:modified_time" content="2023-04-12T06:23:43.208Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="dns">
 <meta property="article:tag" content="unbound">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://fly542.cn/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_0.png">
+<meta name="twitter:image" content="http://fly542.cn/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E4%BD%BF%E7%94%A8rbtree/rbtree_0.png">
   
   
-  <title>unbound源码修改---配置文件增加变量 - Fly542 技术沉淀</title>
+  <title>unbound源码修改---rbtree用法总结 - Fly542 技术沉淀</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
 
@@ -189,7 +180,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="unbound源码修改---配置文件增加变量">
+            <span class="h2" id="subtitle" title="unbound源码修改---rbtree用法总结">
               
             </span>
 
@@ -199,8 +190,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2023-04-12 11:42" pubdate>
-        2023年4月12日 中午
+      <time datetime="2023-04-12 14:07" pubdate>
+        2023年4月12日 下午
       </time>
     </span>
   
@@ -210,7 +201,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      674 字
+      1.9k 字
     </span>
   
 
@@ -219,7 +210,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      6 分钟
+      16 分钟
     </span>
   
 
@@ -248,45 +239,31 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">unbound源码修改---配置文件增加变量</h1>
+            <h1 style="display: none">unbound源码修改---rbtree用法总结</h1>
             
             <div class="markdown-body">
-              <p>unbound配置文件增加新的变量大概经过以下4个步骤即可</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><pre><code class="hljs markdown"><span class="hljs-bullet">1.</span> 在util/config<span class="hljs-emphasis">_file.h的struct config_</span>file中增加变量名<br><span class="hljs-bullet">2.</span> 在util/config<span class="hljs-emphasis">_file.c中初始化相关变量并解析</span><br><span class="hljs-emphasis">3. 在util/configparser.y中增加对应的变量赋值语句</span><br><span class="hljs-emphasis">4. 在util/configlexer.lex 中引用上一步中的变量</span><br></code></pre></td></tr></table></figure>
-
-<h1 id="在util-config-file-h-的struct-config-file中增加变量名"><a href="#在util-config-file-h-的struct-config-file中增加变量名" class="headerlink" title="在util/config_file.h 的struct config_file中增加变量名"></a>在<code>util/config_file.h</code> 的<code>struct config_file</code>中增加变量名</h1><img src="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_0.png" srcset="/img/loading.gif" lazyload class="">
-
-<h1 id="在-util-config-file-c-中初始化相关变量并解析"><a href="#在-util-config-file-c-中初始化相关变量并解析" class="headerlink" title="在 util/config_file.c 中初始化相关变量并解析"></a>在 <code>util/config_file.c</code> 中初始化相关变量并解析</h1><ul>
-<li><p>在<code>config_create</code> 函数中初始化变量</p>
-<img src="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_1.png" srcset="/img/loading.gif" lazyload class="">
+              <p>unbound中大量使用rbtree, 相关用法如下</p>
 <ul>
-<li>在 <code>config_create_forlib</code> 函数中初始化变量<br>如果变量在libunbound库中使用则需要在config_create_forlib中也初始化相关变量.<img src="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_4.png" srcset="/img/loading.gif" lazyload class=""></li>
+<li><p>定义rbtree存储节点数据结构</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></div></td><td class="code"><pre><code class="hljs abnf">struct ipset_domain_node &#123;<br>    rbnode_type node<span class="hljs-comment">;</span><br>    char * domain<span class="hljs-comment">;</span><br>    char * name<span class="hljs-comment">;</span><br>&#125;<span class="hljs-comment">;</span><br><br>struct ipset_env &#123;<br>    void* mnl<span class="hljs-comment">;</span><br><br>    int v4_enabled<span class="hljs-comment">;</span><br>    int v6_enabled<span class="hljs-comment">;</span><br><br>    const char *name_v4<span class="hljs-comment">;</span><br>    const char *name_v6<span class="hljs-comment">;</span><br>    rbtree_type * domain_tree<span class="hljs-comment">;</span><br>&#125;<span class="hljs-comment">;</span><br></code></pre></td></tr></table></figure></li>
+<li><p>定义节点比较函数</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs reasonml"><span class="hljs-comment">//文件间定义</span><br><span class="hljs-built_in">int</span> ipset<span class="hljs-constructor">_domain_cmp(<span class="hljs-params">const</span> <span class="hljs-params">void</span><span class="hljs-operator">*</span> <span class="hljs-params">left</span>, <span class="hljs-params">const</span> <span class="hljs-params">void</span><span class="hljs-operator">*</span> <span class="hljs-params">right</span>)</span>;<br><br><span class="hljs-comment">// c文件中实现</span><br><span class="hljs-built_in">int</span> ipset<span class="hljs-constructor">_domain_cmp(<span class="hljs-params">const</span> <span class="hljs-params">void</span><span class="hljs-operator">*</span> <span class="hljs-params">left</span>, <span class="hljs-params">const</span> <span class="hljs-params">void</span><span class="hljs-operator">*</span> <span class="hljs-params">right</span>)</span> &#123;<br>    return strcmp(((<span class="hljs-keyword">struct</span> ipset_domain_node*)left)-&gt;domain,<br>            ((<span class="hljs-keyword">struct</span> ipset_domain_node*)right)-&gt;domain);<br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li><p>修改<code>util/fptr_wlist.c</code> 中的 <code>fptr_whitelist_rbtree_cmp</code>函数<br>增加新增的比较函数判定</p>
+<img src="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E4%BD%BF%E7%94%A8rbtree/rbtree_0.png" srcset="/img/loading.gif" lazyload class=""></li>
+<li><p>创建rbtree</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">rbtree_type<span class="hljs-operator"> * </span>domain_tree = rbtree<span class="hljs-constructor">_create(&amp;<span class="hljs-params">ipset_domain_cmp</span>)</span>;<br></code></pre></td></tr></table></figure></li>
+<li><p>插入节点</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">static void ipset_add_node(rbtree_type * tree, const char * domain,<br>        const char * setname) &#123;<br>    struct ipset_domain_node * <span class="hljs-keyword">node</span><span class="hljs-title">= (struct</span> ipset_domain_node *)calloc(<span class="hljs-number">1</span>,<br>            sizeof(struct ipset_domain_node));<br>    if(<span class="hljs-attr">NULL=</span>=domain || <span class="hljs-attr">NULL=</span>=setname) &#123;<br>        return;<br>    &#125;<br>    if(domain[strlen(domain)-<span class="hljs-number">1</span>] != &#x27;.&#x27;) &#123;<br>        char tmp[BUFF_LEN] = &#123;<span class="hljs-number">0</span>&#125;;<br>        snprintf(tmp, BUFF_LEN, <span class="hljs-string">&quot;%s.&quot;</span>, domain);<br>        <span class="hljs-keyword">node</span><span class="hljs-title">-&gt;domain</span> =  strdup(tmp);<br>    &#125; else &#123;<br>        <span class="hljs-keyword">node</span><span class="hljs-title">-&gt;domain</span> =  strdup(domain);<br>    &#125;<br>    <span class="hljs-keyword">node</span><span class="hljs-title">-&gt;name</span> = strdup(setname);<br>    <span class="hljs-keyword">node</span><span class="hljs-title">-&gt;node</span>.key = <span class="hljs-keyword">node</span><span class="hljs-title">;</span><br><span class="hljs-title">    rbtree_insert</span>(tree, &amp;<span class="hljs-keyword">node</span><span class="hljs-title">-&gt;node</span>);                                     <br>&#125;                                                                                <br>  <br></code></pre></td></tr></table></figure></li>
+<li><p>查询节点</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">if(domain_tree) &#123;<br>     struct ipset_domain_node key, *<span class="hljs-keyword">node</span><span class="hljs-title">;</span><br><span class="hljs-title">     key</span>.domain = (char*)qname;<br>     key.node.key = &amp;key;<br>     <span class="hljs-keyword">node</span> <span class="hljs-title">= (struct</span> ipset_domain_node*)rbtree_search(domain_tree, &amp;key);<br>     if(<span class="hljs-keyword">node</span><span class="hljs-title">) &#123;</span><br><span class="hljs-title">         setname</span> = <span class="hljs-keyword">node</span><span class="hljs-title">-&gt;name</span>;<br>         verbose(VERB_ALGO, <span class="hljs-string">&quot;ipset find qname=%s, setname=%s&quot;</span>,                <br>                 qname, <span class="hljs-keyword">node</span><span class="hljs-title">-&gt;name</span>);                                          <br>     &#125;                                                                        <br> &#125;           <br></code></pre></td></tr></table></figure></li>
+<li><p>清理时树节点遍历删除</p>
+<ul>
+<li>定义树清理时的遍历清理函数<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs xl">static void ipset_del_node(rbnode_type* x, void* ATTR_UNUSED(arg)) &#123;<br>   struct ipset_domain_node* v = (struct ipset_domain_node*)x;<br>   <span class="hljs-function"><span class="hljs-title">verbose</span>(VERB_ALGO, &quot;ipset free domain=%s, <span class="hljs-keyword">name</span>=%s&quot;, v-&gt;</span><span class="hljs-function"><span class="hljs-title">domain</span>, v-&gt;</span><span class="hljs-keyword">name</span>);<br>   <span class="hljs-function"><span class="hljs-title">free</span>(v-&gt;</span>domain);<br>   <span class="hljs-function"><span class="hljs-title">free</span>(v-&gt;</span><span class="hljs-keyword">name</span>);<br>   free(v);<br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li>清理树时调用循环处理函数<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">traverse<span class="hljs-constructor">_postorder(<span class="hljs-params">domain_tree</span>, <span class="hljs-params">ipset_del_node</span>, NULL)</span>;<br></code></pre></td></tr></table></figure></li>
 </ul>
 </li>
-<li><p>在 <code>config_get_option</code> 函数中获取到配置文件中信息到变量中</p>
-<img src="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_2.png" srcset="/img/loading.gif" lazyload class="">
-<ul>
-<li>在 <code>config_set_option</code> 函数中设置配置文件中的变量内容<br>如果变量在 libunbound 或 remote 控制中可用的话也需要在此函数中进行进行</li>
 </ul>
-</li>
-<li><p>在 <code>config_delete</code> 函数中释放申请的字符串资源</p>
-<img src="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_3.png" srcset="/img/loading.gif" lazyload class=""></li>
-</ul>
-<h1 id="在-util-configparser-y-中增加对应的变量赋值语句"><a href="#在-util-configparser-y-中增加对应的变量赋值语句" class="headerlink" title="在 util/configparser.y 中增加对应的变量赋值语句"></a>在 <code>util/configparser.y</code> 中增加对应的变量赋值语句</h1><ul>
-<li><p>%token 部分增加自动生成变量</p>
-<img src="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_5.png" srcset="/img/loading.gif" lazyload class=""></li>
-<li><p>在分组变量内增加新的变量</p>
-</li>
-</ul>
-<p>注意下图的分组格式</p>
-<img src="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_6.png" srcset="/img/loading.gif" lazyload class="">
-<p>下图为在ipset模块contents中增加新的变量</p>
-<img src="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_7.png" srcset="/img/loading.gif" lazyload class="">
 
-<ul>
-<li>增加自动变量判定逻辑<br>关联token中的VAR_IPSET_NAME_DOMAIN和 ipset_name_domain<img src="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_8.png" srcset="/img/loading.gif" lazyload class=""></li>
-</ul>
-<h1 id="在-util-configlexer-lex-中引用上一步中的变量"><a href="#在-util-configlexer-lex-中引用上一步中的变量" class="headerlink" title="在 util/configlexer.lex 中引用上一步中的变量"></a>在 <code>util/configlexer.lex</code> 中引用上一步中的变量</h1><img src="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/cf_add_9.png" srcset="/img/loading.gif" lazyload class="">
             </div>
             <hr>
             <div>
@@ -324,18 +301,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E4%BD%BF%E7%94%A8rbtree/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">unbound源码修改---rbtree用法总结</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/04/11/04DevOps/25ipset%E4%B8%8Eiptables/">
-                        <span class="hidden-mobile">ipset与iptables</span>
+                      <a href="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/">
+                        <span class="hidden-mobile">unbound源码修改---配置文件增加变量</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
