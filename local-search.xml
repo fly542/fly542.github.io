@@ -4,6 +4,35 @@
   
   
   <entry>
+    <title>unbound配置说明</title>
+    <link href="/2023/04/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/"/>
+    <url>/2023/04/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/</url>
+    
+    <content type="html"><![CDATA[<h1 id="stub-zone和forward-zone区别"><a href="#stub-zone和forward-zone区别" class="headerlink" title="stub zone和forward zone区别"></a>stub zone和forward zone区别</h1><p>相同点:</p><ul><li>两者配置很相似，都是向上游请求接收到的特定域名的请求数据</li></ul><p>不同点:</p><ul><li>stub 会修改接收到的原始DNS请求包中的<code>RD 标记为0</code>，从而向上游请求时上游server不会返回递归结果，forward不会修改原始标记<code>RD</code></li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>devops</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>linux</tag>
+      
+      <tag>dns</tag>
+      
+      <tag>unbound</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>unbound源码修改---rbtree用法总结</title>
     <link href="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E4%BD%BF%E7%94%A8rbtree/"/>
     <url>/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E4%BD%BF%E7%94%A8rbtree/</url>
