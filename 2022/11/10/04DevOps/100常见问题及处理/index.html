@@ -16,15 +16,15 @@
   <meta name="author" content="Fly542">
   <meta name="keywords" content="">
   
-    <meta name="description" content="rm 删除时报错’Argument list too long’12#替换rm -rf  命令，改用xargs 即可ls | xargs rm -rf   清理 &#x2F;var&#x2F;log&#x2F;journal 下的内容12345# 如何判断占用了多少空间journalctl --disk-usage# 清理目录数据的阈值为500Mjournalctl --vacuum-size&#x3D;500M">
+    <meta name="description" content="rm 删除时报错’Argument list too long’12#替换rm -rf  命令，改用xargs 即可ls | xargs rm -rf   清理 &#x2F;var&#x2F;log&#x2F;journal 下的内容12345# 如何判断占用了多少空间journalctl --disk-usage# 清理目录数据的阈值为500Mjournalctl --vacuum-size&#x3D;500M   ulimit 值超">
 <meta property="og:type" content="article">
 <meta property="og:title" content="常见问题处理方法">
 <meta property="og:url" content="http://fly542.cn/2022/11/10/04DevOps/100%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%8F%8A%E5%A4%84%E7%90%86/index.html">
 <meta property="og:site_name" content="Fly542 技术沉淀">
-<meta property="og:description" content="rm 删除时报错’Argument list too long’12#替换rm -rf  命令，改用xargs 即可ls | xargs rm -rf   清理 &#x2F;var&#x2F;log&#x2F;journal 下的内容12345# 如何判断占用了多少空间journalctl --disk-usage# 清理目录数据的阈值为500Mjournalctl --vacuum-size&#x3D;500M">
+<meta property="og:description" content="rm 删除时报错’Argument list too long’12#替换rm -rf  命令，改用xargs 即可ls | xargs rm -rf   清理 &#x2F;var&#x2F;log&#x2F;journal 下的内容12345# 如何判断占用了多少空间journalctl --disk-usage# 清理目录数据的阈值为500Mjournalctl --vacuum-size&#x3D;500M   ulimit 值超">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-11-10T08:40:11.000Z">
-<meta property="article:modified_time" content="2023-04-18T01:41:24.232Z">
+<meta property="article:modified_time" content="2023-04-18T10:04:40.330Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
 <meta name="twitter:card" content="summary_large_image">
@@ -197,7 +197,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      167 字
+      766 字
     </span>
   
 
@@ -206,7 +206,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      2 分钟
+      7 分钟
     </span>
   
 
@@ -242,6 +242,14 @@
 
 
 <h3 id="清理-var-log-journal-下的内容"><a href="#清理-var-log-journal-下的内容" class="headerlink" title="清理 /var/log/journal 下的内容"></a>清理 /var/log/journal 下的内容</h3><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-comment"># 如何判断占用了多少空间</span><br><span class="hljs-keyword">journalctl </span>--<span class="hljs-keyword">disk-usage</span><br><span class="hljs-keyword"></span><br><span class="hljs-comment"># 清理目录数据的阈值为500M</span><br><span class="hljs-keyword">journalctl </span>--vacuum-size=<span class="hljs-number">500</span>M<br></code></pre></td></tr></table></figure>
+
+
+<h3 id="ulimit-值超出允许范围导致无法登陆操作系统"><a href="#ulimit-值超出允许范围导致无法登陆操作系统" class="headerlink" title="ulimit 值超出允许范围导致无法登陆操作系统"></a>ulimit 值超出允许范围导致无法登陆操作系统</h3><p>一般在/etc/security/limits.conf文件中设置各种限制值。</p>
+<p><font color=red> 但是请注意，如果你在文件中设置，你可能设置的值超出范围，导致不可预知的后果，例如无法登陆操作系统。</font></p>
+<p>下面这个对open files的限制就是一个例子，它不识别unlimited，是一个有限的值。<br>所以如果你在/etc/security/limits.conf中设置了</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-bullet">* </span>soft    nofile  unlimited<br><span class="hljs-bullet">* </span>hard    nofile  unlimited<br></code></pre></td></tr></table></figure>
+<p>那就完蛋了，因为你接下来的进程将登陆不了系统了。<br>我们最好先使用ulimit命令验证一下你将要设置的值是否合法。</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs vim">[root@root ~]# ulimit -n <span class="hljs-number">1024000000</span><br>-bash: ulimi<span class="hljs-variable">t:</span> <span class="hljs-keyword">open</span> <span class="hljs-keyword">file</span><span class="hljs-variable">s:</span> cannot modify limi<span class="hljs-variable">t:</span> Operation not permitted<br>[root@root ~]# ulimit -n <span class="hljs-number">9999999999</span><br>-bash: ulimi<span class="hljs-variable">t:</span> <span class="hljs-keyword">open</span> <span class="hljs-keyword">file</span><span class="hljs-variable">s:</span> cannot modify limi<span class="hljs-variable">t:</span> Operation not permitted<br>[root@root ~]# ulimit -n <span class="hljs-number">9999999</span><br>-bash: ulimi<span class="hljs-variable">t:</span> <span class="hljs-keyword">open</span> <span class="hljs-keyword">file</span><span class="hljs-variable">s:</span> cannot modify limi<span class="hljs-variable">t:</span> Operation not permitted<br>[root@root ~]# ulimit -n <span class="hljs-number">999999</span><br></code></pre></td></tr></table></figure>
 
             </div>
             <hr>
