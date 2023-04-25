@@ -374,7 +374,7 @@ git tag -l | awk &#39;/release-/&#39; |  xargs git tag -d
 <h3 id="6-添加标签"><a href="#6-添加标签" class="headerlink" title="6.添加标签"></a>6.添加标签</h3><div class="code-wrapper"><pre><code class="hljs">// 添加一个名为xxx的标签
 $git tag -a xxx -m&quot;xxxxxxx&quot;
 // 将标签推送到服务器
-$git push origin tag-name
+$git push origin tag-names
 </code></pre></div>
 <h2 id="三-遇到问题及解决方法"><a href="#三-遇到问题及解决方法" class="headerlink" title="三. 遇到问题及解决方法"></a>三. 遇到问题及解决方法</h2><h3 id="1-git-push-或者-clone-出错"><a href="#1-git-push-或者-clone-出错" class="headerlink" title="1. git push 或者 clone 出错"></a>1. git push 或者 clone 出错</h3><p>出错代码:<br>    <figure class="highlight subunit"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><pre><code class="hljs subunit"><span class="hljs-keyword">error: </span>RPC failed; curl 56 OpenSSL SSL_read: error:1408F119:SSL routines:ssl3_get_record:decryption failed or bad record mac, errno 0<br>fatal: the remote end hung up unexpectedly<br>fatal: early EOF<br>fatal: index-pack failed<br></code></pre></td></tr></table></figure></p>
 <p>解决方法：增大 postbuffer<br>    <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">git <span class="hljs-built_in">config</span> <span class="hljs-comment">--global http.postBuffer 1048576000</span><br></code></pre></td></tr></table></figure></p>
