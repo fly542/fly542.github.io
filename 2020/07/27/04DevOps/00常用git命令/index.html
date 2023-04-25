@@ -197,7 +197,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      4.9k 字
+      4.8k 字
     </span>
   
 
@@ -316,8 +316,23 @@ $ git commit -m &quot;这里是注释&quot;
 $ git push origin master //提交master代码到远端
 </code></pre></div>
 <h3 id="19-git-submodule-添加子仓库"><a href="#19-git-submodule-添加子仓库" class="headerlink" title="19.git submodule 添加子仓库"></a>19.git submodule 添加子仓库</h3><p>Git Submodule 允许一个git仓库，作为另一个git仓库的子目录，并且保持父项目和子项目相互独立</p>
-<div class="code-wrapper"><pre><code class="hljs"><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></div></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-comment"># 查看子模块</span><br>$ git <span class="hljs-keyword">submodule</span><br><span class="hljs-keyword"></span><span class="hljs-comment"># 为当前工程添加指定分支 xx 的 submodule</span><br>$ git <span class="hljs-keyword">submodule </span><span class="hljs-keyword">add </span>-<span class="hljs-keyword">b </span>xx &lt;仓库地址&gt; &lt;本地路径&gt;<br><span class="hljs-comment"># 为当前工程添加submodule</span><br>$ git <span class="hljs-keyword">submodule </span><span class="hljs-keyword">add </span>&lt;仓库地址&gt; &lt;本地路径&gt;<br><span class="hljs-comment"># 下载的工程带有submodule,使用以下命令下载子模块内容</span><br>$ git <span class="hljs-keyword">submodule </span>update --init --recursive<br><span class="hljs-comment"># 更新子模块为远程项目的最新版本</span><br>$ git <span class="hljs-keyword">submodule </span>update --remote<br><span class="hljs-comment"># 删除子模块需要经过以下4步, 以删除assets文件夹为例</span><br>	<span class="hljs-comment">#1. 删除子模块文件夹</span><br>	$ git rm --<span class="hljs-keyword">cached </span>assets<br>	<span class="hljs-comment">#2. 删除.gitmodules文件中相关子模块信息</span><br>	<span class="hljs-comment">#3. 删除.git/config中的相关子模块信息</span><br>	<span class="hljs-comment">#4. 删除.git/modules/src/文件夹中的相关子模块文件</span><br>	<br></code></pre></td></tr></table></figure>
-</code></pre>
+<div class="code-wrapper"><pre><code class="hljs">// 查看子模块
+git submodule
+// 为当前工程添加指定分支 xx 的 submodule
+git submodule add -b xx &lt;仓库地址&gt; &lt;本地路径&gt;
+// 为当前工程添加submodule
+git submodule add &lt;仓库地址&gt; &lt;本地路径&gt;
+// 下载的工程带有submodule,使用以下命令下载子模块内容
+git submodule update --init --recursive
+// 更新子模块为远程项目的最新版本
+git submodule update --remote
+// 删除子模块需要经过以下4步, 以删除assets文件夹为例
+    // 1. 删除子模块文件夹
+    git rm --cached assets
+    // 2. 删除.gitmodules文件中相关子模块信息
+    // 3. 删除.git/config中的相关子模块信息
+    // 4. 删除.git/modules/src/文件夹中的相关子模块文件
+</code></pre></div>
 <h3 id="20-更新源地址"><a href="#20-更新源地址" class="headerlink" title="20 更新源地址"></a>20 更新源地址</h3><div class="code-wrapper"><pre><code class="hljs">$ git remote set-url origin &lt;new_addr&gt;
 </code></pre></div>
 <h3 id="21-创建空白分支"><a href="#21-创建空白分支" class="headerlink" title="21 创建空白分支"></a>21 创建空白分支</h3><div class="code-wrapper"><pre><code class="hljs">利用git checkout的 --orphan参数来建立一个没有任何历史记录的空分支
@@ -361,7 +376,7 @@ $git tag -a xxx -m&quot;xxxxxxx&quot;
 // 将标签推送到服务器
 $git push origin tag-name
 </code></pre></div>
-<h2 id="三-遇到问题及解决方法"><a href="#三-遇到问题及解决方法" class="headerlink" title="三. 遇到问题及解决方法"></a>三. 遇到问题及解决方法</h2><h3 id="1-git-push-或者-clone-出错"><a href="#1-git-push-或者-clone-出错" class="headerlink" title="1. git push 或者 clone 出错"></a>1. git push 或者 clone 出错</h3><p>出错代码:<br>    <figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs subunit"><span class="hljs-keyword">error: </span>RPC failed; curl 56 OpenSSL SSL_read: error:1408F119:SSL routines:ssl3_get_record:decryption failed or bad record mac, errno 0<br>fatal: the remote end hung up unexpectedly<br>fatal: early EOF<br>fatal: index-pack failed<br></code></pre></td></tr></table></figure></p>
+<h2 id="三-遇到问题及解决方法"><a href="#三-遇到问题及解决方法" class="headerlink" title="三. 遇到问题及解决方法"></a>三. 遇到问题及解决方法</h2><h3 id="1-git-push-或者-clone-出错"><a href="#1-git-push-或者-clone-出错" class="headerlink" title="1. git push 或者 clone 出错"></a>1. git push 或者 clone 出错</h3><p>出错代码:<br>    <figure class="highlight subunit"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><pre><code class="hljs subunit"><span class="hljs-keyword">error: </span>RPC failed; curl 56 OpenSSL SSL_read: error:1408F119:SSL routines:ssl3_get_record:decryption failed or bad record mac, errno 0<br>fatal: the remote end hung up unexpectedly<br>fatal: early EOF<br>fatal: index-pack failed<br></code></pre></td></tr></table></figure></p>
 <p>解决方法：增大 postbuffer<br>    <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">git <span class="hljs-built_in">config</span> <span class="hljs-comment">--global http.postBuffer 1048576000</span><br></code></pre></td></tr></table></figure></p>
 <h3 id="2-git-archive-时没有同步submodule"><a href="#2-git-archive-时没有同步submodule" class="headerlink" title="2. git archive 时没有同步submodule"></a>2. git archive 时没有同步submodule</h3><p>在使用 git archive的时候，发现并没有把项目里的submodule里的文件归档过去，只有一个submodule的文件夹</p>
 <p>解决思路：1、先在父目录使用git archive后，再通过git submodule foreach遍历submodule，对sudmodule里的文件进行git archive，这样最后，所有文件都能归档到一个地方了</p>
