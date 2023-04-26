@@ -1,0 +1,533 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="本文章转载自 https:&#x2F;&#x2F;linuxtools-rst.readthedocs.io&#x2F;zh_CN&#x2F;latest&#x2F;tool&#x2F;nm.html nm 命令显示关于指定 File 中符号的信息，文件可以是对象文件、可执行文件或对象文件库。如果文件没有包含符号信息，nm 命令报告该情况，但不把它解释为出错条件。 nm 命令缺省情况下报告十进制符号表示法下的数字值。 1234567891011121314">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nm 目标文件格式分析《转》">
+<meta property="og:url" content="http://fly542.cn/2023/04/26/04DevOps/26nm%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="本文章转载自 https:&#x2F;&#x2F;linuxtools-rst.readthedocs.io&#x2F;zh_CN&#x2F;latest&#x2F;tool&#x2F;nm.html nm 命令显示关于指定 File 中符号的信息，文件可以是对象文件、可执行文件或对象文件库。如果文件没有包含符号信息，nm 命令报告该情况，但不把它解释为出错条件。 nm 命令缺省情况下报告十进制符号表示法下的数字值。 1234567891011121314">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-26T06:44:40.000Z">
+<meta property="article:modified_time" content="2023-04-26T06:46:54.318Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>nm 目标文件格式分析《转》 - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="nm 目标文件格式分析《转》">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2023-04-26 14:44" pubdate>
+        2023年4月26日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      3.5k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      30 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">nm 目标文件格式分析《转》</h1>
+            
+            <div class="markdown-body">
+              <p>本文章转载自 <a target="_blank" rel="noopener" href="https://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/nm.html">https://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/nm.html</a></p>
+<p>nm 命令显示关于指定 File 中符号的信息，文件可以是对象文件、可执行文件或对象文件库。如果文件没有包含符号信息，nm 命令报告该情况，但不把它解释为出错条件。 nm 命令缺省情况下报告十进制符号表示法下的数字值。</p>
+<figure class="highlight sqf"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></div></td><td class="code"><pre><code class="hljs sqf"><br>$nm myProgrammer<br><span class="hljs-number">08049</span>f28 d <span class="hljs-variable">_DYNAMIC</span><br><span class="hljs-number">08049</span>ff4 d <span class="hljs-variable">_GLOBAL_OFFSET_TABLE_</span><br><span class="hljs-number">080484</span>dc R <span class="hljs-variable">_IO_stdin_used</span><br>         w <span class="hljs-variable">_Jv_RegisterClasses</span><br><span class="hljs-number">08049</span>f18 d <span class="hljs-variable">__CTOR_END__</span><br><span class="hljs-number">08049</span>f14 d <span class="hljs-variable">__CTOR_LIST__</span><br><span class="hljs-number">08049</span>f20 D <span class="hljs-variable">__DTOR_END__</span><br><span class="hljs-number">08049</span>f1c d <span class="hljs-variable">__DTOR_LIST__</span><br><span class="hljs-number">080485</span>e0 r <span class="hljs-variable">__FRAME_END__</span><br><span class="hljs-number">08049</span>f24 d <span class="hljs-variable">__JCR_END__</span><br><span class="hljs-number">08049</span>f24 d <span class="hljs-variable">__JCR_LIST__</span><br><span class="hljs-number">0804</span>a014 A <span class="hljs-variable">__bss_start</span><br><span class="hljs-number">0804</span>a00c D <span class="hljs-variable">__data_start</span><br><span class="hljs-number">08048490</span> t <span class="hljs-variable">__do_global_ctors_aux</span><br><span class="hljs-number">08048360</span> t <span class="hljs-variable">__do_global_dtors_aux</span><br><span class="hljs-number">0804</span>a010 D <span class="hljs-variable">__dso_handle</span><br>         w <span class="hljs-variable">__gmon_start__</span><br><span class="hljs-number">08048482</span> T <span class="hljs-variable">__i686</span>.get_pc_thunk.bx<br><span class="hljs-number">08049</span>f14 d <span class="hljs-variable">__init_array_end</span><br><span class="hljs-number">08049</span>f14 d <span class="hljs-variable">__init_array_start</span><br><span class="hljs-number">08048480</span> T <span class="hljs-variable">__libc_csu_fini</span><br><span class="hljs-number">08048410</span> T <span class="hljs-variable">__libc_csu_init</span><br>         U <span class="hljs-variable">__libc_start_main</span>@@GLIBC_2.<span class="hljs-number">0</span><br><span class="hljs-number">0804</span>a014 A <span class="hljs-variable">_edata</span><br><span class="hljs-number">0804</span>a01c A <span class="hljs-variable">_end</span><br><span class="hljs-number">080484</span>bc T <span class="hljs-variable">_fini</span><br><span class="hljs-number">080484</span>d8 R <span class="hljs-variable">_fp_hw</span><br><span class="hljs-number">080482</span>b4 T <span class="hljs-variable">_init</span><br><span class="hljs-number">08048330</span> T <span class="hljs-variable">_start</span><br><span class="hljs-number">0804</span>a014 b completed.<span class="hljs-number">6086</span><br><span class="hljs-number">0804</span>a00c W data_start<br><span class="hljs-number">0804</span>a018 b dtor_idx.<span class="hljs-number">6088</span><br><span class="hljs-number">080483</span>c0 t frame_dummy<br><span class="hljs-number">080483</span>e4 T main<br>         U printf@@GLIBC_2.<span class="hljs-number">0</span><br></code></pre></td></tr></table></figure>
+
+<p>这些包含可执行代码的段称为正文段。同样地，数据段包含了不可执行的信息或数据。另一种类型的段，称为 BSS 段，它包含以符号数据开头的块。对于 nm 命令列出的每个符号，它们的值使用十六进制来表示（缺省行为），并且在该符号前面加上了一个表示符号类型的编码字符。</p>
+<p>可以将目标文件中所包含的不同的部分划分为段。段可以包含可执行代码、符号名称、初始数据值和许多其他类型的数据。有关这些类型的数据的详细信息，可以阅读 UNIX 中 nm 的 man 页面，其中按照该命令输出中的字符编码分别对每种类型进行了描述。</p>
+<h1 id="选项说明"><a href="#选项说明" class="headerlink" title="选项说明"></a>选项说明</h1><hr>
+<ul>
+<li>-a或–debug-syms：显示所有的符号，包括debugger-only symbols。  </li>
+<li>-B：等同于–format=bsd，用来兼容MIPS的nm。  </li>
+<li>-C或–demangle：将低级符号名解析(demangle)成用户级名字。这样可以使得C++函数名具有可读性。</li>
+<li>–no-demangle：默认的选项，不需要将低级符号名解析成用户级名。</li>
+<li>-D或–dynamic：显示动态符号。该任选项仅对于动态目标(例如特定类型的共享库)有意义。  </li>
+<li>-f format：使用format格式输出。format可以选取bsd、sysv或posix，该选项在GNU的nm中有用。默认为bsd。  </li>
+<li>-g或–extern-only：仅显示外部符号。  </li>
+<li>-n、-v或–numeric-sort：按符号对应地址的顺序排序，而非按符号名的字符顺序。  </li>
+<li>-p或–no-sort：按目标文件中遇到的符号顺序显示，不排序。  </li>
+<li>-P或–portability：使用POSIX.2标准输出格式代替默认的输出格式。等同于使用任选项-f posix。  </li>
+<li>-s或–print-armap：当列出库中成员的符号时，包含索引。索引的内容包含：哪些模块包含哪些名字的映射。  </li>
+<li>-r或–reverse-sort：反转排序的顺序(例如，升序变为降序)。  </li>
+<li>–size-sort：按大小排列符号顺序。该大小是按照一个符号的值与它下一个符号的值进行计算的。  </li>
+<li>–target=bfdname：指定一个目标代码的格式，而非使用系统的默认格式。  </li>
+<li>-u或–undefined-only：仅显示没有定义的符号(那些外部符号)。</li>
+<li>–defined-only:仅显示定义的符号。  </li>
+<li>-l或–line-numbers：对每个符号，使用调试信息来试图找到文件名和行号。 </li>
+<li>-V或–version：显示nm的版本号。  </li>
+<li>–help：显示nm的选项。</li>
+</ul>
+<h1 id="符号说明"><a href="#符号说明" class="headerlink" title="符号说明"></a>符号说明</h1><hr>
+<p>对于每一个符号来说，其类型如果是小写的，则表明该符号是local的；大写则表明该符号是global(external)的。</p>
+<ul>
+<li><p>A  该符号的值是绝对的，在以后的链接过程中，不允许进行改变。这样的符号值，常常出现在中断向量表中，例如用符号来表示各个中断向量函数在中断向量表中的位置。</p>
+</li>
+<li><p>B  该符号的值出现在非初始化数据段(bss)中。例如，在一个文件中定义全局static int test。则该符号test的类型为b，位于bss section中。其值表示该符号在bss段中的偏移。一般而言，bss段分配于RAM中。</p>
+</li>
+<li><p>C  该符号为common。common symbol是未初始话数据段。该符号没有包含于一个普通section中。只有在链接过程中才进行分配。符号的值表示该符号需要的字节数。例如在一个c文件中，定义int test，并且该符号在别的地方会被引用，则该符号类型即为C。否则其类型为B。    </p>
+</li>
+<li><p>D  该符号位于初始化数据段中。一般来说，分配到data section中。</p>
+<div class="code-wrapper"><pre><code class="hljs">  例如：定义全局int baud_table[5] = &#123;9600, 19200, 38400, 57600, 115200&#125;，会分配到初始化数据段中。
+</code></pre></div>
+</li>
+<li><p>G  该符号也位于初始化数据段中。主要用于small object提高访问small data object的一种方式。</p>
+</li>
+<li><p>I  该符号是对另一个符号的间接引用。     </p>
+</li>
+<li><p>N  该符号是一个debugging符号。         </p>
+</li>
+<li><p>R  该符号位于只读数据区。</p>
+<ul>
+<li>例如定义全局const int test[] = {123, 123};则test就是一个只读数据区的符号。</li>
+<li>值得注意的是，如果在一个函数中定义const char *test = “abc”, const char test_int = 3。使用nm都不会得到符号信息，但是字符串”abc”分配于只读存储器中，test在rodata section中，大小为4。 </li>
+</ul>
+</li>
+<li><p>S  符号位于非初始化数据区，用于small object。</p>
+</li>
+<li><p>T  该符号位于代码区text section。       </p>
+</li>
+<li><p>U  该符号在当前文件中是未定义的，即该符号的定义在别的文件中。<br>  例如，当前文件调用另一个文件中定义的函数，在这个被调用的函数在当前就是未定义的；但是在定义它的文件中类型是T。但是对于全局变量来说，在定义它的文件中，其符号类型为C，在使用它的文件中，其类型为U。</p>
+</li>
+<li><p>V  该符号是一个weak object。       </p>
+</li>
+<li><p>W  The symbol is a weak symbol that has not been specifically tagged as a weak object symbol.       </p>
+</li>
+<li><p>?  该符号类型没有定义</p>
+</li>
+</ul>
+<p><em>库或对象名</em><br>如果您指定了 -A 选项，则 nm 命令只报告与该文件有关的或者库或者对象名。</p>
+<h1 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h1><hr>
+<ol>
+<li>寻找特殊标识</li>
+</ol>
+<p>有时会碰到一个编译了但没有链接的代码，那是因为它缺失了标识符；这种情况，可以用nm和objdump、readelf命令来查看程序的符号表；所有这些命令做的工作基本一样；</p>
+<p>比如连接器报错有未定义的标识符；大多数情况下，会发生在库的缺失或企图链接一个错误版本的库的时候；浏览目标代码来寻找一个特殊标识符的引用::</p>
+<div class="code-wrapper"><pre><code class="hljs">nm -uCA *.o | grep foo
+</code></pre></div>
+<p>-u选项限制了每个目标文件中未定义标识符的输出。-A选项用于显示每个标识符的文件名信息；对于C++代码，常用的还有-C选项，它也为解码这些标识符；</p>
+<p>.. note::</p>
+<div class="code-wrapper"><pre><code class="hljs">objdump、readld命令可以完成同样的任务。等效命令为：
+$objdump  -t
+$readelf -s
+</code></pre></div>
+<ol start="2">
+<li><p>列出 a.out 对象文件的静态和外部符::</p>
+<p> $nm -e a.out</p>
+</li>
+<li><p>以十六进制显示符号大小和值并且按值排序符号::</p>
+<p> $nm -xv a.out</p>
+</li>
+<li><p>显示 libc.a 中所有 64 位对象符号，忽略所有 32 位对象::</p>
+<p> $nm -X64 /usr/lib/libc.a</p>
+</li>
+</ol>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/devops/">devops</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/linux/">linux</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/04/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/">
+                        <span class="hidden-mobile">unbound配置说明</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
