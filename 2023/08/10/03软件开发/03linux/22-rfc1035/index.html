@@ -1,0 +1,1189 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1.此备忘录的状态本RFC描述了域系统和协议的详细信息，并假定读者熟悉本文档中讨论的概念。伴随RFC，“域名-概念和设施” [RFC-1034]。 域系统是功能和数据类型（它们是正式协议）和功能和数据类型（仍处于试验阶段）的混合体。由于域系统是有意扩展的，因此应始终在官方协议之外的系统部分中期待新的数据类型和实验行为。官方协议部分包括标准查询，响应和Internet类RR数据格式（例如主机地址）。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fly542 技术沉淀">
+<meta property="og:url" content="http://fly542.cn/2023/08/10/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/22-rfc1035/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="1.此备忘录的状态本RFC描述了域系统和协议的详细信息，并假定读者熟悉本文档中讨论的概念。伴随RFC，“域名-概念和设施” [RFC-1034]。 域系统是功能和数据类型（它们是正式协议）和功能和数据类型（仍处于试验阶段）的混合体。由于域系统是有意扩展的，因此应始终在官方协议之外的系统部分中期待新的数据类型和实验行为。官方协议部分包括标准查询，响应和Internet类RR数据格式（例如主机地址）。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-10T02:43:04.853Z">
+<meta property="article:modified_time" content="2021-10-29T06:24:28.608Z">
+<meta property="article:author" content="Fly542">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2023-08-10 10:43" pubdate>
+        2023年8月10日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      33k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      273 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none"></h1>
+            
+            <div class="markdown-body">
+              <h1 id="1-此备忘录的状态"><a href="#1-此备忘录的状态" class="headerlink" title="1.此备忘录的状态"></a>1.此备忘录的状态</h1><p>本RFC描述了域系统和协议的详细信息，并假定读者熟悉本文档中讨论的概念。<br>伴随RFC，“域名-概念和设施” [RFC-1034]。</p>
+<p>域系统是功能和数据类型（它们是正式协议）和功能和数据类型（仍处于试验阶段）的混合体。由于域系统是有意扩展的，因此应始终在官方协议之外的系统部分中期待新的数据类型和实验行为。官方协议部分包括标准查询，响应和Internet类RR数据格式（例如主机地址）。自从上一个RFC设置以来，几个定义已更改，因此一些以前的定义已过时。</p>
+<p>这些RFC中清楚地标记了实验性或过时的功能，因此应谨慎使用这些信息。</p>
+<p>特别提醒读者，不要依赖示例中出现的最新或完整的值，因为它们的目的主要是教学目的。该备忘录的分发是无限的。</p>
+<h1 id="2"><a href="#2" class="headerlink" title="2."></a>2.</h1><h2 id="2-1"><a href="#2-1" class="headerlink" title="2.1"></a>2.1</h2><p>域名的目的是提供一种资源命名机制，以使名称可以在不同的主机，网络，协议族，互联网和管理组织中使用。</p>
+<p>从用户的角度来看，域名可用作本地代理（称为解析器）的参数，该代理检索与域名关联的信息。因此，用户可能会要求提供与特定域名相关联的主机地址或邮件信息。为了使用户能够请求特定类型的信息，会将适当的查询类型与域名一起传递给解析器。对于用户来说，域树是一个单一的信息空间；解析器负责向用户隐藏名称服务器之间的数据分布。</p>
+<p>从解析器的角度来看，构成域空间的数据库分布在各种名称服务器之间。域空间的不同部分存储在不同的名称服务器中，尽管特定的数据项将冗余存储在两个或多个名称服务器中。解析器从至少一台名称服务器的知识开始。当解析器处理用户查询时，它会向已知的名称服务器询问信息。作为回报，解析器将接收所需的信息或将其引荐给另一个名称服务器。使用这些引用，解析程序可以了解其他名称服务器的身份和内容。解析程序负责通过咨询其他服务器中的冗余数据库来处理域空间的分配并处理名称服务器故障的影响。</p>
+<p>名称服务器管理两种数据。第一种数据存放在称为区域的集中；每个区域都是特定数据库的完整数据库<br>域空间的“修剪”子树。此数据称为权威数据。名称服务器会定期检查以确保其区域是最新的，如果不是，则获取更新区域的新副本。</p>
+<p>来自本地或其他名称服务器中存储的主文件。第二种数据是由本地解析器获取的缓存数据。此数据可能不完整，但是当重复访问非本地数据时，可以提高检索过程的性能。缓存的数据最终会被超时机制丢弃。</p>
+<p>此功能结构隔离了解析器中的用户界面，故障恢复和分发问题，并隔离了名称服务器中的数据库更新和刷新问题。</p>
+<h2 id="2-2-常用配置"><a href="#2-2-常用配置" class="headerlink" title="2.2 常用配置"></a>2.2 常用配置</h2><p>主机可以通过多种方式参与域名系统，具体取决于主机是否运行检索信息的程序<br>来自域系统的域名服务器，用于回答来自其他主机的查询的域名服务器，或两种功能的各种组合。最简单，也可能是最典型的配置如下所示：</p>
+<div class="code-wrapper"><pre><code class="hljs">             本地主机                          |  外部主机
+                                               |
++---------+               +----------+         |  +--------+
+|         | 用户 请求     |          |   请求  |  |        |
+|  用户   |--------------&gt;|          |---------|-&gt;| 外部   |
+|  程序   |               |  解析器  |         |  |  Name  |
+|         |&lt;--------------|          |&lt;--------|--| Server |
+|         | 用户 应答     |          |  应答   |  |        |
++---------+               +----------+         |  +--------+
+                            |     A            |
+               添加缓存     |     | references |
+                            V     |            |
+                          +----------+         |
+                          |  缓存    |         |
+                          +----------+         |
+                          
+</code></pre></div>
+<p>用户程序通过解析器与域名空间交互；用户查询和用户响应的格式特定于主机及其操作系统。用户查询通常是操作系统调用，而解析程序及其缓存将是主机操作系统的一部分。能力较弱的主机可能选择将解析器实现为与需要其服务的每个程序链接的子例程。解析程序使用通过查询外部名称服务器和本地缓存获取的信息来回答用户查询。</p>
+<p>请注意，解析器可能必须对几个不同的外部名称服务器进行几个查询才能回答特定的用户查询，因此，用户查询的解析可能涉及多个网络访问和任意数量的时间。对外部名称服务器的查询和相应的响应具有描述的标准格式</p>
+<p>在本备忘录中，可能是数据报。</p>
+<p>根据其功能，名称服务器可以是专用计算机上的独立程序，也可以是大型分时主机上的一个或多个进程。一个简单的配置可能是：</p>
+<div class="code-wrapper"><pre><code class="hljs">             Local Host                        |  Foreign
+                                               |
+  +---------+                                  |
+ /         /|                                  |
++---------+ |             +----------+         |  +--------+
+|         | |             |          |responses|  |        |
+|         | |             |   Name   |---------|-&gt;|Foreign |
+|  Master |--------------&gt;|  Server  |         |  |Resolver|
+|  files  | |             |          |&lt;--------|--|        |
+|         |/              |          | queries |  +--------+
++---------+               +----------+         |
+</code></pre></div>
+<p>在这里，主要名称服务器通过从其本地文件系统中读取主文件来获取有关一个或多个区域的信息，并回答有关来自外部解析器的那些区域的查询。</p>
+<p>DNS要求多个区域服务器冗余地支持所有区域。指定的辅助服务器可以使用DNS的区域传输协议来获取区域并从主服务器检查更新。该配置如下所示：</p>
+<div class="code-wrapper"><pre><code class="hljs">             Local Host                        |  Foreign
+                                               |
+  +---------+                                  |
+ /         /|                                  |
++---------+ |             +----------+         |  +--------+
+|         | |             |          |responses|  |        |
+|         | |             |   Name   |---------|-&gt;|Foreign |
+|  Master |--------------&gt;|  Server  |         |  |Resolver|
+|  files  | |             |          |&lt;--------|--|        |
+|         |/              |          | queries |  +--------+
++---------+               +----------+         |
+                            A     |maintenance |  +--------+
+                            |     +------------|-&gt;|        |
+                            |      queries     |  |Foreign |
+                            |                  |  |  Name  |
+                            +------------------|--| Server |
+                         maintenance responses |  +--------+
+</code></pre></div>
+<p>在这种配置中，名称服务器会定期与外部名称服务器建立虚拟电路，以获取区域的副本或检查现有副本是否已更改。为这些维护活动发送的消息采用与查询和响应相同的形式，但是消息顺序有所不同。</p>
+<p>支持域名系统各个方面的主机中的信息流如下所示：</p>
+<div class="code-wrapper"><pre><code class="hljs">             Local Host                        |  Foreign
+                                               |
++---------+               +----------+         |  +--------+
+|         | user queries  |          |queries  |  |        |
+|  User   |--------------&gt;|          |---------|-&gt;|Foreign |
+| Program |               | Resolver |         |  |  Name  |
+|         |&lt;--------------|          |&lt;--------|--| Server |
+|         | user responses|          |responses|  |        |
++---------+               +----------+         |  +--------+
+                            |     A            |
+            cache additions |     | references |
+                            V     |            |
+                          +----------+         |
+                          |  Shared  |         |
+                          | database |         |
+                          +----------+         |
+                            A     |            |
+  +---------+     refreshes |     | references |
+ /         /|               |     V            |
++---------+ |             +----------+         |  +--------+
+|         | |             |          |responses|  |        |
+|         | |             |   Name   |---------|-&gt;|Foreign |
+|  Master |--------------&gt;|  Server  |         |  |Resolver|
+|  files  | |             |          |&lt;--------|--|        |
+|         |/              |          | queries |  +--------+
++---------+               +----------+         |
+                            A     |maintenance |  +--------+
+                            |     +------------|-&gt;|        |
+                            |      queries     |  |Foreign |
+                            |                  |  |  Name  |
+                            +------------------|--| Server |
+                         maintenance responses |  +--------+
+</code></pre></div>
+<p>共享数据库保存本地名称服务器和解析器的域空间数据。共享数据库的内容通常是由名称服务器的定期刷新操作维护的权威数据和来自先前解析程序请求的缓存数据的混合。域数据的结构以及名称服务器和解析程序之间同步的必要性暗示了此数据库的一般特征，但实际格式取决于本地实现者。</p>
+<p>还可以定制信息流，以便一组主机一起行动以优化活动。有时这样做是为了减轻负担<br>功能强大的主机，这样他们就不必实施完整的解析程序。这对于希望最大程度地减少所需新网络代码量的PC或主机而言是合适的。在集中式缓存具有较高命中率的前提下，该方案还可以允许一组主机共享少量缓存，而不必维护大量单独的缓存。无论哪种情况，解析器都将由存根解析器代替，存根解析器充当位于一个或多个已知执行该服务的名称服务器中的递归服务器中的解析器的前端：</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></div></td><td class="code"><pre><code class="hljs gherkin">               Local Hosts                     |<span class="hljs-string">  Foreign</span><br><span class="hljs-string">                                               </span>|<br>+---------+                                    |<span class="hljs-string"></span><br><span class="hljs-string"></span>|<span class="hljs-string">         </span>|<span class="hljs-string"> responses                          </span>|<br>|<span class="hljs-string"> Stub    </span>|<span class="hljs-string">&lt;--------------------+              </span>|<br>|<span class="hljs-string"> Resolver</span>|<span class="hljs-string">                     </span>|<span class="hljs-string">              </span>|<br>|<span class="hljs-string">         </span>|<span class="hljs-string">----------------+    </span>|<span class="hljs-string">              </span>|<br>+---------+ recursive      |<span class="hljs-string">    </span>|<span class="hljs-string">              </span>|<br>            queries        |<span class="hljs-string">    </span>|<span class="hljs-string">              </span>|<br>                           V    |<span class="hljs-string">              </span>|<br>+---------+ recursive     +----------+         |<span class="hljs-string">  +--------+</span><br><span class="hljs-string"></span>|<span class="hljs-string">         </span>|<span class="hljs-string"> queries       </span>|<span class="hljs-string">          </span>|<span class="hljs-string">queries  </span>|<span class="hljs-string">  </span>|<span class="hljs-string">        </span>|<br>|<span class="hljs-string"> Stub    </span>|<span class="hljs-string">--------------&gt;</span>|<span class="hljs-string"> Recursive</span>|<span class="hljs-string">---------</span>|<span class="hljs-string">-&gt;</span>|<span class="hljs-string">Foreign </span>|<br>|<span class="hljs-string"> Resolver</span>|<span class="hljs-string">               </span>|<span class="hljs-string"> Server   </span>|<span class="hljs-string">         </span>|<span class="hljs-string">  </span>|<span class="hljs-string">  Name  </span>|<br>|<span class="hljs-string">         </span>|<span class="hljs-string">&lt;--------------</span>|<span class="hljs-string">          </span>|<span class="hljs-string">&lt;--------</span>|<span class="hljs-string">--</span>|<span class="hljs-string"> Server </span>|<br>+---------+ responses     |<span class="hljs-string">          </span>|<span class="hljs-string">responses</span>|<span class="hljs-string">  </span>|<span class="hljs-string">        </span>|<br>                          +----------+         |<span class="hljs-string">  +--------+</span><br><span class="hljs-string">                          </span>|<span class="hljs-string">  Central </span>|<span class="hljs-string">         </span>|<br>                          |<span class="hljs-string">   cache  </span>|<span class="hljs-string">         </span>|<br>                          +----------+         |<br></code></pre></td></tr></table></figure>
+
+<p>无论如何，请注意，为了确保可靠性，始终会复制域组件。</p>
+<h2 id="2-3-约定"><a href="#2-3-约定" class="headerlink" title="2.3 约定"></a>2.3 约定</h2><p>域系统具有处理低级但基本问题的几种约定。尽管实现者可以在自己的系统内随意违反这些约定，但他必须在从其他主机观察到的所有行为中遵守这些约定。</p>
+<h3 id="2-3-1-首先名称语法"><a href="#2-3-1-首先名称语法" class="headerlink" title="2.3.1 首先名称语法"></a>2.3.1 首先名称语法</h3><p>DNS规范试图在构造域名的规则中尽可能通用。这个想法是，任何现有对象的名称都可以用最少的更改就可以表示为域名。</p>
+<p>但是，在为对象分配域名时，审慎的用户将选择一个既要满足域系统规则又要满足该对象的任何现有规则的名称，无论这些规则是由现有程序发布还是隐含。</p>
+<p>例如，命名邮件域时，用户应同时满足此备忘录的规则和RFC-822中的规则。创建新的主机名时，应遵循HOSTS.TXT的旧规则。这样可以避免将旧软件转换为使用域名时出现问题。</p>
+<p>以下语法将减少许多使用域名的应用程序（例如邮件，TELNET）的问题。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs dts"><span class="hljs-params">&lt;domain&gt;</span> :: = <span class="hljs-params">&lt;subdomain&gt;</span> | <span class="hljs-string">&quot; &quot;</span><br><br><span class="hljs-params">&lt;subdomain&gt;</span> :: = <span class="hljs-params">&lt;label&gt;</span> | <span class="hljs-params">&lt;subdomain&gt;</span><span class="hljs-string">&quot;.&quot;</span> <span class="hljs-params">&lt;标签&gt;</span><br><br><span class="hljs-params">&lt;label&gt;</span> :: = <span class="hljs-params">&lt;letter&gt;</span> [[<span class="hljs-params">&lt;ldh-str&gt;</span>] <span class="hljs-params">&lt;let-dig&gt;</span>]<br><br><span class="hljs-params">&lt;ldh-str&gt;</span> :: = <span class="hljs-params">&lt;let-dig-hyp&gt;</span> | <span class="hljs-params">&lt;let-dig-hyp&gt;</span> <span class="hljs-params">&lt;ldh-str&gt;</span><br><br><span class="hljs-params">&lt;let-dig-hyp&gt;</span> :: = <span class="hljs-params">&lt;let-dig&gt;</span> “-”<br><br><span class="hljs-params">&lt;let-dig&gt;</span> :: = <span class="hljs-params">&lt;letter&gt;</span> | <span class="hljs-params">&lt;数字&gt;</span><br><br><span class="hljs-params">&lt;字母&gt;</span> :: = <span class="hljs-number">52</span>个字母字符A到Z中的任何一个（大写）和a到z中的小写<br><br><span class="hljs-params">&lt;digit&gt;</span> :: =十个数字<span class="hljs-number">0</span>到<span class="hljs-number">9</span>中的任何一个<br></code></pre></td></tr></table></figure>
+<p>请注意，虽然域名中允许使用大小写字母，但大小写没有任何意义。就是说，具有相同拼写但大小写不同的两个名称应视为相同。</p>
+<p>标签必须遵循ARPANET主机名的规则。它们必须以字母开头，以字母或数字结尾，并且仅以字母，数字和连字符作为内部字符。长度上也有一些限制。标签不得超过63个字符。</p>
+<p>例如，以下字符串标识Internet中的主机：</p>
+<p>A.ISI.EDU XX.LCS.MIT.EDU SRI-NIC.ARPA</p>
+<h3 id="2-3-2。数据传输顺序"><a href="#2-3-2。数据传输顺序" class="headerlink" title="2.3.2。数据传输顺序"></a>2.3.2。数据传输顺序</h3><p>本文档中描述的报头和数据的传输顺序解析为八位位组级别。每当图表显示</p>
+<p>一组八位位组，这些八位位组的传输顺序是用英语阅读它们的正常顺序。例如，在下图中，八位位组按照其编号顺序进行传输。</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code"> 0                   1</span><br><span class="hljs-section"> 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5</span><br><span class="hljs-section">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="hljs-section">|       1       |       2       |</span><br><span class="hljs-section">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="hljs-section">|       3       |       4       |</span><br><span class="hljs-section">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="hljs-section">|       5       |       6       |</span><br><span class="hljs-section">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br></code></pre></td></tr></table></figure>
+
+<p>每当八位位组代表数字量时，图中最左边的位就是高阶或最高有效位。即，标记为0的位是最高有效位。例如，下图表示值170（十进制）。</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-section"> 0 1 2 3 4 5 6 7</span><br><span class="hljs-section">+-+-+-+-+-+-+-+-+</span><br><span class="hljs-section">|1 0 1 0 1 0 1 0|</span><br><span class="hljs-section">+-+-+-+-+-+-+-+-+</span><br></code></pre></td></tr></table></figure>
+<p>同样，每当一个多字节的字段代表一个数字量时，整个字段的最左位就是最高有效位。传输多字节的数量时，最重要的字节首先传输。</p>
+<h3 id="2-3-3-角色案例"><a href="#2-3-3-角色案例" class="headerlink" title="2.3.3 角色案例"></a>2.3.3 角色案例</h3><p>对于正式协议中DNS的所有部分，字符串之间的所有比较（例如标签，域名等）均不区分大小写。目前，此规则在整个域系统中均有效，无一例外。但是，除当前用法外，将来可能需要在名称中使用完整的二进制八位位组功能，因此应避免尝试以7位ASCII存储域名或使用特殊字节来终止标签等。</p>
+<p>当数据进入域系统时，应尽可能保留其原始大小写。在某些情况下，这是无法做到的。例如，如果将两个RR存储在数据库中，一个存储在x.y，一个存储在X.Y，则它们实际上存储在数据库的同一位置，因此将仅保留一个大小写。基本规则是，只有在使用数据定义数据库中的结构时才可以忽略大小写，并且以不区分大小写的方式进行比较时，两个名称是相同的。</p>
+<p>区分大小写的数据的丢失必须最小化。因此，虽然x.y和X.Y的数据都可以存储在x.y或X.Y的单个位置下，但是a.x和B.X的数据永远不会存储在A.x，A.X，b.x或b.X的下面。通常，这保留了域名的第一个标签的大小写，但是强制内部节点标签标准化。</p>
+<p>如果系统管理员区分大小写，则将数据输入到域数据库中的系统管理员应注意以区分大小写的方式表示他们提供给域系统的数据。域系统中的数据分发系统将确保保留一致的表示形式。</p>
+<h3 id="2-3-4-大小限制"><a href="#2-3-4-大小限制" class="headerlink" title="2.3.4 大小限制"></a>2.3.4 大小限制</h3><p>DNS中的各种对象和参数都有大小限制。它们在下面列出。有些可以轻松更改，而其他则更基础。</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs armasm">标签 不超过<span class="hljs-number">63</span>个八位位组<br><br>名称 不超过<span class="hljs-number">255</span>个八位字节<br><br><span class="hljs-symbol">TTL</span> 有符号<span class="hljs-number">32</span>位数字的<span class="hljs-meta">TTL</span>正值。<br><br><span class="hljs-symbol">UDP</span>消息 不超过<span class="hljs-number">512</span>个八位位组<br></code></pre></td></tr></table></figure>
+
+<p>#3 域名空间和RR定义</p>
+<h2 id="3-1-命名空间定义"><a href="#3-1-命名空间定义" class="headerlink" title="3.1 命名空间定义"></a>3.1 命名空间定义</h2><p>消息中的域名是由一系列标签表示的。每个标签第一个字节表示该标签后字符个数。每个域名以零字节结尾。长度字段的高位两位必须为零，长度字段的其余六位将标签限制为63个八位位组或更少。</p>
+<p>为了简化实施，域名的总长度（即，标签八位字节和标签长度八位字节）被限制为255个八位字节或更少。</p>
+<p>尽管标签可以包含组成标签的八位字节中的任何8位值，但强烈建议标签遵循本备忘录中其他地方描述的首选语法，该语法与现有主机命名约定兼容。名称服务器和解析器必须以不区分大小写的方式（即A = a）比较标签，并假设ASCII的奇偶校验为零。非字母代码必须完全匹配。</p>
+<h2 id="3-2-RR定义"><a href="#3-2-RR定义" class="headerlink" title="3.2  RR定义"></a>3.2  RR定义</h2><h3 id="3-2-1-格式"><a href="#3-2-1-格式" class="headerlink" title="3.2.1 格式"></a>3.2.1 格式</h3><p>所有RR具有相同的顶级格式，如下所示：</p>
+<div class="code-wrapper"><pre><code class="hljs">                                1  1  1  1  1  1
+  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                                               |
+/                                               /
+/                      NAME                     /
+|                                               |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                      TYPE                     |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                     CLASS                     |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                      TTL                      |
+|                                               |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                   RDLENGTH                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--|
+/                     RDATA                     /
+/                                               /
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+</code></pre></div>
+<p>在哪里：</p>
+<p>命名所有者名称，即此资源记录所属的节点的名称。</p>
+<p>TYPE包含RR TYPE代码之一的两个八位位组。</p>
+<p>CLASS包含RR CLASS代码之一的两个八位位组。</p>
+<p>TTL一个32位带符号整数，它指定在再次查询信息源之前可以缓存资源记录的时间间隔。零值被解释为表示RR仅可用于进行中的事务，不应缓存。例如，SOA记录始终以零TTL分发，以禁止缓存。零值也可以用于易失性数据。</p>
+<p>RDLENGTH一个无符号的16位整数，它指定RDATA字段的八位字节长度。</p>
+<p>RDATA是描述资源的八位字节的可变长度字符串。此信息的格式根据资源记录的类型和类别而有所不同。</p>
+<h3 id="3-2-2-TYPE值"><a href="#3-2-2-TYPE值" class="headerlink" title="3.2.2  TYPE值"></a>3.2.2  TYPE值</h3><p>TYPE字段用于资源记录中。请注意，这些类型是QTYPE的子集。</p>
+<p>TYPE的值和含义</p>
+<p>1主机地址</p>
+<p>NS 2权威名称服务器</p>
+<p>MD 3邮件目的地（已淘汰-使用MX）</p>
+<p>MF 4邮件转发器（已淘汰-使用MX）</p>
+<p>CNAME 5别名的规范名称</p>
+<p>SOA 6标志着授权区域的开始</p>
+<p>MB 7一个邮箱域名（EXPERIMENTAL）</p>
+<p>MG 8邮件组成员（EXPERIMENTAL）</p>
+<p>MR 9邮件重命名域名（EXPERIMENTAL）</p>
+<p>空10空RR（EXPERIMENTAL）</p>
+<p>WKS 11众所周知的服务描述</p>
+<p>PTR 12域名指针</p>
+<p>HINFO 13主机信息</p>
+<p>MINFO 14邮箱或邮件列表信息</p>
+<p>MX 15邮件交换</p>
+<p>TXT 16文字字串</p>
+<h3 id="3-2-3。-QTYPE值"><a href="#3-2-3。-QTYPE值" class="headerlink" title="3.2.3。 QTYPE值"></a>3.2.3。 QTYPE值</h3><p>QTYPE字段出现在查询的问题部分。 QTYPES是TYPE的超集，因此所有TYPE都是有效的QTYPE。此外，还定义了以下QTYPE：</p>
+<p>AXFR 252要求转移整个区域</p>
+<p>MAILB 253请求与邮箱相关的记录（MB，MG或MR）</p>
+<p>MAILA 254要求邮件代理RR（已淘汰-请参阅MX）</p>
+<ul>
+<li>255所有记录的请求</li>
+</ul>
+<h3 id="3-2-4。类别值"><a href="#3-2-4。类别值" class="headerlink" title="3.2.4。类别值"></a>3.2.4。类别值</h3><p>CLASS字段出现在资源记录中。以下CLASS助记符<br>和值定义：</p>
+<p>IN 1互联网</p>
+<p>CS 2 CSNET类（作废-仅用于某些作废的RFC中的示例）</p>
+<p>CH 3 CHAOS类</p>
+<p>HS 4 Hesiod [Dyer 87]</p>
+<h3 id="3-2-5。-QCLASS值"><a href="#3-2-5。-QCLASS值" class="headerlink" title="3.2.5。 QCLASS值"></a>3.2.5。 QCLASS值</h3><p>QCLASS字段出现在查询的问题部分。 QCLASS值是CLASS值的超集；每个CLASS都是有效的QCLASS。除了CLASS值，还定义了以下QCLASS：</p>
+<ul>
+<li>255个任何班级</li>
+</ul>
+<h2 id="3-3。标准RR"><a href="#3-3。标准RR" class="headerlink" title="3.3。标准RR"></a>3.3。标准RR</h2><p>预期至少在所有类别中都会出现以下RR定义。特别是，NS，SOA，CNAME和PTR将在所有类中使用，并且在所有类中具有相同的格式。因为它们的RDATA格式是已知的，所以可以压缩这些RR的RDATA部分中的所有域名。</p>
+<p><domain-name>是表示为一系列标签的域名，并以长度为零的标签终止。 <character-string>是一个单字节长度的八位位组，后跟该数量的字符。 <character-string>被视为二进制信息，并且最大长度为256个字符（包括长度八位位组）。</p>
+<h3 id="3-3-1。-CNAME-RDATA格式"><a href="#3-3-1。-CNAME-RDATA格式" class="headerlink" title="3.3.1。 CNAME RDATA格式"></a>3.3.1。 CNAME RDATA格式</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/ CNAME /
+///
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>在哪里：</p>
+<p>CNAME一个<domain-name>，它指定所有者的规范名称或主名称。所有者名称是别名。</p>
+<p>CNAME RR不会引起任何其他节处理，但是在某些情况下，名称服务器可以选择以规范名称重新启动查询。有关详细信息，请参见[RFC-1034]中名称服务器逻辑的描述。</p>
+<h3 id="3-3-2。-HINFO-RDATA格式"><a href="#3-3-2。-HINFO-RDATA格式" class="headerlink" title="3.3.2。 HINFO RDATA格式"></a>3.3.2。 HINFO RDATA格式</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/                      中央处理器                      /
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/操作系统/
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>在哪里：</p>
+<p>CPU一个<character-string>，它指定CPU类型。</p>
+<p>OS A <character-string>指定操作<br>                系统类型。</p>
+<p>可在[RFC-1010]中找到CPU和OS的标准值。</p>
+<p>HINFO记录用于获取有关主机的常规信息。主要用途是用于诸如FTP之类的协议，当它们在相同类型的机器或操作系统之间进行交谈时，可以使用特殊的过程。</p>
+<h3 id="3-3-3。-MB-RDATA格式（EXPERIMENTAL）"><a href="#3-3-3。-MB-RDATA格式（EXPERIMENTAL）" class="headerlink" title="3.3.3。 MB RDATA格式（EXPERIMENTAL）"></a>3.3.3。 MB RDATA格式（EXPERIMENTAL）</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/ MADNAME /
+///
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>在哪里：</p>
+<p>MADNAME一个<domain-name>，它指定具有指定邮箱的主机。</p>
+<p>MB记录引起附加的节处理，该节查找与MADNAME对应的A型RR。</p>
+<h3 id="3-3-4。-MD-RDATA格式（已淘汰）"><a href="#3-3-4。-MD-RDATA格式（已淘汰）" class="headerlink" title="3.3.4。 MD RDATA格式（已淘汰）"></a>3.3.4。 MD RDATA格式（已淘汰）</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/ MADNAME /
+///
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>在哪里：</p>
+<p>MADNAME一个<domain-name>，它指定一个主机，该主机具有该域的邮件代理，该代理应该能够为该域传递邮件。</p>
+<p>MD记录引起附加的节处理，该节查找与MADNAME对应的A类型记录。</p>
+<p>MD已过时。有关新方案的详细信息，请参见MX和[RFC-974]的定义。处理主文件中找到的MD RR的推荐策略是拒绝它们，或将它们转换为优先级0的MX RR。</p>
+<h3 id="3-3-5。-MF-RDATA格式（已淘汰）"><a href="#3-3-5。-MF-RDATA格式（已淘汰）" class="headerlink" title="3.3.5。 MF RDATA格式（已淘汰）"></a>3.3.5。 MF RDATA格式（已淘汰）</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/ MADNAME /
+///
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>在哪里：</p>
+<p>MADNAME一个<domain-name>，它指定一个主机，该主机具有该域的邮件代理，它将接受邮件以转发到该域。</p>
+<p>MF记录引起附加的节处理，该节查找与MADNAME对应的A类型记录。</p>
+<p>MF已过时。有关新方案的详细信息，请参见MX和[RFC-974]的定义。建议处理主文件中的MD RR的建议策略是拒绝它们，或将它们转换为优先级为10的MX RR。</p>
+<h3 id="3-3-6。-MG-RDATA格式（EXPERIMENTAL）"><a href="#3-3-6。-MG-RDATA格式（EXPERIMENTAL）" class="headerlink" title="3.3.6。 MG RDATA格式（EXPERIMENTAL）"></a>3.3.6。 MG RDATA格式（EXPERIMENTAL）</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/ MGMNAME /
+///
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>在哪里：</p>
+<p>MGMNAME一个<domain-name>，它指定一个邮箱，该邮箱是由域名指定的邮件组的成员。</p>
+<p>MG记录不会导致任何其他部分的处理。</p>
+<h3 id="3-3-7。-MINFO-RDATA格式（EXPERIMENTAL）"><a href="#3-3-7。-MINFO-RDATA格式（EXPERIMENTAL）" class="headerlink" title="3.3.7。 MINFO RDATA格式（EXPERIMENTAL）"></a>3.3.7。 MINFO RDATA格式（EXPERIMENTAL）</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/ RMAILBX /
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/ EMAILBX /
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>在哪里：</p>
+<p>RMAILBX一个<domain-name>，它指定一个负责邮件列表或邮箱的邮箱。如果此域名为根名称，则MINFO RR的所有者自行负责。请注意，许多现有的邮件列表将邮箱X请求用于邮件列表X的RMAILBX字段，例如，Msgroup的Msgroup请求。该字段提供了更通用的机制。</p>
+<p>EMAILBX一个<domain-name>，它指定一个邮箱，该邮箱将接收与MINFO RR所有者指定的邮件列表或邮箱相关的错误消息（类似于已建议的ERRORS-TO：字段）。如果该域名为根命名，则应将错误返回给邮件的发件人。</p>
+<p>MINFO记录不会导致任何其他节处理。尽管这些记录可以与一个简单的邮箱相关联，但它们通常与邮件列表一起使用。</p>
+<p>3.3.8。 MR RDATA格式（实验性）</p>
+<div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/                   新名字                     /
+///
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>在哪里：</p>
+<p>NEWNAME一个<domain-name>，它指定一个邮箱，该邮箱是指定邮箱的正确重命名。</p>
+<p>MR记录不会导致其他部分的处理。 MR的主要用途是作为已移至其他邮箱的用户的转发条目。</p>
+<h3 id="3-3-9。-MX-RDATA格式"><a href="#3-3-9。-MX-RDATA格式" class="headerlink" title="3.3.9。 MX RDATA格式"></a>3.3.9。 MX RDATA格式</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|偏好|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/                   交换                    /
+///
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>在哪里：</p>
+<p>优先级一个16位整数，指定在同一所有者中的此RR之间的优先级。较低的值是优选的。</p>
+<p>EXCHANGE &lt;域名&gt;指定一个愿意充当所有者名称的邮件交换的主机。</p>
+<p>MX记录导致类型EXCHANGE指定的主机的另一节处理。 [RFC-974]中详细说明了MX RR的使用。</p>
+<h3 id="3-3-10。-NULL-RDATA格式（EXPERIMENTAL）"><a href="#3-3-10。-NULL-RDATA格式（EXPERIMENTAL）" class="headerlink" title="3.3.10。 NULL RDATA格式（EXPERIMENTAL）"></a>3.3.10。 NULL RDATA格式（EXPERIMENTAL）</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/ &lt;任何内容&gt; /
+///
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>只要它不超过65535个八位位组，任何内容都可以在RDATA字段中。</p>
+<p>NULL记录不会导致任何其他节处理。主文件中不允许使用NULL RR。在DNS的某些实验性扩展中，NULL用作占位符。</p>
+<h3 id="3-3-11。-NS-RDATA格式"><a href="#3-3-11。-NS-RDATA格式" class="headerlink" title="3.3.11。 NS RDATA格式"></a>3.3.11。 NS RDATA格式</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/ NSDNAME /
+///
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>在哪里：</p>
+<p>NSDNAME一个<domain-name>，它指定对指定的类和域具有权威性的主机。</p>
+<p>NS记录不仅导致通常的附加节处理来定位A类型的记录，而且还导致在引用中使用时对它们所在的区域进行特殊搜索以获取胶合信息。</p>
+<p>NS RR指出，应该期望命名主机具有一个从指定类的所有者名称开始的区域。请注意，该类可能不指示应用于与主机进行通信的协议系列，尽管通常是一个很强的提示。例如，通常使用IN类协议查询作为Internet（IN）或Hesiod（HS）类信息的名称服务器的主机。</p>
+<h3 id="3-3-12。-PTR-RDATA格式"><a href="#3-3-12。-PTR-RDATA格式" class="headerlink" title="3.3.12。 PTR RDATA格式"></a>3.3.12。 PTR RDATA格式</h3><div class="code-wrapper"><pre><code class="hljs">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+/                   PTRDNAME                    /
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+</code></pre></div>
+<p>PTRDNAME 是一个指向某个域名位置的 &lt;域名&gt;。</p>
+<p>PTR记录不会导致任何其他节处理。这些RR用于特殊域中，以指向域空间中的其他位置。这些记录是简单的数据，并不意味着与CNAME识别别名的任何特殊处理类似。有关示例，请参见IN-ADDR.ARPA域的描述。</p>
+<h3 id="3-3-13。-SOA-RDATA格式"><a href="#3-3-13。-SOA-RDATA格式" class="headerlink" title="3.3.13。 SOA RDATA格式"></a>3.3.13。 SOA RDATA格式</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/ MNAME /
+///
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/ RNAME /
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|系列|
+| |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|刷新|
+| |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|重试|
+| |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|过期|
+| |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|最低|
+| |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>在哪里：</p>
+<p>MNAME名称服务器的&lt;域名&gt;，它是该区域的原始数据或主要数据源。</p>
+<p>RNAME一个<domain-name>，它指定负责此区域的人员的邮箱。</p>
+<p>SERIAL区域的原始副本的无符号32位版本号。区域传输会保留此值。该值包含在内，应使用序列空间算法进行比较。</p>
+<p>刷新应该刷新区域之前的32位时间间隔。</p>
+<p>重试应尝试重试失败之前应经过的32位时间间隔。</p>
+<p>EXPIRE一个32位的时间值，它指定区域不再具有权威性之前可以经过的时间间隔的上限。</p>
+<p>MINIMUM应该从此区域与任何RR一起导出的无符号32位最小TTL字段。</p>
+<p>SOA记录不会导致任何其他节处理。</p>
+<p>所有时间均以秒为单位。</p>
+<p>这些字段中的大多数仅与名称服务器维护操作相关。但是，MINIMUM用于所有从区域检索RR的查询操作。每当响应查询而发送RR时，TTL字段都将设置为相应SOA中RR和MINIMUM字段中TTL字段的最大值。因此，MINIMUM是区域中所有RR的TTL字段的下限。请注意，当将RR复制到响应中时，应使用MINIMUM，而不是从主文件或通过区域传输加载区域时，应使用MINIMUM。该证明的原因是允许将来的动态更新工具以已知的语义来更改SOA RR。</p>
+<h3 id="3-3-14。-TXT-RDATA格式"><a href="#3-3-14。-TXT-RDATA格式" class="headerlink" title="3.3.14。 TXT RDATA格式"></a>3.3.14。 TXT RDATA格式</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/ TXT数据/
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>在哪里：</p>
+<p>TXT-DATA一个或多个<character-string>。</p>
+<p>TXT RR用于保存描述性文本。文本的语义取决于找到文本的域。</p>
+<h2 id="3-4。特定于互联网的RR"><a href="#3-4。特定于互联网的RR" class="headerlink" title="3.4。特定于互联网的RR"></a>3.4。特定于互联网的RR</h2><h3 id="3-4-1。-RDATA格式"><a href="#3-4-1。-RDATA格式" class="headerlink" title="3.4.1。 RDATA格式"></a>3.4.1。 RDATA格式</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|地址|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>在哪里：</p>
+<p>地址32位Internet地址。</p>
+<p>具有多个Internet地址的主机将具有多个A记录。</p>
+<p>A记录不会导致任何其他节处理。主文件中A行的RDATA部分是一个Internet地址，用四个十进制数字表示，这些数字用点分隔，没有任何嵌入的空格（例如“ 10.2.0.52”或“ 192.0.5.6”）。</p>
+<h3 id="3-4-2。-WKS-RDATA格式"><a href="#3-4-2。-WKS-RDATA格式" class="headerlink" title="3.4.2。 WKS RDATA格式"></a>3.4.2。 WKS RDATA格式</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|地址|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|协议| |
++-+-+-+-+-+-+-+-+ |
+| |
+/ &lt;位图&gt; /
+///
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>在哪里：</p>
+<p>地址32位互联网地址</p>
+<p>协议8位IP协议号</p>
+<p>&lt;位图&gt;可变长度位图。位图必须是8位长的倍数。</p>
+<p>WKS记录用于描述特定Internet地址上特定协议支持的众所周知的服务。 PROTOCOL字段指定IP协议编号，并且位图在指定协议的每个端口上只有一位。第一位对应于端口0，第二位对应于端口1，依此类推。如果位图不包含感兴趣协议的位，则假定该位为零。 [RFC-1010]中指定了端口和协议的适当值和助记符。</p>
+<p>例如，如果PROTOCOL = TCP（6），则第26位对应于TCP端口25（SMTP）。如果设置了此位，则SMTP服务器应在TCP端口25上侦听；否则，请在SMTP服务器上侦听。如果为零，则指定的地址不支持SMTP服务。</p>
+<p>WKS RR的目的是为TCP和UDP提供服务器的可用性信息。如果服务器同时支持TCP和UDP或具有多个Internet地址，则使用多个WKS RR。</p>
+<p>WKS RR不会导致任何其他部分的处理。</p>
+<p>在主文件中，端口和协议都使用助记符或十进制数字表示。</p>
+<h2 id="3-5-IN-ADDR-ARPA-域"><a href="#3-5-IN-ADDR-ARPA-域" class="headerlink" title="3.5 IN-ADDR.ARPA 域"></a>3.5 IN-ADDR.ARPA 域</h2><p>Internet使用特殊的域来支持网关位置和Internet地址到主机的映射。其他类别可以在其他领域中采用类似的策略。该域的目的是提供一种保证的方法，以执行主机地址到主机名的映射，并简化查询以定位Internet中特定网络上的所有网关。</p>
+<p>请注意，这两个服务都类似于可以通过逆向查询执行的功能。区别在于，域名空间的这部分是根据地址构造的，因此可以保证可以找到适当的数据，而无需详尽搜索域名空间。</p>
+<p>该域始于IN-ADDR.ARPA，并具有遵循Internet寻址结构的子结构。</p>
+<p>除后缀IN-ADDR.ARPA外，IN-ADDR.ARPA域中的域名还定义为最多具有四个标签。每个标签代表一个Internet地址的一个八位位组，并表示为字符串，表示范围为0-255的十进制值（除了零位八位位组（由单个零表示）以外，省略了前导零）。</p>
+<p>主机地址由指定了所有四个标签的域名表示。因此，Internet地址10.2.0.52的数据位于域名52.0.2.10.IN-ADDR.ARPA。反向读取虽然很尴尬，但允许委派区域，而这些区域正是地址空间的一个网络。例如，10.IN-ADDR.ARPA可以是包含ARPANET数据的区域，而26.IN-ADDR.ARPA可以是MILNET的单独区域。地址节点用于在正常域空间中保存指向主要主机名的指针。</p>
+<p>网络号对应于IN-ADDR.ARPA域中各个深度的一些非终端节点，因为Internet网络号是1个，2个或3个八位位组。网络节点用于保存指向连接到该网络的网关的主要主机名的指针。根据定义，由于网关位于多个网络上，因此网关通常将具有指向该网关的两个或多个网络节点。网关还将在其完全限定的地址处具有主机级别的指针。</p>
+<p>网络节点上的网关指针和全地址节点上的普通主机指针都使用PTR RR指向相应主机的主域名。</p>
+<p>例如，IN-ADDR.ARPA域将包含有关网络10和26之间的ISI网关，从网络10到MIT的网络18的MIT网关以及主机A.ISI.EDU和MULTICS.MIT.EDU的信息。假设ISI网关的地址为10.2.0.22和26.0.0.103，名称为MILNET-GW.ISI.EDU，而MIT网关的地址为10.0.0.77和18.10.0.4，名称为GW.LCS.MIT.EDU，则域数据库将包含：</p>
+<div class="code-wrapper"><pre><code class="hljs">10.IN-ADDR.ARPA。 PTR MILNET-GW.ISI.EDU。
+10.IN-ADDR.ARPA。 PTR GW.LCS.MIT.EDU。
+18，IN-ADDR.ARPA PTR GW.LCS.MIT.EDU。
+26.ADDR.ARPA PTR MILNET-GW.ISI.EDU。
+22.0.2.10.IN-ADDR.ARPA。 PTR MILNET-GW.ISI.EDU。
+103.0.0.26.IN-ADDR.ARPA。 PTR MILNET-GW.ISI.EDU。
+77.0.0.10.IN-ADDR.ARPA。 PTR GW.LCS.MIT.EDU。
+4.0.10.18.IN-ADDR.ARPA。 PTR GW.LCS.MIT.EDU。
+103.0.3.26.IN-ADDR.ARPA。 PTR A.ISI.EDU。
+6.0.0.10.IN-ADDR.ARPA。 PTR MULTICS.MIT.EDU。
+</code></pre></div>
+<p>因此，想要在网络10上定位网关的程序将发出以下形式的查询：QTYPE = PTR，QCLASS = IN，QNAME = 10.IN-ADDR.ARPA。它将收到两个RR作为回应：</p>
+<div class="code-wrapper"><pre><code class="hljs">10.IN-ADDR.ARPA。 PTR MILNET-GW.ISI.EDU。
+10.IN-ADDR.ARPA。 PTR GW.LCS.MIT.EDU。
+</code></pre></div>
+<p>然后，程序可以针对MILNET-GW.ISI.EDU发起QTYPE = A，QCLASS = IN查询。和GW.LCS.MIT.EDU。发现这些网关的Internet地址。</p>
+<p>想要查找与Internet主机地址10.0.0.6相对应的主机名的解析器将执行以下形式的查询：QTYPE = PTR，QCLASS = IN，QNAME = 6.0.0.10.IN-ADDR.ARPA，并将收到：</p>
+<div class="code-wrapper"><pre><code class="hljs">6.0.0.10.IN-ADDR.ARPA。 PTR MULTICS.MIT.EDU。
+</code></pre></div>
+<p>使用这些服务时应注意以下几点：<br>   -由于IN-ADDR.ARPA专用域和特定主机或网关的普通域将位于不同的区域，因此存在数据不一致的可能性。</p>
+<p>   -网关通常在单独的域中具有两个名称，其中只有一个可以是主要的。</p>
+<p>   -使用域数据库初始化其路由表的系统必须以足够的网关信息开头，以确保它们可以访问适当的名称服务器。</p>
+<p>   -网关数据仅以与当前HOSTS.TXT文件等效的方式反映网关的存在。它不会替代GGP或EGP中的动态可用性信息。</p>
+<h2 id="3-6。定义新类型，类和特殊名称空间"><a href="#3-6。定义新类型，类和特殊名称空间" class="headerlink" title="3.6。定义新类型，类和特殊名称空间"></a>3.6。定义新类型，类和特殊名称空间</h2><p>先前定义的类型和类别是截至本备忘录发布之日为止正在使用的类型和类别。应该有新的定义。本节向考虑添加现有设施的设计人员提出一些建议。邮件列表<a href="mailto:&#x4e;&#65;&#77;&#x45;&#x44;&#x52;&#79;&#x50;&#x50;&#x45;&#82;&#83;&#64;&#83;&#82;&#73;&#x2d;&#x4e;&#x49;&#x43;&#46;&#65;&#82;&#x50;&#65;">&#x4e;&#65;&#77;&#x45;&#x44;&#x52;&#79;&#x50;&#x50;&#x45;&#82;&#83;&#64;&#83;&#82;&#73;&#x2d;&#x4e;&#x49;&#x43;&#46;&#65;&#82;&#x50;&#65;</a>是讨论设计问题的论坛。</p>
+<p>通常，当要将有关现有对象的新信息添加到数据库中时，或者对于某些全新对象，我们需要新的数据格式时，使用新类型是合适的。设计人员应尝试定义通常适用于所有类的类型及其RDATA格式，并避免信息重复。当将DNS用于新协议等需要新的特定于类的数据格式时，或者需要复制现有名称空间但需要单独的管理域时，则使用新类是合适的。</p>
+<p>新的类型和类需要用于主文件的助记符。主文件的格式要求类型和类的助记符不相交。</p>
+<p>TYPE和CLASS值必须分别是QTYPE和QCLASS的适当子集。</p>
+<p>本系统使用多个RR来表示一种类型的多个值，而不是将多个值存储在单个RR的RDATA部分中。对于大多数应用而言，这效率较低，但确实使RR较短。多个RR假设已纳入有关动态更新方法的一些实验工作中。</p>
+<p>本系统试图最小化数据库中数据的重复以确保一致性。因此，为了找到用于邮件交换的主机地址，您可以将邮件域名映射到主机名，然后将主机名映射到地址，而不是直接映射到主机地址。此方法是首选方法，因为它避免了出现不一致的机会。</p>
+<p>在定义新的数据类型时，不应使用多种RR类型在条目之间创建顺序或为等效绑定表达不同格式，而应在RR主体中携带此信息，并使用一种类型。此策略避免了缓存多个类型和定义QTYPE以匹配多个类型的问题。</p>
+<p>例如，邮件交换绑定的原始形式使用两种RR类型，一种代表“更紧密”的交换（MD），一种代表“较不紧密”的交换（MF）。困难在于，在缓存中存在一种RR类型不会传达有关另一种RR的任何信息，因为获取缓存信息的查询可能使用了MF，MD或MAILA（两者都匹配）的QTYPE。重新设计的服务在RDATA部分中使用了具有“首选项”值的单一类型（MX），可以对不同的RR进行排序。但是，如果在缓存中找到任何MX RR，则所有RR都应该存在。</p>
+<p>＃4.讯息</p>
+<h2 id="4-1。格式"><a href="#4-1。格式" class="headerlink" title="4.1。格式"></a>4.1。格式</h2><p>域协议内部的所有通信均以一种称为消息的单一格式进行。邮件的顶级格式分为5个部分（某些情况下某些部分为空），如下所示：</p>
+<div class="code-wrapper"><pre><code class="hljs">+ --------------------- +
+|标头|
++ --------------------- +
+|问题名称服务器的问题
++ --------------------- +
+|回答|驻地代表回答问题
++ --------------------- +
+|权威|指向授权机构的RR
++ --------------------- +
+|附加| RR拥有其他信息
++ --------------------- +
+</code></pre></div>
+<p>标头部分始终存在。标头包含指定剩余部分中的哪些部分存在的字段，还指定消息是查询还是响应，标准查询还是其他一些操作码等。</p>
+<p>标头后面的节的名称是从它们在标准查询中的使用派生的。问题部分包含描述名称服务器问题的字段。这些字段是查询类型（QTYPE），查询类（QCLASS）和查询域名（QNAME）。最后三个部分具有相同的格式：串联资源记录（RR）的列表可能为空。答案部分包含回答问题的RR。权限部分包含指向权威名称服务器的RR；其他记录部分包含与查询相关的RR，但它们并不是严格的问题答案。</p>
+<h3 id="4-1-1。标头节格式"><a href="#4-1-1。标头节格式" class="headerlink" title="4.1.1。标头节格式"></a>4.1.1。标头节格式</h3><p>标头包含以下字段：</p>
+<div class="code-wrapper"><pre><code class="hljs">                                1 1 1 1 1 1
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+| ID |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+| QR |操作码| AA | TC | RD | RA | Z | RCODE |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+| QDCOUNT |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+| ANCOUNT |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+| NSCOUNT |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|帐户|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>在哪里：</p>
+<p>ID由程序分配的16位标识符，该标识符生成任何类型的查询。该标识符被复制为相应的答复，并且请求者可以使用该标识符来匹配对未完成查询的答复。</p>
+<p>QR一位字段，指定此消息是查询（0）还是响应（1）。</p>
+<p>OPCODE一个四位字段，用于指定此消息中的查询类型。此值由查询的发起者设置并复制到响应中。值是：</p>
+<div class="code-wrapper"><pre><code class="hljs">            0标准查询（QUERY）
+
+            1反向查询（IQUERY）
+
+            2服务器状态请求（STATUS）
+
+            3-15保留以备将来使用
+</code></pre></div>
+<p>AA权威答案-此位在响应中有效，并指定响应名称服务器是“问题”部分中的域名的授权机构。</p>
+<div class="code-wrapper"><pre><code class="hljs">            注意，由于别名，答案部分的内容可能具有多个所有者名称。 AA位对应于与查询名称匹配的名称，或对应于答案部分中的第一个所有者名称。
+</code></pre></div>
+<p>TC TrunCation-指定此消息由于长度大于传输信道上允许的长度而被截断。</p>
+<p>要求RD递归-可以在查询中设置此位，并将其复制到响应中。如果设置了RD，它将指示名称服务器以递归方式进行查询。递归查询支持是可选的。</p>
+<p>RA递归可用-可以在响应中设置或清除它，并表示名称服务器中是否提供递归查询支持。</p>
+<p>Z保留供将来使用。在所有查询和响应中必须为零。</p>
+<p>RCODE响应代码-这4位字段设置为响应的一部分。这些值具有以下解释：</p>
+<div class="code-wrapper"><pre><code class="hljs">            0无错误条件
+
+            1格式错误-名称服务器无法解释查询。
+
+            2服务器故障-由于名称服务器问题，名称服务器无法处理此查询。
+
+            3名称错误-仅对来自权威名称服务器的响应有意义，此代码表示查询中引用的域名不存在。
+
+            4未实现-名称服务器不支持所请求的查询类型。
+
+            5拒绝-名称服务器由于策略原因拒绝执行指定的操作。例如，名称服务器可能不希望将信息提供给特定请求者，或者名称服务器可能不希望对特定数据执行特定操作（例如，区域传送）。
+
+            6-15保留以备将来使用。
+</code></pre></div>
+<p>QDCOUNT一个无符号的16位整数，指定问题部分中的条目数。</p>
+<p>ANCOUNT一个无符号的16位整数，用于指定答案部分中的资源记录数。</p>
+<p>NSCOUNT一个无符号的16位整数，用于在授权记录部分中指定名称服务器资源记录的数量。</p>
+<p>ARCOUNT一个无符号的16位整数，用于指定其他记录部分中的资源记录数。</p>
+<h3 id="4-1-2。问题部分格式"><a href="#4-1-2。问题部分格式" class="headerlink" title="4.1.2。问题部分格式"></a>4.1.2。问题部分格式</h3><p>问题部分用于在大多数查询中携带“问题”，即定义所要询问内容的参数。该部分包含QDCOUNT（通常为1）条目，每种格式如下：</p>
+<div class="code-wrapper"><pre><code class="hljs">                                1 1 1 1 1 1
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+| |
+/ QNAME /
+///
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+| QTYPE |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+| QCLASS |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre></div>
+<p>在哪里：</p>
+<p>QNAME以标签序列表示的域名，其中每个标签由一个长度八位位组和随后的那个八位位组数组成。域名以零长度的八位位组结尾，表示根的空标签。请注意，此字段可能是奇数个八位位组；不使用填充。</p>
+<p>QTYPE是两个八位字节的代码，用于指定查询的类型。该字段的值包括对TYPE字段有效的所有代码，以及一些更通用的代码，这些代码可以匹配一种以上的RR。</p>
+<p>QCLASS是两个八位字节的代码，用于指定查询的类。例如，对于Internet，QCLASS字段是IN。</p>
+<h3 id="4-1-3。资源记录格式"><a href="#4-1-3。资源记录格式" class="headerlink" title="4.1.3。资源记录格式"></a>4.1.3。资源记录格式</h3><p>答案，权限和其他部分均共享相同的格式：可变数量的资源记录，其中记录的数量在标头的相应计数字段中指定。每个资源记录具有以下格式：<br>                                    1 1 1 1 1 1<br>      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5<br>    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+<br>    | |<br>    ///<br>    /                      名称                     /<br>    | |<br>    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+<br>    | TYPE |<br>    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+<br>    |类|<br>    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+<br>    | TTL |<br>    | |<br>    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+<br>    | RDLENGTH |<br>    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ ||<br>    / RDATA /<br>    ///<br>    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</p>
+<p>在哪里：</p>
+<p>命名此资源记录所属的域名。</p>
+<p>TYPE包含RR类型代码之一的两个八位位组。此字段在RDATA字段中指定数据的含义。</p>
+<p>CLASS两个八位字节，用于指定RDATA字段中数据的类别。</p>
+<p>TTL一个32位无符号整数，指定在应丢弃资源记录之前可以缓存资源记录的时间间隔（以秒为单位）。零值被解释为表示RR仅可用于进行中的事务，不应缓存。</p>
+<p>RDLENGTH一个无符号的16位整数，它指定RDATA字段的八位字节长度。</p>
+<p>RDATA是描述资源的八位字节的可变长度字符串。此信息的格式根据资源记录的类型和类别而有所不同。例如，如果TYPE为A，CLASS为IN，则RDATA字段为4个八位字节的ARPA Internet地址。</p>
+<h3 id="4-1-4-消息压缩"><a href="#4-1-4-消息压缩" class="headerlink" title="4.1.4 消息压缩"></a>4.1.4 消息压缩</h3><p>为了减小消息的大小，域名系统利用一种压缩方案消除了消息中重复的域名。在此方案中，整个域名或域名末尾的标签列表将替换为指向先前相同名称的指针。</p>
+<p>指针采用两个字节序列的形式：</p>
+<div class="code-wrapper"><pre><code class="hljs">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+| 1  1|                OFFSET                   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+</code></pre></div>
+<p>前两位是1。这允许将指针与标签区分开，因为标签必须限制为63个字节或更少，所以标签必须以两个零位开头。 （保留10和01的组合以供将来使用。）OFFSET字段指定距消息开头的偏移量（即，域标头中ID字段的第一个字节）。零偏移量指定ID字段的第一个字节，依此类推。</p>
+<p>压缩方案允许将消息中的域名表示为：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-bullet">- </span>以零结尾的标签序列<br><br><span class="hljs-bullet">- </span>指针<br><br><span class="hljs-bullet">- </span>以指针结尾的一系列标签<br></code></pre></td></tr></table></figure>
+<p>指针只能用于格式不特定于类的域名的出现。如果不是这种情况，则将需要名称服务器或解析器知道其处理的所有RR的格式。到目前为止，还没有这种情况，但是它们可能会以将来的RDATA格式出现。</p>
+<p>如果域名的一部分包含在消息中，该消息受长度字段的约束（例如RR的RDATA部分），并且使用了压缩，则在长度计算中使用压缩名称的长度，而不是长度扩展名的名称。</p>
+<p>程序可以随意避免在它们生成的消息中使用指针，尽管这会减少数据报的容量，并可能导致截断。但是，所有程序都必须了解包含指针的到达消息。</p>
+<p>例如，数据报可能需要使用域名F.ISI.ARPA，FOO.F.ISI.ARPA，ARPA和根。忽略消息的其他字段，这些域名可能表示为：</p>
+<div class="code-wrapper"><pre><code class="hljs">   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+20 |           1           |           F           |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+22 |           3           |           I           |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+24 |           S           |           I           |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+26 |           4           |           A           |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+28 |           R           |           P           |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+30 |           A           |           0           |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+40 |           3           |           F           |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+42 |           O           |           O           |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+44 | 1  1|                20                       |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+64 | 1  1|                26                       |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+92 |           0           |                       |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+</code></pre></div>
+<p>F.ISI.ARPA的域名显示在偏移量20处。FOO.F.ISI.ARPA的域名显示在偏移量40处；而FOO.F.ISI.ARPA的域名显示在偏移量40处。此定义使用指针将FOO的标签连接到先前定义的F.ISI.ARPA。域名ARPA在20处使用指向名称F.ISI.ARPA的ARPA组件的指针在偏移量64处定义；请注意，该指针依赖于ARPA，它是字符串中位于20的最后一个标签。根域名由单个零位八位字节（在92处）定义；根域名没有标签。</p>
+<h2 id="4-2。运输"><a href="#4-2。运输" class="headerlink" title="4.2。运输"></a>4.2。运输</h2><p>DNS假定消息将作为数据报或虚拟电路承载的字节流进行传输。尽管虚拟电路可用于任何DNS活动，但数据报由于其较低的开销和更好的性能而被查询首选。区域刷新活动必须使用虚拟电路，因为需要可靠的传输。</p>
+<p>Internet支持使用服务器端口53上的TCP [RFC-793]（十进制）访问名称服务器，以及使用UDP端口53上的UDP [RFC-768]进行数据报访问（十进制）。</p>
+<p>4.2.1。 UDP使用</p>
+<p>使用UDP用户服务器端口53（十进制）发送的消息。</p>
+<p>UDP携带的消息被限制为512字节（不计算IP或UDP标头）。较长的消息将被截断，并且标头中的TC位置1。</p>
+<p>区域传输不接受UDP，但建议将UDP用于Internet中的标准查询。使用UDP发送的查询可能会丢失，因此需要重传策略。查询或它们的响应可以通过网络或在名称服务器中进行处理来重新排序，因此解析器不应依赖于它们按顺序返回。</p>
+<p>最佳的UDP重传策略将随着Internet的性能和客户端的需求而变化，但是建议以下内容：</p>
+<p>   -在重复查询服务器的特定地址之前，客户端应尝试其他服务器和服务器地址。</p>
+<p>   -如果可能，重传间隔应基于先前的统计数据。过于激进的重新传输很容易使整个社区的响应速度变慢。根据客户端与预期服务器的连接程度，最小重传间隔应为2-5秒。</p>
+<p>有关服务器选择和重传策略的更多建议，可以在本备忘录的“解析器”部分中找到。</p>
+<h3 id="4-2-2。-TCP使用"><a href="#4-2-2。-TCP使用" class="headerlink" title="4.2.2。 TCP使用"></a>4.2.2。 TCP使用</h3><p> 通过TCP连接发送的消息使用服务器端口53（十进制）。该消息的前缀为两个字节的长度字段，该字段给出了消息的长度，但不包括两个字节的长度字段。此长度字段允许低级处理在开始解析之前组装完整的消息。</p>
+<p>建议使用几种连接管理策略：</p>
+<p>   -服务器不应阻止其他活动等待TCP数据。</p>
+<p>   -服务器应支持多个连接。</p>
+<p>   -服务器应假定客户端将启动连接关闭，并应延迟关闭其连接结束，直到满足所有未完成的客户端请求为止。</p>
+<p>   -如果服务器需要关闭休眠的连接以回收资源，则应等待直到该连接空闲两分钟左右的时间。特别是，服务器应允许在单个连接上进行SOA和AXFR请求序列（开始刷新操作）。由于服务器仍然无法回答查询，因此可以使用单边关闭或重置来代替正常关闭。</p>
+<p>＃5.主文件</p>
+<p>主文件是包含文本格式的RR的文本文件。由于可以用RR列表的形式来表示区域的内容，因此尽管可以将其用于列出高速缓存的内容，但最常使用主文件来定义区域。因此，本节首先讨论主文件中RR的格式，然后讨论使用主文件在某个名称服务器中创建区域时的特殊注意事项。</p>
+<h2 id="5-1。格式"><a href="#5-1。格式" class="headerlink" title="5.1。格式"></a>5.1。格式</h2><p>这些文件的格式是一个输入序列。条目主要面向行，尽管可以使用括号在行边界上延续项目列表，并且文本文字可以在文本内包含CRLF。制表符和空格的任何组合都可作为构成条目的各个项目之间的分隔符。主文件中任何行的结尾都可以以注释结尾。注释以“;”开头。 （分号）。</p>
+<p>定义了以下条目：</p>
+<div class="code-wrapper"><pre><code class="hljs">&lt;空白&gt; [&lt;评论&gt;]
+
+$ ORIGIN &lt;域名&gt; [&lt;注释&gt;]
+
+$ INCLUDE &lt;文件名&gt; [&lt;域名&gt;] [&lt;注释&gt;]
+
+&lt;域名&gt; &lt;rr&gt; [&lt;注释&gt;]
+
+&lt;空白&gt; &lt;rr&gt; [&lt;注释&gt;]
+</code></pre></div>
+<p>文件中的任何位置都允许带有或不带注释的空行。</p>
+<p>定义了两个控件条目：$ ORIGIN和$ INCLUDE。 $ ORIGIN后跟一个域名，并将相对域名的当前来源重置为所述名称。 $ INCLUDE将命名文件插入当前文件，并且可以选择指定一个域名，该域名设置包含文件的相对域名起源。 $ INCLUDE也可能有评论。请注意，$ INCLUDE条目永远不会更改父文件的相对原点，而不管对包含文件中相对原点的更改如何。</p>
+<p>最后两种形式代表RR。如果RR的条目以空白开头，则假定该RR由最后声明的所有者拥有。如果RR条目以<domain-name>开头，那么将重置所有者名称。</p>
+<p><rr>内容采用以下形式之一：</p>
+<div class="code-wrapper"><pre><code class="hljs">[&lt;TTL&gt;] [&lt;class&gt;] &lt;类型&gt; &lt;RDATA&gt;
+
+[&lt;class&gt;] [&lt;TTL&gt;] &lt;类型&gt; &lt;RDATA&gt;
+</code></pre></div>
+<p>RR以可选的TTL和类字段开头，然后是适合于该类型和类的类型和RDATA字段。类和类型使用标准助记符，TTL是十进制整数。默认情况下，遗漏的class和TTL值为默认值。由于类型和类助记符是不相交的，因此解析是唯一的。 （请注意，此顺序不同于示例中使用的顺序和实际RR中使用的顺序；给定的顺序使解析和默认设置更为容易。）</p>
+<p><domain-name>构成了主文件中大部分数据。<br>域名中的标签表示为字符串，并用点分隔。引用约定允许将任意字符存储在域名中。以点结尾的域名称为绝对域名，它们被视为完整域名。不以点结尾的域名称为相对域名；实际域名是相对部分与$ ORIGIN，$ INCLUDE中指定的原点或作为主文件加载例程的参数的串联。如果没有可用的原语，则相对名称是错误的。</p>
+<p><character-string>用一种或两种方式表示：连续的字符集，不带内部空格，或表示为以“开始”并以“结束”的字符串。在“定界字符串中，除了”本身，任何字符都可以出现，必须使用\（反斜杠）将其引起来。</p>
+<p>由于这些文件是文本文件，因此需要使用几种特殊的编码来加载任意数据。特别是：</p>
+<div class="code-wrapper"><pre><code class="hljs">            的根。
+</code></pre></div>
+<p>@自由站立@表示当前原点。</p>
+<p>\ X，其中X是数字（0-9）以外的任何字符，用于引用该字符，因此其特殊含义不适用。例如， ”\。”可用于在标签中放置点字符。</p>
+<p>\ DDD，其中每个D是一个数字，是与DDD描述的十进制数字相对应的八位字节。假定生成的八位位组是文本，并且不检查其特殊含义。</p>
+<p>（）括号用于对跨越线边界的数据进行分组。实际上，括号内的行不被识别。</p>
+<p>;分号用于发表评论；该行的其余部分将被忽略。</p>
+<p>5.2。使用主文件定义区域</p>
+<p>使用主文件加载区域时，如果在主文件中遇到任何错误，则应禁止该操作。这样做的理由是，单个错误可能会导致广泛的后果。例如，假设定义委托的RR有语法错误；那么服务器将为子区域中的所有名称返回权威名称错误（服务器上也存在子区域的情况除外）。</p>
+<p>除了确保文件在语法上正确之外，还应该执行其他几个有效性检查：</p>
+<p>   1.文件中的所有RR应该具有相同的类。</p>
+<p>   2.在区域的顶部应该恰好有一个SOA RR。</p>
+<p>   3.如果存在委托并且需要粘合信息，则应该存在。</p>
+<p>   4.区域中权威节点之外的信息应该是粘合信息，而不是起源或类似错误的结果。</p>
+<p>5.3。主文件示例</p>
+<p>以下是一个示例文件，该文件可用于定义ISI.EDU区域，并加载了ISI.EDU的来源：</p>
+<p>@ IN SOA VENERA Action \ .domains（<br>                                 20;序列号<br>                                 7200;刷新<br>                                 600;重试<br>                                 3600000;到期<br>                                 60）;最低限度</p>
+<div class="code-wrapper"><pre><code class="hljs">    NS A.ISI.EDU。
+    NS VENERA
+    NS VAXA
+    MX 10 VENERA
+    MX 20 VAXA
+</code></pre></div>
+<p>A A 26.3.0.103</p>
+<p>VENERA A 10.1.0.52<br>        一个128.9.0.32</p>
+<p>瓦克斯A 10.2.0.27<br>        一个128.9.0.33</p>
+<p>$ INCLUDE <SUBSYS> ISI-MAILBOXES.TXT</p>
+<p>文件<SUBSYS> ISI-MAILBOXES.TXT是：</p>
+<div class="code-wrapper"><pre><code class="hljs">教育部MB A.ISI.EDU。
+拉里·MB A.ISI.EDU。
+科利MB A.ISI.EDU。
+STOOGES MG MOE
+        拉里
+        MG库里
+</code></pre></div>
+<p>请注意，在SOA RR中使用\字符来指定负责人的邮箱“ <a href="mailto:&#x41;&#x63;&#116;&#105;&#x6f;&#110;&#46;&#x64;&#111;&#x6d;&#x61;&#105;&#110;&#115;&#x40;&#69;&#46;&#73;&#x53;&#x49;&#46;&#69;&#x44;&#85;">&#x41;&#x63;&#116;&#105;&#x6f;&#110;&#46;&#x64;&#111;&#x6d;&#x61;&#105;&#110;&#115;&#x40;&#69;&#46;&#73;&#x53;&#x49;&#46;&#69;&#x44;&#85;</a>”。</p>
+<p>＃6.名称服务器的实现</p>
+<h2 id="6-1。建筑学"><a href="#6-1。建筑学" class="headerlink" title="6.1。建筑学"></a>6.1。建筑学</h2><p>名称服务器的最佳结构将取决于主机操作系统，以及名称服务器是否与解析程序操作集成在一起（通过支持递归服务或通过与解析程序共享其数据库）。本节讨论与解析器共享数据库的名称服务器的实现注意事项，但是大多数这些担忧都存在于任何名称服务器中。</p>
+<p>6.1.1。控制</p>
+<p>名称服务器必须采用多个并发活动，无论这些活动是在主机OS中作为单独的任务实现还是在单个名称服务器程序中进行多路复用。名称服务器在等待TCP数据刷新或查询活动时阻止UDP请求的服务是完全不可接受的。类似地，尽管名称服务器可以选择序列化来自单个客户端的请求，或将来自相同客户端的相同请求视为重复，但也不应尝试在不并行处理此类请求的情况下尝试提供递归服务。名称服务器从主文件重新加载区域或将新刷新的区域合并到数据库中时，名称服务器不应实质上延迟请求。</p>
+<h3 id="6-1-2。数据库"><a href="#6-1-2。数据库" class="headerlink" title="6.1.2。数据库"></a>6.1.2。数据库</h3><p>尽管名称服务器实现可以自由使用他们选择的任何内部数据结构，但建议的结构包括三个主要部分：</p>
+<p>   -“目录”数据结构，该数据结构列出了该服务器可用的区域，以及指向该区域数据结构的“指针”。该结构的主要目的是找到最接近的祖先区域（如果有的话），以到达标准查询。</p>
+<p>   -名称服务器所保留的每个区域的单独数据结构。</p>
+<p>   -用于缓存数据的数据结构。 （或者可能为不同的类使用单独的缓存）</p>
+<p>所有这些数据结构都可以用相同的树结构格式实现，不同部分的节点之间链接的数据不同：目录中的数据是指向区域的指针，而在区域和缓存数据结构中，数据将是RR。在设计树框架时，设计人员应认识到查询处理将需要使用不区分大小写的标签比较来遍历树。并且在实际数据中，少数节点具有很高的分支因子（100-1000或更高），但是绝大多数节点的分支因子非常低（0-1）。</p>
+<p>解决大小写问题的一种方法是将每个节点的标签存储为两部分：标签的标准化大小写表示，其中所有ASCII字符都在一种情况下，以及位掩码，该掩码表示哪些字符实际上是一个字符。不同的情况。可以使用节点的简单链接列表来处理分支因子多样性，直到分支因子超过某个阈值为止，并在超过阈值之后过渡到哈希结构。无论如何，用于存储树部分的哈希结构必须确保哈希函数和过程保留DNS的大小写约定。</p>
+<p>对数据库的不同部分使用单独的结构是出于以下几个因素的推动：</p>
+<p>   -目录结构可以是几乎静态的结构，仅当系统管理员更改服务器支持的区域时才需要更改。此结构也可以用于存储用于控制刷新活动的参数。</p>
+<p>   -区域的各个数据结构允许简单地通过更改目录中的指针来替换区域。区域刷新操作可以构建新的结构，完成后，可以通过简单的指针替换将其拼接到数据库中。刷新区域非常重要，查询不应同时使用旧数据和新数据。</p>
+<p>   -通过适当的搜索过程，区域中的权威数据将始终“隐藏”，因此优先于缓存的数据。</p>
+<p>   -导致重叠区域等的区域定义错误可能会导致对查询的错误响应，但是问题确定得以简化，并且一个“不良”区域的内容不会破坏另一个区域。</p>
+<p>   -由于高速缓存的更新频率最高，因此在重新启动系统时最容易受到损坏。它还可能充满已过期的RR数据。无论哪种情况，都可以很容易地将其丢弃而不会干扰区域数据。</p>
+<p>数据库设计的一个主要方面是选择一种结构，该结构允许名称服务器处理名称服务器主机的崩溃问题。名称服务器应在系统崩溃时保存的状态信息包括目录结构（包括每个区域的刷新状态）和区域数据本身。</p>
+<h3 id="6-1-3。时间"><a href="#6-1-3。时间" class="headerlink" title="6.1.3。时间"></a>6.1.3。时间</h3><p>RR的TTL数据和刷新活动的定时数据都取决于以秒为单位的32位计时器。在数据库内部，高速缓存的数据的刷新计时器和TTL在概念上是“递减计数”，而区域中的数据则保持不变的TTL。</p>
+<p>推荐的实施策略是以两种方式存储时间：相对增量和绝对时间。一种方法是对一种类型使用正32位数字，对另一种类型使用负数。区域中的RR使用相对时间；刷新计时器和缓存数据使用绝对时间。绝对数是相对于某些已知原点的，并在放入查询的响应中时转换为相对值。转换为相对值后，如果绝对TTL为负，则数据过期，应将其忽略。</p>
+<h2 id="6-2。标准查询处理"><a href="#6-2。标准查询处理" class="headerlink" title="6.2。标准查询处理"></a>6.2。标准查询处理</h2><p>[RFC-1034]中介绍了标准查询处理的主要算法。</p>
+<p>当使用QCLASS = *或其他与多个类匹配的QCLASS处理查询时，除非服务器可以保证该响应涵盖所有类，否则响应绝不应该是权威的。</p>
+<p>编写响应时，可以在附加部分中省略要插入到附加部分中的RR，但是在应答或授权部分中重复的RR。</p>
+<p>当响应太长而需要截断时，截断应从响应的结尾开始，并在数据报中继续进行。因此，如果权限部分有任何数据，则保证答案部分是唯一的。</p>
+<p>SOA中的MINIMUM值应用于设置从区域分发的数据的TTL的下限。当将数据复制到响应中时，应执行该下限功能。这将允许将来的动态更新协议在没有歧义语义的情况下更改SOA MINIMUM字段。</p>
+<h2 id="6-3。区域刷新和重新加载处理"><a href="#6-3。区域刷新和重新加载处理" class="headerlink" title="6.3。区域刷新和重新加载处理"></a>6.3。区域刷新和重新加载处理</h2><p>尽管服务器已尽力而为，但由于语法错误等原因，它可能无法从主文件加载区域数据，或者无法刷新其到期参数内的区域。在这种情况下，名称服务器应该回答查询，好像它不应该拥有该区域一样。</p>
+<p>如果主服务器正在通过AXFR发送区域，并且在传输期间创建了新版本，则主服务器应尽可能继续发送旧版本。无论如何，它绝不应该发送一个版本的一部分而发送另一个版本的一部分。如果无法完成，则主机应重置进行区域传输的连接。</p>
+<h2 id="6-4。逆查询（可选）"><a href="#6-4。逆查询（可选）" class="headerlink" title="6.4。逆查询（可选）"></a>6.4。逆查询（可选）</h2><p>反向查询是DNS的可选部分。不需要名称服务器支持任何形式的反向查询。如果名称服务器收到它不支持的反向查询，则它将返回错误响应，并在标头中设置“未实现”错误。尽管反向查询支持是可选的，但所有名称服务器都必须至少能够返回错误响应。</p>
+<h3 id="6-4-1。反向查询和响应的内容。"><a href="#6-4-1。反向查询和响应的内容。" class="headerlink" title="6.4.1。反向查询和响应的内容。"></a>6.4.1。反向查询和响应的内容。</h3><p>逆查询逆向由标准查询操作执行的映射。标准查询将域名映射到资源，而反向查询将资源映射到域名。例如，标准查询可能会将域名绑定到主机地址。相应的反向查询将主机地址绑定到域名。</p>
+<p>反向查询在消息的答案部分采用单个RR的形式，而问题部分为空。查询RR的所有者名称及其TTL不重要。响应在“问题”部分带有问题，这些问题标识拥有查询RR的所有名称，其中“名称服务器知道”。由于没有名称服务器知道所有域名空间，因此永远不能假定响应是完整的。因此，反向查询主要用于数据库管理和调试活动。反向查询不是将主机地址映射到主机名的可接受方法。请改用IN-ADDR.ARPA域。</p>
+<p>在可能的情况下，名称服务器应为反向查询提供不区分大小写的比较。因此，要求MX RR为“ Venera.isi.edu”的反向查询应获得与对“ VENERA.ISI.EDU”的查询相同的响应。 HINFO RR“ IBM-PC UNIX”的反向查询应产生与“ IBM-pc unix”的反向查询相同的结果。但是，这不能保证，因为名称服务器可能拥有包含字符串的RR，但是名称服务器不知道数据是字符。</p>
+<p>当名称服务器处理反向查询时，它将返回：</p>
+<p>   1.在问题部分中以QNAME的形式指定资源的零个，一个或多个域名</p>
+<p>   2.错误代码，指示名称服务器不支持指定资源类型的反向映射。</p>
+<p>当对反向查询的响应包含一个或多个QNAME时，定义反向查询的答案部分中RR的所有者名称和TTL被修改为与第一个QNAME上找到的RR完全匹配。</p>
+<p>反向查询中返回的RR不能使用与对标准查询的答复相同的机制进行缓存。这样做的一个原因是，一个名称可能具有多个相同类型的RR，并且只会出现一个。例如，对多宿主主机的单个地址进行反向查询可能会给人留下只有一个地址存在的印象。</p>
+<h3 id="6-4-2。反向查询和响应示例"><a href="#6-4-2。反向查询和响应示例" class="headerlink" title="6.4.2。反向查询和响应示例"></a>6.4.2。反向查询和响应示例</h3><p>检索与Internet地址10.1.0.52对应的域名的反向查询的总体结构如下所示：</p>
+<div class="code-wrapper"><pre><code class="hljs">                     + ----------------------------------------- +
+       标头| OPCODE = IQUERY，ID = 997 |
+                     + ----------------------------------------- +
+      问题&lt;空&gt; |
+                     + ----------------------------------------- +
+       回答| &lt;任何名称&gt; A IN 10.1.0.52 |
+                     + ----------------------------------------- +
+      权威| &lt;空&gt; |
+                     + ----------------------------------------- +
+     附加| &lt;空&gt; |
+                     + ----------------------------------------- +
+</code></pre></div>
+<p>该查询询问一个问题，其答案是Internet样式地址10.1.0.52。由于所有者名称未知，因此任何域名都可以用作占位符（并且会被忽略）。通常使用单个八位字节（表示根）为零，因为它可以最大程度地减少消息的长度。 RR的TTL不重要。<br>该查询的响应可能是：</p>
+<div class="code-wrapper"><pre><code class="hljs">                     + ----------------------------------------- +
+       标头| OPCODE =响应，ID = 997 |
+                     + ----------------------------------------- +
+      问题| QTYPE = A，QCLASS = IN，QNAME = VENERA.ISI.EDU |
+                     + ----------------------------------------- +
+       回答| VENERA.ISI.EDU A IN 10.1.0.52 |
+                     + ----------------------------------------- +
+      权威| &lt;空&gt; |
+                     + ----------------------------------------- +
+     附加| &lt;空&gt; |
+                     + ----------------------------------------- +
+</code></pre></div>
+<p>请注意，对反向查询的响应中的QTYPE与反向查询的答案部分中的TYPE字段相同。当逆查询不是唯一的时，对逆查询的响应可能包含多个问题。如果响应中的问题部分不为空，则将答案部分中的RR修改为对应于第一个QNAME上RR的精确副本。</p>
+<h3 id="6-4-3。逆查询处理"><a href="#6-4-3。逆查询处理" class="headerlink" title="6.4.3。逆查询处理"></a>6.4.3。逆查询处理</h3><p>支持反向查询的名称服务器可以通过详尽搜索其数据库来支持这些操作，但是随着数据库大小的增加，这变得不切实际。另一种方法是根据搜索关键字反转数据库。</p>
+<p>对于支持多个区域和大量数据的名称服务器，建议的方法是为每个区域分别进行反转。在刷新期间更改特定区域时，只需重做其反转。</p>
+<p>域系统的将来版本中可能包含对这种类型的反转的传输的支持，但此版本不支持。</p>
+<h2 id="6-5。完成查询和响应"><a href="#6-5。完成查询和响应" class="headerlink" title="6.5。完成查询和响应"></a>6.5。完成查询和响应</h2><p>RFC-882和RFC-883中描述的可选完成服务已删除。重新设计的服务可能会在将来提供。</p>
+<p>＃7.解析器的实现</p>
+<p>在[RFC-1034]中讨论了推荐的解析器算法的顶层。本部分讨论了实现细节，并假定本备忘录的名称服务器实现部分中建议的数据库结构为建议。</p>
+<h2 id="7-1。将用户请求转换为查询"><a href="#7-1。将用户请求转换为查询" class="headerlink" title="7.1。将用户请求转换为查询"></a>7.1。将用户请求转换为查询</h2><p>解析器采取的第一步是将客户的请求（以适合于本地OS的格式表示）转换为以特定名称匹配特定QTYPE和QCLASS的RR的搜索规范。在可能的情况下，QTYPE和QCLASS应该对应于一个单一的类型和一个单一的类，因为这使缓存数据的使用更加简单。这样做的原因是，高速缓存中一种类型的数据的存在并不能确认其他类型的数据的存在或不存在，因此要确保的唯一方法是咨询权威人士。如果使用QCLASS = *，那么权威性的答案将不可用。</p>
+<p>由于解析程序要想有效地执行其功能，必须能够复用多个请求，因此每个待处理的请求通常以状态信息的某些块表示。此状态块通常包含：</p>
+<p>   -指示请求开始时间的时间戳。时间戳用于确定数据库中的RR是否可以使用或已过期。此时间戳使用先前讨论的绝对时间格式在区域和缓存中存储RR。请注意，当RRs TTL指示相对时间时，由于它是区域的一部分，因此RR必须及时。当RR具有绝对时间时，它是缓存的一部分，并且将RR的TTL与请求开始的时间戳进行比较。</p>
+<div class="code-wrapper"><pre><code class="hljs"> 请注意，使用时间戳优于使用当前时间，因为使用时间戳可以将TTL为零的RR以通常的方式输入到缓存中，但即使由于系统负载而间隔了几秒钟之后，当前请求仍会使用它，查询重传超时等。
+</code></pre></div>
+<p>   -某种参数，用于限制将为此请求执行的工作量。</p>
+<div class="code-wrapper"><pre><code class="hljs"> 必须限制解析器响应客户端请求所做的工作量，以防止数据库中的错误（例如，循环的CNAME引用）和操作问题（例如，网络分区，阻止解析器访问其名称服务器）需求。虽然本地限制解析器将特定查询重新发送到特定名称服务器地址的次数非常重要，但解析器应具有全局的每个请求计数器，以限制单个请求的工作。计数器应设置为某个初始值，并在解析器执行任何操作（重传超时，重传等）时递减。如果计数器传递零，则请求将因临时错误而终止。
+
+ 请注意，如果解析程序结构允许一个请求并行启动其他请求，例如当需要访问一个名称服务器的请求导致对名称服务器的地址进行并行解析时，则应使用较低的计数器启动产生的请求。这样可以防止数据库中的循环引用启动解析程序活动的链式反应。
+</code></pre></div>
+<p>   -在[RFC-1034]中讨论的SLIST数据结构。</p>
+<div class="code-wrapper"><pre><code class="hljs"> 如果必须等待外部名称服务器的答复，则此结构会跟踪请求的状态。
+</code></pre></div>
+<h2 id="7-2。发送查询"><a href="#7-2。发送查询" class="headerlink" title="7.2。发送查询"></a>7.2。发送查询</h2><p>如[RFC-1034]中所述，解析程序的基本任务是制定一个查询，该查询将回答客户端的请求，并将该查询定向到可以提供信息的名称服务器。解析程序通常只会以NS RR的形式非常强烈地提示要询问哪些服务器，并且可能必须修改响应于CNAME的查询，或修改解析程序正在查询的名称服务器集，以响应委派响应，该响应指向解析器指向更接近所需信息的名称服务器。除了客户端请求的信息之外，解析器可能还必须调用其自身的服务来确定其希望联系的名称服务器的地址。</p>
+<p>无论如何，本备忘录中使用的模型都假定解析器在多个请求之间进行多路复用，其中一些请求来自客户端，有些内部生成。每个请求都由一些状态信息表示，并且所需的行为是解析程序以使请求得到答复的可能性最大，使请求花费的时间最小化并避免过多传输的方式将查询发送到名称服务器。密钥算法使用请求的状态信息来选择要查询的下一个名称服务器地址，并且还计算超时，如果响应未到达，该超时将导致下一个操作。下一步操作通常是传输到其他服务器，但可能是客户端的暂时错误。</p>
+<p>解析程序始终以要查询的服务器名称列表（SLIST）开头。此列表将是所有NS RR，它们对应于解析器知道的最接近的祖先区域。为避免启动问题，解析器应具有一组默认服务器，如果没有合适的当前NS RR，它将询问。然后，解析器将名称服务器的所有已知地址添加到SLIST中，并且当解析器具有名称服务器的名称但没有地址时，解析器可能会开始并行请求以获取服务器的地址。</p>
+<p>为了完成SLIST的初始化，解析器会将其具有的所有历史记录信息附加到SLIST中的每个地址。这通常包括地址响应时间的某种加权平均值和地址的击球平均值（即，地址对请求的响应频率）。请注意，此信息应按每个地址保存，而不是按每个名称服务器保存，因为特定服务器的响应时间和平均击球率可能因地址而异。还请注意，此信息实际上特定于解析器地址/服务器地址对，因此具有多个地址的解析器可能希望为其每个地址保留单独的历史记录。此步骤的一部分必须处理没有此类历史记录的地址；在这种情况下，预期的5-10秒的往返时间应该是最坏的情况，而对于相同的本地网络等的估算值则较低。</p>
+<p>请注意，只要遵循委托，解析程序算法就会重新初始化SLIST。</p>
+<p>该信息将建立可用名称服务器地址的部分排名。每次选择一个地址，都应更改状态以防止再次选择它，直到尝试了所有其他地址。每次传输的超时应比平均预测值大50-100％，以允许响应发生变化。</p>
+<p>一些要点：</p>
+<p>   -解析程序可能会遇到以下情况：对于SLIST中命名的任何名称服务器，没有地址可用，并且列表中的服务器正是通常用于查找其自身地址的服务器。这种情况通常发生在以下情况：胶水地址RR的TTL小于NS RR的标记委托，或者解析器缓存NS搜索的结果。解析器应检测到这种情况，并在下一个祖先区域或根目录处重新开始搜索。</p>
+<p>   -如果解析程序从名称服务器收到服务器错误或其他奇怪的响应，则应将其从SLIST中删除，并可能希望安排立即传输到下一个候选服务器地址。</p>
+<h2 id="7-3。处理回应"><a href="#7-3。处理回应" class="headerlink" title="7.3。处理回应"></a>7.3。处理回应</h2><p>处理到达的响应数据报的第一步是解析响应。此过程应包括：</p>
+<p>   -检查标题是否合理。当期望响应时，丢弃作为查询的数据报。</p>
+<p>   -解析消息的各个部分，并确保所有RR的格式正确。</p>
+<p>   -作为可选步骤，检查到达数据的TTL，以查找TTL过长的RR。如果RR的TTL太长（例如大于1周），则丢弃整个响应，或将响应中的所有TTL限制为1周。</p>
+<p>下一步是使响应与当前的解析器请求匹配。推荐的策略是使用域标头中的ID字段进行初步匹配，然后验证问题部分是否与当前所需的信息相对应。这要求传输算法将域ID字段的几位专用于某种请求标识符。此步骤有几个要点：</p>
+<p>   -一些名称服务器从不同于用于接收查询的地址的地址发送响应。也就是说，解析器不能依靠响应来自与它发送相应查询到的地址相同的地址。在UNIX系统中通常会遇到此名称服务器错误。</p>
+<p>   -如果解析器将特定请求重新传输到名称服务器，则它应该能够使用来自任何传输的响应。但是，如果它使用响应来采样访问名称服务器的往返时间，则它必须能够确定与该响应匹配的传输（并保持每个传出消息的传输时间），或者仅基于以下时间来计算往返时间初始传输。</p>
+<p>   -根据某些NS RR，名称服务器有时将不具有其应具有的区域的当前副本。解析程序应仅从当前SLIST中删除名称服务器，然后继续。</p>
+<h2 id="7-4。使用缓存"><a href="#7-4。使用缓存" class="headerlink" title="7.4。使用缓存"></a>7.4。使用缓存</h2><p>通常，我们希望解析器缓存其在响应中接收到的所有数据，因为它可能对回答将来的客户端请求很有用。但是，有几种类型的数据不应该被缓存：</p>
+<p>   -当特定所有者名称的多个相同类型的RR可用时，解析器应全部缓存或完全不缓存它们。当响应被截断并且解析器不知道它是否具有完整集时，它不应缓存可能的部分RR集。</p>
+<p>   -永远不要优先使用缓存的数据来代替权威数据，因此，如果缓存会导致这种情况发生，则不应缓存数据。</p>
+<p>   -反向查询的结果不应被缓存。</p>
+<p>   -如果数据可能用于构造通配符，则QNAME包含“ *”标签的标准查询的结果。原因是高速缓存不一定包含现有的RR或区域边界信息，而这是限制通配RR的应用所必需的。</p>
+<p>   -可疑可靠性响应中的RR数据。当解析程序收到请求之外的未经请求的响应或RR数据时，应将其丢弃而不进行缓存。基本含义是，应先对数据包进行所有完整性检查，然后再对其进行缓存。</p>
+<p>同样，当解析程序在响应中具有一组用于某些名称的RR，并且想要缓存RR时，它应检查其缓存中是否已存在RR。根据情况，响应或高速缓存中的数据是首选，但决不要将两者结合在一起。如果响应中的数据来自答案部分中的权威数据，则总是首选。</p>
+<p>＃8.邮件支持</p>
+<p>域系统定义了将邮箱映射到域名的标准，以及两种使用邮箱信息导出邮件路由信息的方法。第一种方法称为邮件交换绑定，另一种方法称为邮箱绑定。邮箱编码标准和邮件交换绑定是DNS官方协议的一部分，是Internet中邮件路由的推荐方法。邮箱绑定是一项实验性功能，目前仍在开发中，并且可能会发生变化。</p>
+<p>邮箱编码标准假定邮箱名称的格式为“ &lt;本地部分&gt; @ &lt;邮件域&gt;”。尽管这些部分中的每个部分中允许的语法在各种邮件Internet之间都有很大的不同，但ARPA Internet的首选语法在[RFC-822]中给出。</p>
+<p>DNS将<local-part>编码为单个标签，并将<mail-domain>编码为域名。 <local-part>中的单个标签以<mail-domain>中的域名开头，以形成与邮箱相对应的域名。因此，邮箱<a href="mailto:&#x48;&#x4f;&#83;&#84;&#x4d;&#65;&#83;&#84;&#69;&#82;&#x40;&#83;&#x52;&#x49;&#x2d;&#78;&#x49;&#67;&#x2e;&#65;&#x52;&#80;&#65;">&#x48;&#x4f;&#83;&#84;&#x4d;&#65;&#83;&#84;&#69;&#82;&#x40;&#83;&#x52;&#x49;&#x2d;&#78;&#x49;&#67;&#x2e;&#65;&#x52;&#80;&#65;</a>被映射到域名HOSTMASTER.SRI-NIC.ARPA。如果<local-part>包含点或其他特殊字符，则其在主文件中的表示形式将需要使用反斜杠引号来确保域名正确编码。例如，邮箱<a href="mailto:&#x41;&#99;&#116;&#105;&#111;&#x6e;&#46;&#x64;&#111;&#109;&#x61;&#105;&#x6e;&#115;&#x40;&#73;&#x53;&#73;&#x2e;&#69;&#x44;&#x55;">&#x41;&#99;&#116;&#105;&#111;&#x6e;&#46;&#x64;&#111;&#109;&#x61;&#105;&#x6e;&#115;&#x40;&#73;&#x53;&#73;&#x2e;&#69;&#x44;&#x55;</a>将表示为Action \ .domains.ISI.EDU。</p>
+<h2 id="8-1。邮件交换绑定"><a href="#8-1。邮件交换绑定" class="headerlink" title="8.1。邮件交换绑定"></a>8.1。邮件交换绑定</h2><p>邮件交换绑定使用邮箱规范的<mail-domain>部分来确定应将邮件发送到的位置。甚至没有参考<local-part>。 [RFC-974]详细指定了此方法，在尝试使用邮件交换支持之前应进行咨询。</p>
+<p>此方法的优点之一是，它使邮件目标名称与用于支持邮件服务的主机脱钩，但代价是查找功能中需要另外一层间接层。但是，加法层应避免在<local-part>中使用复杂的“％”，“！”等编码。</p>
+<p>该方法的本质是将<mail-domain>用作域名来查找类型MX RR，该MX RR列出愿意接受<mail-domain>的邮件的主机，以及根据主机对主机进行排序的优先级值由管理员为<mail-domain>指定。</p>
+<p>在本备忘录中，示例中将<mail-domain> ISI.EDU与主机VENERA.ISI.EDU和VAXA.ISI.EDU一起用作ISI.EDU的邮件交换。如果邮件发给<a href="mailto:&#x4d;&#111;&#99;&#x6b;&#x61;&#x70;&#101;&#x74;&#x72;&#105;&#x73;&#64;&#x49;&#83;&#73;&#x2e;&#69;&#x44;&#85;">&#x4d;&#111;&#99;&#x6b;&#x61;&#x70;&#101;&#x74;&#x72;&#105;&#x73;&#64;&#x49;&#83;&#73;&#x2e;&#69;&#x44;&#85;</a>的邮件，它将通过查找ISI.EDU的MX RR进行路由。 ISI.EDU上的MX RR分别名为VENERA.ISI.EDU和VAXA.ISI.EDU，类型为A的查询可以找到主机地址。</p>
+<h2 id="8-2。邮箱绑定（实验性）"><a href="#8-2。邮箱绑定（实验性）" class="headerlink" title="8.2。邮箱绑定（实验性）"></a>8.2。邮箱绑定（实验性）</h2><p>在邮箱绑定中，邮件程序使用整个邮件目标规范来构造域名。邮箱的编码域名在QTYPE = MAILB查询中用作QNAME字段。</p>
+<p>此查询可能有几种结果：</p>
+<p>   1.查询可能返回名称错误，表明邮箱不存在为域名。</p>
+<div class="code-wrapper"><pre><code class="hljs">  从长远来看，这将表明指定的邮箱不存在。但是，在普遍使用邮箱绑定之前，应将此错误条件解释为意味着由全局部分标识的组织不支持邮箱绑定。适当的过程是此时恢复交换绑定。
+</code></pre></div>
+<p>   2.查询可以返回邮件重命名（MR）RR。</p>
+<div class="code-wrapper"><pre><code class="hljs">  MR RR在其RDATA字段中带有新的邮箱规范。邮件程序应将旧邮箱替换为新邮箱，然后重试该操作。
+</code></pre></div>
+<p>   3.查询可以返回MB RR。</p>
+<div class="code-wrapper"><pre><code class="hljs">  MB RR在其RDATA字段中携带主机的域名。邮件程序应该通过任何适用的协议（例如b，SMTP）将邮件传递到该主机。
+</code></pre></div>
+<p>   4.查询可以返回一个或多个邮件组（MG）RR。</p>
+<div class="code-wrapper"><pre><code class="hljs">  这种情况意味着该邮箱实际上是一个邮件列表或邮件组，而不是单个邮箱。每个MG RR都有一个RDATA字段，用于标识作为该组成员的邮箱。邮件发送者应将邮件的副本发送给每个成员。
+</code></pre></div>
+<p>   5.查询可以返回MB RR以及一个或多个MG RR。</p>
+<div class="code-wrapper"><pre><code class="hljs">  这种情况意味着该邮箱实际上是一个邮件列表。邮件程序可以将消息传递到MB RR所指定的主机，该主机进而将邮件传递给所有成员，或者邮件程序可以使用MG RR自己进行扩展。
+</code></pre></div>
+<p>在任何这些情况下，响应都可以包括邮件信息（MINFO）RR。此RR通常与邮件组相关联，但对于MB合法。 MINFO RR标识两个邮箱。其中之一标识原始邮箱名称的负责人。此邮箱应用于添加到邮件组等的请求。MINFO RR中的第二个邮箱名称标识一个应接收有关邮件故障的错误消息的邮箱。当成员姓名的错误应报告给向列表发送消息的人以外的其他人时，这尤其适用于邮寄列表。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/08/10/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/21-rfc1035/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">RFC1035(域名 - 实施和规范)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/05/26/04DevOps/99windows%E4%B8%8B%E5%B8%B8%E7%94%A8%E7%9B%AE%E5%BD%95/">
+                        <span class="hidden-mobile">99windows下常用目录</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

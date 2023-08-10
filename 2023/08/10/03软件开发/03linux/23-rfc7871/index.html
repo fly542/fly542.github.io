@@ -1,0 +1,831 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Internet Engineering Task Force (IETF)                     C. ContavalliRequest for Comments: 7871                              W. van der GaastCategory: Informational">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fly542 技术沉淀">
+<meta property="og:url" content="http://fly542.cn/2023/08/10/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/23-rfc7871/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="Internet Engineering Task Force (IETF)                     C. ContavalliRequest for Comments: 7871                              W. van der GaastCategory: Informational">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-10T02:55:16.705Z">
+<meta property="article:modified_time" content="2021-06-23T01:43:03.564Z">
+<meta property="article:author" content="Fly542">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2023-08-10 10:55" pubdate>
+        2023年8月10日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      51k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      422 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none"></h1>
+            
+            <div class="markdown-body">
+              <p>Internet Engineering Task Force (IETF)                     C. Contavalli<br>Request for Comments: 7871                              W. van der Gaast<br>Category: Informational                                           Google<br>ISSN: 2070-1721                                              D. Lawrence<br>                                                     Akamai Technologies<br>                                                               W. Kumari<br>                                                                  Google<br>                                                                May 2016</p>
+<div class="code-wrapper"><pre><code class="hljs">                  Client Subnet in DNS Queries
+</code></pre></div>
+<p>Abstract</p>
+<p>   This document describes an Extension Mechanisms for DNS (EDNS0)<br>   option that is in active use to carry information about the network<br>   that originated a DNS query and the network for which the subsequent<br>   response can be cached.  Since it has some known operational and<br>   privacy shortcomings, a revision will be worked through the IETF for<br>   improvement.</p>
+<p>Status of This Memo</p>
+<p>   This document is not an Internet Standards Track specification; it is<br>   published for informational purposes.</p>
+<p>   This document is a product of the Internet Engineering Task Force<br>   (IETF).  It represents the consensus of the IETF community.  It has<br>   received public review and has been approved for publication by the<br>   Internet Engineering Steering Group (IESG).  Not all documents<br>   approved by the IESG are a candidate for any level of Internet<br>   Standard; see Section 2 of RFC 5741.</p>
+<p>   Information about the current status of this document, any errata,<br>   and how to provide feedback on it may be obtained at<br>   <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc7871">http://www.rfc-editor.org/info/rfc7871</a>.</p>
+<p>Contavalli, et al.            Informational                     [Page 1]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>Copyright Notice</p>
+<p>   Copyright (c) 2016 IETF Trust and the persons identified as the<br>   document authors.  All rights reserved.</p>
+<p>   This document is subject to BCP 78 and the IETF Trust’s Legal<br>   Provisions Relating to IETF Documents<br>   (<a target="_blank" rel="noopener" href="http://trustee.ietf.org/license-info">http://trustee.ietf.org/license-info</a>) in effect on the date of<br>   publication of this document.  Please review these documents<br>   carefully, as they describe your rights and restrictions with respect<br>   to this document.  Code Components extracted from this document must<br>   include Simplified BSD License text as described in Section 4.e of<br>   the Trust Legal Provisions and are provided without warranty as<br>   described in the Simplified BSD License.</p>
+<p>Contavalli, et al.            Informational                     [Page 2]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>Table of Contents</p>
+<ol>
+<li>Introduction …………………………………………….4</li>
+<li>Privacy Note …………………………………………….5</li>
+<li>Requirements Notation …………………………………….5</li>
+<li>Terminology ……………………………………………..6</li>
+<li>Overview ………………………………………………..7</li>
+<li>Option Format ……………………………………………8</li>
+<li>Protocol Description ……………………………………..9<br>7.1. Originating the Option ……………………………….9<div class="code-wrapper"><pre><code class="hljs"> 7.1.1. Recursive Resolvers .................................9
+ 7.1.2. Stub Resolvers .....................................10
+ 7.1.3. Forwarding Resolvers ...............................11
+</code></pre></div>
+7.2. Generating a Response ……………………………….11<div class="code-wrapper"><pre><code class="hljs"> 7.2.1. Authoritative Nameserver ...........................11
+ 7.2.2. Intermediate Nameserver ............................13
+</code></pre></div>
+7.3. Handling ECS Responses and Caching ……………………14<div class="code-wrapper"><pre><code class="hljs"> 7.3.1. Caching the Response ...............................15
+ 7.3.2. Answering from Cache ...............................16
+</code></pre></div>
+7.4. Delegations and Negative Answers ……………………..17<br>7.5. Transitivity ……………………………………….18</li>
+<li>IANA Considerations ……………………………………..18</li>
+<li>DNSSEC Considerations ……………………………………19</li>
+<li>NAT Considerations ……………………………………..19</li>
+<li>Security Considerations …………………………………20      11.1. Privacy …………………………………………..20      11.2. Birthday Attacks …………………………………..21      11.3. Cache Pollution ……………………………………22</li>
+<li>Sending the Option ……………………………………..23      12.1. Probing …………………………………………..23      12.2. Whitelist …………………………………………24</li>
+<li>Example ……………………………………………….24</li>
+<li>References …………………………………………….26      14.1. Normative References ……………………………….26      14.2. Informative References ……………………………..27<br>Acknowledgements …………………………………………..28<br>Contributors ………………………………………………29<br>Authors’ Addresses …………………………………………30</li>
+</ol>
+<p>Contavalli, et al.            Informational                     [Page 3]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<ol>
+<li> Introduction</li>
+</ol>
+<p>   Many Authoritative Nameservers today return different responses based<br>   on the perceived topological location of the user.  These servers use<br>   the IP address of the incoming query to identify that location.</p>
+<p>   Since most queries come from Intermediate Recursive Resolvers, the<br>   source address is that of the Recursive Resolver rather than of the<br>   query originator.</p>
+<p>   Traditionally, and probably still in the majority of instances,<br>   Recursive Resolvers are reasonably close in the topological sense to<br>   the Stub Resolvers or Forwarding Resolvers that are the source of<br>   queries.  For these resolvers, using their own IP address is<br>   sufficient for Authoritative Nameservers that tailor responses based<br>   upon location of the querier.</p>
+<p>   Increasingly, though, a class of Recursive Resolvers has arisen that<br>   handles query sources that are often not topologically close.  The<br>   motivation for having such Centralized Resolvers varies but is<br>   usually because of some enhanced experience, such as greater cache<br>   security or applying policies regarding where users may connect.<br>   (Although political censorship usually comes to mind here, the same<br>   actions may be used by a parent when setting controls on where a<br>   minor may connect.)  Similarly, many ISPs and other organizations use<br>   a Centralized Resolver infrastructure that can be distant from the<br>   clients the resolvers serve.  These cases all lead to less than<br>   desirable responses from topology-sensitive Authoritative<br>   Nameservers.</p>
+<p>   This document defines an EDNS0 [RFC6891] option to convey network<br>   information that is relevant to the DNS message.  It will carry<br>   sufficient network information about the originator for the<br>   Authoritative Nameserver to tailor responses.  It will also provide<br>   for the Authoritative Nameserver to indicate the scope of network<br>   addresses for which the tailored answer is intended.  This EDNS0<br>   option is intended for those Recursive Resolvers and Authoritative<br>   Nameservers that would benefit from the extension and not for general<br>   purpose deployment.  This is completely optional and can safely be<br>   ignored by servers that choose not to implement or enable it.</p>
+<p>   This document also includes guidelines on how best to cache those<br>   results, and it provides recommendations on when this protocol<br>   extension should be used.</p>
+<p>   At least a dozen different client and server implementations have<br>   been written based on earlier draft versions of this specification.<br>   The protocol is in active production use today.  While the</p>
+<p>Contavalli, et al.            Informational                     [Page 4]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>   implementations interoperate, there is varying behavior around edge<br>   cases that were poorly specified.  Known incompatibilities are<br>   described in this document, and the authors believe that it is better<br>   to describe the system as it is working today, even if not everyone<br>   agrees with the details of the original specification<br>   ([VANDERGAAST]).  The alternative is an undocumented and proprietary<br>   system.</p>
+<p>   A revised proposal to improve upon the minor flaws in this protocol<br>   will be forthcoming to the IETF.</p>
+<ol start="2">
+<li> Privacy Note</li>
+</ol>
+<p>   If we were just beginning to design this mechanism, and not<br>   documenting existing protocol, it is unlikely that we would have done<br>   things exactly this way.</p>
+<p>   The IETF is actively working on enhancing DNS privacy<br>   [DPRIVE_Working_Group] and the reinjection of metadata [METADATA] has<br>   been identified as a problematic design pattern.</p>
+<p>   As noted above however, this document primarily describes existing<br>   behavior of a deployed method to further the understanding of the<br>   Internet community.</p>
+<p>   We recommend that the feature be turned off by default in all<br>   nameserver software, and that operators only enable it explicitly in<br>   those circumstances where it provides a clear benefit for their<br>   clients.  We also encourage the deployment of means to allow users to<br>   make use of the opt-out provided.  Finally, we recommend that others<br>   avoid techniques that may introduce additional metadata in future<br>   work, as it may damage user trust.</p>
+<p>   Regrettably, support for the opt-out provisions of this specification<br>   are currently limited.  Only one stub resolver, getdns, is known to<br>   be able to originate queries with anonymity requested, and as yet no<br>   applications are known to be able to indicate that user preference to<br>   the stub resolver.</p>
+<ol start="3">
+<li> Requirements Notation</li>
+</ol>
+<p>   The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”,<br>   “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this<br>   document are to be interpreted as described in [RFC2119].</p>
+<p>Contavalli, et al.            Informational                     [Page 5]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<ol start="4">
+<li> Terminology</li>
+</ol>
+<p>   ECS:  EDNS Client Subnet.</p>
+<p>   Client:  A Stub Resolver, Forwarding Resolver, or Recursive Resolver.<br>      A client to a Recursive Resolver or a Forwarding Resolver.</p>
+<p>   Server:  A Forwarding Resolver, Recursive Resolver, or Authoritative<br>      Nameserver.</p>
+<p>   Stub Resolver:  A simple DNS protocol implementation on the client<br>      side as described in [RFC1034], Section 5.3.1.  A client to a<br>      Recursive Resolver or a Forwarding Resolver.</p>
+<p>   Authoritative Nameserver:  A nameserver that has authority over one<br>      or more DNS zones.  These are normally not contacted by Stub<br>      Resolver or end user clients directly but by Recursive Resolvers.<br>      Described in [RFC1035], Section 6.</p>
+<p>   Recursive Resolver:  A nameserver that is responsible for resolving<br>      domain names for clients by following the domain’s delegation<br>      chain.  Recursive Resolvers frequently use caches to be able to<br>      respond to client queries quickly.  Described in [RFC1035],<br>      Section 7.</p>
+<p>   Forwarding Resolver:  A nameserver that does not do iterative<br>      resolution itself, but instead passes that responsibility to<br>      another Recursive Resolver, called a “Forwarder” in [RFC2308],<br>      Section 1.</p>
+<p>   Intermediate Nameserver:  Any nameserver in between the Stub Resolver<br>      and the Authoritative Nameserver, such as a Recursive Resolver or<br>      a Forwarding Resolver.</p>
+<p>   Centralized Resolvers:  Intermediate Nameservers that serve a<br>      topologically diverse network address space.</p>
+<p>   Tailored Response:  A response from a nameserver that is customized<br>      for the node that sent the query, often based on performance<br>      (i.e., lowest latency, least number of hops, topological distance,<br>      etc.).</p>
+<p>   Topologically Close:  Refers to two hosts being close in terms of the<br>      number of hops or the time it takes for a packet to travel from<br>      one host to the other.  The concept of topological distance is<br>      only loosely related to the concept of geographical distance: two</p>
+<p>Contavalli, et al.            Informational                     [Page 6]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<div class="code-wrapper"><pre><code class="hljs">  geographically close hosts can still be very distant from a
+  topological perspective, and two geographically distant hosts can
+  be quite close on the network.
+</code></pre></div>
+<p>   For a more comprehensive treatment of DNS terms, please see<br>   [RFC7719].</p>
+<ol start="5">
+<li> Overview</li>
+</ol>
+<p>   The general idea of this document is to provide an EDNS0 option to<br>   allow Recursive Resolvers, if they are willing, to forward details<br>   about the origin network from which a query is coming when talking to<br>   other nameservers.</p>
+<p>   The format of the edns-client-subnet (ECS) EDNS0 option is described<br>   in Section 6 and is meant to be added in queries sent by Intermediate<br>   Nameservers in a way that is transparent to Stub Resolvers and end<br>   users, as described in Section 7.1.  ECS is only defined for the<br>   Internet (IN) DNS class.</p>
+<p>   As described in Section 7.2, an Authoritative Nameserver could use<br>   ECS as a hint to the end user’s network location and provide a better<br>   answer.  Its response would also contain an ECS option, clearly<br>   indicating that the server made use of this information, and that the<br>   answer is tied to the client’s network.</p>
+<p>   As described in Section 7.3, Intermediate Nameservers would use this<br>   information to cache the response.</p>
+<p>   Some Intermediate Nameservers may also have to be able to forward ECS<br>   queries they receive, as described in Section 7.5.</p>
+<p>   The mechanisms provided by ECS raise various security-related<br>   concerns related to cache growth, the ability to spoof EDNS0 options,<br>   and privacy.  Section 11 explores various mitigation techniques.</p>
+<p>   The expectation, however, is that this option will primarily be used<br>   between Recursive Resolvers and Authoritative Nameservers that are<br>   sensitive to network location issues.  Most Recursive Resolvers,<br>   Authoritative Nameservers, and Stub Resolvers will never need to know<br>   about this option and will continue working as they had been.</p>
+<p>   Failure to support this option or its improper handling will, at<br>   worst, cause suboptimal identification of client network location,<br>   which is a common occurrence in current Content Delivery Network<br>   (CDN) setups.</p>
+<p>Contavalli, et al.            Informational                     [Page 7]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>   Section 7.1 also provides a mechanism for Stub Resolvers to signal<br>   Recursive Resolvers that they do not want ECS treatment for specific<br>   queries.</p>
+<p>   Additionally, operators of Intermediate Nameservers with ECS enabled<br>   are allowed to choose how many bits of the address of received<br>   queries to forward or to reduce the number of bits forwarded for<br>   queries already including an ECS option.</p>
+<ol start="6">
+<li> Option Format</li>
+</ol>
+<p>   This protocol uses an EDNS0 [RFC6891] option to include client<br>   address information in DNS messages.  The option is structured as<br>   follows:</p>
+<div class="code-wrapper"><pre><code class="hljs">            +0 (MSB)                            +1 (LSB)
+  +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+</code></pre></div>
+<p>   0: |                          OPTION-CODE                          |<br>      +—+—+—+—+—+—+—+—+—+—+—+—+—+—+—+—+<br>   2: |                         OPTION-LENGTH                         |<br>      +—+—+—+—+—+—+—+—+—+—+—+—+—+—+—+—+<br>   4: |                            FAMILY                             |<br>      +—+—+—+—+—+—+—+—+—+—+—+—+—+—+—+—+<br>   6: |     SOURCE PREFIX-LENGTH      |     SCOPE PREFIX-LENGTH       |<br>      +—+—+—+—+—+—+—+—+—+—+—+—+—+—+—+—+<br>   8: |                           ADDRESS…                          /<br>      +—+—+—+—+—+—+—+—+—+—+—+—+—+—+—+—+</p>
+<p>   o  (Defined in [RFC6891]) OPTION-CODE, 2 octets, for ECS is 8 (0x00<br>      0x08).</p>
+<p>   o  (Defined in [RFC6891]) OPTION-LENGTH, 2 octets, contains the<br>      length of the payload (everything after OPTION-LENGTH) in octets.</p>
+<p>   o  FAMILY, 2 octets, indicates the family of the address contained in<br>      the option, using address family codes as assigned by IANA in<br>      Address Family Numbers [Address_Family_Numbers].</p>
+<p>   The format of the address part depends on the value of FAMILY.  This<br>   document only defines the format for FAMILY 1 (IPv4) and FAMILY 2<br>   (IPv6), which are as follows:</p>
+<p>   o  SOURCE PREFIX-LENGTH, an unsigned octet representing the leftmost<br>      number of significant bits of ADDRESS to be used for the lookup.<br>      In responses, it mirrors the same value as in the queries.</p>
+<p>Contavalli, et al.            Informational                     [Page 8]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>   o  SCOPE PREFIX-LENGTH, an unsigned octet representing the leftmost<br>      number of significant bits of ADDRESS that the response covers.<br>      In queries, it MUST be set to 0.</p>
+<p>   o  ADDRESS, variable number of octets, contains either an IPv4 or<br>      IPv6 address, depending on FAMILY, which MUST be truncated to the<br>      number of bits indicated by the SOURCE PREFIX-LENGTH field,<br>      padding with 0 bits to pad to the end of the last octet needed.</p>
+<p>   o  A server receiving an ECS option that uses either too few or too<br>      many ADDRESS octets, or that has non-zero ADDRESS bits set beyond<br>      SOURCE PREFIX-LENGTH, SHOULD return FORMERR to reject the packet,<br>      as a signal to the software developer making the request to fix<br>      their implementation.</p>
+<p>   All fields are in network byte order (“big-endian”, per [RFC1700],<br>   Data Notation).</p>
+<ol start="7">
+<li> Protocol Description</li>
+</ol>
+<p>7.1.  Originating the Option</p>
+<p>   The ECS option should generally be added by Recursive Resolvers when<br>   querying Authoritative Nameservers, as described in Section 12.  The<br>   option can also be initialized by a Stub Resolver or Forwarding<br>   Resolver.</p>
+<p>7.1.1.  Recursive Resolvers</p>
+<p>   The setup of the ECS option in a Recursive Resolver depends on the<br>   client query that triggered the resolution process.</p>
+<p>   In the usual case, where no ECS option was present in the client<br>   query, the Recursive Resolver initializes the option by setting<br>   FAMILY of the client’s address.  It then uses the value of its<br>   maximum cacheable prefix length to set SOURCE PREFIX-LENGTH.  For<br>   privacy reasons, and because the whole IP address is rarely required<br>   to determine a tailored response, this length SHOULD be shorter than<br>   the full address, as described in Section 11.</p>
+<p>   If the triggering query included an ECS option itself, it MUST be<br>   examined for its SOURCE PREFIX-LENGTH.  The Recursive Resolver’s<br>   outgoing query MUST then set SOURCE PREFIX-LENGTH to the shorter of<br>   the incoming query’s SOURCE PREFIX-LENGTH or the server’s maximum<br>   cacheable prefix length.</p>
+<p>Contavalli, et al.            Informational                     [Page 9]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>   Finally, in both cases, SCOPE PREFIX-LENGTH is set to 0 and ADDRESS<br>   is then added up to SOURCE PREFIX-LENGTH number of bits, with<br>   trailing 0 bits added, if needed, to fill the final octet.  The total<br>   number of octets used MUST only be enough to cover SOURCE PREFIX-<br>   LENGTH bits, rather than the full width that would normally be used<br>   by addresses in FAMILY.</p>
+<p>   FAMILY and ADDRESS information MAY be used from the ECS option in the<br>   incoming query.  Passing the existing address data is supportive of<br>   the Recursive Resolver being used as the target of a Forwarding<br>   Resolver, but could possibly run into policy problems with regard to<br>   usage agreements between the Recursive Resolver and Authoritative<br>   Nameserver.  See Section 12.2 for more discussion on this point.  If<br>   the Recursive Resolver will not forward FAMILY and ADDRESS data from<br>   the incoming ECS option, it SHOULD return a REFUSED response.</p>
+<p>   Subsequent queries to refresh the data MUST, if unrestricted by an<br>   incoming SOURCE PREFIX-LENGTH, specify the longest SOURCE PREFIX-<br>   LENGTH that the Recursive Resolver is willing to cache, even if a<br>   previous response indicated that a shorter prefix length was<br>   sufficient.</p>
+<p>7.1.2.  Stub Resolvers</p>
+<p>   A Stub Resolver MAY generate DNS queries with an ECS option that sets<br>   SOURCE PREFIX-LENGTH to limit how network information should be<br>   revealed.  An Intermediate Nameserver that receives such a query MUST<br>   NOT make queries that include more bits of client address than in the<br>   originating query.</p>
+<p>   A SOURCE PREFIX-LENGTH value of 0 means that the Recursive Resolver<br>   MUST NOT add the client’s address information to its queries.  The<br>   subsequent Recursive Resolver query to the Authoritative Nameserver<br>   will then either not include an ECS option or MAY optionally include<br>   its own address information, which is what the Authoritative<br>   Nameserver will almost certainly use to generate any Tailored<br>   Response in lieu of an option.  This allows the answer to be handled<br>   by the same caching mechanism as other queries, with an explicit<br>   indicator of the applicable scope.  Subsequent Stub Resolver queries<br>   for /0 can then be answered from this cached response.</p>
+<p>   A Stub Resolver MUST set SCOPE PREFIX-LENGTH to 0.  It MAY include<br>   FAMILY and ADDRESS data, but should be prepared to handle a REFUSED<br>   response if the Intermediate Nameserver that it queries has a policy<br>   that denies forwarding of ADDRESS.  If there is no ADDRESS set, i.e.,<br>   SOURCE PREFIX-LENGTH is set to 0, then FAMILY SHOULD be set to the<br>   transport over which the query is sent.  This is for</p>
+<p>Contavalli, et al.            Informational                    [Page 10]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>   interoperability; at least one major authoritative server will ignore<br>   the option if FAMILY is not 1 or 2, even though it is irrelevant if<br>   there are no ADDRESS bits.</p>
+<p>7.1.3.  Forwarding Resolvers</p>
+<p>   Forwarding Resolvers essentially appear to be Stub Resolvers to<br>   whatever Recursive Resolver is ultimately handling the query, but<br>   they look like a Recursive Resolver to their client.  A Forwarding<br>   Resolver using this option MUST prepare it as described in<br>   Section 7.1.1, “Recursive Resolvers”.  In particular, a Forwarding<br>   Resolver that implements this protocol MUST honor SOURCE PREFIX-<br>   LENGTH restrictions indicated in the incoming query from its client.<br>   See also Section 7.5.</p>
+<p>   Since the Recursive Resolver it contacts will treat the Forwarding<br>   Resolver like a Stub Resolver, the Recursive Resolver’s policies<br>   regarding incoming ADDRESS information will apply in the same way.<br>   If the Forwarding Resolver receives a REFUSED response when it sends<br>   a query that includes a non-zero ADDRESS, it MUST retry with no<br>   ADDRESS.</p>
+<p>7.2.  Generating a Response</p>
+<p>7.2.1.  Authoritative Nameserver</p>
+<p>   When a query containing an ECS option is received, an Authoritative<br>   Nameserver supporting ECS MAY use the address information specified<br>   in the option to generate a tailored response.</p>
+<p>   Authoritative Nameservers that have not implemented or enabled<br>   support for the ECS option ought to safely ignore it within incoming<br>   queries, per [RFC6891], Section 6.1.2.  Such a server MUST NOT<br>   include an ECS option within replies to indicate lack of support for<br>   it.  Implementers of Intermediate Nameservers should be aware,<br>   however, that some nameservers incorrectly echo back unknown EDNS0<br>   options.  In this protocol, that should be mostly harmless, as the<br>   SCOPE PREFIX-LENGTH should come back as 0, thus marking the response<br>   as covering all networks.</p>
+<p>   A query with a wrongly formatted option (e.g., an unknown FAMILY)<br>   MUST be rejected and a FORMERR response MUST be returned to the<br>   sender, as described in [RFC6891], “Transport Considerations”.</p>
+<p>   An Authoritative Nameserver that implements this protocol and<br>   receives an ECS option MUST include an ECS option in its response to<br>   indicate that it SHOULD be cached accordingly, regardless of whether<br>   the client information was needed to formulate an answer.  (Note that</p>
+<p>Contavalli, et al.            Informational                    [Page 11]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>   the requirement in [RFC6891] to reserve space for the OPT record<br>   could mean that the Answer section of the response will be truncated<br>   and fall back to TCP indicated accordingly.)  If an ECS option was<br>   not included in a query, one MUST NOT be included in the response<br>   even if the server is providing a Tailored Response – presumably<br>   based on the address from which it received the query.</p>
+<p>   FAMILY, SOURCE PREFIX-LENGTH, and ADDRESS in the response MUST match<br>   those in the query.  Echoing back these values helps to mitigate<br>   certain attack vectors, as described in Section 11.</p>
+<p>   SCOPE PREFIX-LENGTH in the response indicates the network for which<br>   the answer is intended.</p>
+<p>   A SCOPE PREFIX-LENGTH value longer than SOURCE PREFIX-LENGTH<br>   indicates that the provided prefix length was not specific enough to<br>   select the most appropriate Tailored Response.  Future queries for<br>   the name within the specified network SHOULD use the longer SCOPE<br>   PREFIX-LENGTH.  Factors affecting whether the Recursive Resolver<br>   would use the longer length include the amount of privacy masking the<br>   operator wants to provide their users, and the additional resource<br>   implications for the cache.</p>
+<p>   Conversely, a shorter SCOPE PREFIX-LENGTH indicates that more bits<br>   than necessary were provided, and the answer is suitable for a<br>   broader range of addresses.  This could be as short as 0, to indicate<br>   that the answer is suitable for all addresses in FAMILY.</p>
+<p>   As the logical topology of any part of the network with regard to the<br>   tailored response can vary, an Authoritative Nameserver may return<br>   different values of SCOPE PREFIX-LENGTH for different networks.</p>
+<p>   Since some queries can result in multiple RRsets being added to the<br>   response, there is an unfortunate ambiguity from the original<br>   specification as to how SCOPE PREFIX-LENGTH would apply to each<br>   individual RRset.  For example, multiple types in response to an ANY<br>   metaquery could all have different applicable SCOPE PREFIX-LENGTH<br>   values, but this protocol only has the ability to signal one.  The<br>   response SHOULD therefore, include the longest relevant PREFIX-LENGTH<br>   of any RRset in the answer, which could have the unfortunate side<br>   effect of redundantly caching some data that could be cached more<br>   broadly.  For the specific case of a Canonical Name (CNAME) chain,<br>   the Authoritative Nameserver SHOULD only place the initial CNAME<br>   record in the Answer section, to have it cached unambiguously and<br>   appropriately.  Most modern Recursive Resolvers restart the query<br>   with the CNAME, so the remainder of the chain is typically ignored</p>
+<p>Contavalli, et al.            Informational                    [Page 12]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>   anyway.  For message-focused resolvers, rather than RRset-focused<br>   ones, this will mean caching the entire CNAME chain at the longest<br>   PREFIX-LENGTH of any RRset in the chain.</p>
+<p>   The specific logic that an Authoritative Nameserver uses to choose a<br>   tailored response is not in the scope of this document.  Implementers<br>   are encouraged, however, to carefully consider their selection of<br>   SCOPE PREFIX-LENGTH for the response in the event that the best<br>   tailored response cannot be determined, and what the implications<br>   would be over the life of the TTL.</p>
+<p>   Authoritative Nameservers might have situations where one Tailored<br>   Response is appropriate for a relatively broad address range, such as<br>   an IPv4 /20, except for some exceptions, such as a few /24 ranges<br>   within that /20.  Because it can’t be guaranteed that queries for all<br>   longer prefix lengths would arrive before one that would be answered<br>   by the shorter prefix length, an Authoritative Nameserver MUST NOT<br>   overlap prefixes.</p>
+<p>   When the Authoritative Nameserver has a longer prefix length Tailored<br>   Response within a shorter prefix length Tailored Response, then<br>   implementations can either:</p>
+<ol>
+<li><p>Deaggregate the shorter prefix response into multiple longer<br> prefix responses, or</p>
+</li>
+<li><p>Alert the operator that the order of queries will determine which<br> answers get cached, and either warn and continue or treat this as<br> an error and refuse to load the configuration.</p>
+</li>
+</ol>
+<p>   This choice should be documented for the operator, for example, in<br>   the user manual.</p>
+<p>   When deaggregating to correct the overlap, prefix lengths should be<br>   optimized to use the minimum necessary to cover the address space, in<br>   order to reduce the overhead that results from having multiple copies<br>   of the same answer.  As a trivial example, if the Tailored Response<br>   for 1.2.0/20 is A but there is one exception of 1.2.3/24 for B, then<br>   the Authoritative Nameserver would need to provide Tailored Responses<br>   for 1.2.0/23, 1.2.2/24, 1.2.4/22, and 1.2.8/21 all pointing to A, and<br>   1.2.3/24 to B.</p>
+<p>7.2.2.  Intermediate Nameserver</p>
+<p>   When an Intermediate Nameserver uses ECS, whether it passes an ECS<br>   option in its own response to its client is predicated on whether the<br>   client originally included the option.  Because a client that did not<br>   use an ECS option might not be able to understand it, the server MUST</p>
+<p>Contavalli, et al.            Informational                    [Page 13]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>   NOT provide one in its response.  If the client query did include the<br>   option, the server MUST include one in its response, especially as it<br>   could be talking to a Forwarding Resolver, which would need the<br>   information for its own caching.</p>
+<p>   If an Intermediate Nameserver receives a response that has a longer<br>   SCOPE PREFIX-LENGTH than SOURCE PREFIX-LENGTH that it provided in its<br>   query, it SHOULD still provide the result as the answer to the<br>   triggering client request even if the client is in a different<br>   address range.  The Intermediate Nameserver MAY instead opt to retry<br>   with a longer SOURCE PREFIX-LENGTH to get a better reply before<br>   responding to its client, as long as it does not exceed a SOURCE<br>   PREFIX-LENGTH specified in the query that triggered resolution, but<br>   this obviously has implications for the latency of the overall<br>   lookup.</p>
+<p>   The logic for using the cache to determine whether the Intermediate<br>   Nameserver already knows the response to provide to its client is<br>   covered in the next section.</p>
+<p>7.3.  Handling ECS Responses and Caching</p>
+<p>   When an Intermediate Nameserver receives a response containing an ECS<br>   option and without the TC bit set, it SHOULD cache the result based<br>   on the data in the option.  If the TC bit was set, the Intermediate<br>   Resolver SHOULD retry the query over TCP to get the complete Answer<br>   section for caching.</p>
+<p>   If FAMILY, SOURCE PREFIX-LENGTH, and SOURCE PREFIX-LENGTH bits of<br>   ADDRESS in the response don’t match the non-zero fields in the<br>   corresponding query, the full response MUST be dropped, as described<br>   in Section 11.  In a response to a query that specified only SOURCE<br>   PREFIX-LENGTH for privacy masking, the FAMILY and ADDRESS fields MUST<br>   contain the appropriate non-zero information that the Authoritative<br>   Nameserver used to generate the answer, so that it can be cached<br>   accordingly.</p>
+<p>   If no ECS option is contained in the response, the Intermediate<br>   Nameserver SHOULD treat this as being equivalent to having received a<br>   SCOPE PREFIX-LENGTH of 0, which is an answer suitable for all client<br>   addresses.  See further discussion on the security implications of<br>   this in Section 11.</p>
+<p>   If a REFUSED response is received from an Authoritative Nameserver,<br>   an ECS-aware resolver MUST retry the query without ECS to distinguish<br>   the response from one where the Authoritative Nameserver is not<br>   responsible for the name, which is a common convention for the<br>   REFUSED status.  Similarly, a client of a Recursive Resolver SHOULD</p>
+<p>Contavalli, et al.            Informational                    [Page 14]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>   retry after receiving a REFUSED response because it is not<br>   sufficiently clear whether the REFUSED response was because of the<br>   ECS option or some other reason.</p>
+<p>7.3.1.  Caching the Response</p>
+<p>   In the cache, all resource records in the Answer section MUST be tied<br>   to the network specified in the response.  The appropriate prefix<br>   length depends on the relationship between SOURCE PREFIX-LENGTH,<br>   SCOPE PREFIX-LENGTH, and the maximum cacheable prefix length<br>   configured for the cache.</p>
+<p>   If SCOPE PREFIX-LENGTH is not longer than SOURCE PREFIX-LENGTH, store<br>   SCOPE PREFIX-LENGTH bits of ADDRESS, and then mark the response as<br>   valid for all addresses that fall within that range.</p>
+<p>   Similarly, if SOURCE PREFIX-LENGTH is the maximum configured for the<br>   cache, store SOURCE PREFIX-LENGTH bits of ADDRESS, and then mark the<br>   response as valid for all addresses that fall within that range.</p>
+<p>   If SOURCE PREFIX-LENGTH is shorter than the configured maximum and<br>   SCOPE PREFIX-LENGTH is longer than SOURCE PREFIX-LENGTH, store SOURCE<br>   PREFIX-LENGTH bits of ADDRESS, and then mark the response as valid<br>   only to answer client queries that specify exactly the same SOURCE<br>   PREFIX-LENGTH in their own ECS option.</p>
+<p>   The handling of DNSSEC-related records in the Answer section was<br>   unspecified in the original draft version of this document and is<br>   inconsistently handled in existing implementations.  A Resource<br>   Record Signature (RRSIG) must obviously be tied to the RRset that it<br>   signs, but it is RECOMMENDED that all other DNSSEC records be scoped<br>   at /0.  See Section 9 for more information.</p>
+<p>   Note that the Additional and Authority sections from a DNS response<br>   message are specifically excluded here.  Any records from these<br>   sections MUST NOT be tied to a network.  See Section 7.4 for more<br>   information.</p>
+<p>   Records that are cached as /0 because of a query’s SOURCE PREFIX-<br>   LENGTH of 0 MUST be distinguished from those that are cached as /0<br>   because of a response’s SCOPE PREFIX-LENGTH of 0.  The former should<br>   only be used for other /0 queries that the Intermediate Resolver<br>   receives, but the latter is suitable as a response for all networks.</p>
+<p>Contavalli, et al.            Informational                    [Page 15]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>   Although omitting network-specific caching will significantly<br>   simplify an implementation, the resulting drop in cache hits is very<br>   likely to defeat most latency benefits provided by ECS.  Therefore,<br>   implementing full caching support as described in this section is<br>   strongly RECOMMENDED.</p>
+<p>   Enabling support for ECS in an Intermediate Nameserver will<br>   significantly increase the size of the cache, reduce the number of<br>   results that can be served from cache, and increase the load on the<br>   server.  Implementing the mitigation techniques described in<br>   Section 11 is strongly recommended.  For cache size issues,<br>   implementers should consider data storage formats that allow the same<br>   answer data to be shared among multiple prefixes.</p>
+<p>7.3.2.  Answering from Cache</p>
+<p>   Cache lookups are first done as usual for a DNS query, using the<br>   query tuple of &lt;name, type, class&gt;.  Then, the appropriate RRset MUST<br>   be chosen based on the longest prefix matching.  The client address<br>   to use for comparison will depend on whether the Intermediate<br>   Nameserver received an ECS option in its client query.</p>
+<p>   o  If no ECS option was provided, the client’s address is used.</p>
+<p>   o  If there was an ECS option specifying SOURCE PREFIX-LENGTH and<br>      ADDRESS covering the client’s address, the client address is used<br>      but SOURCE PREFIX-LENGTH is initially ignored.  If no covering<br>      entry is found and SOURCE PREFIX-LENGTH is shorter than the<br>      configured maximum length allowed for the cache, repeat the cache<br>      lookup for an entry that exactly matches SOURCE PREFIX-LENGTH.<br>      These special entries, which do not cover longer prefix lengths,<br>      occur as described in the previous section.</p>
+<p>   o  If there was an ECS option with an ADDRESS, the ADDRESS from it<br>      MAY be used if the local policy allows.  The policy can vary<br>      depending on the agreements the operator of the Intermediate<br>      Nameserver has with Authoritative Nameserver operators; see<br>      Section 12.2.  If the policy does not allow it, a REFUSED response<br>      SHOULD be sent.  See Section 7.5 for more information.</p>
+<p>   If a matching network is found and the relevant data is unexpired,<br>   the response is generated as per Section 7.2.</p>
+<p>   If no matching network is found, the Intermediate Nameserver MUST<br>   perform resolution as usual.  This is necessary to avoid Tailored<br>   Responses in the cache from being returned to the wrong clients, and</p>
+<p>Contavalli, et al.            Informational                    [Page 16]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>   to avoid a single query coming from a client on a different network<br>   from polluting the cache with a Tailored Response for all the users<br>   of that resolver.</p>
+<p>7.4.  Delegations and Negative Answers</p>
+<p>   The prohibition against tying ECS data to records from the Authority<br>   and Additional sections left an unfortunate ambiguity in the original<br>   specification, primarily with regard to negative answers.  The<br>   expectation of the original authors was that ECS would only really be<br>   used for address requests and the positive result in the response’s<br>   Answer section, which was the use case that was driving the<br>   definition of the protocol.</p>
+<p>   For negative answers, some independent implementations of both<br>   resolvers and authorities did not see the section restriction as<br>   necessarily meaning that a given name and type must only have either<br>   positive ECS-tagged answers or a negative answer.  They support being<br>   able to tell one part of the network that the data does not exist,<br>   while telling another part of the network that it does.</p>
+<p>   Several other implementations, however, do not support being able to<br>   mix positive and negative answers; thus, interoperability is a<br>   problem.  It is RECOMMENDED that no specific behavior regarding<br>   negative answers be relied upon, but that Authoritative Nameservers<br>   should conservatively expect that Intermediate Nameservers will treat<br>   all negative answers as /0; therefore, they SHOULD set SCOPE PREFIX-<br>   LENGTH accordingly.</p>
+<p>   This issue is expected to be revisited in a future revision of the<br>   protocol, possibly blessing the mixing of positive and negative<br>   answers.  There are implications for cache data structures that<br>   developers should consider when writing new ECS code.</p>
+<p>   The delegations case is a bit easier to tease out.  In operational<br>   practice, if an authoritative server is using address information to<br>   provide customized delegations, it is the resolver that will be using<br>   the answer for its next iterative query.  Addresses in the Additional<br>   section SHOULD therefore ignore ECS data, and the Authoritative<br>   Nameserver SHOULD return a zero SCOPE PREFIX-LENGTH on delegations.<br>   A Recursive Resolver SHOULD treat a non-zero SCOPE PREFIX LENGTH in a<br>   delegation as though it were zero.</p>
+<p>Contavalli, et al.            Informational                    [Page 17]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>7.5.  Transitivity</p>
+<p>   Generally, ECS options will only be present in DNS messages between a<br>   Recursive Resolver and an Authoritative Nameserver, i.e., one hop.<br>   However, in certain configurations, for example, multi-tier<br>   nameserver setups, it may be necessary to implement transitive<br>   behavior on Intermediate Nameservers.</p>
+<p>   Any Intermediate Nameserver that forwards ECS options received from<br>   its clients MUST fully implement the caching behavior described in<br>   Section 7.3.</p>
+<p>   An Intermediate Nameserver MAY forward ECS options with address<br>   information.  This information MAY match the source IP address of the<br>   incoming query, and MAY have more or fewer address bits than the<br>   nameserver would normally include in a locally originated ECS option.<br>   If an Intermediate Nameserver receives a query with SOURCE PREFIX-<br>   LENGTH set to 0, it MUST NOT include client address information in<br>   queries made to resolve that client’s request (see Section 7.1.2).</p>
+<p>   If, for any reason, the Intermediate Nameserver does not want to use<br>   the information in an ECS option it receives (too little address<br>   information, network address from a range not authorized to use the<br>   server, private/unroutable address space, etc.), it SHOULD drop the<br>   query and return a REFUSED response.  Note again that a query MUST<br>   NOT be refused solely because it provides 0 address bits.</p>
+<p>   Be aware that at least one major existing implementation does not<br>   return REFUSED and instead just processes the query as though the<br>   problematic information were not present.  This can lead to anomalous<br>   situations, such as a response from the Intermediate Nameserver that<br>   indicates it is tailored for one network (the one passed in the<br>   original query, since the ADDRESS must match) when actually it is for<br>   another network (the one which contains the address that the<br>   Intermediate Nameserver saw as making the query).</p>
+<ol start="8">
+<li> IANA Considerations</li>
+</ol>
+<p>   IANA has assigned option code 8 in the “DNS EDNS0 Option Codes (OPT)”<br>   registry to edns-client-subnet.</p>
+<p>   IANA has updated the reference to refer to this RFC.</p>
+<p>Contavalli, et al.            Informational                    [Page 18]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<ol start="9">
+<li> DNSSEC Considerations</li>
+</ol>
+<p>   The presence or absence of an EDNS0 OPT resource record ([RFC6891])<br>   containing an ECS option in a DNS query does not change the usage of<br>   the resource records and mechanisms used to provide data origin<br>   authentication and data integrity to the DNS, as described in<br>   [RFC4033], [RFC4034], and [RFC4035].  OPT records are not signed.</p>
+<p>   Use of this option, however, does imply increased DNS traffic between<br>   any given Recursive Resolver and Authoritative Nameserver, which<br>   could be another barrier to further DNSSEC adoption in this area.</p>
+<p>   The initial version of this protocol, against which several<br>   Authoritative and Recursive Nameserver implementations were written,<br>   did not discuss the handling of DNSSEC RRs; thus, it is expected that<br>   there are operational inconsistencies in handling them.</p>
+<p>   Given the intention of this document to describe how ECS is currently<br>   deployed, specifying new requirements for DNSSEC handling is out of<br>   scope.  However, some recommendations can be made as to what is most<br>   likely to result in successful interoperation for a DNSSEC-signed ECS<br>   zone, mainly from the point of view of Authoritative Nameservers.</p>
+<p>   Most DNSSEC records SHOULD be scoped at /0, except for the RRSIG<br>   records, which MUST be tied to the RRset that they sign in a Tailored<br>   Response.  While it is possible to conceive of a way to get other<br>   DNSSEC records working in a network-specific way, it has little<br>   apparent benefit or likelihood of working with deployed validating<br>   resolvers.</p>
+<p>   One further implication here is that, despite the discussion about<br>   negative answers in Section 7.4, scoping NextSECure (NSEC) or NSEC3<br>   records at /0 per the previous paragraph necessarily implies that<br>   DNSSEC-signed negative answers must also be network-invariant.</p>
+<ol start="10">
+<li> NAT Considerations</li>
+</ol>
+<p>   Special awareness of ECS in devices that perform Network Address<br>   Translation (NAT) as described in [RFC2663] is not required; queries<br>   can be passed through as is.  The client’s network address SHOULD NOT<br>   be added, and existing ECS options, if present, SHOULD NOT be<br>   modified by NAT devices.</p>
+<p>   In large-scale global networks behind a NAT device (but, for example<br>   with Centralized Resolver infrastructure), an internal Intermediate<br>   Nameserver might have detailed network layout information, and may</p>
+<p>Contavalli, et al.            Informational                    [Page 19]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>   know which external subnets are used for egress traffic by each<br>   internal network.  In such cases, the Intermediate Nameserver MAY use<br>   that information when originating ECS options.</p>
+<p>   In other cases, if a Recursive Resolver knows that it is situated<br>   behind a NAT device, it SHOULD NOT originate ECS options with their<br>   external IP address and instead rely on downstream Intermediate<br>   Nameservers to do so.  It MAY, however, choose to include the option<br>   with their internal address for the purposes of signaling its own<br>   limit for SOURCE PREFIX-LENGTH.</p>
+<p>   Full treatment of special network addresses is beyond the scope of<br>   this document; handling them will likely differ according to the<br>   operational environments of each service provider.  As a general<br>   guideline, if an Authoritative Nameserver on the publicly routed<br>   Internet receives a query that specifies an ADDRESS in [RFC1918] or<br>   [RFC4193] private address space, it SHOULD ignore ADDRESS and look up<br>   its answer based on the address of the Recursive Resolver.  In the<br>   response, it SHOULD set SCOPE PREFIX-LENGTH to cover all of the<br>   relevant private space.  For example, a query for ADDRESS 10.1.2.0<br>   with a SOURCE PREFIX-LENGTH of 24 would get a returned SCOPE PREFIX-<br>   LENGTH of 8.  The Intermediate Nameserver MAY elect to cache the<br>   answer under one entry for special-purpose addresses [RFC6890]; see<br>   Section 11.3 of this document.</p>
+<ol start="11">
+<li> Security Considerations</li>
+</ol>
+<p>11.1.  Privacy</p>
+<p>   With the ECS option, the network address of the client that initiated<br>   the resolution becomes visible to all servers involved in the<br>   resolution process.  Additionally, it will be visible from any<br>   network traversed by the DNS packets.</p>
+<p>   To protect users’ privacy, Recursive Resolvers are strongly<br>   encouraged to conceal part of the user’s IP address by truncating<br>   IPv4 addresses to 24 bits. 56 bits are recommended for IPv6, based on<br>   [RFC6177].</p>
+<p>   ISPs should have more detailed knowledge of their own networks.  That<br>   is, they might know that all 24-bit prefixes in a /20 are in the same<br>   area.  In those cases, for optimal cache utilization and improved<br>   privacy, the ISP’s Recursive Resolver SHOULD truncate IP addresses in<br>   this /20 to just 20 bits, instead of 24 as recommended above.</p>
+<p>   Users who wish their full IP address to be hidden need to configure<br>   their client software, if possible, to include an ECS option<br>   specifying the wildcard address (i.e., a SOURCE PREFIX-LENGTH of 0).</p>
+<p>Contavalli, et al.            Informational                    [Page 20]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>   As described in previous sections, this option will be forwarded<br>   across all the Recursive Resolvers supporting ECS, which MUST NOT<br>   modify it to include the network address of the client.</p>
+<p>   Note that even without an ECS option, any server queried directly by<br>   the user will be able to see the full client IP address.  Recursive<br>   Resolvers or Authoritative Nameservers MAY use the source IP address<br>   of queries to return a cached entry or to generate a Tailored<br>   Response that best matches the query.</p>
+<p>11.2.  Birthday Attacks</p>
+<p>   ECS adds information to the DNS query tuple (q-tuple).  This allows<br>   an attacker to send a caching Intermediate Nameserver multiple<br>   queries with spoofed IP addresses either in the ECS option or as the<br>   source IP.  These queries will trigger multiple outgoing queries with<br>   the same name, type, and class, just with different address<br>   information in the ECS option.</p>
+<p>   With multiple queries for the same name in flight, the attacker has a<br>   higher chance of success to send a matching response with SCOPE<br>   PREFIX-LENGTH set to 0 to get it cached for all hosts.</p>
+<p>   To counter this, the ECS option in a response packet MUST contain the<br>   full FAMILY, ADDRESS, and SOURCE PREFIX-LENGTH fields from the<br>   corresponding query.  Intermediate Nameservers processing a response<br>   MUST verify that these match, and they SHOULD discard the entire<br>   response if they do not.</p>
+<p>   The requirement to discard is categorized as “SHOULD” instead of<br>   “MUST” because it stands in opposition to the instruction in<br>   Section 7.3, which states that a response lacking an ECS option<br>   should be treated as though it had one of SCOPE PREFIX-LENGTH of 0.<br>   If that is always true, then an attacker does not need to worry about<br>   matching the original ECS option data and just needs to flood back<br>   responses that have no ECS option at all.</p>
+<p>   This type of attack could be detected in ongoing operations by<br>   marking whether the responding nameserver had previously been sending<br>   ECS options and/or by taking note of an incoming flood of bogus<br>   responses and flagging the relevant query for re-resolution.  This<br>   type of detection is more complex than existing nameserver responses<br>   to spoof floods, and it would also need to be sensitive to a<br>   nameserver legitimately stopping ECS replies even though it had<br>   previously given them.</p>
+<p>Contavalli, et al.            Informational                    [Page 21]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>11.3.  Cache Pollution</p>
+<p>   It is simple for an arbitrary resolver or client to provide false<br>   information in the ECS option, or to send UDP packets with forged<br>   source IP addresses.</p>
+<p>   This could be used to:</p>
+<p>   o  pollute the cache of Intermediate Resolvers by filling it with<br>      results that will rarely (if ever) be used.</p>
+<p>   o  reverse-engineer the algorithms (or data) used by the<br>      Authoritative Nameserver to calculate Tailored Responses.</p>
+<p>   o  mount a denial-of-service attack against an Intermediate<br>      Nameserver by forcing it to perform many more recursive queries<br>      than it would normally do, due to how caching is handled for<br>      queries containing the ECS option.</p>
+<p>   Even without malicious intent, Centralized Resolvers providing<br>   answers to clients in multiple networks will need to cache different<br>   responses for different networks, putting more memory pressure on the<br>   cache.</p>
+<p>   To mitigate those problems:</p>
+<p>   o  Recursive Resolvers implementing ECS should only enable it in<br>      deployments where it is expected to bring clear advantages to the<br>      end users, such as when expecting clients from a variety of<br>      networks or from a wide geographical area.  Due to the high cache<br>      pressure introduced by ECS, the feature SHOULD be disabled in all<br>      default configurations.</p>
+<p>   o  Recursive Resolvers SHOULD limit the number of networks and<br>      answers they keep in the cache for any given query.</p>
+<p>   o  Recursive Resolvers SHOULD limit the total number of different<br>      networks that they keep in cache.</p>
+<p>   o  Recursive Resolvers MUST NOT send an ECS option with SOURCE<br>      PREFIX-LENGTH providing more bits in ADDRESS than they are willing<br>      to cache responses for.</p>
+<p>   o  Recursive Resolvers should implement algorithms to improve the<br>      cache hit rate, given the size constraints indicated above.<br>      Recursive Resolvers MAY, for example, decide to discard more-<br>      specific cache entries first.</p>
+<p>Contavalli, et al.            Informational                    [Page 22]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>   o  Authoritative Nameservers and Recursive Resolvers should discard<br>      ECS options that are either obviously forged or otherwise known to<br>      be wrong.  They SHOULD at least treat unroutable addresses, such<br>      as some of the address blocks defined in [RFC6890], as equivalent<br>      to the Recursive Resolver’s own identity.  They SHOULD ignore and<br>      never forward ECS options specifying other routable addresses that<br>      are known not to be served by the query source.</p>
+<p>   o  The ECS option is just a hint to Authoritative Nameservers for<br>      customizing results.  They can decide to ignore the content of the<br>      ECS option based on blacklists or whitelists, rate-limiting<br>      mechanisms, or any other logic implemented in the software.</p>
+<ol start="12">
+<li> Sending the Option</li>
+</ol>
+<p>   When implementing a Recursive Resolver, there are two strategies on<br>   deciding when to include an ECS option in a query.  At this stage,<br>   it’s not clear which strategy is best.</p>
+<p>12.1.  Probing</p>
+<p>   A Recursive Resolver can send the ECS option with every outgoing<br>   query.  However, it is RECOMMENDED that resolvers remember which<br>   Authoritative Nameservers did not return the option with their<br>   response and omit client address information from subsequent queries<br>   to those nameservers.</p>
+<p>   Additionally, Recursive Resolvers SHOULD be configured never to send<br>   the option when querying root, top-level, and effective top-level<br>   (i.e., “public suffix” [Public_Suffix_List]) domain servers.  These<br>   domains are delegation-centric and are very unlikely to generate<br>   different responses based on the address of the client.</p>
+<p>   When probing, it is important that several things are probed: support<br>   for ECS, support for EDNS0, support for EDNS0 options, or possibly an<br>   unreachable nameserver.  Various implementations are known to drop<br>   DNS packets with OPT RRs (with or without options), thus several<br>   probes are required to discover what is supported.</p>
+<p>   Probing, if implemented, MUST be repeated periodically, e.g., daily.<br>   If an Authoritative Nameserver indicates ECS support for one zone, it<br>   is to be expected that the nameserver supports ECS for all of its<br>   zones.  Likewise, an Authoritative Nameserver that uses ECS<br>   information for one of its zones MUST indicate support for the option<br>   in all of its responses to ECS queries.  If the option is supported<br>   but not actually used for generating a response, its SCOPE PREFIX-<br>   LENGTH MUST be set to 0.</p>
+<p>Contavalli, et al.            Informational                    [Page 23]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>12.2.  Whitelist</p>
+<p>   As described previously, it is expected that only a few Recursive<br>   Resolvers will need to use ECS, and that it will generally be enabled<br>   only if it offers a clear benefit to the users.</p>
+<p>   To avoid the complexity of implementing a probing and detection<br>   mechanism (and the possible query loss/delay that may come with it),<br>   an implementation could use a whitelist of Authoritative Nameservers<br>   to send the option to, likely specified by their domain name.<br>   Implementations MAY also allow additional configuring of this based<br>   on other criteria, such as zone or query type.  As of the time of<br>   this writing, at least one implementation makes use of a whitelist.</p>
+<p>   An advantage of using a whitelist is that partial client address<br>   information is only disclosed to nameservers that are known to use<br>   the information, improving privacy.</p>
+<p>   A drawback is scalability.  The operator needs to track which<br>   Authoritative Nameservers support ECS, making it harder for new<br>   Authoritative Nameservers to start using the option.</p>
+<p>   Similarly, Authoritative Nameservers can also use whitelists to limit<br>   the feature to only certain clients.  For example, a CDN that does<br>   not want all of their mapping trivially walked might require a legal<br>   agreement with the Recursive Resolver operator, to clearly describe<br>   the acceptable use of the feature.</p>
+<p>   The maintenance of access control mechanisms is out of scope for this<br>   protocol definition.</p>
+<ol start="13">
+<li><p> Example</p>
+</li>
+<li><p>A Stub Resolver, SR, with the IP address<br>  2001:0db8:fd13:4231:2112:8a2e:c37b:7334 tries to resolve<br>  <a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a> by forwarding the query to the Recursive<br>  Resolver, RNS, asking for recursion.</p>
+</li>
+<li><p>RNS, supporting ECS, looks up <a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a> in its cache.  An<br>  entry is found neither for <a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a> nor for example.com.</p>
+</li>
+<li><p>RNS builds a query to send to the root and .com servers.  The<br>  implementation of RNS provides facilities so that an<br>  administrator can configure it not to forward ECS in certain<br>  cases.  In particular, RNS is configured not to include an ECS<br>  option when talking to Top-Level-Domain or root nameservers, as<br>  described in Section 7.1.  Thus, no ECS option is added, and<br>  resolution is performed as usual.</p>
+</li>
+</ol>
+<p>Contavalli, et al.            Informational                    [Page 24]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<ol start="4">
+<li><p>RNS now knows the next server to query: the Authoritative<br>  Nameserver, ANS, responsible for example.com.</p>
+</li>
+<li><p>RNS prepares a new query for <a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a>, including an ECS<br>  option with:</p>
+<ul>
+<li><p> OPTION-CODE set to 8.</p>
+</li>
+<li><p>OPTION-LENGTH set to 0x00 0x0b for the following fixed 4<br> octets plus the 7 octets that will be used for ADDRESS.</p>
+</li>
+<li><p> FAMILY set to 0x00 0x02, as IP is an IPv6 address.</p>
+</li>
+<li><p>SOURCE PREFIX-LENGTH set to 0x38, as RNS is configured to<br> conceal the last 72 bits of every IPv6 address.</p>
+</li>
+<li><p>SCOPE PREFIX-LENGTH set to 0x00, as specified by this<br> document for all queries.</p>
+</li>
+<li><p>ADDRESS set to 0x20 0x01 0x0d 0xb8 0xfd 0x13 0x42, providing<br> only the first 56 bits of the IPv6 address.</p>
+</li>
+</ul>
+</li>
+<li><p>The query is sent.  ANS understands and uses ECS.  It parses the<br>  ECS option, and generates a Tailored Response.</p>
+</li>
+<li><p>Due its internal implementation, ANS finds a response that is<br>  tailored for the whole /16 of the client that performed the<br>  query.</p>
+</li>
+<li><p>ANS adds an ECS option in the response, containing:</p>
+<ul>
+<li><p> OPTION-CODE set to 8.</p>
+</li>
+<li><p> OPTION-LENGTH set to 0x00 0x07.</p>
+</li>
+<li><p> FAMILY set to 0x00 0x02.</p>
+</li>
+<li><p> SOURCE PREFIX-LENGTH set to 0x38, copied from the query.</p>
+</li>
+<li><p> SCOPE PREFIX-LENGTH set to 0x30, indicating a /48 network.</p>
+</li>
+<li><p>ADDRESS set to 0x20 0x01 0x0d 0xb8 0xfd 0x13 0x42, copied<br> from the query.</p>
+</li>
+</ul>
+</li>
+<li><p>RNS receives the response containing an ECS option.  It verifies<br>  that FAMILY, SOURCE PREFIX-LENGTH, and ADDRESS match the query.<br>  If not, the message is discarded.</p>
+</li>
+</ol>
+<p>Contavalli, et al.            Informational                    [Page 25]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<ol start="10">
+<li><p>The response is interpreted as usual.  Since the response<br> contains an ECS option, ADDRESS, SCOPE PREFIX-LENGTH, and FAMILY<br> in the response are used to cache the entry.</p>
+</li>
+<li><p>RNS sends a response to Stub Resolver, SR, without including an<br> ECS option.</p>
+</li>
+<li><p>RNS receives another query to resolve <a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a>.  This<br> time, a response is cached.  The response, however, is tied to a<br> particular network.  If the client’s address matches any network<br> in the cache, then the response is returned from the cache.<br> Otherwise, another query is performed.  If multiple results<br> match, the one with the longest SCOPE PREFIX-LENGTH is chosen,<br> as per common best-network-match algorithms.</p>
+</li>
+<li><p> References</p>
+</li>
+</ol>
+<p>14.1.  Normative References</p>
+<p>   [RFC1034]  Mockapetris, P., “Domain Names - Concepts and Facilities”,<br>              STD 13, RFC 1034, DOI 10.17487/RFC1034, November 1987,<br>              <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc1034">http://www.rfc-editor.org/info/rfc1034</a>.</p>
+<p>   [RFC1035]  Mockapetris, P., “Domain Names - Implementation and<br>              Specification”, STD 13, RFC 1035, DOI 10.17487/RFC1035,<br>              November 1987, <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc1035">http://www.rfc-editor.org/info/rfc1035</a>.</p>
+<p>   [RFC1700]  Reynolds, J. and J. Postel, “Assigned Numbers”, RFC 1700,<br>              DOI 10.17487/RFC1700, October 1994,<br>              <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc1700">http://www.rfc-editor.org/info/rfc1700</a>.</p>
+<p>   [RFC1918]  Rekhter, Y., Moskowitz, B., Karrenberg, D., de Groot, G.,<br>              and E. Lear, “Address Allocation for Private Internets”,<br>              BCP 5, RFC 1918, DOI 10.17487/RFC1918, February 1996,<br>              <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc1918">http://www.rfc-editor.org/info/rfc1918</a>.</p>
+<p>   [RFC2119]  Bradner, S., “Key words for use in RFCs to Indicate<br>              Requirement Levels”, BCP 14, RFC 2119,<br>              DOI 10.17487/RFC2119, March 1997,<br>              <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc2119">http://www.rfc-editor.org/info/rfc2119</a>.</p>
+<p>   [RFC4033]  Arends, R., Austein, R., Larson, M., Massey, D., and S.<br>              Rose, “DNS Security Introduction and Requirements”,<br>              RFC 4033, DOI 10.17487/RFC4033, March 2005,<br>              <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc4033">http://www.rfc-editor.org/info/rfc4033</a>.</p>
+<p>Contavalli, et al.            Informational                    [Page 26]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>   [RFC4034]  Arends, R., Austein, R., Larson, M., Massey, D., and S.<br>              Rose, “Resource Records for the DNS Security Extensions”,<br>              RFC 4034, DOI 10.17487/RFC4034, March 2005,<br>              <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc4034">http://www.rfc-editor.org/info/rfc4034</a>.</p>
+<p>   [RFC4035]  Arends, R., Austein, R., Larson, M., Massey, D., and S.<br>              Rose, “Protocol Modifications for the DNS Security<br>              Extensions”, RFC 4035, DOI 10.17487/RFC4035, March 2005,<br>              <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc4035">http://www.rfc-editor.org/info/rfc4035</a>.</p>
+<p>   [RFC4193]  Hinden, R. and B. Haberman, “Unique Local IPv6 Unicast<br>              Addresses”, RFC 4193, DOI 10.17487/RFC4193, October 2005,<br>              <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc4193">http://www.rfc-editor.org/info/rfc4193</a>.</p>
+<p>   [RFC6177]  Narten, T., Huston, G., and L. Roberts, “IPv6 Address<br>              Assignment to End Sites”, BCP 157, RFC 6177,<br>              DOI 10.17487/RFC6177, March 2011,<br>              <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc6177">http://www.rfc-editor.org/info/rfc6177</a>.</p>
+<p>   [RFC6890]  Cotton, M., Vegoda, L., Bonica, R., Ed., and B. Haberman,<br>              “Special-Purpose IP Address Registries”, BCP 153,<br>              RFC 6890, DOI 10.17487/RFC6890, April 2013,<br>              <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc6890">http://www.rfc-editor.org/info/rfc6890</a>.</p>
+<p>   [RFC6891]  Damas, J., Graff, M., and P. Vixie, “Extension Mechanisms<br>              for DNS (EDNS(0))”, STD 75, RFC 6891,<br>              DOI 10.17487/RFC6891, April 2013,<br>              <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc6891">http://www.rfc-editor.org/info/rfc6891</a>.</p>
+<p>14.2.  Informative References</p>
+<p>   [Address_Family_Numbers]<br>              IANA, “Address Family Numbers”,<br>              <a target="_blank" rel="noopener" href="http://www.iana.org/assignments/address-family-numbers">http://www.iana.org/assignments/address-family-numbers</a>.</p>
+<p>   [DPRIVE_Working_Group]<br>              IETF, “PNS PRIVate Exchange (dprive) DPRIVE Working<br>              Group”, 2015,<br>              <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/wg/dprive/charter/">https://datatracker.ietf.org/wg/dprive/charter/</a>.</p>
+<p>   [METADATA]<br>              Hardie, T., Ed., “Design considerations for Metadata<br>              Insertion”, Work in Progress, draft-hardie-privsec-<br>              metadata-insertion-02, March 2016.</p>
+<p>   [Public_Suffix_List]<br>              “Public Suffix List”, <a target="_blank" rel="noopener" href="https://publicsuffix.org/">https://publicsuffix.org/</a>.</p>
+<p>Contavalli, et al.            Informational                    [Page 27]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>   [RFC2308]  Andrews, M., “Negative Caching of DNS Queries (DNS<br>              NCACHE)”, RFC 2308, DOI 10.17487/RFC2308, March 1998,<br>              <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc2308">http://www.rfc-editor.org/info/rfc2308</a>.</p>
+<p>   [RFC2663]  Srisuresh, P. and M. Holdrege, “IP Network Address<br>              Translator (NAT) Terminology and Considerations”,<br>              RFC 2663, DOI 10.17487/RFC2663, August 1999,<br>              <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc2663">http://www.rfc-editor.org/info/rfc2663</a>.</p>
+<p>   [RFC7719]  Hoffman, P., Sullivan, A., and K. Fujiwara, “DNS<br>              Terminology”, RFC 7719, DOI 10.17487/RFC7719, December<br>              2015, <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc7719">http://www.rfc-editor.org/info/rfc7719</a>.</p>
+<p>   [VANDERGAAST]<br>              Contavalli, C., Gaast, W., Leach, S., and E. Lewis,<br>              “Client Subnet in DNS Requests”, Work in Progress,<br>              draft-vandergaast-edns-client-subnet-02, July 2013.</p>
+<p>Acknowledgements</p>
+<p>   The authors wish to thank Darryl Rodden for his work as a co-author,<br>   and the following people for reviewing this document and for<br>   providing useful feedback: Paul S. R. Chisholm, B. Narendran,<br>   Leonidas Kontothanassis, David Presotto, Philip Rowlands, Chris<br>   Morrow, Kara Moscoe, Alex Nizhner, Warren Kumari, and Richard Rabbat<br>   from Google; Terry Farmer, Mark Teodoro, Edward Lewis, and Eric<br>   Burger from Neustar; David Ulevitch and Matthew Dempsky from OpenDNS;<br>   Patrick W. Gilmore and Steve Hill from Akamai; Colm MacCarthaigh and<br>   Richard Sheehan from Amazon; Tatuya Jinmei from Infoblox; Andrew<br>   Sullivan from Dyn; John Dickinson from Sinodun; Mark Delany from<br>   Apple; Yuri Schaeffer from NLnet Labs; Duane Wessels Verisign;<br>   Antonio Querubin; Daniel Kahn Gillmor from the ACLU; Evan Hunt and<br>   Mukund Sivaraman from the Internet Software Consortium; Russ Housley<br>   from Vigilsec; Stephen Farrell from Trinity College Dublin; Alissa<br>   Cooper from Cisco; Suzanne Woolf; and all of the other people that<br>   replied to our emails on various mailing lists.</p>
+<p>Contavalli, et al.            Informational                    [Page 28]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>Contributors</p>
+<p>   The individuals below contributed significantly to this document.</p>
+<p>   Edward Lewis<br>   ICANN<br>   12025 Waterfront Drive, Suite 300<br>   Los Angeles, CA 90094-2536<br>   United States</p>
+<p>   Email: <a href="mailto:&#101;&#x64;&#x77;&#x61;&#114;&#x64;&#x2e;&#x6c;&#101;&#119;&#105;&#115;&#64;&#105;&#x63;&#x61;&#x6e;&#x6e;&#x2e;&#111;&#114;&#x67;">&#101;&#x64;&#x77;&#x61;&#114;&#x64;&#x2e;&#x6c;&#101;&#119;&#105;&#115;&#64;&#105;&#x63;&#x61;&#x6e;&#x6e;&#x2e;&#111;&#114;&#x67;</a></p>
+<p>   Sean Leach<br>   Fastly<br>   P.O. Box 78266<br>   San Francisco, CA 94107<br>   United States</p>
+<p>   Jason Moreau<br>   Akamai Technologies<br>   150 Broadway<br>   Cambridge, MA 02142-1413<br>   United States</p>
+<p>Contavalli, et al.            Informational                    [Page 29]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
+<p>Authors’ Addresses</p>
+<p>   Carlo Contavalli<br>   Google<br>   1600 Amphitheater Parkway<br>   Mountain View, CA  94043<br>   United States</p>
+<p>   Email: <a href="mailto:&#99;&#x63;&#x6f;&#x6e;&#x74;&#97;&#118;&#97;&#108;&#x6c;&#x69;&#x40;&#x67;&#x6f;&#111;&#103;&#108;&#x65;&#46;&#x63;&#x6f;&#109;">&#99;&#x63;&#x6f;&#x6e;&#x74;&#97;&#118;&#97;&#108;&#x6c;&#x69;&#x40;&#x67;&#x6f;&#111;&#103;&#108;&#x65;&#46;&#x63;&#x6f;&#109;</a></p>
+<p>   Wilmer van der Gaast<br>   Google<br>   Belgrave House, 76 Buckingham Palace Road<br>   London  SW1W 9TQ<br>   United Kingdom</p>
+<p>   Email: <a href="mailto:&#119;&#105;&#108;&#109;&#101;&#x72;&#64;&#x67;&#111;&#x6f;&#x67;&#108;&#101;&#46;&#99;&#x6f;&#x6d;">&#119;&#105;&#108;&#109;&#101;&#x72;&#64;&#x67;&#111;&#x6f;&#x67;&#108;&#101;&#46;&#99;&#x6f;&#x6d;</a></p>
+<p>   David C Lawrence<br>   Akamai Technologies<br>   150 Broadway<br>   Cambridge, MA  02142-1054<br>   United States</p>
+<p>   Email: <a href="mailto:&#x74;&#x61;&#x6c;&#101;&#x40;&#x61;&#107;&#x61;&#x6d;&#x61;&#x69;&#46;&#99;&#111;&#x6d;">&#x74;&#x61;&#x6c;&#101;&#x40;&#x61;&#107;&#x61;&#x6d;&#x61;&#x69;&#46;&#99;&#111;&#x6d;</a></p>
+<p>   Warren Kumari<br>   Google<br>   1600 Amphitheatre Parkway<br>   Mountain View, CA  94043<br>   United States</p>
+<p>   Email: <a href="mailto:&#119;&#x61;&#114;&#114;&#101;&#110;&#x40;&#x6b;&#117;&#109;&#x61;&#114;&#x69;&#46;&#110;&#x65;&#x74;">&#119;&#x61;&#114;&#114;&#101;&#110;&#x40;&#x6b;&#117;&#109;&#x61;&#114;&#x69;&#46;&#110;&#x65;&#x74;</a></p>
+<p>Contavalli, et al.            Informational                    [Page 30]
+</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/08/10/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/22-rfc1034/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">RFC1034(域名 - 概念和设施)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/08/10/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/21-rfc1035/">
+                        <span class="hidden-mobile">RFC1035(域名 - 实施和规范)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
