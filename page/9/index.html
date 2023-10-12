@@ -191,6 +191,153 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2020/07/30/04DevOps/02%E5%A4%9A%E7%89%88%E6%9C%ACgcc%E9%83%A8%E7%BD%B2/" target="_self">
+          多版本gcc部署
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/07/30/04DevOps/02%E5%A4%9A%E7%89%88%E6%9C%ACgcc%E9%83%A8%E7%BD%B2/" target="_self">
+          
+          安装scl源：yum install centos-release-SCL scl-utils-build 查看从 SCL 中安装的包的列表：scl –list 列出scl源有哪些包可以用：yum list all –enablerepo&#x3D;’centos-sclo-rh’ 查看从 SCL 中安装的包的列表：scl –list 安装5.3版本的gcc、gcc-c++yum install devto
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-07-30 14:48" pubdate>
+              2020-07-30
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/devops/">devops</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/gcc/">gcc,</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/07/29/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/02%20Pika/pika%20%E8%BF%90%E7%BB%B4%E5%91%BD%E4%BB%A4/" target="_self">
+          pika 运维命令
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/07/29/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/02%20Pika/pika%20%E8%BF%90%E7%BB%B4%E5%91%BD%E4%BB%A4/" target="_self">
+          
+          一、运维经验1231、可能的话将整个pika目录放到ssd磁盘2、从节点全量同步数据的时候会将主节点所有数据同步到var&#x2F;dbsync目录下，所以此空间一定足够3、  二、命令pika 停止命令1.&#x2F;redis-cli -h 127.0.0.1 -p 9221 shutdown  启动命令1&#x2F;opt&#x2F;soft&#x2F;whb&#x2F;pika&#x2F;sbin&#x2F;pika -c &#x2F;opt&#x2F;soft&#x2F;whb&#x2F;pika&#x2F;con
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-07-29 12:06" pubdate>
+              2020-07-29
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a>
+            
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+            
+              <a href="/tags/pika/">pika</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/07/27/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/09%E5%88%A9%E7%94%A8Shell%E5%91%BD%E4%BB%A4%E8%8E%B7%E5%8F%96IP%E5%9C%B0%E5%9D%80/" target="_self">
+          利用Shell命令获取IP地址
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/07/27/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/09%E5%88%A9%E7%94%A8Shell%E5%91%BD%E4%BB%A4%E8%8E%B7%E5%8F%96IP%E5%9C%B0%E5%9D%80/" target="_self">
+          
+          获取单个网卡的IPv4地址，方法如下： 方法一：  $&#x2F;sbin&#x2F;ifconfig ethX | awk &#39;&#x2F;inet addr&#x2F; &amp;#123;print $2&amp;#125;&#39; | cut -f2 -d &quot;:&quot;  方法二：   $&#x2F;sbin&#x2F;ifconfig ethX | awk &#39;&#x2F;inet addr&#x2F; &amp;#123;print $2&amp;#125;&#39;
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-07-27 18:36" pubdate>
+              2020-07-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/linux/">linux</a>
+            
+              <a href="/tags/shell/">shell</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2020/07/27/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/02MD5%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86/" target="_self">
           MD5算法原理
         </a>
@@ -499,149 +646,6 @@
               <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
             
               <a href="/tags/sqlite/">sqlite</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/07/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/02%E5%A4%A7%E7%AB%AF-%E5%B0%8F%E7%AB%AF%E5%AF%B9%E9%BD%90%E5%88%A4%E5%AE%9A%E5%87%BD%E6%95%B0/" target="_self">
-          大端-小端对齐判定函数
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/07/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/02%E5%A4%A7%E7%AB%AF-%E5%B0%8F%E7%AB%AF%E5%AF%B9%E9%BD%90%E5%88%A4%E5%AE%9A%E5%87%BD%E6%95%B0/" target="_self">
-          
-          大端-小端对齐判定方法 123456789101112131415161718192021int main(int argc, char** argv) &amp;#123;	(void)argc;	(void)argv;	union &amp;#123;		short s;		char c[sizeof(short)];	&amp;#125;un;	un.s &#x3D; 0x0102;	if(sizeof(short)!&#x3D;2)
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-07-26 22:13" pubdate>
-              2020-07-26
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/c/">c++</a>
-            
-              <a href="/tags/c/">c</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/07/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/02Rust/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E6%8F%90%E7%A4%BAremovte_this_mut/" target="_self">
-          为什么函数参数提示《remove this mut》
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/07/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/02Rust/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E6%8F%90%E7%A4%BAremovte_this_mut/" target="_self">
-          
-          翻译自《https:&#x2F;&#x2F;www.snoyman.com&#x2F;blog&#x2F;2020&#x2F;05&#x2F;no-mutable-parameters-in-rust》 在回顾Begin Rust书中的倒数第二章时，出现了一个稍微高级的话题。这个话题引起了我一段时间的兴趣，特别是因为它展示了Rust和Haskell如何处理可变性的一些根本差异。该主题对于本书而言太高了，但是我想提供一个外部资源，以供有好奇心的人参考。就是这
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-07-26 17:28" pubdate>
-              2020-07-26
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/rust/">rust</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/07linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/" target="_self">
-          linux下IO应用详解
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/07/25/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/07linux%E4%B8%8BIO%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%A3/" target="_self">
-          
-          一. 对于I&#x2F;O的概述Linux磁盘I&#x2F;O分为Buffered IO和Direct IO，这两者有何区别？ Buffered IO：当应用程序尝试读取某块数据的时候，如果这块数据已经存放在了页缓存（page cache）中，那么这块数据就可以立即返回给应用程序，而不需要经过实际的物理读盘操作。当然，如果数据在应用程序读取之前并未被存放在页缓存中，那么就需要先将数据从磁盘读到页缓存中去。对于写操作来
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-07-25 17:44" pubdate>
-              2020-07-25
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/linux/">linux</a>
             
           </div>
         

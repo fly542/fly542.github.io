@@ -191,6 +191,157 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2023/04/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/" target="_self">
+          unbound配置说明
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2023/04/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/" target="_self">
+          
+          stub zone和forward zone区别相同点:  两者配置很相似，都是向上游请求接收到的特定域名的请求数据  不同点:  stub 会修改接收到的原始DNS请求包中的RD 标记为0，从而向上游请求时上游server不会返回递归结果，forward不会修改原始标记RD
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-04-14 10:56" pubdate>
+              2023-04-14
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/devops/">devops</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/dns/">dns</a>
+            
+              <a href="/tags/unbound/">unbound</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E4%BD%BF%E7%94%A8rbtree/" target="_self">
+          unbound源码修改---rbtree用法总结
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E4%BD%BF%E7%94%A8rbtree/" target="_self">
+          
+          unbound中大量使用rbtree, 相关用法如下  定义rbtree存储节点数据结构 12345678910111213141516struct ipset_domain_node &amp;#123;    rbnode_type node;    char * domain;    char * name;&amp;#125;;struct ipset_env &amp;#123;    void* mnl;
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-04-12 14:07" pubdate>
+              2023-04-12
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/linux/">linux</a>
+            
+              <a href="/tags/dns/">dns</a>
+            
+              <a href="/tags/unbound/">unbound</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/" target="_self">
+          unbound源码修改---配置文件增加变量
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/" target="_self">
+          
+          unbound配置文件增加新的变量大概经过以下4个步骤即可 12341. 在util&#x2F;config_file.h的struct config_file中增加变量名2. 在util&#x2F;config_file.c中初始化相关变量并解析3. 在util&#x2F;configparser.y中增加对应的变量赋值语句4. 在util&#x2F;configlexer.lex 中引用上一步中的变量  在util&#x2F;config_f
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-04-12 11:42" pubdate>
+              2023-04-12
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/linux/">linux</a>
+            
+              <a href="/tags/dns/">dns</a>
+            
+              <a href="/tags/unbound/">unbound</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2023/04/11/04DevOps/25ipset%E4%B8%8Eiptables/" target="_self">
           ipset与iptables
         </a>
@@ -506,147 +657,6 @@
               <a href="/tags/linux/">linux</a>
             
               <a href="/tags/shell/">shell</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/18/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/10errno%E8%AF%B4%E6%98%8E/" target="_self">
-          errno说明
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2022/11/18/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/10errno%E8%AF%B4%E6%98%8E/" target="_self">
-          
-          目前已知errno号最大133,分别定义与&#x2F;usr&#x2F;include&#x2F;asm-generic&#x2F;errno-base.h和 &#x2F;usr&#x2F;include&#x2F;asm-generic&#x2F;errno.h errno说明   errno号 说明    0 Success   1 Operation not permitted   2 No such file or directory   3 No such proc
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-18 11:44" pubdate>
-              2022-11-18
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/linux/">linux</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/10/04DevOps/100%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%8F%8A%E5%A4%84%E7%90%86/" target="_self">
-          常见问题处理方法
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2022/11/10/04DevOps/100%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%8F%8A%E5%A4%84%E7%90%86/" target="_self">
-          
-          rm 删除时报错’Argument list too long’12#替换rm -rf  命令，改用xargs 即可ls | xargs rm -rf   清理 &#x2F;var&#x2F;log&#x2F;journal 下的内容12345# 如何判断占用了多少空间journalctl --disk-usage# 清理目录数据的阈值为500Mjournalctl --vacuum-size&#x3D;500M   ulimit 值超
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-10 16:40" pubdate>
-              2022-11-10
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/devops/">devops</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/linux/">linux</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/10/04DevOps/21tcpdump%E5%AE%9E%E7%94%A8%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/" target="_self">
-          tcpdump实用方法总结
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2022/11/10/04DevOps/21tcpdump%E5%AE%9E%E7%94%A8%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93/" target="_self">
-          
-          要用tcpdump 抓包，一定要切换到root账户，只有root才有权限将网卡变更为混杂模式。 tcpdump可以分为三大部分内容，第一是选项，第二是过滤表达式，第三是输出信息 基本格式为 tcpdump 选项 &#39;过滤表达式&#39; 实用选项参数说明   参数名 说明    -i 即interface，指定要监听的网卡名,默认为eth0，内核版本&gt;2.2时可用any指定所有网卡
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-10 10:40" pubdate>
-              2022-11-10
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/devops/">devops</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/linux/">linux</a>
             
           </div>
         

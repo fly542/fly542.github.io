@@ -191,6 +191,149 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2023/10/12/04DevOps/27openssl%E7%9B%B8%E5%85%B3%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95%E6%B1%87%E6%80%BB/" target="_self">
+          openssl相关使用方法汇总
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2023/10/12/04DevOps/27openssl%E7%9B%B8%E5%85%B3%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95%E6%B1%87%E6%80%BB/" target="_self">
+          
+          openssl工具用法 要查看一个证书文件（例如 xxx.pem）的详细信息，可以使用以下命令： 1openssl x509 -in xxx.pem -text -noout 要确定密钥的类型，可以使用以下命令: 1openssl rsa -in priv_key.key -noout -text
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-10-12 09:19" pubdate>
+              2023-10-12
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/devops/">devops</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/linux/">linux</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/10/07/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/16%E5%A6%82%E4%BD%95%E5%9C%A8%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%B8%AD%E8%BF%BD%E8%B8%AA%E8%BF%90%E8%A1%8C%E6%80%81%E5%86%85%E5%AD%98%E5%B4%A9%E6%BA%83%E7%9A%84%E7%AC%AC%E4%B8%80%E7%8E%B0%E5%9C%BA/" target="_self">
+          如何在生产环境中追踪运行态内存崩溃的第一现场
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2023/10/07/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/16%E5%A6%82%E4%BD%95%E5%9C%A8%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%B8%AD%E8%BF%BD%E8%B8%AA%E8%BF%90%E8%A1%8C%E6%80%81%E5%86%85%E5%AD%98%E5%B4%A9%E6%BA%83%E7%9A%84%E7%AC%AC%E4%B8%80%E7%8E%B0%E5%9C%BA/" target="_self">
+          
+          引言在c&#x2F;c++开发中，内存相关错误一直都是开发人员的高压线，由于近期工作中上线服务偶尔出现崩溃问题，而崩溃的位置竟然是在 malloc函数的内部（见下图1），看到崩溃的第一反应是自己的程序出了问题，glibc使用多年还是很稳定的。于是先进行了一波代码自查，检查了程序中所有的memcpy、strcpy、memset、sprintf函数的使用并未发现异常，于是放弃人工检查，改为使用工具来进行定位分析
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-10-07 11:53" pubdate>
+              2023-10-07
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/devops/">devops</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/c/">c++</a>
+            
+              <a href="/tags/c/">c</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/08/15/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/05%E5%9F%BA%E6%95%B0%E6%A0%91(RadixTrie)/" target="_self">
+          基数树(Radix Trie)
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2023/08/15/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/05%E5%9F%BA%E6%95%B0%E6%A0%91(RadixTrie)/" target="_self">
+          
+          定义在计算机科学中，基数树（Radix Trie，也叫基数特里树或压缩前缀树）是一种数据结构，是一种更节省空间的Trie（前缀树），其中作为唯一子节点的每个节点都与其父节点合并，边既可以表示为元素序列又可以表示为单个元素。 因此每个内部节点的子节点数最多为基数树的基数r ，其中r为正整数，是2的x次方，x≥1，这使得基数树更适用于对于较小的集合（尤其是字符串很长的情况下）和有很长相同前缀的字符串集
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-08-15 14:21" pubdate>
+              2023-08-15
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/devops/">devops</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/linux/">linux</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2023/08/10/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/22-rfc1034/" target="_self">
           RFC1034(域名 - 概念和设施)
         </a>
@@ -481,157 +624,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/linux/">linux</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/04/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/" target="_self">
-          unbound配置说明
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2023/04/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/" target="_self">
-          
-          stub zone和forward zone区别相同点:  两者配置很相似，都是向上游请求接收到的特定域名的请求数据  不同点:  stub 会修改接收到的原始DNS请求包中的RD 标记为0，从而向上游请求时上游server不会返回递归结果，forward不会修改原始标记RD
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-14 10:56" pubdate>
-              2023-04-14
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/devops/">devops</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/dns/">dns</a>
-            
-              <a href="/tags/unbound/">unbound</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E4%BD%BF%E7%94%A8rbtree/" target="_self">
-          unbound源码修改---rbtree用法总结
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E4%BD%BF%E7%94%A8rbtree/" target="_self">
-          
-          unbound中大量使用rbtree, 相关用法如下  定义rbtree存储节点数据结构 12345678910111213141516struct ipset_domain_node &amp;#123;    rbnode_type node;    char * domain;    char * name;&amp;#125;;struct ipset_env &amp;#123;    void* mnl;
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-12 14:07" pubdate>
-              2023-04-12
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/linux/">linux</a>
-            
-              <a href="/tags/dns/">dns</a>
-            
-              <a href="/tags/unbound/">unbound</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/" target="_self">
-          unbound源码修改---配置文件增加变量
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2023/04/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E4%BF%AE%E6%94%B9-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A2%9E%E5%8A%A0%E5%8F%98%E9%87%8F/" target="_self">
-          
-          unbound配置文件增加新的变量大概经过以下4个步骤即可 12341. 在util&#x2F;config_file.h的struct config_file中增加变量名2. 在util&#x2F;config_file.c中初始化相关变量并解析3. 在util&#x2F;configparser.y中增加对应的变量赋值语句4. 在util&#x2F;configlexer.lex 中引用上一步中的变量  在util&#x2F;config_f
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-12 11:42" pubdate>
-              2023-04-12
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/linux/">linux</a>
-            
-              <a href="/tags/dns/">dns</a>
-            
-              <a href="/tags/unbound/">unbound</a>
             
           </div>
         
