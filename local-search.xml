@@ -4,6 +4,31 @@
   
   
   <entry>
+    <title>常用配置</title>
+    <link href="/2023/11/24/04DevOps/29%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6%E9%85%8D%E7%BD%AE/"/>
+    <url>/2023/11/24/04DevOps/29%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6%E9%85%8D%E7%BD%AE/</url>
+    
+    <content type="html"><![CDATA[<h1 id="vscode-常用配置"><a href="#vscode-常用配置" class="headerlink" title="vscode 常用配置"></a>vscode 常用配置</h1><h2 id="点击文件会替换已经打开文件的解决办法"><a href="#点击文件会替换已经打开文件的解决办法" class="headerlink" title="点击文件会替换已经打开文件的解决办法"></a>点击文件会替换已经打开文件的解决办法</h2><ul><li>ctrl+shift+p，弹出搜索框。</li><li>在搜索框中输入Open User Setting，点击打开。 </li><li>打开以后看到如下界面，输入enablePreview搜索，然后将以下两个对勾取消即可<img src="/2023/11/24/04DevOps/29%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6%E9%85%8D%E7%BD%AE/1.png" class=""></li></ul><h2 id="设置默认编码"><a href="#设置默认编码" class="headerlink" title="设置默认编码"></a>设置默认编码</h2><ul><li>打开 VS Code，依次点击<code>文件</code>–&gt;<code>首选项</code>–&gt;<code>设置</code></li><li>在设置中搜索 <code>files.encoding</code>，选择工作区或用户后在下拉菜单中选择编码格式，如<code>utf8</code>等。</li><li>如果你想要 VS Code 自动检测文件编码格式并使用该编码格式打开文件，可以勾选“files.autoGuessEncoding”选项。</li><li>保存关闭</li></ul><h1 id="notepad-常用配置"><a href="#notepad-常用配置" class="headerlink" title="notepad++常用配置"></a>notepad++常用配置</h1><h2 id="配置FignerText"><a href="#配置FignerText" class="headerlink" title="配置FignerText"></a>配置FignerText</h2><p>官方地址：<a href="https://github.com/erinata/FingerText">https://github.com/erinata/FingerText</a></p><p>参考地址：<a href="https://blog.csdn.net/shaoyubin999/article/details/101844831">https://blog.csdn.net/shaoyubin999/article/details/101844831</a></p><p>常用配置方法</p><img src="/2023/11/24/04DevOps/29%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6%E9%85%8D%E7%BD%AE/2.png" class=""><p>blog_head 代码</p><figure class="highlight yaml"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></div></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-meta">---</span><br><span class="hljs-attr">title:</span>  <span class="hljs-string">vscode常用配置</span><br><span class="hljs-attr">date:</span> <span class="hljs-number">2023-11-24 11:53:20</span><br><span class="hljs-attr">tags:</span><br><span class="hljs-bullet">-</span> <span class="hljs-string">linux</span><br><span class="hljs-attr">categories:</span><br><span class="hljs-bullet">-</span> <span class="hljs-string">devops</span><br><span class="hljs-meta">---</span><br>[<span class="hljs-string">&gt;END&lt;</span>]<br></code></pre></td></tr></table></figure><p>blog_img 代码</p><figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs django"><span class="hljs-template-tag">&#123;% <span class="hljs-name">asset_img</span> xxxx.png %&#125;</span><br></code></pre></td></tr></table></figure>]]></content>
+    
+    
+    <categories>
+      
+      <category>devops</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>linux</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>ubuntu环境下vim+copilot的部署与使用</title>
     <link href="/2023/11/13/04DevOps/28ubuntu%E7%8E%AF%E5%A2%83vim+copilot%E7%9A%84%E9%83%A8%E7%BD%B2%E4%B8%8E%E4%BD%BF%E7%94%A8/"/>
     <url>/2023/11/13/04DevOps/28ubuntu%E7%8E%AF%E5%A2%83vim+copilot%E7%9A%84%E9%83%A8%E7%BD%B2%E4%B8%8E%E4%BD%BF%E7%94%A8/</url>

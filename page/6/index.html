@@ -191,6 +191,55 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2020/12/08/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/07%E5%AE%8F%E5%AE%9A%E4%B9%89define%E7%9A%84%E5%A5%87%E6%8A%80%E6%B7%AB%E5%B7%A7/" target="_self">
+          宏定义define的奇技淫巧
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/12/08/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/07%E5%AE%8F%E5%AE%9A%E4%B9%89define%E7%9A%84%E5%A5%87%E6%8A%80%E6%B7%AB%E5%B7%A7/" target="_self">
+          
+          define中的三个特殊符号：#，##，#@#define Conn(x,y) x##y #define ToChar(x)#@x #define ToString(x)#x  对应解释如下： (1)x##y 表示x连接y，如下：     int n &#x3D; Conn(123,456);&#x2F;* 结果就是n&#x3D;123456;*&#x2F;     char* str &#x3D; Conn(&quot;asdf&quot;,&amp;
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-12-08 20:40" pubdate>
+              2020-12-08
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/c/">c++</a>
+            
+              <a href="/tags/c/">c</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2020/12/04/04DevOps/10vim%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%8F%8A%E5%BF%AB%E6%8D%B7%E9%94%AE/" target="_self">
           vim常用命令及快捷键
         </a>
@@ -568,55 +617,6 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2020-08-29 08:38" pubdate>
               2020-08-29
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/c/">c++</a>
-            
-              <a href="/tags/c/">c</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/08/28/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/03Linux%E4%B8%AD%E7%BA%BF%E7%A8%8B%E4%B8%8ECPU%E6%A0%B8%E7%9A%84%E7%BB%91%E5%AE%9A/" target="_self">
-          Linux中线程与CPU核的绑定
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/08/28/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/03Linux%E4%B8%AD%E7%BA%BF%E7%A8%8B%E4%B8%8ECPU%E6%A0%B8%E7%9A%84%E7%BB%91%E5%AE%9A/" target="_self">
-          
-          不管是线程还是进程，都是通过设置亲和性(affinity)来达到目的。对于进程一般是使用 sched_setaffinity 这个函数来实现. 与进程的情况相似，线程亲和性的设置和获取主要通过下面两个函数来实现： 12int pthread_setaffinity_np(pthread_t thread, size_t cpusetsize， const cpu_set_t *cpuset);in
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-08-28 11:45" pubdate>
-              2020-08-28
             </time>
           </div>
         
