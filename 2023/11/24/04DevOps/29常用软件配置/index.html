@@ -26,7 +26,7 @@
 <meta property="og:image" content="http://fly542.cn/2023/11/24/04DevOps/29%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6%E9%85%8D%E7%BD%AE/1.png">
 <meta property="og:image" content="http://fly542.cn/2023/11/24/04DevOps/29%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6%E9%85%8D%E7%BD%AE/2.png">
 <meta property="article:published_time" content="2023-11-24T08:14:08.000Z">
-<meta property="article:modified_time" content="2023-11-24T03:54:28.950Z">
+<meta property="article:modified_time" content="2023-11-27T13:55:48.762Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
 <meta name="twitter:card" content="summary_large_image">
@@ -200,7 +200,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      560 字
+      1.1k 字
     </span>
   
 
@@ -209,7 +209,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      5 分钟
+      10 分钟
     </span>
   
 
@@ -258,10 +258,21 @@
 <img src="/2023/11/24/04DevOps/29%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6%E9%85%8D%E7%BD%AE/2.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>blog_head 代码</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></div></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-meta">---</span><br><span class="hljs-attr">title:</span>  <span class="hljs-string">vscode常用配置</span><br><span class="hljs-attr">date:</span> <span class="hljs-number">2023-11-24 11:53:20</span><br><span class="hljs-attr">tags:</span><br><span class="hljs-bullet">-</span> <span class="hljs-string">linux</span><br><span class="hljs-attr">categories:</span><br><span class="hljs-bullet">-</span> <span class="hljs-string">devops</span><br><span class="hljs-meta">---</span><br>[<span class="hljs-string">&gt;END&lt;</span>]<br></code></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></div></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-meta">---</span><br><span class="hljs-attr">title:</span> <br><span class="hljs-attr">date:</span> <span class="hljs-string">$[![(key)DATE:yyyy-MM-dd]!]</span> <span class="hljs-string">$[![(key)TIME]!]</span><br><span class="hljs-attr">tags:</span><br><span class="hljs-bullet">-</span> <span class="hljs-string">linux</span><br><span class="hljs-attr">categories:</span><br><span class="hljs-bullet">-</span> <span class="hljs-string">devops</span><br><span class="hljs-meta">---</span><br>[<span class="hljs-string">&gt;END&lt;</span>]<br></code></pre></td></tr></table></figure>
 
 <p>blog_img 代码</p>
 <figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs django"><span class="hljs-template-tag">&#123;% <span class="hljs-name">asset_img</span> xxxx.png %&#125;</span><br></code></pre></td></tr></table></figure>
+
+
+<h1 id="windows下配置多个hexo发布到github时每个账号配置不同的sshkey"><a href="#windows下配置多个hexo发布到github时每个账号配置不同的sshkey" class="headerlink" title="windows下配置多个hexo发布到github时每个账号配置不同的sshkey"></a>windows下配置多个hexo发布到github时每个账号配置不同的sshkey</h1><p>由于github账号近几年增加了全局sshkey的重复判定，导致多个github账号间不同使用相同的sshkey。</p>
+<p>所以在hexo自动提交的时候就需要使用不同的用户key进验证。</p>
+<p>省略生成 id_rsa_github_zy 及 ssh-add 加入id_rsa_github_zy的步骤</p>
+<ol>
+<li>在windows的<code>C:\Users\xxxxx\.ssh\config</code> 文件增加新的github用户信息<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">Host z_github   <span class="hljs-comment"># 注意和西面的repo中的内容相对应</span><br>	HostName github.com<br>	<span class="hljs-keyword">User</span> <span class="hljs-title">z-fly542</span>  <span class="hljs-comment"># 注意和西面的repo中的内容相对应</span><br>	IdentityFile C:\Users\xxxx\.ssh\id_rsa_github_zy<br></code></pre></td></tr></table></figure></li>
+<li>修改hexo根目录下的_config.yml文件<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs elixir"><span class="hljs-symbol">deploy:</span><br>  <span class="hljs-symbol">type:</span> git<br>  <span class="hljs-symbol">repo:</span><br>        <span class="hljs-symbol">github:</span> git<span class="hljs-variable">@z_github</span><span class="hljs-symbol">:z-fly542/z-fly542</span>.github.io.git,master<br></code></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://doreality.xyz/posts/9fda10db.html">https://doreality.xyz/posts/9fda10db.html</a></p>
+
             </div>
             <hr>
             <div>
