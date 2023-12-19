@@ -26,7 +26,7 @@
 <meta property="og:image" content="http://fly542.cn/2023/11/29/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/07%E5%AD%97%E5%85%B8%E6%A0%91%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%BB%A5%E5%8F%8A%E5%BA%94%E7%94%A8(%E8%BD%AC%E8%BD%BD)/trie-compress.png">
 <meta property="og:image" content="http://fly542.cn/2023/11/29/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/07%E5%AD%97%E5%85%B8%E6%A0%91%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%BB%A5%E5%8F%8A%E5%BA%94%E7%94%A8(%E8%BD%AC%E8%BD%BD)/trie-dname.png">
 <meta property="article:published_time" content="2023-11-29T06:28:41.000Z">
-<meta property="article:modified_time" content="2023-11-29T06:47:54.521Z">
+<meta property="article:modified_time" content="2023-12-19T08:59:07.632Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
 <meta name="twitter:card" content="summary_large_image">
@@ -200,7 +200,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      7.1k 字
+      7k 字
     </span>
   
 
@@ -209,7 +209,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      60 分钟
+      59 分钟
     </span>
   
 
@@ -372,7 +372,9 @@
 </li>
 <li><p>IP地址库，一般由许多条IP地址段(CIDR), 位置(地理区域，服务商)的记录组成。在权威DNS服务器中，用作EDNS进行基于地理位置的解析(geoip); 在Cache DNS中，用于缓存各权威服务的地址段。</p>
 </li>
-<li><p>在Knot中采用的QP trie实现了权威服务的geoip:(<a target="_blank" rel="noopener" href="https://github.com/CZ-NIC/knot/blob/master/src/knot/modules/geoip/geoip.c">https://github.com/CZ-NIC/knot/blob/master/src/knot/modules/geoip/geoip.c</a>) 、在Unbound中，采用类似CB trie做了EDNS缓存(<a target="_blank" rel="noopener" href="https://github.com/NLnetLabs/unbound/blob/master/edns-subnet/addrtree.c">https://github.com/NLnetLabs/unbound/blob/master/edns-subnet/addrtree.c</a>)</p>
+<li><p>在Knot中采用的QP trie实现了权威服务的<a target="_blank" rel="noopener" href="https://github.com/CZ-NIC/knot/blob/master/src/knot/modules/geoip/geoip.c">geoip</a></p>
+</li>
+<li><p>在Unbound中，采用类似CB trie做了<a target="_blank" rel="noopener" href="https://github.com/NLnetLabs/unbound/blob/master/edns-subnet/addrtree.c">EDNS缓存</a></p>
 </li>
 <li><p>路由表<br>路由表的存储、查找算法，经过持续不断的优化，目前可以说五花八门。由于路由表的特性，基于字典树的实现是其中有代表性的一大类。目前linux系统可以查看到按字典树组织路由表：</p>
 <figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs dns">$ cat /proc/net/fib_trie<br>Main:<br>  +-- <span class="hljs-number">0.0.0.0</span>/<span class="hljs-number">0 3 0 5</span><br>     |-- <span class="hljs-number">0.0.0.0</span><br>        /<span class="hljs-number">0</span> universe UNICAST<br>     +-- <span class="hljs-number">127.0.0.0</span>/<span class="hljs-number">8 2 0 2</span><br>        +-- <span class="hljs-number">127.0.0.0</span>/<span class="hljs-number">31 1 0 0</span><br>           |-- <span class="hljs-number">127.0.0.0</span><br>              /<span class="hljs-number">32</span> link BROADCAST<br>              /<span class="hljs-number">8</span> host LOCAL<br>           |-- <span class="hljs-number">127.0.0.1</span><br>              /<span class="hljs-number">32</span> host LOCAL<br>        |-- <span class="hljs-number">127.255.255.255</span><br>           /<span class="hljs-number">32</span> link BROADCAST<br>     +-- <span class="hljs-number">192.168.2.0</span>/<span class="hljs-number">24 2 0 1</span><br>        |-- <span class="hljs-number">192.168.2.0</span><br>           /<span class="hljs-number">32</span> link BROADCAST<br>           /<span class="hljs-number">24</span> link UNICAST<br>        |-- <span class="hljs-number">192.168.2.110</span><br>           /<span class="hljs-number">32</span> host LOCAL<br>        |-- <span class="hljs-number">192.168.2.255</span><br>           /<span class="hljs-number">32</span> link BROADCAST<br>Local:<br>  +-- <span class="hljs-number">0.0.0.0</span>/<span class="hljs-number">0 3 0 5</span><br>     |-- <span class="hljs-number">0.0.0.0</span><br>        /<span class="hljs-number">0</span> universe UNICAST<br>     +-- <span class="hljs-number">127.0.0.0</span>/<span class="hljs-number">8 2 0 2</span><br>        +-- <span class="hljs-number">127.0.0.0</span>/<span class="hljs-number">31 1 0 0</span><br>           |-- <span class="hljs-number">127.0.0.0</span><br>              /<span class="hljs-number">32</span> link BROADCAST<br>              /<span class="hljs-number">8</span> host LOCAL<br>           |-- <span class="hljs-number">127.0.0.1</span><br>              /<span class="hljs-number">32</span> host LOCAL<br>        |-- <span class="hljs-number">127.255.255.255</span><br>           /<span class="hljs-number">32</span> link BROADCAST<br>     +-- <span class="hljs-number">192.168.2.0</span>/<span class="hljs-number">24 2 0 1</span><br>        |-- <span class="hljs-number">192.168.2.0</span><br>           /<span class="hljs-number">32</span> link BROADCAST<br>           /<span class="hljs-number">24</span> link UNICAST<br>        |-- <span class="hljs-number">192.168.2.110</span><br>           /<span class="hljs-number">32</span> host LOCAL<br>        |-- <span class="hljs-number">192.168.2.255</span><br>           /<span class="hljs-number">32</span> link BROADCAST<br></code></pre></td></tr></table></figure></li>
