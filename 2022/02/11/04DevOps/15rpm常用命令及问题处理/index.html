@@ -16,15 +16,15 @@
   <meta name="author" content="Fly542">
   <meta name="keywords" content="">
   
-    <meta name="description" content="常用命令 rpm –qf 的命令全称是 rpm --queryformat ,格式为rpm --queryformat [QUERYFMT] , 其中QUERYFMT是一系列rpm查询标志，可以通过rpm --querytags命令查询有哪些标志可以使用. rpm -qa 的默认格式为 rpm -qa --qf &#39;%&amp;#123;name&amp;#125;-%&amp;#123;version&amp;#125;">
+    <meta name="description" content="常用命令 rpm –qf 的命令全称是 rpm --queryformat ,格式为rpm --queryformat [QUERYFMT] , 其中QUERYFMT是一系列rpm查询标志，可以通过rpm --querytags命令查询有哪些标志可以使用. rpm -qa 的默认格式为rpm -qa --qf &#39;%&amp;#123;name&amp;#125;-%&amp;#123;version&amp;#125;-">
 <meta property="og:type" content="article">
 <meta property="og:title" content="rpm 常用命令及问题处理">
 <meta property="og:url" content="http://fly542.cn/2022/02/11/04DevOps/15rpm%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%8F%8A%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/index.html">
 <meta property="og:site_name" content="Fly542 技术沉淀">
-<meta property="og:description" content="常用命令 rpm –qf 的命令全称是 rpm --queryformat ,格式为rpm --queryformat [QUERYFMT] , 其中QUERYFMT是一系列rpm查询标志，可以通过rpm --querytags命令查询有哪些标志可以使用. rpm -qa 的默认格式为 rpm -qa --qf &#39;%&amp;#123;name&amp;#125;-%&amp;#123;version&amp;#125;">
+<meta property="og:description" content="常用命令 rpm –qf 的命令全称是 rpm --queryformat ,格式为rpm --queryformat [QUERYFMT] , 其中QUERYFMT是一系列rpm查询标志，可以通过rpm --querytags命令查询有哪些标志可以使用. rpm -qa 的默认格式为rpm -qa --qf &#39;%&amp;#123;name&amp;#125;-%&amp;#123;version&amp;#125;-">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-02-11T02:09:15.000Z">
-<meta property="article:modified_time" content="2024-01-08T07:14:00.645Z">
+<meta property="article:modified_time" content="2024-01-08T09:47:01.194Z">
 <meta property="article:author" content="Fly542">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -239,7 +239,7 @@
             <div class="markdown-body">
               <h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><ul>
 <li>rpm –qf 的命令全称是 <code>rpm --queryformat</code> ,格式为<code>rpm --queryformat [QUERYFMT]</code> , 其中QUERYFMT是一系列rpm查询标志，可以通过<code>rpm --querytags</code>命令查询有哪些标志可以使用.</li>
-<li>rpm -qa 的默认格式为<code> rpm -qa --qf &#39;%&#123;name&#125;-%&#123;version&#125;-%&#123;release&#125;\n&#39;</code> 不带版本信息，可以使用<code>rpm -qa --qf &#39;%&#123;name&#125;-%&#123;version&#125;-%&#123;release&#125;.%&#123;arch&#125;\n&#39;</code> 输出带版本信息的数据格式<br>// 查询包xxx.rpm依赖哪些rpm包的相信信息</li>
+<li>rpm -qa 的默认格式为<code>rpm -qa --qf &#39;%&#123;name&#125;-%&#123;version&#125;-%&#123;release&#125;\n&#39;</code> 不带版本信息，可以使用<code>rpm -qa --qf &#39;%&#123;name&#125;-%&#123;version&#125;-%&#123;release&#125;.%&#123;arch&#125;\n&#39;</code> 输出带版本信息的数据格式<br>// 查询包xxx.rpm依赖哪些rpm包的相信信息</li>
 <li>rpm -qpR xxx.rpm<br>// 查询openssl-libs被哪些库依赖</li>
 <li>rpm -e –test  openssl-libs</li>
 <li>rpm -e –nodeps xxx.rpm  删除xxx.rpm时忽略所有的依赖关系</li>
