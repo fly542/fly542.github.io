@@ -191,6 +191,206 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2022/07/22/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/15%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B8%8E%E5%88%86%E6%9E%90/" target="_self">
+          内存管理与分析
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2022/07/22/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/15%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B8%8E%E5%88%86%E6%9E%90/" target="_self">
+          
+          检测方法如何定位分析程序中当前内存使用情况，可通过外部和内部两种方式来确定内存相关情况， 外部字段分析只要知道进程的pid 即可通过命令 &#x2F;proc&#x2F;xxxx&#x2F;satatus 来查看内存信息。其中xxxx为pid号. 显示的各个字段含义如下: 12345678910111213VmPeak: 代表当前进程运行过程中虚拟内存的峰值。VmSize: 代表进程现在正在占用的虚拟内存。VmLck: 代表进
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-07-22 11:29" pubdate>
+              2022-07-22
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/devops/">devops</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/c/">c++</a>
+            
+              <a href="/tags/c/">c</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/05/24/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/14pem%E6%A0%BC%E5%BC%8F%E5%85%AC%E9%92%A5%E7%A7%81%E9%92%A5%E6%96%87%E4%BB%B6%E5%AE%9E%E7%8E%B0RSA%E5%8A%A0%E8%A7%A3%E5%AF%86/" target="_self">
+          openssl生成pem格式公钥私钥文件并实现RSA加解密
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2022/05/24/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/14pem%E6%A0%BC%E5%BC%8F%E5%85%AC%E9%92%A5%E7%A7%81%E9%92%A5%E6%96%87%E4%BB%B6%E5%AE%9E%E7%8E%B0RSA%E5%8A%A0%E8%A7%A3%E5%AF%86/" target="_self">
+          
+          使用openssl生成pem格式私钥和公钥 生成公钥和私钥 12openssl生成私钥命令： openssl genrsa -out rsa_private_key.pem 1024openssl生成公钥命令： openssl rsa -in rsa_private_key.pem -pubout -out rsa_public_key.pem 此时可以看到 rsa_private_key.pem
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-05-24 10:49" pubdate>
+              2022-05-24
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/c/">c++</a>
+            
+              <a href="/tags/c/">c</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/04/22/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/13stl%E4%B8%A5%E6%A0%BC%E5%BC%B1%E5%BA%8Fstric_weak_ordering/" target="_self">
+          stl严格弱序(stick weak ordering)
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2022/04/22/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/13stl%E4%B8%A5%E6%A0%BC%E5%BC%B1%E5%BA%8Fstric_weak_ordering/" target="_self">
+          
+          STL有序容器对元素关键字的类型有要求，元素关键字的类型必须定义了严格弱序（stick weak ordering） 什么是严格弱序STL严格弱序条件如果类型T满足以下Compare类型 T 满足二元谓词 (BinaryPredicate) 且提供以下两个对象  T类型的对象 comp 函数 一个等价于 !comp(a, b) &amp;&amp; !comp(b, a) 的表达式 equiv(a
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-04-22 09:25" pubdate>
+              2022-04-22
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/c/">c++</a>
+            
+              <a href="/tags/c/">c</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/04/06/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/05others/00OpenResty(nginx+lua)%E5%9F%BA%E7%A1%80/" target="_self">
+          OpenResty(nginx+lua)基础 (转载)
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2022/04/06/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/05others/00OpenResty(nginx+lua)%E5%9F%BA%E7%A1%80/" target="_self">
+          
+          本文转载自《https:&#x2F;&#x2F;www.cnblogs.com&#x2F;digdeep&#x2F;p&#x2F;4859575.html》 OpenResty 介绍OpenResty 官网：http:&#x2F;&#x2F;openresty.org&#x2F; OpenResty 是一个nginx和它的各种三方模块的一个打包而成的软件平台。最重要的一点是它将lua&#x2F;luajit打包了进来，使得我们可以使用lua脚本来进行web的开发。有了lua，我们可以借
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-04-06 11:15" pubdate>
+              2022-04-06
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/linux/">linux</a>
+            
+              <a href="/tags/nginx/">nginx</a>
+            
+              <a href="/tags/lua/">lua</a>
+            
+              <a href="/tags/openresty/">openresty</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2022/04/01/04DevOps/16systemd%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%8F%8A%E7%AE%A1%E7%90%86%E6%96%B9%E6%B3%95/" target="_self">
           systemd配置文件及管理方法
         </a>
@@ -450,198 +650,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/12/22/04DevOps/13typora%E9%85%8D%E7%BD%AE%E6%A0%87%E9%A2%98%E8%87%AA%E5%8A%A8%E6%B7%BB%E5%8A%A0%E5%BA%8F%E5%8F%B7/" target="_self">
-          typora配置标题自动添加序号
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/12/22/04DevOps/13typora%E9%85%8D%E7%BD%AE%E6%A0%87%E9%A2%98%E8%87%AA%E5%8A%A8%E6%B7%BB%E5%8A%A0%E5%BA%8F%E5%8F%B7/" target="_self">
-          
-          依次点击以下按钮进入typora主题目录文件—》偏好设置—》外观—》打开主题文件夹  在主题目录创建 base.user.css 文件  在base.user.css 文件中增加以下内容 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-12-22 15:57" pubdate>
-              2021-12-22
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/devops/">devops</a>
-            
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/08/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/12c11_bind%E8%AF%A6%E8%A7%A3/" target="_self">
-          c++11 std::bind 详解
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/08/12/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/12c11_bind%E8%AF%A6%E8%A7%A3/" target="_self">
-          
-          1. 概述 std::bind 函数定义在头文件中，是一个函数模板，它就像一个函数适配器，接受一个可调用对象（callable object），生成一个新的可调用对象来“适应”原对象的参数列表。一般而言，我们用它可以把一个原本接收N个参数的函数fn，通过绑定一些参数，返回一个接收M个（M可以大于N，但这么做没什么意义）参数的新函数。同时，使用std::bind函数还可以实现参数顺序调整等操作。 2
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-08-12 12:01" pubdate>
-              2021-08-12
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/c/">c++</a>
-            
-              <a href="/tags/c11/">c11</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/08/09/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/11unique_ptr%E5%92%8Cshared_ptr%E5%8F%8Aweak_ptr%E7%9A%84%E4%BD%BF%E7%94%A8/" target="_self">
-          unique_ptr和shared_ptr及weak_ptr的使用
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/08/09/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/11unique_ptr%E5%92%8Cshared_ptr%E5%8F%8Aweak_ptr%E7%9A%84%E4%BD%BF%E7%94%A8/" target="_self">
-          
-          1. unique_ptr1.1 初始化方式 直接初始化1unique&lt;T&gt; myPtr(new T);  &#x2F;&#x2F;ok。但不能通过隐式转换来构造，如unique&lt;T&gt; myPtr &#x3D; new T()。因为unique_ptr构造函数被声明为explicit。 移动构造1unique&lt;T&gt; myOtherPtr &#x3D; std::move(myPtr);但不允许复制构造
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-08-09 20:30" pubdate>
-              2021-08-09
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/c/">c++</a>
-            
-              <a href="/tags/c11/">c11</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/05/17/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/10%E6%8C%87%E9%92%88/" target="_self">
-          指针精髓
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/05/17/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/10%E6%8C%87%E9%92%88/" target="_self">
-          
-          1. 指针的定义程序运行时，每一个变量的数据都是保存在内存的一个确定位置，可以用&amp;操作符取得这个内存位置的值。32位操作系统上，这个值实际上就是一个32位的整数。 12int iA &#x3D; 30;cout&lt;&lt;”iA变量的内存地址：”&lt;&lt;&amp;iA&lt;&lt;endl; 有时候我们需要把这个地址也保存起来，以实现在程序中直接使用。如果每次都对变量取地址，显得不方便
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-05-17 18:40" pubdate>
-              2021-05-17
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/c/">c++</a>
-            
-              <a href="/tags/c/">c</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/4/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/#board">3</a><a class="page-number" href="/page/4/#board">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/#board">6</a><a class="page-number" href="/page/7/#board">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/#board">11</a><a class="extend next" rel="next" href="/page/6/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/4/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/#board">3</a><a class="page-number" href="/page/4/#board">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/#board">6</a><a class="page-number" href="/page/7/#board">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/#board">12</a><a class="extend next" rel="next" href="/page/6/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

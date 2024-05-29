@@ -191,6 +191,193 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2020/08/28/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/03Linux%E4%B8%AD%E7%BA%BF%E7%A8%8B%E4%B8%8ECPU%E6%A0%B8%E7%9A%84%E7%BB%91%E5%AE%9A/" target="_self">
+          Linux中线程与CPU核的绑定
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/08/28/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/03Linux%E4%B8%AD%E7%BA%BF%E7%A8%8B%E4%B8%8ECPU%E6%A0%B8%E7%9A%84%E7%BB%91%E5%AE%9A/" target="_self">
+          
+          不管是线程还是进程，都是通过设置亲和性(affinity)来达到目的。对于进程一般是使用 sched_setaffinity 这个函数来实现. 与进程的情况相似，线程亲和性的设置和获取主要通过下面两个函数来实现： 12int pthread_setaffinity_np(pthread_t thread, size_t cpusetsize， const cpu_set_t *cpuset);in
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-08-28 11:45" pubdate>
+              2020-08-28
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/c/">c++</a>
+            
+              <a href="/tags/c/">c</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/08/27/04DevOps/08Python%E5%86%85%E7%BD%AE%E7%9A%84SimpleHTTPServer%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" target="_self">
+          Python 内置的SimpleHTTPServer使用指南
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/08/27/04DevOps/08Python%E5%86%85%E7%BD%AE%E7%9A%84SimpleHTTPServer%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" target="_self">
+          
+          Python内置了一个简单的HTTP服务器，只需要在命令行下面敲一行命令，一个HTTP服务器就起来了：(假设我们需要共享我们的目录 &#x2F;home&#x2F;haoel 而IP地址是192.168.1.1） 12$ cd &#x2F;home&#x2F;haoel$ python -m SimpleHTTPServer 8888 后面的8888端口是可选的，不填会采用缺省端口8000。注意，这会将当前所在的文件夹设置为默认的Web
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-08-27 17:50" pubdate>
+              2020-08-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/devops/">devops</a>
+            
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/01DNS%E5%8D%8F%E8%AE%AE/" target="_self">
+          DNS协议介绍
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/01DNS%E5%8D%8F%E8%AE%AE/" target="_self">
+          
+          惯例首选name语法DNS规范试图使构建的域名规则尽可能通用。这一想法的精髓是任何现有对象的名称经过尽量小的改变都能表示为域名。但是在为对象分配域名时，谨慎的用户将选择即满足域名系统规则，又满足对象任何现有规则的名称，无论这些规则是公开出版的还是由现有程序暗示的。如：当命名邮件域时，用于应当即满足本备忘录的规则，又满足RFC-822宏的规则。创建新的主机名时，应当遵守旧的HOSTS.TXT规则。这
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-08-26 21:10" pubdate>
+              2020-08-26
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/linux/">linux</a>
+            
+              <a href="/tags/dns/">dns</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/00DNS%E5%9F%BA%E7%A1%80/" target="_self">
+          DNS基础
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/00DNS%E5%9F%BA%E7%A1%80/" target="_self">
+          
+          DNS 基础内容什么是 DNS？DNS 是一个应用层协议,域名系统 (DNS) 的作用是将人类可读的域名 (如，www.example.com) 转换为机器可读的 IP 地址 (如，192.0.2.44)。DNS 协议建立在 UDP 或 TCP 协议之上，默认使用 53 号端口。客户端默认通过 UDP 协议进行通讯，但是由于广域网中不适合传输过大的 UDP 数据包，因此规定当报文长度超过了 512
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-08-26 19:02" pubdate>
+              2020-08-26
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/linux/">linux</a>
+            
+              <a href="/tags/dns/">dns</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2020/08/22/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/01%20suqid%20%E5%AD%98%E5%82%A8%E6%A8%A1%E5%9E%8B%E7%A0%94%E7%A9%B6/" target="_self">
           suqid 存储模型研究
         </a>
@@ -466,187 +653,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/08/16/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/00%20squid%20%E5%86%85%E5%AD%98%E6%B1%A0%E7%A0%94%E7%A9%B6/" target="_self">
-          00 squid 内存池研究
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/08/16/05%E5%88%86%E5%B8%83%E5%BC%8F%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93/03%20squid/00%20squid%20%E5%86%85%E5%AD%98%E6%B1%A0%E7%A0%94%E7%A9%B6/" target="_self">
-          
-          1. 概述本文的squid原理及代码基于squid 4.12版的源码，主要阐述及分析了squid的内存池原理及响应的代码实现。squid的内存池有两种模式，一种是poolmalloc模式，另外一种是poolchunked模式 2. 原理分析从总体上来看，squid的内存池是通过按照不同大小的固定尺寸内存链来处理的。应用向内存池申请内存时，先找到应用需要的内存对应的内存链，再从内存链中获取一个可用的
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-08-16 08:09" pubdate>
-              2020-08-16
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BB%A3%E7%90%86%E8%BD%AF%E4%BB%B6/">高性能代理软件</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/squid/">squid</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/08/15/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/" target="_self">
-          伸展树(splay)
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/08/15/00%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03%E4%BC%B8%E5%B1%95%E6%A0%91(splay)/" target="_self">
-          
-          概述二叉查找树（Binary Search Tree，也叫二叉排序树，即Binary Sort Tree）能够支持多种动态集合操作，它可以用来表示有序集合、建立索引等，因而在实际应用中，二叉排序树是一种非常重要的数据结构。 从算法复杂度角度考虑，我们知道，作用于二叉查找树上的基本操作（如查找，插入等）的时间复杂度与树的高度成正比。对一个含n个节点的完全二叉树，这些操作的最坏情况运行时间为O(log
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-08-15 17:59" pubdate>
-              2020-08-15
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">算法与数据结构</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E7%AE%97%E6%B3%95/">算法</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/08/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/02%20%5B%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB%5D%E9%A2%91%E7%B9%81%E5%88%86%E9%85%8D%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/" target="_self">
-          02 [百度分享]频繁分配释放内存导致的性能问题分析
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/08/14/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/06%E5%BC%80%E5%8F%91%E5%88%86%E6%9E%90/02%20%5B%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB%5D%E9%A2%91%E7%B9%81%E5%88%86%E9%85%8D%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/" target="_self">
-          
-          1. 现象 压力测试过程中，发现被测对象性能不够理想，具体表现为：进程的系统态CPU消耗20，用户态CPU消耗10，系统idle大约70  用ps -o majflt,minflt -C program命令查看，发现majflt每秒增量为0，而minflt每秒增量大于10000。  2. 分析2.1 初步分析majflt代表major fault，中文名叫大错误，minflt代表minor fau
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-08-14 23:38" pubdate>
-              2020-08-14
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/" target="_self">
-          VIRT 与 RSE 占用分析
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/08/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/05VIRT%E4%B8%8ERES%E5%8D%A0%E7%94%A8%E5%88%86%E6%9E%90/" target="_self">
-          
-          1、概述在Linux命令行中执行top命令，可以查询到所有进程使用的VIRT虚拟内存、RES常驻内存和共享内存SHR。那么，什么是VIRT虚拟内存、RES常驻内存和共享内存SHR？我们编写的Linux C++程序如何影响它们呢？ VIRT：- 进程“需要的”虚拟内存大小，包括进程使用的库、代码、数据，以及malloc、new分配的堆空间和分配的栈空间等； - 假如进程新申请10MB的内存，但实际只
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-08-13 12:28" pubdate>
-              2020-08-13
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/linux/">linux</a>
-            
-              <a href="/tags/c/">c</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/7/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/#board">6</a><a class="page-number" href="/page/7/#board">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/#board">9</a><a class="page-number" href="/page/10/#board">10</a><a class="page-number" href="/page/11/#board">11</a><a class="extend next" rel="next" href="/page/9/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/7/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/#board">6</a><a class="page-number" href="/page/7/#board">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/#board">9</a><a class="page-number" href="/page/10/#board">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/#board">12</a><a class="extend next" rel="next" href="/page/9/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
