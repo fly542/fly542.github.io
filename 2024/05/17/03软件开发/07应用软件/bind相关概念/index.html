@@ -24,7 +24,7 @@
 <meta property="og:description" content="bind中view和zone的区别 1. Viewview 是BIND中用来实现基于客户端来源的条件DNS解析的功能。通过view，你可以根据不同的客户端IP地址或其他条件，为不同的用户提供不同的DNS响应。它的主要用途包括： 实现内部和外部DNS解析：比如，公司内部的用户和外部的用户访问同一个域名时，可能需要得到不同的IP地址。负载均衡和地理位置服务：根据客户端的地理位置返回最合适的服务器地址。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-05-17T02:05:25.000Z">
-<meta property="article:modified_time" content="2024-06-06T07:07:16.786Z">
+<meta property="article:modified_time" content="2024-06-20T07:27:31.190Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
 <meta name="twitter:card" content="summary_large_image">
@@ -197,7 +197,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      978 字
+      1.6k 字
     </span>
   
 
@@ -206,7 +206,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      9 分钟
+      14 分钟
     </span>
   
 
@@ -248,6 +248,17 @@
 <figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs abnf">zone <span class="hljs-string">&quot;example.com&quot;</span> &#123;<br>    type master<span class="hljs-comment">;</span><br>    file <span class="hljs-string">&quot;example.com.db&quot;</span><span class="hljs-comment">;</span><br>&#125;<span class="hljs-comment">;</span><br></code></pre></td></tr></table></figure>
 <p>在这个例子中，example.com域名被配置为一个master（主）区域，并且所有的DNS记录都存储在example.com.db文件中。</p>
 <p>总结<br>View：用于条件DNS解析，允许基于客户端来源定义不同的DNS响应。<br>Zone：表示一个域名及其子域名的管理区域，包含该域名的所有DNS记录。</p>
+<h1 id="bind-增量更新"><a href="#bind-增量更新" class="headerlink" title="bind 增量更新"></a>bind 增量更新</h1><p>bind支持增量更新,使用nsupdate向bind发送增量更新时，基于标准增量更新协议 <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc2136">RFC 2136</a>。其中DNS协议头的OPCODE设置为5代表是增量更新协议。</p>
+<p>nsupdate 增量更新走TCP协议。</p>
+<h2 id="nsupdate-增量更新基本流程"><a href="#nsupdate-增量更新基本流程" class="headerlink" title="nsupdate 增量更新基本流程"></a>nsupdate 增量更新基本流程</h2><ol>
+<li>先发送一个查询SOA请求，附加信息携带TSIG记录来传递认证信息， 服务端应答认证结果。</li>
+<li>再发送基于RFC2136的增量更新协议， 附加信息携带TSIG记录传递任认证信息， 服务端应答结果</li>
+</ol>
+<h3 id="TSIG记录"><a href="#TSIG记录" class="headerlink" title="TSIG记录"></a>TSIG记录</h3><p>TSIG记录格式定义与<a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc2845">RFC2845</a></p>
+<p>TSIG(Secret Key Transaction Authentication for DNS)即DNS密钥交易验证</p>
+<p>在TSIG（Transaction Signature）协议中，MAC指的是Message Authentication Code，即消息认证码。在具体的实现中，通常使用HMAC（Hash-based Message Authentication Code）来生成和验证消息的认证码。</p>
+<p>HMAC是一种基于哈希函数的消息认证码，它结合了一个密钥与消息数据进行计算，产生一个固定长度的认证码。HMAC算法通常与特定的哈希算法结合使用，如MD5、SHA-1、SHA-256等，以确保消息的完整性和真实性，同时防止伪造或篡改。</p>
+<p>在TSIG协议中，MAC（即HMAC）用于对DNS消息进行签名和验证，以确保消息在传输过程中没有被篡改，并且可以验证消息的发送方是否具有合法的密钥。具体而言，TSIG协议中的MAC（HMAC）包括以下关键点：</p>
 
             </div>
             <hr>
