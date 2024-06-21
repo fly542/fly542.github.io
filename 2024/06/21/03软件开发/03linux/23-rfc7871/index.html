@@ -16,20 +16,21 @@
   <meta name="author" content="Fly542">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Internet Engineering Task Force (IETF)                     C. ContavalliRequest for Comments: 7871                              W. van der GaastCategory: Informational">
+    <meta name="description" content="Introduction     Many Authoritative Nameservers today return different responses based   on the perceived topological location of the user.  These servers use   the IP address of the incoming query">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Fly542 技术沉淀">
-<meta property="og:url" content="http://fly542.cn/2023/08/10/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/23-rfc7871/index.html">
+<meta property="og:title" content="RFC7871(DNS 查询中的客户端子网(EDNS))">
+<meta property="og:url" content="http://fly542.cn/2024/06/21/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/23-rfc7871/index.html">
 <meta property="og:site_name" content="Fly542 技术沉淀">
-<meta property="og:description" content="Internet Engineering Task Force (IETF)                     C. ContavalliRequest for Comments: 7871                              W. van der GaastCategory: Informational">
+<meta property="og:description" content="Introduction     Many Authoritative Nameservers today return different responses based   on the perceived topological location of the user.  These servers use   the IP address of the incoming query">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-08-10T02:55:16.705Z">
-<meta property="article:modified_time" content="2021-06-23T01:43:03.564Z">
+<meta property="article:published_time" content="2024-06-21T01:12:00.000Z">
+<meta property="article:modified_time" content="2024-06-21T01:13:14.803Z">
 <meta property="article:author" content="Fly542">
+<meta property="article:tag" content="dns">
 <meta name="twitter:card" content="summary_large_image">
   
   
-  <title>Fly542 技术沉淀</title>
+  <title>RFC7871(DNS 查询中的客户端子网(EDNS)) - Fly542 技术沉淀</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
 
@@ -175,7 +176,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="">
+            <span class="h2" id="subtitle" title="RFC7871(DNS 查询中的客户端子网(EDNS))">
               
             </span>
 
@@ -185,8 +186,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2023-08-10 10:55" pubdate>
-        2023年8月10日 上午
+      <time datetime="2024-06-21 09:12" pubdate>
+        2024年6月21日 上午
       </time>
     </span>
   
@@ -196,7 +197,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      51k 字
+      47k 字
     </span>
   
 
@@ -205,7 +206,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      422 分钟
+      395 分钟
     </span>
   
 
@@ -234,52 +235,10 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none"></h1>
+            <h1 style="display: none">RFC7871(DNS 查询中的客户端子网(EDNS))</h1>
             
             <div class="markdown-body">
-              <p>Internet Engineering Task Force (IETF)                     C. Contavalli<br>Request for Comments: 7871                              W. van der Gaast<br>Category: Informational                                           Google<br>ISSN: 2070-1721                                              D. Lawrence<br>                                                     Akamai Technologies<br>                                                               W. Kumari<br>                                                                  Google<br>                                                                May 2016</p>
-<div class="code-wrapper"><pre><code class="hljs">                  Client Subnet in DNS Queries
-</code></pre></div>
-<p>Abstract</p>
-<p>   This document describes an Extension Mechanisms for DNS (EDNS0)<br>   option that is in active use to carry information about the network<br>   that originated a DNS query and the network for which the subsequent<br>   response can be cached.  Since it has some known operational and<br>   privacy shortcomings, a revision will be worked through the IETF for<br>   improvement.</p>
-<p>Status of This Memo</p>
-<p>   This document is not an Internet Standards Track specification; it is<br>   published for informational purposes.</p>
-<p>   This document is a product of the Internet Engineering Task Force<br>   (IETF).  It represents the consensus of the IETF community.  It has<br>   received public review and has been approved for publication by the<br>   Internet Engineering Steering Group (IESG).  Not all documents<br>   approved by the IESG are a candidate for any level of Internet<br>   Standard; see Section 2 of RFC 5741.</p>
-<p>   Information about the current status of this document, any errata,<br>   and how to provide feedback on it may be obtained at<br>   <a target="_blank" rel="noopener" href="http://www.rfc-editor.org/info/rfc7871">http://www.rfc-editor.org/info/rfc7871</a>.</p>
-<p>Contavalli, et al.            Informational                     [Page 1]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
-<p>Copyright Notice</p>
-<p>   Copyright (c) 2016 IETF Trust and the persons identified as the<br>   document authors.  All rights reserved.</p>
-<p>   This document is subject to BCP 78 and the IETF Trust’s Legal<br>   Provisions Relating to IETF Documents<br>   (<a target="_blank" rel="noopener" href="http://trustee.ietf.org/license-info">http://trustee.ietf.org/license-info</a>) in effect on the date of<br>   publication of this document.  Please review these documents<br>   carefully, as they describe your rights and restrictions with respect<br>   to this document.  Code Components extracted from this document must<br>   include Simplified BSD License text as described in Section 4.e of<br>   the Trust Legal Provisions and are provided without warranty as<br>   described in the Simplified BSD License.</p>
-<p>Contavalli, et al.            Informational                     [Page 2]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
-<p>Table of Contents</p>
-<ol>
-<li>Introduction …………………………………………….4</li>
-<li>Privacy Note …………………………………………….5</li>
-<li>Requirements Notation …………………………………….5</li>
-<li>Terminology ……………………………………………..6</li>
-<li>Overview ………………………………………………..7</li>
-<li>Option Format ……………………………………………8</li>
-<li>Protocol Description ……………………………………..9<br>7.1. Originating the Option ……………………………….9<div class="code-wrapper"><pre><code class="hljs"> 7.1.1. Recursive Resolvers .................................9
- 7.1.2. Stub Resolvers .....................................10
- 7.1.3. Forwarding Resolvers ...............................11
-</code></pre></div>
-7.2. Generating a Response ……………………………….11<div class="code-wrapper"><pre><code class="hljs"> 7.2.1. Authoritative Nameserver ...........................11
- 7.2.2. Intermediate Nameserver ............................13
-</code></pre></div>
-7.3. Handling ECS Responses and Caching ……………………14<div class="code-wrapper"><pre><code class="hljs"> 7.3.1. Caching the Response ...............................15
- 7.3.2. Answering from Cache ...............................16
-</code></pre></div>
-7.4. Delegations and Negative Answers ……………………..17<br>7.5. Transitivity ……………………………………….18</li>
-<li>IANA Considerations ……………………………………..18</li>
-<li>DNSSEC Considerations ……………………………………19</li>
-<li>NAT Considerations ……………………………………..19</li>
-<li>Security Considerations …………………………………20      11.1. Privacy …………………………………………..20      11.2. Birthday Attacks …………………………………..21      11.3. Cache Pollution ……………………………………22</li>
-<li>Sending the Option ……………………………………..23      12.1. Probing …………………………………………..23      12.2. Whitelist …………………………………………24</li>
-<li>Example ……………………………………………….24</li>
-<li>References …………………………………………….26      14.1. Normative References ……………………………….26      14.2. Informative References ……………………………..27<br>Acknowledgements …………………………………………..28<br>Contributors ………………………………………………29<br>Authors’ Addresses …………………………………………30</li>
-</ol>
-<p>Contavalli, et al.            Informational                     [Page 3]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
-<ol>
+              <ol>
 <li> Introduction</li>
 </ol>
 <p>   Many Authoritative Nameservers today return different responses based<br>   on the perceived topological location of the user.  These servers use<br>   the IP address of the incoming query to identify that location.</p>
@@ -621,19 +580,19 @@
 <p>Contributors</p>
 <p>   The individuals below contributed significantly to this document.</p>
 <p>   Edward Lewis<br>   ICANN<br>   12025 Waterfront Drive, Suite 300<br>   Los Angeles, CA 90094-2536<br>   United States</p>
-<p>   Email: <a href="mailto:&#x65;&#x64;&#x77;&#97;&#114;&#100;&#46;&#x6c;&#101;&#x77;&#x69;&#115;&#64;&#105;&#x63;&#97;&#110;&#x6e;&#46;&#111;&#x72;&#x67;">&#x65;&#x64;&#x77;&#97;&#114;&#100;&#46;&#x6c;&#101;&#x77;&#x69;&#115;&#64;&#105;&#x63;&#97;&#110;&#x6e;&#46;&#111;&#x72;&#x67;</a></p>
+<p>   Email: <a href="mailto:&#101;&#100;&#x77;&#x61;&#x72;&#x64;&#x2e;&#108;&#101;&#119;&#105;&#x73;&#64;&#105;&#x63;&#97;&#110;&#x6e;&#x2e;&#111;&#114;&#x67;">&#101;&#100;&#x77;&#x61;&#x72;&#x64;&#x2e;&#108;&#101;&#119;&#105;&#x73;&#64;&#105;&#x63;&#97;&#110;&#x6e;&#x2e;&#111;&#114;&#x67;</a></p>
 <p>   Sean Leach<br>   Fastly<br>   P.O. Box 78266<br>   San Francisco, CA 94107<br>   United States</p>
 <p>   Jason Moreau<br>   Akamai Technologies<br>   150 Broadway<br>   Cambridge, MA 02142-1413<br>   United States</p>
 <p>Contavalli, et al.            Informational                    [Page 29]<br><br>RFC 7871              Client Subnet in DNS Queries              May 2016</p>
 <p>Authors’ Addresses</p>
 <p>   Carlo Contavalli<br>   Google<br>   1600 Amphitheater Parkway<br>   Mountain View, CA  94043<br>   United States</p>
-<p>   Email: <a href="mailto:&#x63;&#x63;&#x6f;&#110;&#x74;&#x61;&#x76;&#x61;&#x6c;&#108;&#x69;&#64;&#x67;&#x6f;&#111;&#x67;&#x6c;&#x65;&#46;&#x63;&#x6f;&#x6d;">&#x63;&#x63;&#x6f;&#110;&#x74;&#x61;&#x76;&#x61;&#x6c;&#108;&#x69;&#64;&#x67;&#x6f;&#111;&#x67;&#x6c;&#x65;&#46;&#x63;&#x6f;&#x6d;</a></p>
+<p>   Email: <a href="mailto:&#x63;&#x63;&#111;&#x6e;&#116;&#97;&#118;&#97;&#x6c;&#108;&#x69;&#x40;&#x67;&#111;&#x6f;&#x67;&#108;&#x65;&#x2e;&#99;&#111;&#109;">&#x63;&#x63;&#111;&#x6e;&#116;&#97;&#118;&#97;&#x6c;&#108;&#x69;&#x40;&#x67;&#111;&#x6f;&#x67;&#108;&#x65;&#x2e;&#99;&#111;&#109;</a></p>
 <p>   Wilmer van der Gaast<br>   Google<br>   Belgrave House, 76 Buckingham Palace Road<br>   London  SW1W 9TQ<br>   United Kingdom</p>
-<p>   Email: <a href="mailto:&#119;&#105;&#x6c;&#x6d;&#101;&#x72;&#x40;&#x67;&#111;&#x6f;&#x67;&#x6c;&#x65;&#x2e;&#99;&#x6f;&#109;">&#119;&#105;&#x6c;&#x6d;&#101;&#x72;&#x40;&#x67;&#111;&#x6f;&#x67;&#x6c;&#x65;&#x2e;&#99;&#x6f;&#109;</a></p>
+<p>   Email: <a href="mailto:&#x77;&#105;&#x6c;&#109;&#x65;&#x72;&#64;&#x67;&#111;&#x6f;&#103;&#x6c;&#101;&#x2e;&#x63;&#111;&#x6d;">&#x77;&#105;&#x6c;&#109;&#x65;&#x72;&#64;&#x67;&#111;&#x6f;&#103;&#x6c;&#101;&#x2e;&#x63;&#111;&#x6d;</a></p>
 <p>   David C Lawrence<br>   Akamai Technologies<br>   150 Broadway<br>   Cambridge, MA  02142-1054<br>   United States</p>
-<p>   Email: <a href="mailto:&#x74;&#97;&#x6c;&#x65;&#64;&#97;&#107;&#97;&#109;&#97;&#x69;&#x2e;&#x63;&#x6f;&#x6d;">&#x74;&#97;&#x6c;&#x65;&#64;&#97;&#107;&#97;&#109;&#97;&#x69;&#x2e;&#x63;&#x6f;&#x6d;</a></p>
+<p>   Email: <a href="mailto:&#116;&#97;&#108;&#101;&#x40;&#97;&#x6b;&#x61;&#109;&#x61;&#105;&#x2e;&#x63;&#x6f;&#109;">&#116;&#97;&#108;&#101;&#x40;&#97;&#x6b;&#x61;&#109;&#x61;&#105;&#x2e;&#x63;&#x6f;&#109;</a></p>
 <p>   Warren Kumari<br>   Google<br>   1600 Amphitheatre Parkway<br>   Mountain View, CA  94043<br>   United States</p>
-<p>   Email: <a href="mailto:&#119;&#x61;&#x72;&#x72;&#x65;&#x6e;&#x40;&#x6b;&#x75;&#109;&#x61;&#114;&#x69;&#46;&#110;&#101;&#x74;">&#119;&#x61;&#x72;&#x72;&#x65;&#x6e;&#x40;&#x6b;&#x75;&#109;&#x61;&#114;&#x69;&#46;&#110;&#101;&#x74;</a></p>
+<p>   Email: <a href="mailto:&#x77;&#97;&#x72;&#x72;&#101;&#110;&#x40;&#107;&#x75;&#x6d;&#x61;&#114;&#x69;&#x2e;&#x6e;&#x65;&#x74;">&#x77;&#97;&#x72;&#x72;&#101;&#110;&#x40;&#107;&#x75;&#x6d;&#x61;&#114;&#x69;&#x2e;&#x6e;&#x65;&#x74;</a></p>
 <p>Contavalli, et al.            Informational                    [Page 30]
 </p>
 
@@ -642,6 +601,20 @@
             <div>
               <div class="post-metas mb-3">
                 
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/devops/">devops</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/dns/">dns</a>
+                    
+                  </div>
                 
               </div>
               
@@ -656,18 +629,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/08/10/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/22-rfc1034/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">RFC1034(域名 - 概念和设施)</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/08/10/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/21-rfc1035/">
-                        <span class="hidden-mobile">RFC1035(域名 - 实施和规范)</span>
+                      <a href="/2024/05/29/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/24-rfc9460/">
+                        <span class="hidden-mobile">RFC9460(通过DNS进行服务绑定和参数指定 SVCB 和 HTTPS 资源记录)</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
