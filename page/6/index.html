@@ -191,6 +191,86 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2022/01/27/04DevOps/14%E5%AE%9A%E4%BD%8D%E8%BF%9B%E7%A8%8B%E8%A2%ABkill%E6%88%96%E5%88%9B%E5%BB%BA%E7%9A%84%E7%88%B6%E8%BF%9B%E7%A8%8B/" target="_self">
+          定位进程被kill或创建的父进程
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2022/01/27/04DevOps/14%E5%AE%9A%E4%BD%8D%E8%BF%9B%E7%A8%8B%E8%A2%ABkill%E6%88%96%E5%88%9B%E5%BB%BA%E7%9A%84%E7%88%B6%E8%BF%9B%E7%A8%8B/" target="_self">
+          
+          有时进程会被其他服务或监控脚本莫名其妙的kill，为了找到真正发出kill或pkill信号的进程，我们可以使用linux下的audit工具来捕获发出创建或kill进程的父进程信息。 审核系统(audit)包含两个主要部分：用户空间的应用程序、实用程序，以及 kernel-side 系统调用处理。Kernel 的组件从用户空间的应用程序接受系统调用，并且通过三个过滤器中的一个过滤器来进行筛选： us
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-01-27 11:57" pubdate>
+              2022-01-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/devops/">devops</a>
+            
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/01/07/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/00%E4%B8%AA%E4%BA%BA%E5%BC%80%E5%8F%91%E5%9F%BA%E6%9C%AC%E5%8E%9F%E5%88%99/" target="_self">
+          个人开发基本原则
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2022/01/07/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/00%E4%B8%AA%E4%BA%BA%E5%BC%80%E5%8F%91%E5%9F%BA%E6%9C%AC%E5%8E%9F%E5%88%99/" target="_self">
+          
+          cpp构造函数 不要在构造函数中注册任何回调； 不要在构造函数中把 this 传给跨线程的对象  1因为在构造函数执行期间对象还没有完成初始化，如果 this被泄露（escape）给了其他对象（其自身创建的子对象除外），那么别的线程有可能访问这个半成品对象，这会造成难以预料的后果 智能指针 shared_ptr 是管理共享资源的利器，需要注意避免循环引用，通常的做法是 owner 持有指向 chi
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-01-07 07:03" pubdate>
+              2022-01-07
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
+            
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2021/12/22/04DevOps/13typora%E9%85%8D%E7%BD%AE%E6%A0%87%E9%A2%98%E8%87%AA%E5%8A%A8%E6%B7%BB%E5%8A%A0%E5%BA%8F%E5%8F%B7/" target="_self">
           typora配置标题自动添加序号
         </a>
@@ -548,104 +628,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/makeifle/">makeifle</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/02/22/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/09Linux%E4%B8%ADerrno%E8%AF%B4%E6%98%8E/" target="_self">
-          Linux中errno说明
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/02/22/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/09Linux%E4%B8%ADerrno%E8%AF%B4%E6%98%8E/" target="_self">
-          
-          linux下errno的对应数值位于&#x2F;usr&#x2F;include&#x2F;asm-generic&#x2F;errno-base.h 和&#x2F;usr&#x2F;include&#x2F;asm-generic&#x2F;errno.h 中 errno-base.h的内容如下： 12345678910111213141516171819202122232425262728293031323334353637383940#ifndef _ASM_GENER
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-02-22 11:45" pubdate>
-              2021-02-22
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/c/">c++</a>
-            
-              <a href="/tags/c/">c</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/01/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/08%E5%90%84%E7%B1%BBconst%E6%8C%87%E9%92%88%E7%9A%84%E5%8C%BA%E5%88%AB/" target="_self">
-          const char*, char const*, char*const 的区别
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/01/13/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/01c_cpp/08%E5%90%84%E7%B1%BBconst%E6%8C%87%E9%92%88%E7%9A%84%E5%8C%BA%E5%88%AB/" target="_self">
-          
-          Bjarne在他的The C++ Programming Language里面给出过一个助记的方法：把一个声明从右向左读。 1234567char * const cp; ( * 读成 pointer to ) cp is a const pointer to char const char * p; p is a pointer to const char; char const * p;  &#x2F;
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-01-13 18:40" pubdate>
-              2021-01-13
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">软件开发</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/c/">c++</a>
-            
-              <a href="/tags/c/">c</a>
             
           </div>
         

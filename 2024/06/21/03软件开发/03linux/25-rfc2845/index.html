@@ -1,0 +1,571 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1. Introduction The Domain Name System (DNS) [RFC1034, RFC1035] is a replicated hierarchical distributed database system that provides information fundamental to Internet operations, such as name &lt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RFC2845(DNS 密钥交易认证 (TSIG))">
+<meta property="og:url" content="http://fly542.cn/2024/06/21/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/25-rfc2845/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="1. Introduction The Domain Name System (DNS) [RFC1034, RFC1035] is a replicated hierarchical distributed database system that provides information fundamental to Internet operations, such as name &lt;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-06-21T01:03:26.000Z">
+<meta property="article:modified_time" content="2024-06-21T02:40:12.546Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="dns">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>RFC2845(DNS 密钥交易认证 (TSIG)) - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="RFC2845(DNS 密钥交易认证 (TSIG))">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2024-06-21 09:03" pubdate>
+        2024年6月21日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      24k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      200 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">RFC2845(DNS 密钥交易认证 (TSIG))</h1>
+            
+            <div class="markdown-body">
+              <h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h1><ul>
+<li><p>The Domain Name System (DNS) [RFC1034, RFC1035] is a replicated hierarchical distributed database system that provides information fundamental to Internet operations, such as name &lt;=&gt; address translation and mail handling information.  DNS has recently been extended [RFC2535] to provide for data origin authentication, and public key distribution, all based on public key cryptography and public key based digital signatures.  To be practical, this form of security generally requires extensive local caching of keys and tracing of authentication through multiple keys and signatures to a pre-trusted locally configured key.</p>
+</li>
+<li><p>One difficulty with the [RFC2535] scheme is that common DNS implementations include simple “stub” resolvers which do not have caches.  Such resolvers typically rely on a caching DNS server on another host.  It is impractical for these stub resolvers to perform general [RFC2535] authentication and they would naturally depend on their caching DNS server to perform such services for them.  To do so securely requires secure communication of queries and responses. [RFC2535] provides public key transaction signatures to support this, but such signatures are very expensive computationally to generate. In general, these require the same complex public key logic that is impractical for stubs.  This document specifies use of a message authentication code (MAC), specifically HMAC-MD5 (a keyed hash function), to provide an efficient means of point-to-point authentication and integrity checking for transactions.</p>
+</li>
+<li><p>A second area where use of straight [RFC2535] public key based mechanisms may be impractical is authenticating dynamic update [RFC2136] requests.  [RFC2535] provides for request signatures but with [RFC2535] they, like transaction signatures, require computationally expensive public key cryptography and complex authentication logic.  Secure Domain Name System Dynamic Update ([RFC2137]) describes how different keys are used in dynamically updated zones.  This document’s secret key based MACs can be used to authenticate DNS update requests as well as transaction responses, providing a lightweight alternative to the protocol described by [RFC2137].</p>
+</li>
+<li><p>A further use of this mechanism is to protect zone transfers. In this case the data covered would be the whole zone transfer including any glue records sent.  The protocol described by [RFC2535] does not protect glue records and unsigned records unless SIG(0) (transaction signature) is used.</p>
+</li>
+<li><p>The authentication mechanism proposed in this document uses shared secret keys to establish a trust relationship between two entities.  Such keys must be protected in a fashion similar to private keys, lest a third party masquerade as one of the intended parties (forge MACs).  There is an urgent need to provide simple and efficient authentication between clients and local servers and this proposal addresses that need.  This proposal is unsuitable for general server to server authentication for servers which speak with many other servers, since key management would become unwieldy with</p>
+</li>
+</ul>
+<p>the number of shared keys going up quadratically.  But it is suitable for many resolvers on hosts that only talk to a few recursive servers.</p>
+<ul>
+<li><p>A server acting as an indirect caching resolver – a “forwarder” in common usage – might use transaction-based authentication when communicating with its small number of preconfigured “upstream” servers.  Other uses of DNS secret key authentication and possible systems for automatic secret key distribution may be proposed in separate future documents.</p>
+</li>
+<li><p>New Assigned Numbers</p>
+<figure class="highlight subunit"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><pre><code class="hljs subunit">RRTYPE = TSIG (250)<br><span class="hljs-keyword">ERROR </span>= 0..15 (a DNS RCODE)<br><span class="hljs-keyword">ERROR </span>= 16 (BADSIG)<br><span class="hljs-keyword">ERROR </span>= 17 (BADKEY)<br><span class="hljs-keyword">ERROR </span>= 18 (BADTIME)<br></code></pre></td></tr></table></figure></li>
+<li><p>The key words “MUST”, “REQUIRED”, “SHOULD”, “RECOMMENDED”,  and “MAY” in this document are to be interpreted as described in [RFC2119].</p>
+</li>
+</ul>
+<h1 id="2-TSIG-RR-Format-TSIG-RR-格式"><a href="#2-TSIG-RR-Format-TSIG-RR-格式" class="headerlink" title="2 TSIG RR Format(TSIG RR 格式)"></a>2 TSIG RR Format(TSIG RR 格式)</h1><h2 id="2-1-TSIG-RR-Type-TSIG-RR-类型"><a href="#2-1-TSIG-RR-Type-TSIG-RR-类型" class="headerlink" title="2.1 TSIG RR Type(TSIG RR 类型)"></a>2.1 TSIG RR Type(TSIG RR 类型)</h2><p>To provide secret key authentication, we use a new RR type whose mnemonic is TSIG and whose type code is 250.  TSIG is a meta-RR and MUST not be cached.  TSIG RRs are used for authentication between DNS entities that have established a shared secret key.  TSIG RRs are dynamically computed to cover a particular DNS transaction and are not DNS RRs in the usual sense.</p>
+<p>为了提供密钥认证，我们使用一种新的 RR 类型，其助记符为 TSIG，类型代码为 250。TSIG 是元 RR，不得缓存。TSIG RR 用于已建立共享密钥的 DNS 实体之间的认证。TSIG RR 是动态计算的，以涵盖特定的 DNS 事务，而不是通常意义上的 DNS RR。</p>
+<h2 id="2-2-TSIG-Calculation-TSIG-计算"><a href="#2-2-TSIG-Calculation-TSIG-计算" class="headerlink" title="2.2 TSIG Calculation(TSIG 计算)"></a>2.2 TSIG Calculation(TSIG 计算)</h2><p>As the TSIG RRs are related to one DNS request/response, there is no value in storing or retransmitting them, thus the TSIG RR is discarded once it has been used to authenticate a DNS message.  The only message digest algorithm specified in this document is “HMAC-MD5” (see [RFC1321], [RFC2104]).  The “HMAC-MD5” algorithm is mandatory to implement for interoperability.  Other algorithms can be specified at a later date.  Names and definitions of new algorithms MUST be registered with IANA.  All multi-octet integers in the TSIG record are sent in network byte order (see [RFC1035 2.3.2]).</p>
+<p>由于 TSIG RR 与一个 DNS 请求/响应相关，因此存储或重新传输它们没有任何意义，因此一旦 TSIG RR 用于验证 DNS 消息，它就会被丢弃。本文档中指定的唯一消息摘要算法是’HMAC-MD5’（参见 [RFC1321]、[RFC2104]）。’HMAC-MD5’算法是实现互操作性的必需算法。其他算法可以稍后指定。新算法的名称和定义必须在 IANA 注册。TSIG 记录中的所有多八位字节整数都按网络字节顺序发送（参见 [RFC1035 2.3.2]）。</p>
+<h2 id="2-3-Record-Format-记录格式"><a href="#2-3-Record-Format-记录格式" class="headerlink" title="2.3. Record Format(记录格式)"></a>2.3. Record Format(记录格式)</h2><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-type">NAME</span> <br>   <span class="hljs-keyword">TYPE</span> TSIG (<span class="hljs-number">250</span>: <span class="hljs-keyword">Transaction</span> SIGnature)<br><br>   <span class="hljs-keyword">CLASS</span> <span class="hljs-keyword">ANY</span><br><br>   TTL  <span class="hljs-number">0</span><br><br>   RdLen (variable)<br><br>   RDATA<br><br>     Field <span class="hljs-type">Name</span>       Data <span class="hljs-keyword">Type</span>      Notes<br>     <span class="hljs-comment">--------------------------------------------------------------</span><br>     Algorithm <span class="hljs-type">Name</span>   <span class="hljs-keyword">domain</span>-<span class="hljs-type">name</span>    <span class="hljs-type">Name</span> <span class="hljs-keyword">of</span> the algorithm<br>                                     <span class="hljs-keyword">in</span> <span class="hljs-keyword">domain</span> <span class="hljs-type">name</span> syntax.<br>     <span class="hljs-type">Time</span> Signed      u_int48_t      seconds since <span class="hljs-number">1</span>-Jan<span class="hljs-number">-70</span> UTC.<br>     Fudge            u_int16_t      seconds <span class="hljs-keyword">of</span> error permitted<br>                                     <span class="hljs-keyword">in</span> <span class="hljs-type">Time</span> Signed.<br>     MAC Size         u_int16_t      number <span class="hljs-keyword">of</span> octets <span class="hljs-keyword">in</span> MAC.<br>     MAC              octet stream   defined <span class="hljs-keyword">by</span> Algorithm <span class="hljs-type">Name</span>.<br>     Original ID      u_int16_t      original message ID<br>     Error            u_int16_t      expanded RCODE covering<br>                                     TSIG processing.<br>     Other Len        u_int16_t      length, <span class="hljs-keyword">in</span> octets, <span class="hljs-keyword">of</span><br>                                     Other Data.<br>     Other Data       octet stream   empty unless Error == BADTIME<br></code></pre></td></tr></table></figure>
+<p>NAME The name of the key used in domain name syntax. The name should reflect the names of the hosts and uniquely identify the key among a set of keys these two hosts may share at any given time. If hosts A.site.example and B.example.net share a key, possibilities for the key name include <id>.A.site.example, <id>.B.example.net, and <id>.A.site.example.B.example.net.  It should be possible for more than one key to be in simultaneous use among a set of interacting hosts.  The name only needs to be meaningful to the communicating hosts but a meaningful mnemonic name as above is strongly recommended.</p>
+<p>NAME 是域名语法中使用的密钥名称。该名称应反映主机的名称，并在两台主机可能在任何给定时间共享的一组密钥中唯一地标识该密钥。如果主机 A.site.example 和 B.example.net 共享一个密钥，则密钥名称可能包括 <id>.A.site.example、<id>.B.example.net 和 <id>.A.site.example.B.example.net。一组交互主机之间应该可以同时使用多个密钥。该名称只需对通信主机有意义，但强烈建议使用如上所述的有意义的助记符名称。</p>
+<p>The name may be used as a local index to the key involved and it is recommended that it be globally unique.  Where a key is just shared between two hosts, its name actually only need only be meaningful to them but it is recommended that the key name be mnemonic and incorporate the resolver and server host names in that order.</p>
+<p>该名称可用作所涉及密钥的本地索引，建议该名称具有全局唯一性。如果密钥仅在两个主机之间共享，则其名称实际上只需要对它们有意义，但建议密钥名称具有助记符，并按该顺序包含解析器和服务器主机名。</p>
+<h2 id="2-4-Example-示例"><a href="#2-4-Example-示例" class="headerlink" title="2.4. Example(示例)"></a>2.4. Example(示例)</h2><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-type">NAME</span>   HOST.EXAMPLE.<br><br><span class="hljs-keyword">TYPE</span>   TSIG<br><br><span class="hljs-keyword">CLASS</span>  <span class="hljs-keyword">ANY</span><br><br>TTL    <span class="hljs-number">0</span><br><br>RdLen  <span class="hljs-keyword">as</span> appropriate<br><br>RDATA<br><br>   Field <span class="hljs-type">Name</span>       Contents<br>   <span class="hljs-comment">-------------------------------------</span><br>   Algorithm <span class="hljs-type">Name</span>   SAMPLE-ALG.EXAMPLE.<br>   <span class="hljs-type">Time</span> Signed      <span class="hljs-number">853804800</span><br>   Fudge            <span class="hljs-number">300</span><br>   MAC Size         <span class="hljs-keyword">as</span> appropriate<br>   MAC              <span class="hljs-keyword">as</span> appropriate<br>   Original ID      <span class="hljs-keyword">as</span> appropriate<br>   Error            <span class="hljs-number">0</span> (NOERROR)<br>   Other Len        <span class="hljs-number">0</span><br>   Other Data       empty<br></code></pre></td></tr></table></figure>
+
+<h1 id="3-Protocol-Operation-协议操作"><a href="#3-Protocol-Operation-协议操作" class="headerlink" title="3 Protocol Operation(协议操作)"></a>3 Protocol Operation(协议操作)</h1><h2 id="3-1-Effects-of-adding-TSIG-to-outgoing-message-将TSIG添加到外发消息的影响"><a href="#3-1-Effects-of-adding-TSIG-to-outgoing-message-将TSIG添加到外发消息的影响" class="headerlink" title="3.1. Effects of adding TSIG to outgoing message(将TSIG添加到外发消息的影响)"></a>3.1. Effects of adding TSIG to outgoing message(将TSIG添加到外发消息的影响)</h2><p>Once the outgoing message has been constructed, the keyed message digest operation can be performed.  The resulting message digest will then be stored in a TSIG which is appended to the additional data section (the ARCOUNT is incremented to reflect this).  If the TSIG record cannot be added without causing the message to be truncated, the server MUST alter the response so that a TSIG can be included. This response consists of only the question and a TSIG record, and has the TC bit set and RCODE 0 (NOERROR).  The client SHOULD at this point retry the request using TCP (per [RFC1035 4.2.2]).</p>
+<p>一旦构造了传出消息，就可以执行密钥消息摘要操作。生成的消息摘要随后将存储在附加到附加数据部分的 TSIG 中（ARCOUNT 会递增以反映这一点）。如果无法添加 TSIG 记录而不导致消息被截断，则服务器必须更改响应以便包含 TSIG。此响应仅包含问题和 TSIG 记录，并且设置了 TC 位和 RCODE 0（无错误）。此时，客户端应使用 TCP 重试请求（根据 [RFC1035 4.2.2]）。</p>
+<h2 id="3-2-TSIG-processing-on-incoming-messages-处理传入消息中-TSIG"><a href="#3-2-TSIG-processing-on-incoming-messages-处理传入消息中-TSIG" class="headerlink" title="3.2. TSIG processing on incoming messages(处理传入消息中 TSIG )"></a>3.2. TSIG processing on incoming messages(处理传入消息中 TSIG )</h2><p>If an incoming message contains a TSIG record, it MUST be the last record in the additional section.  Multiple TSIG records are not allowed.  If a TSIG record is present in any other position, the packet is dropped and a response with RCODE 1 (FORMERR) MUST be returned.  Upon receipt of a message with a correctly placed TSIG RR, the TSIG RR is copied to a safe location, removed from the DNS Message, and decremented out of the DNS message header’s ARCOUNT. At this point the keyed message digest operation is performed.  If the algorithm name or key name is unknown to the recipient, or if the message digests do not match, the whole DNS message MUST be discarded.  If the message is a query, a response with RCODE 9 (NOTAUTH) MUST be sent back to the originator with TSIG ERROR 17 (BADKEY) or TSIG ERROR 16 (BADSIG).  If no key is available to sign this message it MUST be sent unsigned (MAC size == 0 and empty MAC). A message to the system operations log SHOULD be generated, to warn the operations staff of a possible security incident in progress. Care should be taken to ensure that logging of this type of event does not open the system to a denial of service attack.</p>
+<p>如果传入消息包含 TSIG 记录，则它必须是附加部分中的最后一条记录。不允许有多个 TSIG 记录。如果 TSIG 记录存在于任何其他位置，则数据包将被丢弃，并且必须返回带有 RCODE 1 (FORMERR) 的响应。在收到带有正确放置的 TSIG RR 的消息后，TSIG RR 将被复制到安全位置，从 DNS 消息中删除，并从 DNS 消息头的 ARCOUNT 中减去。此时将执行密钥消息摘要操作。如果接收者不知道算法名称或密钥名称，或者消息摘要不匹配，则必须丢弃整个 DNS 消息。如果该消息是查询，则必须将带有 RCODE 9 (NOTAUTH) 的响应发送回发起者，并显示 TSIG ERROR 17 (BADKEY) 或 TSIG ERROR 16 (BADSIG)。如果没有密钥可用于签署此消息，则必须以未签名形式发送该消息（MAC 大小 == 0 且 MAC 为空）。应生成一条消息发送到系统操作日志，以警告操作人员可能发生的安全事件。应注意确保记录此类事件不会使系统遭受拒绝服务攻击。</p>
+<h2 id="3-3-Time-values-used-in-TSIG-calculations-TSIG-计算中使用的时间值"><a href="#3-3-Time-values-used-in-TSIG-calculations-TSIG-计算中使用的时间值" class="headerlink" title="3.3. Time values used in TSIG calculations(TSIG 计算中使用的时间值)"></a>3.3. Time values used in TSIG calculations(TSIG 计算中使用的时间值)</h2><p>The data digested includes the two timer values in the TSIG header in order to defend against replay attacks.  If this were not done, an attacker could replay old messages but update the “Time Signed” and “Fudge” fields to make the message look new.  This data is named “TSIG Timers”, and for the purpose of digest calculation they are invoked in their “on the wire” format, in the following order: first Time Signed, then Fudge. For example:<br>摘要数据包括 TSIG 标头中的两个计时器值，以防御重放攻击。如果不这样做，攻击者可以重放旧消息，但更新’Time Signed’和’Fudge’字段，使消息看起来是新的。此数据称为’TSIG 计时器’，为了进行摘要计算，它们以’on the wire’格式调用，顺序如下：首先是 <code>Time Signed</code>，然后是 <code>Fudge</code>。示例如下:</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-section">Field Name    Value       Wire Format         Meaning</span><br><span class="hljs-section">----------------------------------------------------------------------</span><br>Time Signed   853804800   00 00 32 e4 07 00   Tue Jan 21 00:00:00 1997<br>Fudge         300         01 2C               5 minutes<br></code></pre></td></tr></table></figure>
+<h2 id="3-4-TSIG-Variables-and-Coverage-TSIG-变量和覆盖范围"><a href="#3-4-TSIG-Variables-and-Coverage-TSIG-变量和覆盖范围" class="headerlink" title="3.4. TSIG Variables and Coverage(TSIG 变量和覆盖范围)"></a>3.4. TSIG Variables and Coverage(TSIG 变量和覆盖范围)</h2><p>When generating or verifying the contents of a TSIG record, the following data are digested, in network byte order or wire format, as appropriate:</p>
+<p>生成或验证 TSIG 记录的内容时，将根据情况以网络字节顺序或有线格式摘要以下数据：</p>
+<h3 id="3-4-1-DNS-Message-DNS消息"><a href="#3-4-1-DNS-Message-DNS消息" class="headerlink" title="3.4.1. DNS Message(DNS消息)"></a>3.4.1. DNS Message(DNS消息)</h3><p>A whole and complete DNS message in wire format, before the TSIG RR has been added to the additional data section and before the DNS Message Header’s ARCOUNT field has been incremented to contain the TSIG RR.  If the message ID differs from the original message ID, the original message ID is substituted for the message ID.  This could happen when forwarding a dynamic update request, for example.</p>
+<p>在将 TSIG RR 添加到附加数据部分之前以及在 DNS 消息头的 ARCOUNT 字段递增以包含 TSIG RR 之前，有线格式的完整 DNS 消息。如果消息 ID 与原始消息 ID 不同，则原始消息 ID 将替换消息 ID。例如，在转发动态更新请求时可能会发生这种情况。</p>
+<h3 id="3-4-2-TSIG-Variables-TSIG变量"><a href="#3-4-2-TSIG-Variables-TSIG变量" class="headerlink" title="3.4.2. TSIG Variables(TSIG变量)"></a>3.4.2. TSIG Variables(TSIG变量)</h3><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">Source       Field <span class="hljs-type">Name</span>       Notes<br><span class="hljs-comment">-----------------------------------------------------------------------</span><br>TSIG RR      <span class="hljs-type">NAME</span>             Key <span class="hljs-type">name</span>, <span class="hljs-keyword">in</span> canonical wire <span class="hljs-keyword">format</span><br>TSIG RR      <span class="hljs-keyword">CLASS</span>            (<span class="hljs-keyword">Always</span> <span class="hljs-keyword">ANY</span> <span class="hljs-keyword">in</span> the <span class="hljs-keyword">current</span> specification)<br>TSIG RR      TTL              (<span class="hljs-keyword">Always</span> <span class="hljs-number">0</span> <span class="hljs-keyword">in</span> the <span class="hljs-keyword">current</span> specification)<br>TSIG RDATA   Algorithm <span class="hljs-type">Name</span>   <span class="hljs-keyword">in</span> canonical wire <span class="hljs-keyword">format</span><br>TSIG RDATA   <span class="hljs-type">Time</span> Signed      <span class="hljs-keyword">in</span> network byte <span class="hljs-keyword">order</span><br>TSIG RDATA   Fudge            <span class="hljs-keyword">in</span> network byte <span class="hljs-keyword">order</span><br>TSIG RDATA   Error            <span class="hljs-keyword">in</span> network byte <span class="hljs-keyword">order</span><br>TSIG RDATA   Other Len        <span class="hljs-keyword">in</span> network byte <span class="hljs-keyword">order</span><br>TSIG RDATA   Other Data       exactly <span class="hljs-keyword">as</span> transmitted<br></code></pre></td></tr></table></figure>
+<p>The RR RDLEN and RDATA MAC Length are not included in the hash since they are not guaranteed to be knowable before the MAC is generated.</p>
+<p>RR RDLEN 和 RDATA MAC 长度不包含在哈希中，因为无法保证在生成 MAC 之前可以知道它们。</p>
+<p>The Original ID field is not included in this section, as it has already been substituted for the message ID in the DNS header and hashed.</p>
+<p>原始 ID 字段不包含在本节中，因为它已被替换为 DNS 标头中的消息 ID 并经过散列。</p>
+<p>For each label type, there must be a defined “Canonical wire format” that specifies how to express a label in an unambiguous way.  For label type 00, this is defined in [RFC2535], for label type 01, this is defined in [RFC2673].  The use of label types other than 00 and 01 is not defined for this specification.</p>
+<p>对于每种标签类型，必须有一个定义的“规范线路格式”，以指定如何以明确的方式表达标签。对于标签类型 00，这在 [RFC2535] 中定义，对于标签类型 01，这在 [RFC2673] 中定义。本规范未定义除 00 和 01 之外的标签类型的使用。</p>
+<h3 id="3-4-3-Request-MAC-请求-验证码"><a href="#3-4-3-Request-MAC-请求-验证码" class="headerlink" title="3.4.3. Request MAC(请求 验证码)"></a>3.4.3. Request MAC(请求 验证码)</h3><p>When generating the MAC to be included in a response, the request MAC must be included in the digest.  The request’s MAC is digested in wire format, including the following fields:</p>
+<p>生成要包含在响应中的 MAC 时，请求 MAC 必须包含在摘要中。请求的 MAC 以有线格式进行摘要，包括以下字段：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-section">Field        Type           Description</span><br><span class="hljs-section">---------------------------------------------------</span><br>MAC Length   u_int16_t      in network byte order<br>MAC Data     octet stream   exactly as transmitted<br></code></pre></td></tr></table></figure>
+
+<h2 id="3-5-Padding-填充"><a href="#3-5-Padding-填充" class="headerlink" title="3.5. Padding(填充)"></a>3.5. Padding(填充)</h2><p>Digested components are fed into the hashing function as a continuous octet stream with no interfield padding.</p>
+<p>已消化的成分以连续的八位字节流的形式输入到散列函数中，且没有字段间填充。</p>
+<h1 id="4-Protocol-Details-协议详细信息"><a href="#4-Protocol-Details-协议详细信息" class="headerlink" title="4 Protocol Details(协议详细信息)"></a>4 Protocol Details(协议详细信息)</h1><h2 id="4-1-TSIG-generation-on-requests-根据请求生成-TSIG"><a href="#4-1-TSIG-generation-on-requests-根据请求生成-TSIG" class="headerlink" title="4.1. TSIG generation on requests(根据请求生成 TSIG)"></a>4.1. TSIG generation on requests(根据请求生成 TSIG)</h2><p>Client performs the message digest operation and appends a TSIG record to the additional data section and transmits the request to the server.  The client MUST store the message digest from the request while awaiting an answer.  The digest components for a request are:</p>
+<p>客户端执行消息摘要操作，将 TSIG 记录附加到附加数据部分，然后将请求传输到服务器。客户端必须在等待答复时存储请求中的消息摘要。请求的摘要组件包括：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs less"><span class="hljs-selector-tag">DNS</span> <span class="hljs-selector-tag">Message</span> (request)<br><span class="hljs-selector-tag">TSIG</span> <span class="hljs-selector-tag">Variables</span> (request)<br></code></pre></td></tr></table></figure>
+
+<p>Note that some older name servers will not accept requests with a nonempty additional data section.  Clients SHOULD only attempt signed transactions with servers who are known to support TSIG and share some secret key with the client – so, this is not a problem in practice.</p>
+<p>请注意，一些较旧的域名服务器不会接受带有非空附加数据部分的请求。客户端应仅尝试与已知支持 TSIG 并与客户端共享某些密钥的服务器进行签名交易 - 因此，这在实践中不是问题。</p>
+<h2 id="4-2-TSIG-on-Answers-TSIG-应答"><a href="#4-2-TSIG-on-Answers-TSIG-应答" class="headerlink" title="4.2. TSIG on Answers(TSIG 应答)"></a>4.2. TSIG on Answers(TSIG 应答)</h2><p>When a server has generated a response to a signed request, it signs the response using the same algorithm and key.  The server MUST not generate a signed response to an unsigned request.  The digest components are:</p>
+<p>当服务器生成对已签名请求的响应时，它会使用相同的算法和密钥对响应进行签名。服务器不得对未签名的请求生成已签名的响应。摘要组件包括：</p>
+<figure class="highlight vbscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs vbscript"><span class="hljs-built_in">Request</span> MAC<br>DNS Message (<span class="hljs-built_in">response</span>)<br>TSIG Variables (<span class="hljs-built_in">response</span>)<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-3-TSIG-on-TSIG-Error-returns-TSIG-上的-TSIG-错误返回"><a href="#4-3-TSIG-on-TSIG-Error-returns-TSIG-上的-TSIG-错误返回" class="headerlink" title="4.3. TSIG on TSIG Error returns(TSIG 上的 TSIG 错误返回)"></a>4.3. TSIG on TSIG Error returns(TSIG 上的 TSIG 错误返回)</h2><p>When a server detects an error relating to the key or MAC, the server SHOULD send back an unsigned error message (MAC size == 0 and empty MAC).  If an error is detected relating to the TSIG validity period, the server SHOULD send back a signed error message.  The digest components are:</p>
+<p>当服务器检测到与密钥或 MAC 相关的错误时，服务器应返回未签名的错误消息（MAC 大小 == 0 且 MAC 为空）。如果检测到与 TSIG 有效期相关的错误，服务器应返回签名的错误消息。摘要组件包括：</p>
+<figure class="highlight vbscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs vbscript"><span class="hljs-built_in">Request</span> MAC (<span class="hljs-keyword">if</span> the <span class="hljs-built_in">request</span> MAC validated)<br>DNS Message (<span class="hljs-built_in">response</span>)<br>TSIG Variables (<span class="hljs-built_in">response</span>)<br></code></pre></td></tr></table></figure>
+
+<p>The reason that the request is not included in this digest in some cases is to make it possible for the client to verify the error.  If the error is not a TSIG error the response MUST be generated as specified in [4.2].</p>
+<p>在某些情况下请求不包含在该摘要中是为了让客户端能够验证错误。如果错误不是 TSIG 错误，则必须按照 [4.2] 中的规定生成响应。</p>
+<h2 id="4-4-TSIG-on-TCP-connection-TCP-连接上的-TSIG"><a href="#4-4-TSIG-on-TCP-connection-TCP-连接上的-TSIG" class="headerlink" title="4.4. TSIG on TCP connection(TCP 连接上的 TSIG)"></a>4.4. TSIG on TCP connection(TCP 连接上的 TSIG)</h2><p>A DNS TCP session can include multiple DNS envelopes.  This is, for example, commonly used by zone transfer.  Using TSIG on such a connection can protect the connection from hijacking and provide data integrity.  The TSIG MUST be included on the first and last DNS envelopes.  It can be optionally placed on any intermediary envelopes.  It is expensive to include it on every envelopes, but it MUST be placed on at least every 100’th envelope.  The first envelope is processed as a standard answer, and subsequent messages have the following digest components:</p>
+<p>DNS TCP 会话可以包含多个 DNS 封装。例如，这通常用于区域传输。在这样的连接上使用 TSIG 可以保护连接免受劫持并提供数据完整性。TSIG 必须包含在第一个和最后一个 DNS 封装上。它可以选择性地放置在任何中间的封装上。在每个封装上都包含 TSIG 的代价很高，但必须至少放置在每第 100 个封装上。第一个封装作为标准响应处理，后续消息具有以下摘要组件：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sql">Prior Digest (<span class="hljs-keyword">running</span>)<br>DNS Messages (<span class="hljs-keyword">any</span> unsigned messages since the <span class="hljs-keyword">last</span> TSIG)<br>TSIG Timers (<span class="hljs-keyword">current</span> message)<br></code></pre></td></tr></table></figure>
+<p>This allows the client to rapidly detect when the session has been altered; at which point it can close the connection and retry.  If a client TSIG verification fails, the client MUST close the connection. If the client does not receive TSIG records frequently enough (as specified above) it SHOULD assume the connection has been hijacked and it SHOULD close the connection.  The client SHOULD treat this the same way as they would any other interrupted transfer (although the exact behavior is not specified).</p>
+<p>这允许客户端快速检测会话何时被篡改；在这种情况下，它可以关闭连接并重试。如果客户端的 TSIG 验证失败，客户端必须关闭连接。如果客户端没有足够频繁地收到 TSIG 记录（如上所述），它应假设连接已被劫持，并应关闭连接。客户端应将此情况视为任何其他中断的传输（尽管没有具体规定其确切行为）。</p>
+<h2 id="4-5-Server-TSIG-checks-服务端TSIG检查"><a href="#4-5-Server-TSIG-checks-服务端TSIG检查" class="headerlink" title="4.5. Server TSIG checks(服务端TSIG检查)"></a>4.5. Server TSIG checks(服务端TSIG检查)</h2><p>Upon receipt of a message, server will check if there is a TSIG RR. If one exists, the server is REQUIRED to return a TSIG RR in the response.  The server MUST perform the following checks in the following order, check KEY, check TIME values, check MAC.</p>
+<p>收到消息后，服务器将检查是否存在 TSIG RR。如果存在，则服务器必须在响应中返回 TSIG RR。服务器必须按以下顺序执行以下检查：检查 KEY、检查 TIME 值、检查 MAC。</p>
+<h3 id="4-5-1-KEY-check-and-error-handling-KEY校验及错误处理"><a href="#4-5-1-KEY-check-and-error-handling-KEY校验及错误处理" class="headerlink" title="4.5.1. KEY check and error handling(KEY校验及错误处理)"></a>4.5.1. KEY check and error handling(KEY校验及错误处理)</h3><p>If a non-forwarding server does not recognize the key used by the client, the server MUST generate an error response with RCODE 9 (NOTAUTH) and TSIG ERROR 17 (BADKEY).  This response MUST be unsigned as specified in [4.3].  The server SHOULD log the error.</p>
+<p>如果非转发服务器无法识别客户端使用的密钥，则服务器必须生成错误响应，其中 RCODE 9（NOTAUTH）和 TSIG ERROR 17（BADKEY）。此响应必须按照 [4.3] 中的规定进行签名。服务器应记录错误。</p>
+<h3 id="4-5-2-TIME-check-and-error-handling-时间检查和错误处理"><a href="#4-5-2-TIME-check-and-error-handling-时间检查和错误处理" class="headerlink" title="4.5.2. TIME check and error handling(时间检查和错误处理)"></a>4.5.2. TIME check and error handling(时间检查和错误处理)</h3><p>If the server time is outside the time interval specified by the request (which is: Time Signed, plus/minus Fudge), the server MUST generate an error response with RCODE 9 (NOTAUTH) and TSIG ERROR 18 (BADTIME).  The server SHOULD also cache the most recent time signed value in a message generated by a key, and SHOULD return BADTIME if a message received later has an earlier time signed value.  A response indicating a BADTIME error MUST be signed by the same key as the request.  It MUST include the client’s current time in the time signed field, the server’s current time (a u_int48_t) in the other data field, and 6 in the other data length field.  This is done so that the client can verify a message with a BADTIME error without the verification failing due to another BADTIME error.  The data signed is specified in [4.3].  The server SHOULD log the error.</p>
+<p>如果服务器时间超出请求指定的时间间隔（即：时间签名，加/减 Fudge），则服务器必须生成错误响应，其中包含 RCODE 9（NOTAUTH）和 TSIG ERROR 18（BADTIME）。服务器还应缓存密钥生成的消息中最新的时间签名值，并且如果稍后收到的消息具有更早的时间签名值，则应返回 BADTIME。指示 BADTIME 错误的响应必须由与请求相同的密钥签名。它必须在时间签名字段中包含客户端的当前时间，在另一个数据字段中包含服务器的当前时间（u_int48_t），在另一个数据长度字段中包含 6。这样做是为了让客户端能够验证带有 BADTIME 错误的消息，而不会因为另一个 BADTIME 错误而导致验证失败。签名的数据在 [4.3] 中指定。服务器应该记录错误。</p>
+<h3 id="4-5-3-MAC-check-and-error-handling-MAC-检查和错误处理"><a href="#4-5-3-MAC-check-and-error-handling-MAC-检查和错误处理" class="headerlink" title="4.5.3. MAC check and error handling(MAC 检查和错误处理)"></a>4.5.3. MAC check and error handling(MAC 检查和错误处理)</h3><p>If a TSIG fails to verify, the server MUST generate an error response as specified in [4.3] with RCODE 9 (NOTAUTH) and TSIG ERROR 16 (BADSIG).  This response MUST be unsigned as specified in [4.3].  The server SHOULD log the error.</p>
+<p>如果 TSIG 验证失败，服务器必须生成错误响应，如 [4.3] 中所述，其中 RCODE 为 9（NOTAUTH），TSIG ERROR 为 16（BADSIG）。此响应必须为未签名的，如 [4.3] 中所述。服务器应记录该错误。</p>
+<h2 id="4-6-Client-processing-of-answer-客户端处理应答"><a href="#4-6-Client-processing-of-answer-客户端处理应答" class="headerlink" title="4.6. Client processing of answer(客户端处理应答)"></a>4.6. Client processing of answer(客户端处理应答)</h2><p>When a client receives a response from a server and expects to see a TSIG, it first checks if the TSIG RR is present in the response. Otherwise, the response is treated as having a format error and discarded.  The client then extracts the TSIG, adjusts the ARCOUNT, and calculates the keyed digest in the same way as the server.  If the TSIG does not validate, that response MUST be discarded, unless the RCODE is 9 (NOTAUTH), in which case the client SHOULD attempt to verify the response as if it were a TSIG Error response, as specified in [4.3].  A message containing an unsigned TSIG record or a TSIG record which fails verification SHOULD not be considered an acceptable response; the client SHOULD log an error and continue to wait for a signed response until the request times out.</p>
+<p>当客户端收到来自服务器的响应并希望看到 TSIG 时，它首先检查响应中是否存在 TSIG RR。否则，响应将被视为格式错误并被丢弃。然后，客户端提取 TSIG、调整 ARCOUNT，并以与服务器相同的方式计算密钥摘要。如果 TSIG 未通过验证，则必须丢弃该响应，除非 RCODE 为 9 (NOTAUTH)，在这种情况下，客户端应尝试验证响应，就像它是 TSIG 错误响应一样，如 [4.3] 中所述。包含未签名的 TSIG 记录或未通过验证的 TSIG 记录的消息不应被视为可接受的响应；客户端应记录错误并继续等待签名的响应，直到请求超时。</p>
+<h3 id="4-6-1-Key-error-handling-Key-错误处理"><a href="#4-6-1-Key-error-handling-Key-错误处理" class="headerlink" title="4.6.1. Key error handling(Key 错误处理)"></a>4.6.1. Key error handling(Key 错误处理)</h3><p>If an RCODE on a response is 9 (NOTAUTH), and the response TSIG validates, and the TSIG key is different from the key used on the request, then this is a KEY error.  The client MAY retry the request using the key specified by the server.  This should never occur, as a server MUST NOT sign a response with a different key than signed the request.</p>
+<p>如果响应中的 RCODE 为 9 (NOTAUTH)，且响应 TSIG 已验证，且 TSIG 密钥与请求中使用的密钥不同，则这是密钥错误。客户端可以使用服务器指定的密钥重试请求。这种情况绝不应该发生，因为服务器不得使用与签名请求不同的密钥对响应进行签名。</p>
+<h3 id="4-6-2-Time-error-handling-Time-错误处理"><a href="#4-6-2-Time-error-handling-Time-错误处理" class="headerlink" title="4.6.2. Time error handling(Time 错误处理)"></a>4.6.2. Time error handling(Time 错误处理)</h3><p>If the response RCODE is 9 (NOTAUTH) and the TSIG ERROR is 18 (BADTIME), or the current time does not fall in the range specified in the TSIG record, then this is a TIME error.  This is an indication that the client and server clocks are not synchronized.  In this case the client SHOULD log the event.  DNS resolvers MUST NOT adjust any clocks in the client based on BADTIME errors, but the server’s time in the other data field SHOULD be logged.</p>
+<p>如果响应 RCODE 为 9 (NOTAUTH) 且 TSIG ERROR 为 18 (BADTIME)，或者当前时间不在 TSIG 记录中指定的范围内，则这是一个 TIME 错误。这表明客户端和服务器时钟不同步。在这种情况下，客户端应记录该事件。DNS 解析器不得根据 BADTIME 错误调整客户端中的任何时钟，但应记录其他数据字段中的服务器时间。</p>
+<h3 id="4-6-3-MAC-error-handling-MAC-错误处理"><a href="#4-6-3-MAC-error-handling-MAC-错误处理" class="headerlink" title="4.6.3. MAC error handling(MAC 错误处理)"></a>4.6.3. MAC error handling(MAC 错误处理)</h3><p>If the response RCODE is 9 (NOTAUTH) and TSIG ERROR is 16 (BADSIG), this is a MAC error, and client MAY retry the request with a new request ID but it would be better to try a different shared key if one is available.  Client SHOULD keep track of how many MAC errors are associated with each key.  Clients SHOULD log this event.</p>
+<p>如果响应 RCODE 为 9 (NOTAUTH) 且 TSIG ERROR 为 16 (BADSIG)，则这是 MAC 错误，客户端可以使用新的请求 ID 重试请求，但如果有可用的共享密钥，最好尝试其他共享密钥。客户端应跟踪与每个密钥关联的 MAC 错误数量。客户端应记录此事件。</p>
+<h2 id="4-7-Special-considerations-for-forwarding-servers-转发服务器的特殊注意事项"><a href="#4-7-Special-considerations-for-forwarding-servers-转发服务器的特殊注意事项" class="headerlink" title="4.7. Special considerations for forwarding servers(转发服务器的特殊注意事项)"></a>4.7. Special considerations for forwarding servers(转发服务器的特殊注意事项)</h2><p>A server acting as a forwarding server of a DNS message SHOULD check for the existence of a TSIG record.  If the name on the TSIG is not of a secret that the server shares with the originator the server MUST forward the message unchanged including the TSIG.  If the name of the TSIG is of a key this server shares with the originator, it MUST process the TSIG.  If the TSIG passes all checks, the forwarding server MUST, if possible, include a TSIG of his own, to the destination or the next forwarder.  If no transaction security is available to the destination and the response has the AD flag (see [RFC2535]), the forwarder MUST unset the AD flag before adding the TSIG to the answer.</p>
+<p>充当 DNS 消息转发服务器的服务器应检查 TSIG 记录是否存在。如果 TSIG 上的名称不是服务器与发起者共享的机密，则服务器必须转发未更改的消息（包括 TSIG）。如果 TSIG 的名称是此服务器与发起者共享的密钥，则它必须处理 TSIG。如果 TSIG 通过所有检查，则转发服务器必须（如果可能）向目的地或下一个转发器包含自己的 TSIG。如果目的地没有可用的事务安全性并且响应具有 AD 标志（请参阅 [RFC2535]），则转发器必须在将 TSIG 添加到答案之前取消设置 AD 标志。</p>
+<h1 id="5-Shared-Secrets-共享密钥"><a href="#5-Shared-Secrets-共享密钥" class="headerlink" title="5 Shared Secrets(共享密钥)"></a>5 Shared Secrets(共享密钥)</h1><ul>
+<li>5.1. Secret keys are very sensitive information and all available steps should be taken to protect them on every host on which they are stored.  Generally such hosts need to be physically protected.  If they are multi-user machines, great care should be taken that unprivileged users have no access to keying material.  Resolvers often run unprivileged, which means all users of a host would be able to see whatever configuration data is used by the resolver.</li>
+</ul>
+<p>密钥是非常敏感的信息，应采取一切可用措施来保护存储密钥的每台主机。通常，此类主机需要物理保护。如果它们是多用户机器，则应特别注意确保非特权用户无权访问密钥材料。解析器通常以非特权方式运行，这意味着主机的所有用户都可以看到解析器使用的任何配置数据。</p>
+<ul>
+<li>5.2. A name server usually runs privileged, which means its configuration data need not be visible to all users of the host.  For this reason, a host that implements transaction-based authentication should probably be configured with a “stub resolver” and a local caching and forwarding name server.  This presents a special problem for [RFC2136] which otherwise depends on clients to communicate only with a zone’s authoritative name servers.</li>
+</ul>
+<p>名称服务器通常以特权方式运行，这意味着其配置数据不需要对主机的所有用户可见。因此，实现基于事务的身份验证的主机可能应该配置“存根解析器”和本地缓存和转发名称服务器。这给 [RFC2136] 带来了一个特殊问题，否则它依赖于客户端仅与区域的权威名称服务器进行通信。</p>
+<ul>
+<li>5.3. Use of strong random shared secrets is essential to the security of TSIG.  See [RFC1750] for a discussion of this issue.  The secret should be at least as long as the keyed message digest, i.e. 16 bytes for HMAC-MD5 or 20 bytes for HMAC-SHA1.</li>
+</ul>
+<p>使用强随机共享密钥对于 TSIG 的安全性至关重要。有关此问题的讨论，请参阅 [RFC1750]。密钥应至少与密钥消息摘要一样长，即 HMAC-MD5 为 16 字节，HMAC-SHA1 为 20 字节。</p>
+<h1 id="6-Security-Considerations-安全注意事项"><a href="#6-Security-Considerations-安全注意事项" class="headerlink" title="6 Security Considerations(安全注意事项)"></a>6 Security Considerations(安全注意事项)</h1><ul>
+<li>6.1. The approach specified here is computationally much less expensive than the signatures specified in [RFC2535].  As long as the shared secret key is not compromised, strong authentication is provided for the last hop from a local name server to the user resolver.</li>
+</ul>
+<p>这里指定的方法在计算上比 [RFC2535] 中指定的签名要便宜得多。只要共享密钥没有被泄露，就可以为从本地名称服务器到用户解析器的最后一跳提供强身份验证。</p>
+<ul>
+<li>6.2. Secret keys should be changed periodically.  If the client host has been compromised, the server should suspend the use of all secrets known to that client.  If possible, secrets should be stored in encrypted form.  Secrets should never be transmitted in the clear over any network.  This document does not address the issue on how to distribute secrets. Secrets should never be shared by more than two entities.</li>
+</ul>
+<p>密钥应定期更改。如果客户端主机已被攻陷，服务器应暂停使用该客户端已知的所有密钥。如果可能，密钥应以加密形式存储。密钥绝不应在任何网络上以明文形式传输。本文档不讨论如何分发密钥的问题。密钥绝不应由两个以上的实体共享。</p>
+<ul>
+<li>6.3. This mechanism does not authenticate source data, only its transmission between two parties who share some secret.  The original source data can come from a compromised zone master or can be corrupted during transit from an authentic zone master to some “caching forwarder.”  However, if the server is faithfully performing the full [RFC2535] security checks, then only security checked data will be available to the client.</li>
+</ul>
+<p>此机制不验证源数据，只验证共享某些秘密的双方之间的传输。原始源数据可能来自受感染的区域主机，也可能在从真实区域主机传输到某些“缓存转发器”的过程中损坏。但是，如果服务器忠实地执行完整的 [RFC2535] 安全检查，则只有经过安全检查的数据才可供客户端使用。</p>
+<ul>
+<li>6.4. A fudge value that is too large may leave the server open to replay attacks.  A fudge value that is too small may cause failures if machines are not time synchronized or there are unexpected network delays.  The recommended value in most situation is 300 seconds.</li>
+</ul>
+<p>过大的 fudge 值可能会使服务器遭受重放攻击。如果机器时间不同步或出现意外的网络延迟，过小的 fudge 值可能会导致故障。大多数情况下的推荐值为 300 秒。</p>
+<h1 id="7-IANA-Considerations-IANA注意事项"><a href="#7-IANA-Considerations-IANA注意事项" class="headerlink" title="7 IANA Considerations(IANA注意事项)"></a>7 IANA Considerations(IANA注意事项)</h1><p>IANA is expected to create and maintain a registry of algorithm names to be used as “Algorithm Names” as defined in Section 2.3.  The initial value should be “HMAC-MD5.SIG-ALG.REG.INT”.  Algorithm names are text strings encoded using the syntax of a domain name.  There is no structure required other than names for different algorithms must be unique when compared as DNS names, i.e., comparison is case insensitive.  Note that the initial value mentioned above is not a domain name, and therefore need not be a registered name within the DNS.  New algorithms are assigned using the IETF Consensus policy defined in RFC 2434. The algorithm name HMAC-MD5.SIG-ALG.REG.INT looks like a FQDN for historical reasons; future algorithm names are expected to be simple (i.e., single-component) names.</p>
+<p>IANA 预计将创建并维护一个算法名称注册表，用作第 2.3 节中定义的“算法名称”。初始值应为“HMAC-MD5.SIG-ALG.REG.INT”。算法名称是使用域名语法编码的文本字符串。除了不同算法的名称在与 DNS 名称进行比较时必须是唯一的（即比较不区分大小写）外，不需要任何结构。请注意，上面提到的初始值不是域名，因此不需要是 DNS 中的注册名称。新算法是使用 RFC 2434 中定义的 IETF 共识策略分配的。由于历史原因，算法名称 HMAC-MD5.SIG-ALG.REG.INT 看起来像 FQDN；未来的算法名称预计将是简单（即单组件）名称。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/devops/">devops</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/dns/">dns</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/06/21/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/23-rfc7871/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">RFC7871(DNS 查询中的客户端子网(EDNS))</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/05/29/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/24-rfc9460/">
+                        <span class="hidden-mobile">RFC9460(通过DNS进行服务绑定和参数指定 SVCB 和 HTTPS 资源记录)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

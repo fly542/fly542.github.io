@@ -1,0 +1,625 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Dynamic Updates in the Domain Name System (DNS UPDATE) 1 - Definitions This document intentionally gives more definition to the roles of “Master,” “Slave,” and “Primary Master” servers, and their enum">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RFC2136(DNS动态更新)">
+<meta property="og:url" content="http://fly542.cn/2024/06/21/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/26-rfc2136/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="Dynamic Updates in the Domain Name System (DNS UPDATE) 1 - Definitions This document intentionally gives more definition to the roles of “Master,” “Slave,” and “Primary Master” servers, and their enum">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-06-21T02:42:26.000Z">
+<meta property="article:modified_time" content="2024-06-21T03:11:04.933Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="dns">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>RFC2136(DNS动态更新) - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="RFC2136(DNS动态更新)">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2024-06-21 10:42" pubdate>
+        2024年6月21日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      36k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      298 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">RFC2136(DNS动态更新)</h1>
+            
+            <div class="markdown-body">
+              <p>Dynamic Updates in the Domain Name System (DNS UPDATE)</p>
+<h1 id="1-Definitions"><a href="#1-Definitions" class="headerlink" title="1 - Definitions"></a>1 - Definitions</h1><p> This document intentionally gives more definition to the roles of “Master,” “Slave,” and “Primary Master” servers, and their enumeration in NS RRs, and the SOA MNAME field.  In that sense, the following server type definitions can be considered an addendum to [RFC1035], and are intended to be consistent with [RFC1996]:</p>
+<div class="code-wrapper"><pre><code class="hljs">Slave           an authoritative server that uses AXFR or IXFR to
+                retrieve the zone and is named in the zone&#39;s NS
+                RRset.
+
+Master          an authoritative server configured to be the
+                source of AXFR or IXFR data for one or more slave
+                servers.
+
+Primary Master  master server at the root of the AXFR/IXFR
+                dependency graph.  The primary master is named in
+                the zone&#39;s SOA MNAME field and optionally by an NS
+                RR.  There is by definition only one primary master
+                server per zone.
+</code></pre></div>
+<p>A domain name identifies a node within the domain name space tree structure.  Each node has a set (possibly empty) of Resource Records (RRs).  All RRs having the same NAME, CLASS and TYPE are called a Resource Record Set (RRset).</p>
+<p>The pseudocode used in this document is for example purposes only. If it is found to disagree with the text, the text shall be considered authoritative.  If the text is found to be ambiguous, the pseudocode can be used to help resolve the ambiguity.</p>
+<ul>
+<li>1.1 - Comparison Rules</li>
+<li>1.1.1. Two RRs are considered equal if their NAME, CLASS, TYPE, RDLENGTH and RDATA fields are equal.  Note that the time-to-live (TTL) field is explicitly excluded from the comparison.</li>
+<li>1.1.2. The rules for comparison of character strings in names are specified in [RFC1035 2.3.3].</li>
+<li>1.1.3. Wildcarding is disabled.  That is, a wildcard (“<em>“) in an update only matches a wildcard (“</em>“) in the zone, and vice versa.</li>
+<li>1.1.4. Aliasing is disabled: A CNAME in the zone matches a CNAME in the update, and will not otherwise be followed.  All UPDATE operations are done on the basis of canonical names.</li>
+<li>1.1.5. The following RR types cannot be appended to an RRset.  If the following comparison rules are met, then an attempt to add the new RR will result in the replacement of the previous RR:  SOA    compare only NAME, CLASS and TYPE – it is not possible to<div class="code-wrapper"><pre><code class="hljs">     have more than one SOA per zone, even if any of the data
+     fields differ.
+</code></pre></div>
+  WKS    compare only NAME, CLASS, TYPE, ADDRESS, and PROTOCOL<div class="code-wrapper"><pre><code class="hljs">     -- only one WKS RR is possible for this tuple, even if the
+     services masks differ.
+</code></pre></div>
+  CNAME  compare only NAME, CLASS, and TYPE – it is not possible<div class="code-wrapper"><pre><code class="hljs">     to have more than one CNAME RR, even if their data fields
+     differ.
+</code></pre></div>
+</li>
+</ul>
+<h2 id="1-2-Glue-RRs"><a href="#1-2-Glue-RRs" class="headerlink" title="1.2 - Glue RRs"></a>1.2 - Glue RRs</h2><p> For the purpose of determining whether a domain name used in the UPDATE protocol is contained within a specified zone, a domain name is “in” a zone if it is owned by that zone’s domain name.  See section 7.18 for details.</p>
+<h2 id="1-3-New-Assigned-Numbers"><a href="#1-3-New-Assigned-Numbers" class="headerlink" title="1.3 - New Assigned Numbers"></a>1.3 - New Assigned Numbers</h2><figure class="highlight ini"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">CLASS</span> = NONE (<span class="hljs-number">254</span>)<br><span class="hljs-attr">RCODE</span> = YXDOMAIN (<span class="hljs-number">6</span>)<br><span class="hljs-attr">RCODE</span> = YXRRSET (<span class="hljs-number">7</span>)<br><span class="hljs-attr">RCODE</span> = NXRRSET (<span class="hljs-number">8</span>)<br><span class="hljs-attr">RCODE</span> = NOTAUTH (<span class="hljs-number">9</span>)<br><span class="hljs-attr">RCODE</span> = NOTZONE (<span class="hljs-number">10</span>)<br><span class="hljs-attr">Opcode</span> = UPDATE (<span class="hljs-number">5</span>)<br></code></pre></td></tr></table></figure>
+<h1 id="2-Update-Message-Format"><a href="#2-Update-Message-Format" class="headerlink" title="2 - Update Message Format"></a>2 - Update Message Format</h1><p> The DNS Message Format is defined by [RFC1035 4.1].  Some extensions are necessary (for example, more error codes are possible under UPDATE than under QUERY) and some fields must be overloaded (see description of CLASS fields below).</p>
+<p> The overall format of an UPDATE message is, following [ibid]:</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">+---------------------+</span><br><span class="hljs-section">|        Header       |</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|         Zone        | specifies the zone to be updated</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|     Prerequisite    | RRs or RRsets which must (not) preexist</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|        Update       | RRs or RRsets to be added or deleted</span><br><span class="hljs-section">+---------------------+</span><br><span class="hljs-section">|   Additional Data   | additional data</span><br><span class="hljs-section">+---------------------+</span><br></code></pre></td></tr></table></figure>
+<p> The Header Section specifies that this message is an UPDATE, and describes the size of the other sections.  The Zone Section names the zone that is to be updated by this message.  The Prerequisite Section specifies the starting invariants (in terms of zone content) required for this update.  The Update Section contains the edits to be made, and the Additional Data Section contains data which may be necessary to complete, but is not part of, this update.</p>
+<h2 id="2-1-Transport-Issues"><a href="#2-1-Transport-Issues" class="headerlink" title="2.1 - Transport Issues"></a>2.1 - Transport Issues</h2><p> An update transaction may be carried in a UDP datagram, if the request fits, or in a TCP connection (at the discretion of the requestor).  When TCP is used, the message is in the format described in [RFC1035 4.2.2].</p>
+<h2 id="2-2-Message-Header"><a href="#2-2-Message-Header" class="headerlink" title="2.2 - Message Header"></a>2.2 - Message Header</h2><p>The header of the DNS Message Format is defined by [RFC 1035 4.1]. Not all opcodes define the same set of flag bits, though as a practical matter most of the bits defined for QUERY (in [ibid]) are identically defined by the other opcodes.  UPDATE uses only one flag bit (QR).</p>
+<p>The DNS Message Format specifies record counts for its four sections (Question, Answer, Authority, and Additional).  UPDATE uses the same fields, and the same section formats, but the naming and use of these sections differs as shown in the following modified header, after [RFC1035 4.1.1]:<br> <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">                                1  1  1  1  1  1</span><br><span class="hljs-section">  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                      ID                       |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|QR|   Opcode  |          Z         |   RCODE   |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    ZOCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    PRCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    UPCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    ADCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></code></pre></td></tr></table></figure></p>
+<p> These fields are used as follows:</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">ID      A <span class="hljs-number">16</span>-bit identifier assigned <span class="hljs-keyword">by</span> <span class="hljs-keyword">the</span> entity that generates <span class="hljs-keyword">any</span><br>        kind <span class="hljs-keyword">of</span> request.  This identifier is copied <span class="hljs-keyword">in</span> <span class="hljs-keyword">the</span><br>        corresponding reply <span class="hljs-keyword">and</span> can be used <span class="hljs-keyword">by</span> <span class="hljs-keyword">the</span> requestor <span class="hljs-built_in">to</span> match<br>        replies <span class="hljs-built_in">to</span> outstanding requests, <span class="hljs-keyword">or</span> <span class="hljs-keyword">by</span> <span class="hljs-keyword">the</span> server <span class="hljs-built_in">to</span> detect<br>        duplicated requests <span class="hljs-built_in">from</span> some requestor.<br><br>QR      A <span class="hljs-literal">one</span> bit field that specifies whether this message is <span class="hljs-keyword">a</span><br>        request (<span class="hljs-number">0</span>), <span class="hljs-keyword">or</span> <span class="hljs-keyword">a</span> response (<span class="hljs-number">1</span>).<br><br>Opcode  A <span class="hljs-literal">four</span> bit field that specifies <span class="hljs-keyword">the</span> kind <span class="hljs-keyword">of</span> request <span class="hljs-keyword">in</span> this<br>        message.  This <span class="hljs-built_in">value</span> is <span class="hljs-built_in">set</span> <span class="hljs-keyword">by</span> <span class="hljs-keyword">the</span> originator <span class="hljs-keyword">of</span> <span class="hljs-keyword">a</span> request<br>        <span class="hljs-keyword">and</span> copied <span class="hljs-keyword">into</span> <span class="hljs-keyword">the</span> response.  The Opcode <span class="hljs-built_in">value</span> that<br>        identifies <span class="hljs-keyword">an</span> UPDATE message is <span class="hljs-literal">five</span> (<span class="hljs-number">5</span>).<br><br>Z       Reserved <span class="hljs-keyword">for</span> future use.  Should be <span class="hljs-literal">zero</span> (<span class="hljs-number">0</span>) <span class="hljs-keyword">in</span> all requests<br>        <span class="hljs-keyword">and</span> responses.  A non-<span class="hljs-literal">zero</span> Z field should be ignored <span class="hljs-keyword">by</span><br>        implementations <span class="hljs-keyword">of</span> this specification.<br><br>RCODE   Response code - this <span class="hljs-literal">four</span> bit field is undefined <span class="hljs-keyword">in</span> requests<br>        <span class="hljs-keyword">and</span> <span class="hljs-built_in">set</span> <span class="hljs-keyword">in</span> responses.  The values <span class="hljs-keyword">and</span> meanings <span class="hljs-keyword">of</span> this field<br>        <span class="hljs-keyword">within</span> responses are <span class="hljs-keyword">as</span> follows:<br><br>           Mneumonic   Value   Description<br>           <span class="hljs-comment">------------------------------------------------------------</span><br>           NOERROR     <span class="hljs-number">0</span>       No error condition.<br>           FORMERR     <span class="hljs-number">1</span>       The name server was unable <span class="hljs-built_in">to</span> interpret<br>                               <span class="hljs-keyword">the</span> request due <span class="hljs-built_in">to</span> <span class="hljs-keyword">a</span> <span class="hljs-built_in">format</span> error.<br>           SERVFAIL    <span class="hljs-number">2</span>       The name server encountered <span class="hljs-keyword">an</span> internal<br>                               failure <span class="hljs-keyword">while</span> processing this request,<br>                               <span class="hljs-keyword">for</span> example <span class="hljs-keyword">an</span> operating <span class="hljs-keyword">system</span> error<br>                               <span class="hljs-keyword">or</span> <span class="hljs-keyword">a</span> forwarding timeout.<br>           NXDOMAIN    <span class="hljs-number">3</span>       Some name that ought <span class="hljs-built_in">to</span> exist,<br>                               does <span class="hljs-keyword">not</span> exist.<br>           NOTIMP      <span class="hljs-number">4</span>       The name server does <span class="hljs-keyword">not</span> support<br>                               <span class="hljs-keyword">the</span> specified Opcode.<br>           REFUSED     <span class="hljs-number">5</span>       The name server refuses <span class="hljs-built_in">to</span> perform <span class="hljs-keyword">the</span><br>                               specified operation <span class="hljs-keyword">for</span> policy <span class="hljs-keyword">or</span><br>                               security reasons.<br>           YXDOMAIN    <span class="hljs-number">6</span>       Some name that ought <span class="hljs-keyword">not</span> <span class="hljs-built_in">to</span> exist,<br>                               does exist.<br>           YXRRSET     <span class="hljs-number">7</span>       Some RRset that ought <span class="hljs-keyword">not</span> <span class="hljs-built_in">to</span> exist,<br>                               does exist.<br>           NXRRSET     <span class="hljs-number">8</span>       Some RRset that ought <span class="hljs-built_in">to</span> exist,<br>                               does <span class="hljs-keyword">not</span> exist.<br><br>           NOTAUTH     <span class="hljs-number">9</span>       The server is <span class="hljs-keyword">not</span> authoritative <span class="hljs-keyword">for</span><br>                               <span class="hljs-keyword">the</span> zone named <span class="hljs-keyword">in</span> <span class="hljs-keyword">the</span> Zone Section.<br>           NOTZONE     <span class="hljs-number">10</span>      A name used <span class="hljs-keyword">in</span> <span class="hljs-keyword">the</span> Prerequisite <span class="hljs-keyword">or</span><br>                               Update Section is <span class="hljs-keyword">not</span> <span class="hljs-keyword">within</span> <span class="hljs-keyword">the</span><br>                               zone denoted <span class="hljs-keyword">by</span> <span class="hljs-keyword">the</span> Zone Section.<br><br>ZOCOUNT The <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> RRs <span class="hljs-keyword">in</span> <span class="hljs-keyword">the</span> Zone Section.<br><br>PRCOUNT The <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> RRs <span class="hljs-keyword">in</span> <span class="hljs-keyword">the</span> Prerequisite Section.<br><br>UPCOUNT The <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> RRs <span class="hljs-keyword">in</span> <span class="hljs-keyword">the</span> Update Section.<br><br>ADCOUNT The <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> RRs <span class="hljs-keyword">in</span> <span class="hljs-keyword">the</span> Additional Data Section.<br></code></pre></td></tr></table></figure>
+<h2 id="2-3-Zone-Section"><a href="#2-3-Zone-Section" class="headerlink" title="2.3 - Zone Section"></a>2.3 - Zone Section</h2><p>The Zone Section has the same format as that specified in [RFC1035 4.1.2], with the fields redefined as follows:</p>
+<div class="code-wrapper"><pre><code class="hljs">                                1  1  1  1  1  1
+  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                                               |
+/                     ZNAME                     /
+/                                               /
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                     ZTYPE                     |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                     ZCLASS                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+</code></pre></div>
+<p>UPDATE uses this section to denote the zone of the records being updated.  All records to be updated must be in the same zone, and therefore the Zone Section is allowed to contain exactly one record. The ZNAME is the zone name, the ZTYPE must be SOA, and the ZCLASS is the zone’s class.</p>
+<h2 id="2-4-Prerequisite-Section"><a href="#2-4-Prerequisite-Section" class="headerlink" title="2.4 - Prerequisite Section"></a>2.4 - Prerequisite Section</h2><p>This section contains a set of RRset prerequisites which must be satisfied at the time the UPDATE packet is received by the primary master server.  The format of this section is as specified by [RFC1035 4.1.3].  There are five possible sets of semantics that can be expressed here, summarized as follows and then explained below.</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">(<span class="hljs-number">1</span>)  RRset <span class="hljs-keyword">exists</span> (<span class="hljs-keyword">value</span> independent).  At least one RR <span class="hljs-keyword">with</span> a<br>     specified <span class="hljs-type">NAME</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">TYPE</span> (<span class="hljs-keyword">in</span> the <span class="hljs-type">zone</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">class</span> specified <span class="hljs-keyword">by</span><br>     the <span class="hljs-type">Zone</span> Section) must exist.<br> <br>(<span class="hljs-number">2</span>)  RRset <span class="hljs-keyword">exists</span> (<span class="hljs-keyword">value</span> dependent).  A <span class="hljs-keyword">set</span> <span class="hljs-keyword">of</span> RRs <span class="hljs-keyword">with</span> a<br>     specified <span class="hljs-type">NAME</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">TYPE</span> <span class="hljs-keyword">exists</span> <span class="hljs-keyword">and</span> has the same members<br>     <span class="hljs-keyword">with</span> the same RDATAs <span class="hljs-keyword">as</span> the RRset specified here <span class="hljs-keyword">in</span> this<br>     Section.<br> <br>(<span class="hljs-number">3</span>)  RRset does <span class="hljs-keyword">not</span> exist.  <span class="hljs-keyword">No</span> RRs <span class="hljs-keyword">with</span> a specified <span class="hljs-type">NAME</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">TYPE</span><br>    (<span class="hljs-keyword">in</span> the <span class="hljs-type">zone</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">class</span> denoted <span class="hljs-keyword">by</span> the <span class="hljs-type">Zone</span> Section) can exist.<br> <br>(<span class="hljs-number">4</span>)  <span class="hljs-type">Name</span> <span class="hljs-keyword">is</span> <span class="hljs-keyword">in</span> use.  At least one RR <span class="hljs-keyword">with</span> a specified <span class="hljs-type">NAME</span> (<span class="hljs-keyword">in</span><br>     the <span class="hljs-type">zone</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">class</span> specified <span class="hljs-keyword">by</span> the <span class="hljs-type">Zone</span> Section) must exist.<br>     Note that this prerequisite <span class="hljs-keyword">is</span> <span class="hljs-keyword">NOT</span> satisfied <span class="hljs-keyword">by</span> empty<br>     nonterminals.<br> <br>(<span class="hljs-number">5</span>)  <span class="hljs-type">Name</span> <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> use.  <span class="hljs-keyword">No</span> RR <span class="hljs-keyword">of</span> <span class="hljs-keyword">any</span> <span class="hljs-keyword">type</span> <span class="hljs-keyword">is</span> <span class="hljs-keyword">owned</span> <span class="hljs-keyword">by</span> a<br>     specified <span class="hljs-type">NAME</span>.  Note that this prerequisite <span class="hljs-keyword">IS</span> satisfied <span class="hljs-keyword">by</span><br>     empty nonterminals.<br></code></pre></td></tr></table></figure>
+<p>The syntax of these is as follows:</p>
+<h3 id="2-4-1-RRset-Exists-Value-Independent"><a href="#2-4-1-RRset-Exists-Value-Independent" class="headerlink" title="2.4.1 - RRset Exists (Value Independent)"></a>2.4.1 - RRset Exists (Value Independent)</h3><p>At least one RR with a specified NAME and TYPE (in the zone and class specified in the Zone Section) must exist.</p>
+<p>For this prerequisite, a requestor adds to the section a single RR whose NAME and TYPE are equal to that of the zone RRset whose existence is required.  RDLENGTH is zero and RDATA is therefore empty.  CLASS must be specified as ANY to differentiate this condition from that of an actual RR whose RDLENGTH is naturally zero (0) (e.g., NULL).  TTL is specified as zero (0).</p>
+<h3 id="2-4-2-RRset-Exists-Value-Dependent"><a href="#2-4-2-RRset-Exists-Value-Dependent" class="headerlink" title="2.4.2 - RRset Exists (Value Dependent)"></a>2.4.2 - RRset Exists (Value Dependent)</h3><p> A set of RRs with a specified NAME and TYPE exists and has the same members with the same RDATAs as the RRset specified here in this section.  While RRset ordering is undefined and therefore not significant to this comparison, the sets be identical in their extent.</p>
+<p> For this prerequisite, a requestor adds to the section an entire RRset whose preexistence is required.  NAME and TYPE are that of the RRset being denoted.  CLASS is that of the zone.  TTL must be specified as zero (0) and is ignored when comparing RRsets for identity.</p>
+<h3 id="2-4-3-RRset-Does-Not-Exist"><a href="#2-4-3-RRset-Does-Not-Exist" class="headerlink" title="2.4.3 - RRset Does Not Exist"></a>2.4.3 - RRset Does Not Exist</h3><p> No RRs with a specified NAME and TYPE (in the zone and class denoted by the Zone Section) can exist.</p>
+<p> For this prerequisite, a requestor adds to the section a single RR whose NAME and TYPE are equal to that of the RRset whose nonexistence is required.  The RDLENGTH of this record is zero (0), and RDATA field is therefore empty.  CLASS must be specified as NONE in order to distinguish this condition from a valid RR whose RDLENGTH is naturally zero (0) (for example, the NULL RR).  TTL must be specified as zero (0).</p>
+<h3 id="2-4-4-Name-Is-In-Use"><a href="#2-4-4-Name-Is-In-Use" class="headerlink" title="2.4.4 - Name Is In Use"></a>2.4.4 - Name Is In Use</h3><p> Name is in use.  At least one RR with a specified NAME (in the zone and class specified by the Zone Section) must exist.  Note that this prerequisite is NOT satisfied by empty nonterminals.</p>
+<p> For this prerequisite, a requestor adds to the section a single RR whose NAME is equal to that of the name whose ownership of an RR is required.  RDLENGTH is zero and RDATA is therefore empty.  CLASS must be specified as ANY to differentiate this condition from that of an actual RR whose RDLENGTH is naturally zero (0) (e.g., NULL).  TYPE must be specified as ANY to differentiate this case from that of an RRset existence test.  TTL is specified as zero (0).</p>
+<h3 id="2-4-5-Name-Is-Not-In-Use"><a href="#2-4-5-Name-Is-Not-In-Use" class="headerlink" title="2.4.5 - Name Is Not In Use"></a>2.4.5 - Name Is Not In Use</h3><p> Name is not in use.  No RR of any type is owned by a specified NAME. Note that this prerequisite IS satisfied by empty nonterminals.</p>
+<p> For this prerequisite, a requestor adds to the section a single RR whose NAME is equal to that of the name whose nonownership of any RRs is required.  RDLENGTH is zero and RDATA is therefore empty.  CLASS must be specified as NONE.  TYPE must be specified as ANY.  TTL must be specified as zero (0).</p>
+<h2 id="2-5-Update-Section"><a href="#2-5-Update-Section" class="headerlink" title="2.5 - Update Section"></a>2.5 - Update Section</h2><p> This section contains RRs to be added to or deleted from the zone. The format of this section is as specified by [RFC1035 4.1.3].  There are four possible sets of semantics, summarized below and with details to follow.</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">(<span class="hljs-number">1</span>) <span class="hljs-keyword">Add</span> RRs <span class="hljs-keyword">to</span> an RRset.<br>(<span class="hljs-number">2</span>) <span class="hljs-keyword">Delete</span> an RRset.<br>(<span class="hljs-number">3</span>) <span class="hljs-keyword">Delete</span> <span class="hljs-keyword">all</span> RRsets <span class="hljs-keyword">from</span> a <span class="hljs-type">name</span>.<br>(<span class="hljs-number">4</span>) <span class="hljs-keyword">Delete</span> an RR <span class="hljs-keyword">from</span> an RRset.<br></code></pre></td></tr></table></figure>
+<p>The syntax of these is as follows:</p>
+<h3 id="2-5-1-Add-To-An-RRset"><a href="#2-5-1-Add-To-An-RRset" class="headerlink" title="2.5.1 - Add To An RRset"></a>2.5.1 - Add To An RRset</h3><p>RRs are added to the Update Section whose NAME, TYPE, TTL, RDLENGTH and RDATA are those being added, and CLASS is the same as the zone class.  Any duplicate RRs will be silently ignored by the primary master.</p>
+<h3 id="2-5-2-Delete-An-RRset"><a href="#2-5-2-Delete-An-RRset" class="headerlink" title="2.5.2 - Delete An RRset"></a>2.5.2 - Delete An RRset</h3><p>One RR is added to the Update Section whose NAME and TYPE are those of the RRset to be deleted.  TTL must be specified as zero (0) and is otherwise not used by the primary master.  CLASS must be specified as ANY.  RDLENGTH must be zero (0) and RDATA must therefore be empty. If no such RRset exists, then this Update RR will be silently ignored by the primary master.</p>
+<h3 id="2-5-3-Delete-All-RRsets-From-A-Name"><a href="#2-5-3-Delete-All-RRsets-From-A-Name" class="headerlink" title="2.5.3 - Delete All RRsets From A Name"></a>2.5.3 - Delete All RRsets From A Name</h3><p>One RR is added to the Update Section whose NAME is that of the name to be cleansed of RRsets.  TYPE must be specified as ANY.  TTL must be specified as zero (0) and is otherwise not used by the primary master.  CLASS must be specified as ANY.  RDLENGTH must be zero (0) and RDATA must therefore be empty.  If no such RRsets exist, then this Update RR will be silently ignored by the primary master.</p>
+<h3 id="2-5-4-Delete-An-RR-From-An-RRset"><a href="#2-5-4-Delete-An-RR-From-An-RRset" class="headerlink" title="2.5.4 - Delete An RR From An RRset"></a>2.5.4 - Delete An RR From An RRset</h3><p> RRs to be deleted are added to the Update Section.  The NAME, TYPE, RDLENGTH and RDATA must match the RR being deleted.  TTL must be specified as zero (0) and will otherwise be ignored by the primary master.  CLASS must be specified as NONE to distinguish this from an RR addition.  If no such RRs exist, then this Update RR will be silently ignored by the primary master.</p>
+<h2 id="2-6-Additional-Data-Section"><a href="#2-6-Additional-Data-Section" class="headerlink" title="2.6 - Additional Data Section"></a>2.6 - Additional Data Section</h2><p>This section contains RRs which are related to the update itself, or to new RRs being added by the update.  For example, out of zone glue (A RRs referred to by new NS RRs) should be presented here.  The server can use or ignore out of zone glue, at the discretion of the server implementor.  The format of this section is as specified by [RFC1035 4.1.3].</p>
+<h1 id="3-Server-Behavior"><a href="#3-Server-Behavior" class="headerlink" title="3 - Server Behavior"></a>3 - Server Behavior</h1><p>A server, upon receiving an UPDATE request, will signal NOTIMP to the requestor if the UPDATE opcode is not recognized or if it is recognized but has not been implemented.  Otherwise, processing continues as follows.</p>
+<h2 id="3-1-Process-Zone-Section"><a href="#3-1-Process-Zone-Section" class="headerlink" title="3.1 - Process Zone Section"></a>3.1 - Process Zone Section</h2><p> 3.1.1. The Zone Section is checked to see that there is exactly one RR therein and that the RR’s ZTYPE is SOA, else signal FORMERR to the requestor.  Next, the ZNAME and ZCLASS are checked to see if the zone so named is one of this server’s authority zones, else signal NOTAUTH to the requestor.  If the server is a zone slave, the request will be forwarded toward the primary master.</p>
+<h3 id="3-1-2-Pseudocode-For-Zone-Section-Processing"><a href="#3-1-2-Pseudocode-For-Zone-Section-Processing" class="headerlink" title="3.1.2 - Pseudocode For Zone Section Processing"></a>3.1.2 - Pseudocode For Zone Section Processing</h3><figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs lisp">if (<span class="hljs-name">zcount</span> != <span class="hljs-number">1</span> || ztype != SOA)<br>     return (<span class="hljs-name">FORMERR</span>)<br>if (<span class="hljs-name">zone_type</span>(<span class="hljs-name">zname</span>, zclass) == SLAVE)<br>     return forward()<br>if (<span class="hljs-name">zone_type</span>(<span class="hljs-name">zname</span>, zclass) == MASTER)<br>     return update()<br>return (<span class="hljs-name">NOTAUTH</span>)<br></code></pre></td></tr></table></figure>
+<p> Sections 3.2 through 3.8 describe the primary master’s behaviour, whereas Section 6 describes a forwarder’s behaviour.</p>
+<h2 id="3-2-Process-Prerequisite-Section"><a href="#3-2-Process-Prerequisite-Section" class="headerlink" title="3.2 - Process Prerequisite Section"></a>3.2 - Process Prerequisite Section</h2><p> Next, the Prerequisite Section is checked to see that all prerequisites are satisfied by the current state of the zone.  Using the definitions expressed in Section 1.2, if any RR’s NAME is not within the zone specified in the Zone Section, signal NOTZONE to the requestor.</p>
+<ul>
+<li>3.2.1. For RRs in this section whose CLASS is ANY, test to see that TTL and RDLENGTH are both zero (0), else signal FORMERR to the requestor.  If TYPE is ANY, test to see that there is at least one RR in the zone whose NAME is the same as that of the Prerequisite RR, else signal NXDOMAIN to the requestor.  If TYPE is not ANY, test to see that there is at least one RR in the zone whose NAME and TYPE are the same as that of the Prerequisite RR, else signal NXRRSET to the requestor.</li>
+<li>3.2.2. For RRs in this section whose CLASS is NONE, test to see that the TTL and RDLENGTH are both zero (0), else signal FORMERR to the requestor.  If the TYPE is ANY, test to see that there are no RRs in the zone whose NAME is the same as that of the Prerequisite RR, else signal YXDOMAIN to the requestor.  If the TYPE is not ANY, test to see that there are no RRs in the zone whose NAME and TYPE are the same as that of the Prerequisite RR, else signal YXRRSET to the requestor.</li>
+<li>3.2.3. For RRs in this section whose CLASS is the same as the ZCLASS,test to see that the TTL is zero (0), else signal FORMERR to the requestor.  Then, build an RRset for each unique &lt;NAME,TYPE&gt; and compare each resulting RRset for set equality (same members, no more, no less) with RRsets in the zone.  If any Prerequisite RRset is not entirely and exactly matched by a zone RRset, signal NXRRSET to the requestor.  If any RR in this section has a CLASS other than ZCLASS or NONE or ANY, signal FORMERR to the requestor.</li>
+</ul>
+<h3 id="3-2-4-Table-Of-Metavalues-Used-In-Prerequisite-Section"><a href="#3-2-4-Table-Of-Metavalues-Used-In-Prerequisite-Section" class="headerlink" title="3.2.4 - Table Of Metavalues Used In Prerequisite Section"></a>3.2.4 - Table Of Metavalues Used In Prerequisite Section</h3><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">CLASS</span>    <span class="hljs-keyword">TYPE</span>     RDATA    Meaning<br><span class="hljs-comment">------------------------------------------------------------</span><br><span class="hljs-keyword">ANY</span>      <span class="hljs-keyword">ANY</span>      empty    <span class="hljs-type">Name</span> <span class="hljs-keyword">is</span> <span class="hljs-keyword">in</span> use<br><span class="hljs-keyword">ANY</span>      rrset    empty    RRset <span class="hljs-keyword">exists</span> (<span class="hljs-keyword">value</span> independent)<br><span class="hljs-keyword">NONE</span>     <span class="hljs-keyword">ANY</span>      empty    <span class="hljs-type">Name</span> <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> use<br><span class="hljs-keyword">NONE</span>     rrset    empty    RRset does <span class="hljs-keyword">not</span> exist<br><span class="hljs-type">zone</span>     rrset    rr       RRset <span class="hljs-keyword">exists</span> (<span class="hljs-keyword">value</span> dependent)<br></code></pre></td></tr></table></figure>
+<h3 id="3-2-5-Pseudocode-for-Prerequisite-Section-Processing"><a href="#3-2-5-Pseudocode-for-Prerequisite-Section-Processing" class="headerlink" title="3.2.5 - Pseudocode for Prerequisite Section Processing"></a>3.2.5 - Pseudocode for Prerequisite Section Processing</h3><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">for</span> rr <span class="hljs-keyword">in</span> prerequisites<br>     <span class="hljs-keyword">if</span> (rr.ttl != <span class="hljs-number">0</span>)<br>          <span class="hljs-keyword">return</span> (FORMERR)<br>     <span class="hljs-keyword">if</span> (zone_of(rr.name) != ZNAME)<br>          <span class="hljs-keyword">return</span> (NOTZONE);<br>     <span class="hljs-keyword">if</span> (rr.<span class="hljs-keyword">class</span> == <span class="hljs-keyword">ANY</span>)<br>          <span class="hljs-keyword">if</span> (rr.rdlength != <span class="hljs-number">0</span>)<br>               <span class="hljs-keyword">return</span> (FORMERR)<br>          <span class="hljs-keyword">if</span> (rr.<span class="hljs-keyword">type</span> == <span class="hljs-keyword">ANY</span>)<br>               <span class="hljs-keyword">if</span> (!zone_name&lt;rr.name&gt;)<br>                    <span class="hljs-keyword">return</span> (NXDOMAIN)<br>          <span class="hljs-keyword">else</span><br>               <span class="hljs-keyword">if</span> (!zone_rrset&lt;rr.name, rr.<span class="hljs-keyword">type</span>&gt;)<br>                    <span class="hljs-keyword">return</span> (NXRRSET)<br>     <span class="hljs-keyword">if</span> (rr.<span class="hljs-keyword">class</span> == <span class="hljs-keyword">NONE</span>)<br>          <span class="hljs-keyword">if</span> (rr.rdlength != <span class="hljs-number">0</span>)<br>               <span class="hljs-keyword">return</span> (FORMERR)<br>          <span class="hljs-keyword">if</span> (rr.<span class="hljs-keyword">type</span> == <span class="hljs-keyword">ANY</span>)<br>               <span class="hljs-keyword">if</span> (zone_name&lt;rr.name&gt;)<br>                    <span class="hljs-keyword">return</span> (YXDOMAIN)<br>          <span class="hljs-keyword">else</span><br>               <span class="hljs-keyword">if</span> (zone_rrset&lt;rr.name, rr.<span class="hljs-keyword">type</span>&gt;)<br>                    <span class="hljs-keyword">return</span> (YXRRSET)<br>     <span class="hljs-keyword">if</span> (rr.<span class="hljs-keyword">class</span> == zclass)<br>          <span class="hljs-keyword">temp</span>&lt;rr.name, rr.<span class="hljs-keyword">type</span>&gt; += rr<br>     <span class="hljs-keyword">else</span><br>          <span class="hljs-keyword">return</span> (FORMERR)<br> <br><span class="hljs-keyword">for</span> rrset <span class="hljs-keyword">in</span> <span class="hljs-keyword">temp</span><br>     <span class="hljs-keyword">if</span> (zone_rrset&lt;rrset.name, rrset.<span class="hljs-keyword">type</span>&gt; != rrset)<br>          <span class="hljs-keyword">return</span> (NXRRSET)<br></code></pre></td></tr></table></figure>
+<h2 id="3-3-Check-Requestor’s-Permissions"><a href="#3-3-Check-Requestor’s-Permissions" class="headerlink" title="3.3 - Check Requestor’s Permissions"></a>3.3 - Check Requestor’s Permissions</h2><ul>
+<li>3.3.1. Next, the requestor’s permission to update the RRs named in the Update Section may be tested in an implementation dependent fashion or using mechanisms specified in a subsequent Secure DNS Update protocol.  If the requestor does not have permission to perform these updates, the server may write a warning message in its operations log, and may either signal REFUSED to the requestor, or ignore the permission problem and proceed with the update.</li>
+<li>3.3.2. While the exact processing is implementation defined, if these verification activities are to be performed, this is the point in the server’s processing where such performance should take place, since if a REFUSED condition is encountered after an update has been partially applied, it will be necessary to undo the partial update and restore the zone to its original state before answering the requestor.</li>
+<li>3.3.3 - Pseudocode for Permission Checking<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">if</span> (<span class="hljs-keyword">security</span> <span class="hljs-keyword">policy</span> <span class="hljs-keyword">exists</span>)<br>     <span class="hljs-keyword">if</span> (this <span class="hljs-keyword">update</span> <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> permitted)<br>          <span class="hljs-keyword">if</span> (<span class="hljs-keyword">local</span> <span class="hljs-keyword">option</span>)<br>               <span class="hljs-keyword">log</span> a message about permission problem<br>          <span class="hljs-keyword">if</span> (<span class="hljs-keyword">local</span> <span class="hljs-keyword">option</span>)<br>               <span class="hljs-keyword">return</span> (REFUSED)<br></code></pre></td></tr></table></figure>
+<h2 id="3-4-Process-Update-Section"><a href="#3-4-Process-Update-Section" class="headerlink" title="3.4 - Process Update Section"></a>3.4 - Process Update Section</h2></li>
+</ul>
+<p>Next, the Update Section is processed as follows.</p>
+<h3 id="3-4-1-Prescan"><a href="#3-4-1-Prescan" class="headerlink" title="3.4.1 - Prescan"></a>3.4.1 - Prescan</h3><p> The Update Section is parsed into RRs and each RR’s CLASS is checked to see if it is ANY, NONE, or the same as the Zone Class, else signal a FORMERR to the requestor.  Using the definitions in Section 1.2, each RR’s NAME must be in the zone specified by the Zone Section, else signal NOTZONE to the requestor.</p>
+<ul>
+<li>3.4.1.2. For RRs whose CLASS is not ANY, check the TYPE and if it is ANY, AXFR, MAILA, MAILB, or any other QUERY metatype, or any unrecognized type, then signal FORMERR to the requestor.  For RRs whose CLASS is ANY or NONE, check the TTL to see that it is zero (0), else signal a FORMERR to the requestor.  For any RR whose CLASS is ANY, check the RDLENGTH to make sure that it is zero (0) (that is, the RDATA field is empty), and that the TYPE is not AXFR, MAILA, MAILB, or any other QUERY metatype besides ANY, or any unrecognized type, else signal FORMERR to the requestor.</li>
+<li>3.4.1.3 - Pseudocode For Update Section Prescan<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">[rr] <span class="hljs-keyword">for</span> rr <span class="hljs-keyword">in</span> updates<br>     <span class="hljs-keyword">if</span> (zone_of(rr.name) != ZNAME)<br>          <span class="hljs-keyword">return</span> (NOTZONE);<br>     <span class="hljs-keyword">if</span> (rr.<span class="hljs-keyword">class</span> == zclass)<br>          <span class="hljs-keyword">if</span> (rr.<span class="hljs-keyword">type</span> &amp; <span class="hljs-keyword">ANY</span>|AXFR|MAILA|MAILB)<br>               <span class="hljs-keyword">return</span> (FORMERR)<br>     <span class="hljs-keyword">elsif</span> (rr.<span class="hljs-keyword">class</span> == <span class="hljs-keyword">ANY</span>)<br>          <span class="hljs-keyword">if</span> (rr.ttl != <span class="hljs-number">0</span> || rr.rdlength != <span class="hljs-number">0</span><br>              || rr.<span class="hljs-keyword">type</span> &amp; AXFR|MAILA|MAILB)<br>               <span class="hljs-keyword">return</span> (FORMERR)<br>     <span class="hljs-keyword">elsif</span> (rr.<span class="hljs-keyword">class</span> == <span class="hljs-keyword">NONE</span>)<br>          <span class="hljs-keyword">if</span> (rr.ttl != <span class="hljs-number">0</span> || rr.<span class="hljs-keyword">type</span> &amp; <span class="hljs-keyword">ANY</span>|AXFR|MAILA|MAILB)<br>               <span class="hljs-keyword">return</span> (FORMERR)<br>     <span class="hljs-keyword">else</span><br>          <span class="hljs-keyword">return</span> (FORMERR)<br></code></pre></td></tr></table></figure>
+<h3 id="3-4-2-Update"><a href="#3-4-2-Update" class="headerlink" title="3.4.2 - Update"></a>3.4.2 - Update</h3></li>
+</ul>
+<p> The Update Section is parsed into RRs and these RRs are processed in order.</p>
+<ul>
+<li><p>3.4.2.1. If any system failure (such as an out of memory condition, or a hardware error in persistent storage) occurs during the processing of this section, signal SERVFAIL to the requestor and undo all updates applied to the zone during this transaction.</p>
+</li>
+<li><p>3.4.2.2. Any Update RR whose CLASS is the same as ZCLASS is added to the zone.  In case of duplicate RDATAs (which for SOA RRs is always the case, and for WKS RRs is the case if the ADDRESS and PROTOCOL fields both match), the Zone RR is replaced by Update RR.  If the TYPE is SOA and there is no Zone SOA RR, or the new SOA.SERIAL is lower (according to [RFC1982]) than or equal to the current Zone SOA RR’s SOA.SERIAL, the Update RR is ignored.  In the case of a CNAME Update RR and a non-CNAME Zone RRset or vice versa, ignore the CNAME Update RR, otherwise replace the CNAME Zone RR with the CNAME Update RR.</p>
+</li>
+<li><p>3.4.2.3. For any Update RR whose CLASS is ANY and whose TYPE is ANY, all Zone RRs with the same NAME are deleted, unless the NAME is the same as ZNAME in which case only those RRs whose TYPE is other than SOA or NS are deleted.  For any Update RR whose CLASS is ANY and whose TYPE is not ANY all Zone RRs with the same NAME and TYPE are deleted, unless the NAME is the same as ZNAME in which case neither SOA or NS RRs will be deleted.</p>
+</li>
+<li><p>3.4.2.4. For any Update RR whose class is NONE, any Zone RR whose NAME, TYPE, RDATA and RDLENGTH are equal to the Update RR is deleted, unless the NAME is the same as ZNAME and either the TYPE is SOA or the TYPE is NS and the matching Zone RR is the only NS remaining in the RRset, in which case this Update RR is ignored.</p>
+</li>
+<li><p>3.4.2.5. Signal NOERROR to the requestor.</p>
+</li>
+<li><p>3.4.2.6 - Table Of Metavalues Used In Update Section</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">CLASS</span>    <span class="hljs-keyword">TYPE</span>     RDATA    Meaning<br><span class="hljs-comment">---------------------------------------------------------</span><br><span class="hljs-keyword">ANY</span>      <span class="hljs-keyword">ANY</span>      empty    <span class="hljs-keyword">Delete</span> <span class="hljs-keyword">all</span> RRsets <span class="hljs-keyword">from</span> a <span class="hljs-type">name</span><br><span class="hljs-keyword">ANY</span>      rrset    empty    <span class="hljs-keyword">Delete</span> an RRset<br><span class="hljs-keyword">NONE</span>     rrset    rr       <span class="hljs-keyword">Delete</span> an RR <span class="hljs-keyword">from</span> an RRset<br><span class="hljs-type">zone</span>     rrset    rr       <span class="hljs-keyword">Add</span> <span class="hljs-keyword">to</span> an RRset<br></code></pre></td></tr></table></figure></li>
+<li><p>3.4.2.7 - Pseudocode For Update Section Processing</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">[rr] <span class="hljs-keyword">for</span> rr <span class="hljs-keyword">in</span> updates<br>     <span class="hljs-keyword">if</span> (rr.<span class="hljs-keyword">class</span> == zclass)<br>          <span class="hljs-keyword">if</span> (rr.<span class="hljs-keyword">type</span> == CNAME)<br>               <span class="hljs-keyword">if</span> (zone_rrset&lt;rr.name, ~CNAME&gt;)<br>                    next [rr]<br>          <span class="hljs-keyword">elsif</span> (zone_rrset&lt;rr.name, CNAME&gt;)<br>               next [rr]<br>          <span class="hljs-keyword">if</span> (rr.<span class="hljs-keyword">type</span> == SOA)<br>               <span class="hljs-keyword">if</span> (!zone_rrset&lt;rr.name, SOA&gt; ||<br>                   zone_rr&lt;rr.name, SOA&gt;.serial &gt; rr.soa.serial)<br>                    next [rr]<br>          <span class="hljs-keyword">for</span> zrr <span class="hljs-keyword">in</span> zone_rrset&lt;rr.name, rr.<span class="hljs-keyword">type</span>&gt;<br>               <span class="hljs-keyword">if</span> (rr.<span class="hljs-keyword">type</span> == CNAME || rr.<span class="hljs-keyword">type</span> == SOA ||<br>                   (rr.<span class="hljs-keyword">type</span> == WKS &amp;&amp; rr.proto == zrr.proto &amp;&amp;<br>                    rr.address == zrr.address) ||<br>                   rr.rdata == zrr.rdata)<br>                    zrr = rr<br>                    next [rr]<br>          zone_rrset&lt;rr.name, rr.<span class="hljs-keyword">type</span>&gt; += rr<br>     <span class="hljs-keyword">elsif</span> (rr.<span class="hljs-keyword">class</span> == <span class="hljs-keyword">ANY</span>)<br>          <span class="hljs-keyword">if</span> (rr.<span class="hljs-keyword">type</span> == <span class="hljs-keyword">ANY</span>)<br>               <span class="hljs-keyword">if</span> (rr.name == zname)<br>                    zone_rrset&lt;rr.name, ~(SOA|NS)&gt; = Nil<br>               <span class="hljs-keyword">else</span><br>                    zone_rrset&lt;rr.name, *&gt; = Nil<br>          <span class="hljs-keyword">elsif</span> (rr.name == zname &amp;&amp;<br>                 (rr.<span class="hljs-keyword">type</span> == SOA || rr.<span class="hljs-keyword">type</span> == NS))<br>               next [rr]<br>          <span class="hljs-keyword">else</span><br>               zone_rrset&lt;rr.name, rr.<span class="hljs-keyword">type</span>&gt; = Nil<br>     <span class="hljs-keyword">elsif</span> (rr.<span class="hljs-keyword">class</span> == <span class="hljs-keyword">NONE</span>)<br>          <span class="hljs-keyword">if</span> (rr.<span class="hljs-keyword">type</span> == SOA)<br>               next [rr]<br>          <span class="hljs-keyword">if</span> (rr.<span class="hljs-keyword">type</span> == NS &amp;&amp; zone_rrset&lt;rr.name, NS&gt; == rr)<br>               next [rr]<br>          zone_rr&lt;rr.name, rr.<span class="hljs-keyword">type</span>, rr.data&gt; = Nil<br><span class="hljs-keyword">return</span> (NOERROR)<br></code></pre></td></tr></table></figure>
+<h2 id="3-5-Stability"><a href="#3-5-Stability" class="headerlink" title="3.5 - Stability"></a>3.5 - Stability</h2></li>
+</ul>
+<p>When a zone is modified by an UPDATE operation, the server must commit the change to nonvolatile storage before sending a response to the requestor or answering any queries or transfers for the modified zone.  It is reasonable for a server to store only the update records as long as a system reboot or power failure will cause these update records to be incorporated into the zone the next time the server is started.  It is also reasonable for the server to copy the entire modified zone to nonvolatile storage after each update operation, though this would have suboptimal performance for large zones.</p>
+<h2 id="3-6-Zone-Identity"><a href="#3-6-Zone-Identity" class="headerlink" title="3.6 - Zone Identity"></a>3.6 - Zone Identity</h2><p>If the zone’s SOA SERIAL is changed by an update operation, that change must be in a positive direction (using modulo 2**32 arithmetic as specified by [RFC1982]).  Attempts to replace an SOA with one whose SERIAL is less than the current one will be silently ignored by the primary master server.</p>
+<p>If the zone’s SOA’s SERIAL is not changed as a result of an update operation, then the server shall increment it automatically before the SOA or any changed name or RR or RRset is included in any response or transfer.  The primary master server’s implementor might choose to autoincrement the SOA SERIAL if any of the following events occurs:</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">(<span class="hljs-number">1</span>)  Each update operation.<br><br>(<span class="hljs-number">2</span>)  A name, RR <span class="hljs-keyword">or</span> RRset <span class="hljs-keyword">in</span> <span class="hljs-keyword">the</span> zone has changed <span class="hljs-keyword">and</span> has subsequently<br>     been visible <span class="hljs-built_in">to</span> <span class="hljs-keyword">a</span> DNS client since <span class="hljs-keyword">the</span> unincremented SOA was<br>     visible <span class="hljs-built_in">to</span> <span class="hljs-keyword">a</span> DNS client, <span class="hljs-keyword">and</span> <span class="hljs-keyword">the</span> SOA is about <span class="hljs-built_in">to</span> become visible<br>     <span class="hljs-built_in">to</span> <span class="hljs-keyword">a</span> DNS client.<br><br>(<span class="hljs-number">3</span>)  A configurable period <span class="hljs-keyword">of</span> <span class="hljs-built_in">time</span> has elapsed since <span class="hljs-keyword">the</span> <span class="hljs-keyword">last</span> update<br>     operation.  This period shall be less than <span class="hljs-keyword">or</span> equal <span class="hljs-built_in">to</span> <span class="hljs-literal">one</span> <span class="hljs-keyword">third</span><br>     <span class="hljs-keyword">of</span> <span class="hljs-keyword">the</span> zone refresh <span class="hljs-built_in">time</span>, <span class="hljs-keyword">and</span> <span class="hljs-keyword">the</span> default shall be <span class="hljs-keyword">the</span> lesser <span class="hljs-keyword">of</span><br>     that maximum <span class="hljs-keyword">and</span> <span class="hljs-number">300</span> <span class="hljs-built_in">seconds</span>.<br><br>(<span class="hljs-number">4</span>)  A configurable <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> updates has been applied since <span class="hljs-keyword">the</span> <span class="hljs-keyword">last</span><br>     SOA change.  The default <span class="hljs-built_in">value</span> <span class="hljs-keyword">for</span> this configuration parameter<br>     shall be <span class="hljs-literal">one</span> hundred (<span class="hljs-number">100</span>).<br></code></pre></td></tr></table></figure>
+<p>It is imperative that the zone’s contents and the SOA’s SERIAL be tightly synchronized.  If the zone appears to change, the SOA must appear to change as well.</p>
+<h2 id="3-7-Atomicity"><a href="#3-7-Atomicity" class="headerlink" title="3.7 - Atomicity"></a>3.7 - Atomicity</h2><p> During the processing of an UPDATE transaction, the server must ensure atomicity with respect to other (concurrent) UPDATE or QUERY transactions.  No two transactions can be processed concurrently if either depends on the final results of the other; in particular, a QUERY should not be able to retrieve RRsets which have been partially modified by a concurrent UPDATE, and an UPDATE should not be able to start from prerequisites that might not still hold at the completion of some other concurrent UPDATE.  Finally, if two UPDATE transactions would modify the same names, RRs or RRsets, then such UPDATE transactions must be serialized.</p>
+<h2 id="3-8-Response"><a href="#3-8-Response" class="headerlink" title="3.8 - Response"></a>3.8 - Response</h2><p> At the end of UPDATE processing, a response code will be known.  A response message is generated by copying the ID and Opcode fields from the request, and either copying the ZOCOUNT, PRCOUNT, UPCOUNT, and ADCOUNT fields and associated sections, or placing zeros (0) in the these “count” fields and not including any part of the original update.  The QR bit is set to one (1), and the response is sent back to the requestor.  If the requestor used UDP, then the response will be sent to the requestor’s source UDP port.  If the requestor used TCP, then the response will be sent back on the requestor’s open TCP connection.</p>
+<h1 id="4-Requestor-Behaviour"><a href="#4-Requestor-Behaviour" class="headerlink" title="4 - Requestor Behaviour"></a>4 - Requestor Behaviour</h1><ul>
+<li>4.1. From a requestor’s point of view, any authoritative server for the zone can appear to be able to process update requests, even though only the primary master server is actually able to modify the zone’s master file.  Requestors are expected to know the name of the zone they intend to update and to know or be able to determine the name servers for that zone.</li>
+<li>4.2. If update ordering is desired, the requestor will need to know the value of the existing SOA RR.  Requestors who update the SOA RR must update the SOA SERIAL field in a positive direction (as defined by [RFC1982]) and also preserve the other SOA fields unless the requestor’s explicit intent is to change them.  The SOA SERIAL field must never be set to zero (0).</li>
+<li>4.3. If the requestor has reasonable cause to believe that all of a zone’s servers will be equally reachable, then it should arrange to try the primary master server (as given by the SOA MNAME field if matched by some NS NSDNAME) first to avoid unnecessary forwarding inside the slave servers.  (Note that the primary master will in some cases not be reachable by all requestors, due to firewalls or network partitioning.)</li>
+<li>4.4. Once the zone’s name servers been found and possibly sorted so that the ones more likely to be reachable and/or support the UPDATE opcode are listed first, the requestor composes an UPDATE message of the following form and sends it to the first name server on its list:<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">ID:                        (new)<br>Opcode:                    UPDATE<br>Zone zcount:               <span class="hljs-number">1</span><br>Zone zname:                (zone name)<br>Zone zclass:               (zone <span class="hljs-keyword">class</span>)<br><span class="hljs-symbol">Zone</span> <span class="hljs-symbol">ztype:                <span class="hljs-symbol">T_SOA</span></span><br><span class="hljs-symbol">Prerequisite</span> <span class="hljs-symbol">Section:      </span>(<span class="hljs-symbol">see</span> <span class="hljs-symbol">previous</span> <span class="hljs-symbol">text</span>)<br><span class="hljs-symbol">Update</span> <span class="hljs-symbol">Section:            </span>(<span class="hljs-symbol">see</span> <span class="hljs-symbol">previous</span> <span class="hljs-symbol">text</span>)<br><span class="hljs-symbol">Additional</span> <span class="hljs-symbol">Data</span> <span class="hljs-symbol">Section:   </span>(<span class="hljs-symbol">empty</span>)<br></code></pre></td></tr></table></figure></li>
+<li>4.5. If the requestor receives a response, and the response has an RCODE other than SERVFAIL or NOTIMP, then the requestor returns an appropriate response to its caller.</li>
+<li>4.6. If a response is received whose RCODE is SERVFAIL or NOTIMP, or if no response is received within an implementation dependent timeout period, or if an ICMP error is received indicating that the server’s port is unreachable, then the requestor will delete the unusable server from its internal name server list and try the next one, repeating until the name server list is empty.  If the requestor runs out of servers to try, an appropriate error will be returned to the requestor’s caller.</li>
+</ul>
+<h1 id="5-Duplicate-Detection-Ordering-and-Mutual-Exclusion"><a href="#5-Duplicate-Detection-Ordering-and-Mutual-Exclusion" class="headerlink" title="5 - Duplicate Detection, Ordering and Mutual Exclusion"></a>5 - Duplicate Detection, Ordering and Mutual Exclusion</h1><ul>
+<li>5.1. For correct operation, mechanisms may be needed to ensure idempotence, order UPDATE requests and provide mutual exclusion.  An UPDATE message or response might be delivered zero times, one time, or multiple times.  Datagram duplication is of particular interest since it covers the case of the so-called “replay attack” where a correct request is duplicated maliciously by an intruder.</li>
+<li>5.2. Multiple UPDATE requests or responses in transit might be delivered in any order, due to network topology changes or load balancing, or to multipath forwarding graphs wherein several slave servers all forward to the primary master.  In some cases, it might be required that the earlier update not be applied after the later update, where “earlier” and “later” are defined by an external time base visible to some set of requestors, rather than by the order of request receipt at the primary master.</li>
+<li>5.3. A requestor can ensure transaction idempotence by explicitly deleting some “marker RR” (rather than deleting the RRset of which it is a part) and then adding a new “marker RR” with a different RDATA field.  The Prerequisite Section should specify that the original “marker RR” must be present in order for this UPDATE message to be accepted by the server.</li>
+<li>5.4. If the request is duplicated by a network error, all duplicate requests will fail since only the first will find the original “marker RR” present and having its known previous value.  The decisions of whether to use such a “marker RR” and what RR to use are left up to the application programmer, though one obvious choice is the zone’s SOA RR as described below.</li>
+<li>5.5. Requestors can ensure update ordering by externally synchronizing their use of successive values of the “marker RR.” Mutual exclusion can be addressed as a degenerate case, in that a single succession of the “marker RR” is all that is needed.</li>
+<li>5.6. A special case where update ordering and datagram duplication intersect is when an RR validly changes to some new value and then back to its previous value.  Without a “marker RR” as described above, this sequence of updates can leave the zone in an undefined state if datagrams are duplicated.</li>
+<li>5.7. To achieve an atomic multitransaction “read-modify-write” cycle, a requestor could first retrieve the SOA RR, and build an UPDATE message one of whose prerequisites was the old SOA RR.  It would then specify updates that would delete this SOA RR and add a new one with an incremented SOA SERIAL, along with whatever actual prerequisites and updates were the object of the transaction.  If the transaction succeeds, the requestor knows that the RRs being changed were not otherwise altered by any other requestor.</li>
+</ul>
+<h1 id="6-Forwarding"><a href="#6-Forwarding" class="headerlink" title="6 - Forwarding"></a>6 - Forwarding</h1><p>When a zone slave forwards an UPDATE message upward toward the zone’s primary master server, it must allocate a new ID and prepare to enter the role of “forwarding server,” which is a requestor with respect to the forward server.</p>
+<ul>
+<li>6.1. The set of forward servers will be same as the set of servers this zone slave would use as the source of AXFR or IXFR data.  So, while the original requestor might have used the zone’s NS RRset to locate its update server, a forwarder always forwards toward its designated zone master servers.</li>
+<li>6.2. If the original requestor used TCP, then the TCP connection from the requestor is still open and the forwarder must use TCP to forward the message.  If the original requestor used UDP, the forwarder may use either UDP or TCP to forward the message, at the whim of the implementor.</li>
+<li>6.3. It is reasonable for forward servers to be forwarders themselves, if the AXFR dependency graph being followed is a deep one involving firewalls and multiple connectivity realms.  In most cases the AXFR dependency graph will be shallow and the forward server will be the primary master server.</li>
+<li>6.4. The forwarder will not respond to its requestor until it receives a response from its forward server.  UPDATE transactions involving forwarders are therefore time synchronized with respect to the original requestor and the primary master server.</li>
+<li>6.5. When there are multiple possible sources of AXFR data and therefore multiple possible forward servers, a forwarder will use the same fallback strategy with respect to connectivity or timeout errors that it would use when performing an AXFR.  This is implementation dependent.</li>
+<li>6.6. When a forwarder receives a response from a forward server, it copies this response into a new response message, assigns its requestor’s ID to that message, and sends the response back to the requestor.</li>
+</ul>
+<h1 id="7-Design-Implementation-Operation-and-Protocol-Notes"><a href="#7-Design-Implementation-Operation-and-Protocol-Notes" class="headerlink" title="7 - Design, Implementation, Operation, and Protocol Notes"></a>7 - Design, Implementation, Operation, and Protocol Notes</h1><p>Some of the principles which guided the design of this UPDATE specification are as follows.  Note that these are not part of the formal specification and any disagreement between this section and any other section of this document should be resolved in favour of the other section.</p>
+<ul>
+<li>7.1. Using metavalues for CLASS is possible only because all RRs in the packet are assumed to be in the same zone, and CLASS is an attribute of a zone rather than of an RRset.  (It is for this reason that the Zone Section is not optional.)</li>
+<li>7.2. Since there are no data-present or data-absent errors possible from processing the Update Section, any necessary data-present and data- absent dependencies should be specified in the Prerequisite Section.</li>
+<li>7.3. The Additional Data Section can be used to supply a server with out of zone glue that will be needed in referrals.  For example, if adding a new NS RR to HOME.VIX.COM specifying a nameserver called NS.AU.OZ, the A RR for NS.AU.OZ can be included in the Additional Data Section.  Servers can use this information or ignore it, at the discretion of the implementor.  We discourage caching this information for use in subsequent DNS responses.</li>
+<li>7.4. The Additional Data Section might be used if some of the RRs later needed for Secure DNS Update are not actually zone updates, but rather ancillary keys or signatures not intended to be stored in the zone (as an update would be), yet necessary for validating the update operation.</li>
+<li>7.5. It is expected that in the absence of Secure DNS Update, a server will only accept updates if they come from a source address that has been statically configured in the server’s description of a primary master zone.  DHCP servers would be likely candidates for inclusion in this statically configured list.</li>
+<li>7.6. It is not possible to create a zone using this protocol, since there is no provision for a slave server to be told who its master servers are.  It is expected that this protocol will be extended in the future to cover this case.  Therefore, at this time, the addition of SOA RRs is unsupported.  For similar reasons, deletion of SOA RRs is also unsupported.</li>
+<li>7.7. The prerequisite for specifying that a name own at least one RR differs semantically from QUERY, in that QUERY would return &lt;NOERROR,ANCOUNT=0&gt; rather than NXDOMAIN if queried for an RRset at this name, while UPDATE’s prerequisite condition [Section 2.4.4] would NOT be satisfied.</li>
+<li>7.8. It is possible for a UDP response to be lost in transit and for a request to be retried due to a timeout condition.  In this case an UPDATE that was successful the first time it was received by the primary master might ultimately appear to have failed when the response to a duplicate request is finally received by the requestor. (This is because the original prerequisites may no longer be satisfied after the update has been applied.)  For this reason, requestors who require an accurate response code must use TCP.</li>
+<li>7.9. Because a requestor who requires an accurate response code will initiate their UPDATE transaction using TCP, a forwarder who receives a request via TCP must forward it using TCP.</li>
+<li>7.10. Deferral of SOA SERIAL autoincrements is made possible so that serial numbers can be conserved and wraparound at 2**32 can be made an infrequent occurance.  Visible (to DNS clients) SOA SERIALs need to differ if the zone differs.  Note that the Authority Section SOA in a QUERY response is a form of visibility, for the purposes of this prerequisite.</li>
+<li>7.11. A zone’s SOA SERIAL should never be set to zero (0) due to interoperability problems with some older but widely installed implementations of DNS.  When incrementing an SOA SERIAL, if the result of the increment is zero (0) (as will be true when wrapping around 2**32), it is necessary to increment it again or set it to one (1).  See [RFC1982] for more detail on this subject.</li>
+<li>7.12. Due to the TTL minimalization necessary when caching an RRset, it is recommended that all TTLs in an RRset be set to the same value. While the DNS Message Format permits variant TTLs to exist in the same RRset, and this variance can exist inside a zone, such variance will have counterintuitive results and its use is discouraged.</li>
+<li>7.13. Zone cut management presents some obscure corner cases to the add and delete operations in the Update Section.  It is possible to delete an NS RR as long as it is not the last NS RR at the root of a zone.  If deleting all RRs from a name, SOA and NS RRs at the root of a zone are unaffected.  If deleting RRsets, it is not possible to delete either SOA or NS RRsets at the top of a zone.  An attempt to add an SOA will be treated as a replace operation if an SOA already exists, or as a no-op if the SOA would be new.</li>
+<li>7.14. No semantic checking is required in the primary master server when adding new RRs.  Therefore a requestor can cause CNAME or NS or any other kind of RR to be added even if their target name does not exist or does not have the proper RRsets to make the original RR useful.  Primary master servers that DO implement this kind of checking should take great care to avoid out-of-zone dependencies (whose veracity cannot be authoritatively checked) and should implement all such checking during the prescan phase.</li>
+<li>7.15. Nonterminal or wildcard CNAMEs are not well specified by [RFC1035] and their use will probably lead to unpredictable results. Their use is discouraged.</li>
+<li>7.16. Empty nonterminals (nodes with children but no RRs of their own) will cause &lt;NOERROR,ANCOUNT=0&gt; responses to be sent in response to a query of any type for that name.  There is no provision for empty terminal nodes – so if all RRs of a terminal node are deleted, the name is no longer in use, and queries of any type for that name will result in an NXDOMAIN response.</li>
+<li>7.17. In a deep AXFR dependency graph, it has not historically been an error for slaves to depend mutually upon each other.  This configuration has been used to enable a zone to flow from the primary master to all slaves even though not all slaves have continuous connectivity to the primary master.  UPDATE’s use of the AXFR dependency graph for forwarding prohibits this kind of dependency loop, since UPDATE forwarding has no loop detection analagous to the SOA SERIAL pretest used by AXFR.</li>
+<li>7.18. Previously existing names which are occluded by a new zone cut are still considered part of the parent zone, for the purposes of zone transfers, even though queries for such names will be referred to the new subzone’s servers.  If a zone cut is removed, all parent zone names that were occluded by it will again become visible to queries.  (This is a clarification of [RFC1034].)</li>
+<li>7.19. If a server is authoritative for both a zone and its child, then queries for names at the zone cut between them will be answered authoritatively using only data from the child zone.  (This is a clarification of [RFC1034].)</li>
+<li>7.20. Update ordering using the SOA RR is problematic since there is no way to know which of a zone’s NS RRs represents the primary master, and the zone slaves can be out of date if their SOA.REFRESH timers have not elapsed since the last time the zone was changed on the primary master.  We recommend that a zone needing ordered updates use only servers which implement NOTIFY (see [RFC1996]) and IXFR (see [RFC1995]), and that a client receiving a prerequisite error while attempting an ordered update simply retry after a random delay period to allow the zone to settle.</li>
+</ul>
+<h1 id="8-Security-Considerations"><a href="#8-Security-Considerations" class="headerlink" title="8 - Security Considerations"></a>8 - Security Considerations</h1><ul>
+<li>8.1. In the absence of [RFC2137] or equivilent technology, the protocol described by this document makes it possible for anyone who can reach an authoritative name server to alter the contents of any zones on that server.  This is a serious increase in vulnerability from the current technology.  Therefore it is very strongly recommended that the protocols described in this document not be used without [RFC2137] or other equivalently strong security measures, e.g. IPsec.</li>
+<li>8.2. A denial of service attack can be launched by flooding an update forwarder with TCP sessions containing updates that the primary master server will ultimately refuse due to permission problems. This arises due to the requirement that an update forwarder receiving a request via TCP use a synchronous TCP session for its forwarding operation.  The connection management mechanisms of [RFC1035 4.2.2] are sufficient to prevent large scale damage from such an attack, but not to prevent some queries from going unanswered during the attack.</li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/devops/">devops</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/dns/">dns</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/06/21/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/23-rfc7871/">
+                        <span class="hidden-mobile">RFC7871(DNS 查询中的客户端子网(EDNS))</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

@@ -19,12 +19,12 @@
     <meta name="description" content="1.此备忘录的状态本RFC描述了域系统和协议的详细信息，并假定读者熟悉本文档中讨论的概念。伴随RFC，“域名-概念和设施” [RFC-1034]。 域系统是功能和数据类型（它们是正式协议）和功能和数据类型（仍处于试验阶段）的混合体。由于域系统是有意扩展的，因此应始终在官方协议之外的系统部分中期待新的数据类型和实验行为。官方协议部分包括标准查询，响应和Internet类RR数据格式（例如主机地址）。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Fly542 技术沉淀">
-<meta property="og:url" content="http://fly542.cn/2023/08/10/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/22-rfc1035/index.html">
+<meta property="og:url" content="http://fly542.cn/2023/08/10/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/21-rfc1035-bak/index.html">
 <meta property="og:site_name" content="Fly542 技术沉淀">
 <meta property="og:description" content="1.此备忘录的状态本RFC描述了域系统和协议的详细信息，并假定读者熟悉本文档中讨论的概念。伴随RFC，“域名-概念和设施” [RFC-1034]。 域系统是功能和数据类型（它们是正式协议）和功能和数据类型（仍处于试验阶段）的混合体。由于域系统是有意扩展的，因此应始终在官方协议之外的系统部分中期待新的数据类型和实验行为。官方协议部分包括标准查询，响应和Internet类RR数据格式（例如主机地址）。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-08-10T02:43:04.853Z">
-<meta property="article:modified_time" content="2023-08-29T03:25:48.932Z">
+<meta property="article:modified_time" content="2024-06-21T01:48:44.095Z">
 <meta property="article:author" content="Fly542">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -205,7 +205,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      275 分钟
+      277 分钟
     </span>
   
 
@@ -248,97 +248,21 @@
 <p>来自本地或其他名称服务器中存储的主文件。第二种数据是由本地解析器获取的缓存数据。此数据可能不完整，但是当重复访问非本地数据时，可以提高检索过程的性能。缓存的数据最终会被超时机制丢弃。</p>
 <p>此功能结构隔离了解析器中的用户界面，故障恢复和分发问题，并隔离了名称服务器中的数据库更新和刷新问题。</p>
 <h2 id="2-2-常用配置"><a href="#2-2-常用配置" class="headerlink" title="2.2 常用配置"></a>2.2 常用配置</h2><p>主机可以通过多种方式参与域名系统，具体取决于主机是否运行检索信息的程序<br>来自域系统的域名服务器，用于回答来自其他主机的查询的域名服务器，或两种功能的各种组合。最简单，也可能是最典型的配置如下所示：</p>
-<div class="code-wrapper"><pre><code class="hljs">             本地主机                          |  外部主机
-                                               |
-+---------+               +----------+         |  +--------+
-|         | 用户 请求     |          |   请求  |  |        |
-|  用户   |--------------&gt;|          |---------|-&gt;| 外部   |
-|  程序   |               |  解析器  |         |  |  Name  |
-|         |&lt;--------------|          |&lt;--------|--| Server |
-|         | 用户 应答     |          |  应答   |  |        |
-+---------+               +----------+         |  +--------+
-                            |     A            |
-               添加缓存     |     | references |
-                            V     |            |
-                          +----------+         |
-                          |  缓存    |         |
-                          +----------+         |
-                          
-</code></pre></div>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></div></td><td class="code"><pre><code class="hljs gherkin">             本地主机                          |<span class="hljs-string">  外部主机</span><br><span class="hljs-string">                                               </span>|<br>+---------+               +----------+         |<span class="hljs-string">  +--------+</span><br><span class="hljs-string"></span>|<span class="hljs-string">         </span>|<span class="hljs-string"> 用户 请求     </span>|<span class="hljs-string">          </span>|<span class="hljs-string">   请求  </span>|<span class="hljs-string">  </span>|<span class="hljs-string">        </span>|<br>|<span class="hljs-string">  用户   </span>|<span class="hljs-string">--------------&gt;</span>|<span class="hljs-string">          </span>|<span class="hljs-string">---------</span>|<span class="hljs-string">-&gt;</span>|<span class="hljs-string"> 外部   </span>|<br>|<span class="hljs-string">  程序   </span>|<span class="hljs-string">               </span>|<span class="hljs-string">  解析器  </span>|<span class="hljs-string">         </span>|<span class="hljs-string">  </span>|<span class="hljs-string">  Name  </span>|<br>|<span class="hljs-string">         </span>|<span class="hljs-string">&lt;--------------</span>|<span class="hljs-string">          </span>|<span class="hljs-string">&lt;--------</span>|<span class="hljs-string">--</span>|<span class="hljs-string"> Server </span>|<br>|<span class="hljs-string">         </span>|<span class="hljs-string"> 用户 应答     </span>|<span class="hljs-string">          </span>|<span class="hljs-string">  应答   </span>|<span class="hljs-string">  </span>|<span class="hljs-string">        </span>|<br>+---------+               +----------+         |<span class="hljs-string">  +--------+</span><br><span class="hljs-string">                            </span>|<span class="hljs-string">     A            </span>|<br>               添加缓存     |<span class="hljs-string">     </span>|<span class="hljs-string"> references </span>|<br>                            V     |<span class="hljs-string">            </span>|<br>                          +----------+         |<span class="hljs-string"></span><br><span class="hljs-string">                          </span>|<span class="hljs-string">  缓存    </span>|<span class="hljs-string">         </span>|<br>                          +----------+         |<br></code></pre></td></tr></table></figure>
 <p>用户程序通过解析器与域名空间交互；用户查询和用户响应的格式特定于主机及其操作系统。用户查询通常是操作系统调用，而解析程序及其缓存将是主机操作系统的一部分。能力较弱的主机可能选择将解析器实现为与需要其服务的每个程序链接的子例程。解析程序使用通过查询外部名称服务器和本地缓存获取的信息来回答用户查询。</p>
 <p>请注意，解析器可能必须对几个不同的外部名称服务器进行几个查询才能回答特定的用户查询，因此，用户查询的解析可能涉及多个网络访问和任意数量的时间。对外部名称服务器的查询和相应的响应具有描述的标准格式</p>
 <p>在本备忘录中，可能是数据报。</p>
 <p>根据其功能，名称服务器可以是专用计算机上的独立程序，也可以是大型分时主机上的一个或多个进程。一个简单的配置可能是：</p>
-<div class="code-wrapper"><pre><code class="hljs">             Local Host                        |  Foreign
-                                               |
-  +---------+                                  |
- /         /|                                  |
-+---------+ |             +----------+         |  +--------+
-|         | |             |          |responses|  |        |
-|         | |             |   Name   |---------|-&gt;|Foreign |
-|  Master |--------------&gt;|  Server  |         |  |Resolver|
-|  files  | |             |          |&lt;--------|--|        |
-|         |/              |          | queries |  +--------+
-+---------+               +----------+         |
-</code></pre></div>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs gherkin">             Local Host                        |<span class="hljs-string">  Foreign</span><br><span class="hljs-string">                                               </span>|<br>  +---------+                                  |<span class="hljs-string"></span><br><span class="hljs-string"> /         /</span>|<span class="hljs-string">                                  </span>|<br>+---------+ |<span class="hljs-string">             +----------+         </span>|<span class="hljs-string">  +--------+</span><br><span class="hljs-string"></span>|<span class="hljs-string">         </span>|<span class="hljs-string"> </span>|<span class="hljs-string">             </span>|<span class="hljs-string">          </span>|<span class="hljs-string">responses</span>|<span class="hljs-string">  </span>|<span class="hljs-string">        </span>|<br>|<span class="hljs-string">         </span>|<span class="hljs-string"> </span>|<span class="hljs-string">             </span>|<span class="hljs-string">   Name   </span>|<span class="hljs-string">---------</span>|<span class="hljs-string">-&gt;</span>|<span class="hljs-string">Foreign </span>|<br>|<span class="hljs-string">  Master </span>|<span class="hljs-string">--------------&gt;</span>|<span class="hljs-string">  Server  </span>|<span class="hljs-string">         </span>|<span class="hljs-string">  </span>|<span class="hljs-string">Resolver</span>|<br>|<span class="hljs-string">  files  </span>|<span class="hljs-string"> </span>|<span class="hljs-string">             </span>|<span class="hljs-string">          </span>|<span class="hljs-string">&lt;--------</span>|<span class="hljs-string">--</span>|<span class="hljs-string">        </span>|<br>|<span class="hljs-string">         </span>|<span class="hljs-string">/              </span>|<span class="hljs-string">          </span>|<span class="hljs-string"> queries </span>|<span class="hljs-string">  +--------+</span><br><span class="hljs-string">+---------+               +----------+         </span>|<br><br></code></pre></td></tr></table></figure>
 <p>在这里，主要名称服务器通过从其本地文件系统中读取主文件来获取有关一个或多个区域的信息，并回答有关来自外部解析器的那些区域的查询。</p>
 <p>DNS要求多个区域服务器冗余地支持所有区域。指定的辅助服务器可以使用DNS的区域传输协议来获取区域并从主服务器检查更新。该配置如下所示：</p>
-<div class="code-wrapper"><pre><code class="hljs">             Local Host                        |  Foreign
-                                               |
-  +---------+                                  |
- /         /|                                  |
-+---------+ |             +----------+         |  +--------+
-|         | |             |          |responses|  |        |
-|         | |             |   Name   |---------|-&gt;|Foreign |
-|  Master |--------------&gt;|  Server  |         |  |Resolver|
-|  files  | |             |          |&lt;--------|--|        |
-|         |/              |          | queries |  +--------+
-+---------+               +----------+         |
-                            A     |maintenance |  +--------+
-                            |     +------------|-&gt;|        |
-                            |      queries     |  |Foreign |
-                            |                  |  |  Name  |
-                            +------------------|--| Server |
-                         maintenance responses |  +--------+
-</code></pre></div>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs gherkin">             Local Host                        |<span class="hljs-string">  Foreign</span><br><span class="hljs-string">                                               </span>|<br>  +---------+                                  |<span class="hljs-string"></span><br><span class="hljs-string"> /         /</span>|<span class="hljs-string">                                  </span>|<br>+---------+ |<span class="hljs-string">             +----------+         </span>|<span class="hljs-string">  +--------+</span><br><span class="hljs-string"></span>|<span class="hljs-string">         </span>|<span class="hljs-string"> </span>|<span class="hljs-string">             </span>|<span class="hljs-string">          </span>|<span class="hljs-string">responses</span>|<span class="hljs-string">  </span>|<span class="hljs-string">        </span>|<br>|<span class="hljs-string">         </span>|<span class="hljs-string"> </span>|<span class="hljs-string">             </span>|<span class="hljs-string">   Name   </span>|<span class="hljs-string">---------</span>|<span class="hljs-string">-&gt;</span>|<span class="hljs-string">Foreign </span>|<br>|<span class="hljs-string">  Master </span>|<span class="hljs-string">--------------&gt;</span>|<span class="hljs-string">  Server  </span>|<span class="hljs-string">         </span>|<span class="hljs-string">  </span>|<span class="hljs-string">Resolver</span>|<br>|<span class="hljs-string">  files  </span>|<span class="hljs-string"> </span>|<span class="hljs-string">             </span>|<span class="hljs-string">          </span>|<span class="hljs-string">&lt;--------</span>|<span class="hljs-string">--</span>|<span class="hljs-string">        </span>|<br>|<span class="hljs-string">         </span>|<span class="hljs-string">/              </span>|<span class="hljs-string">          </span>|<span class="hljs-string"> queries </span>|<span class="hljs-string">  +--------+</span><br><span class="hljs-string">+---------+               +----------+         </span>|<br>                            A     |<span class="hljs-string">maintenance </span>|<span class="hljs-string">  +--------+</span><br><span class="hljs-string">                            </span>|<span class="hljs-string">     +------------</span>|<span class="hljs-string">-&gt;</span>|<span class="hljs-string">        </span>|<br>                            |<span class="hljs-string">      queries     </span>|<span class="hljs-string">  </span>|<span class="hljs-string">Foreign </span>|<br>                            |<span class="hljs-string">                  </span>|<span class="hljs-string">  </span>|<span class="hljs-string">  Name  </span>|<br>                            +------------------|<span class="hljs-string">--</span>|<span class="hljs-string"> Server </span>|<br>                         maintenance responses |<span class="hljs-string">  +--------+</span><br></code></pre></td></tr></table></figure>
 <p>在这种配置中，名称服务器会定期与外部名称服务器建立虚拟电路，以获取区域的副本或检查现有副本是否已更改。为这些维护活动发送的消息采用与查询和响应相同的形式，但是消息顺序有所不同。</p>
 <p>支持域名系统各个方面的主机中的信息流如下所示：</p>
-<div class="code-wrapper"><pre><code class="hljs">             Local Host                        |  Foreign
-                                               |
-+---------+               +----------+         |  +--------+
-|         | user queries  |          |queries  |  |        |
-|  User   |--------------&gt;|          |---------|-&gt;|Foreign |
-| Program |               | Resolver |         |  |  Name  |
-|         |&lt;--------------|          |&lt;--------|--| Server |
-|         | user responses|          |responses|  |        |
-+---------+               +----------+         |  +--------+
-                            |     A            |
-            cache additions |     | references |
-                            V     |            |
-                          +----------+         |
-                          |  Shared  |         |
-                          | database |         |
-                          +----------+         |
-                            A     |            |
-  +---------+     refreshes |     | references |
- /         /|               |     V            |
-+---------+ |             +----------+         |  +--------+
-|         | |             |          |responses|  |        |
-|         | |             |   Name   |---------|-&gt;|Foreign |
-|  Master |--------------&gt;|  Server  |         |  |Resolver|
-|  files  | |             |          |&lt;--------|--|        |
-|         |/              |          | queries |  +--------+
-+---------+               +----------+         |
-                            A     |maintenance |  +--------+
-                            |     +------------|-&gt;|        |
-                            |      queries     |  |Foreign |
-                            |                  |  |  Name  |
-                            +------------------|--| Server |
-                         maintenance responses |  +--------+
-</code></pre></div>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs gherkin">             Local Host                        |<span class="hljs-string">  Foreign</span><br><span class="hljs-string">                                               </span>|<br>+---------+               +----------+         |<span class="hljs-string">  +--------+</span><br><span class="hljs-string"></span>|<span class="hljs-string">         </span>|<span class="hljs-string"> user queries  </span>|<span class="hljs-string">          </span>|<span class="hljs-string">queries  </span>|<span class="hljs-string">  </span>|<span class="hljs-string">        </span>|<br>|<span class="hljs-string">  User   </span>|<span class="hljs-string">--------------&gt;</span>|<span class="hljs-string">          </span>|<span class="hljs-string">---------</span>|<span class="hljs-string">-&gt;</span>|<span class="hljs-string">Foreign </span>|<br>|<span class="hljs-string"> Program </span>|<span class="hljs-string">               </span>|<span class="hljs-string"> Resolver </span>|<span class="hljs-string">         </span>|<span class="hljs-string">  </span>|<span class="hljs-string">  Name  </span>|<br>|<span class="hljs-string">         </span>|<span class="hljs-string">&lt;--------------</span>|<span class="hljs-string">          </span>|<span class="hljs-string">&lt;--------</span>|<span class="hljs-string">--</span>|<span class="hljs-string"> Server </span>|<br>|<span class="hljs-string">         </span>|<span class="hljs-string"> user responses</span>|<span class="hljs-string">          </span>|<span class="hljs-string">responses</span>|<span class="hljs-string">  </span>|<span class="hljs-string">        </span>|<br>+---------+               +----------+         |<span class="hljs-string">  +--------+</span><br><span class="hljs-string">                            </span>|<span class="hljs-string">     A            </span>|<br>            cache additions |<span class="hljs-string">     </span>|<span class="hljs-string"> references </span>|<br>                            V     |<span class="hljs-string">            </span>|<br>                          +----------+         |<span class="hljs-string"></span><br><span class="hljs-string">                          </span>|<span class="hljs-string">  Shared  </span>|<span class="hljs-string">         </span>|<br>                          |<span class="hljs-string"> database </span>|<span class="hljs-string">         </span>|<br>                          +----------+         |<span class="hljs-string"></span><br><span class="hljs-string">                            A     </span>|<span class="hljs-string">            </span>|<br>  +---------+     refreshes |<span class="hljs-string">     </span>|<span class="hljs-string"> references </span>|<br> /         /|<span class="hljs-string">               </span>|<span class="hljs-string">     V            </span>|<br>+---------+ |<span class="hljs-string">             +----------+         </span>|<span class="hljs-string">  +--------+</span><br><span class="hljs-string"></span>|<span class="hljs-string">         </span>|<span class="hljs-string"> </span>|<span class="hljs-string">             </span>|<span class="hljs-string">          </span>|<span class="hljs-string">responses</span>|<span class="hljs-string">  </span>|<span class="hljs-string">        </span>|<br>|<span class="hljs-string">         </span>|<span class="hljs-string"> </span>|<span class="hljs-string">             </span>|<span class="hljs-string">   Name   </span>|<span class="hljs-string">---------</span>|<span class="hljs-string">-&gt;</span>|<span class="hljs-string">Foreign </span>|<br>|<span class="hljs-string">  Master </span>|<span class="hljs-string">--------------&gt;</span>|<span class="hljs-string">  Server  </span>|<span class="hljs-string">         </span>|<span class="hljs-string">  </span>|<span class="hljs-string">Resolver</span>|<br>|<span class="hljs-string">  files  </span>|<span class="hljs-string"> </span>|<span class="hljs-string">             </span>|<span class="hljs-string">          </span>|<span class="hljs-string">&lt;--------</span>|<span class="hljs-string">--</span>|<span class="hljs-string">        </span>|<br>|<span class="hljs-string">         </span>|<span class="hljs-string">/              </span>|<span class="hljs-string">          </span>|<span class="hljs-string"> queries </span>|<span class="hljs-string">  +--------+</span><br><span class="hljs-string">+---------+               +----------+         </span>|<br>                            A     |<span class="hljs-string">maintenance </span>|<span class="hljs-string">  +--------+</span><br><span class="hljs-string">                            </span>|<span class="hljs-string">     +------------</span>|<span class="hljs-string">-&gt;</span>|<span class="hljs-string">        </span>|<br>                            |<span class="hljs-string">      queries     </span>|<span class="hljs-string">  </span>|<span class="hljs-string">Foreign </span>|<br>                            |<span class="hljs-string">                  </span>|<span class="hljs-string">  </span>|<span class="hljs-string">  Name  </span>|<br>                            +------------------|<span class="hljs-string">--</span>|<span class="hljs-string"> Server </span>|<br>                         maintenance responses |<span class="hljs-string">  +--------+</span><br></code></pre></td></tr></table></figure>
 <p>共享数据库保存本地名称服务器和解析器的域空间数据。共享数据库的内容通常是由名称服务器的定期刷新操作维护的权威数据和来自先前解析程序请求的缓存数据的混合。域数据的结构以及名称服务器和解析程序之间同步的必要性暗示了此数据库的一般特征，但实际格式取决于本地实现者。</p>
 <p>还可以定制信息流，以便一组主机一起行动以优化活动。有时这样做是为了减轻负担<br>功能强大的主机，这样他们就不必实施完整的解析程序。这对于希望最大程度地减少所需新网络代码量的PC或主机而言是合适的。在集中式缓存具有较高命中率的前提下，该方案还可以允许一组主机共享少量缓存，而不必维护大量单独的缓存。无论哪种情况，解析器都将由存根解析器代替，存根解析器充当位于一个或多个已知执行该服务的名称服务器中的递归服务器中的解析器的前端：</p>
-<figure class="highlight gherkin"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></div></td><td class="code"><pre><code class="hljs gherkin">               Local Hosts                     |<span class="hljs-string">  Foreign</span><br><span class="hljs-string">                                               </span>|<br>+---------+                                    |<span class="hljs-string"></span><br><span class="hljs-string"></span>|<span class="hljs-string">         </span>|<span class="hljs-string"> responses                          </span>|<br>|<span class="hljs-string"> Stub    </span>|<span class="hljs-string">&lt;--------------------+              </span>|<br>|<span class="hljs-string"> Resolver</span>|<span class="hljs-string">                     </span>|<span class="hljs-string">              </span>|<br>|<span class="hljs-string">         </span>|<span class="hljs-string">----------------+    </span>|<span class="hljs-string">              </span>|<br>+---------+ recursive      |<span class="hljs-string">    </span>|<span class="hljs-string">              </span>|<br>            queries        |<span class="hljs-string">    </span>|<span class="hljs-string">              </span>|<br>                           V    |<span class="hljs-string">              </span>|<br>+---------+ recursive     +----------+         |<span class="hljs-string">  +--------+</span><br><span class="hljs-string"></span>|<span class="hljs-string">         </span>|<span class="hljs-string"> queries       </span>|<span class="hljs-string">          </span>|<span class="hljs-string">queries  </span>|<span class="hljs-string">  </span>|<span class="hljs-string">        </span>|<br>|<span class="hljs-string"> Stub    </span>|<span class="hljs-string">--------------&gt;</span>|<span class="hljs-string"> Recursive</span>|<span class="hljs-string">---------</span>|<span class="hljs-string">-&gt;</span>|<span class="hljs-string">Foreign </span>|<br>|<span class="hljs-string"> Resolver</span>|<span class="hljs-string">               </span>|<span class="hljs-string"> Server   </span>|<span class="hljs-string">         </span>|<span class="hljs-string">  </span>|<span class="hljs-string">  Name  </span>|<br>|<span class="hljs-string">         </span>|<span class="hljs-string">&lt;--------------</span>|<span class="hljs-string">          </span>|<span class="hljs-string">&lt;--------</span>|<span class="hljs-string">--</span>|<span class="hljs-string"> Server </span>|<br>+---------+ responses     |<span class="hljs-string">          </span>|<span class="hljs-string">responses</span>|<span class="hljs-string">  </span>|<span class="hljs-string">        </span>|<br>                          +----------+         |<span class="hljs-string">  +--------+</span><br><span class="hljs-string">                          </span>|<span class="hljs-string">  Central </span>|<span class="hljs-string">         </span>|<br>                          |<span class="hljs-string">   cache  </span>|<span class="hljs-string">         </span>|<br>                          +----------+         |<br></code></pre></td></tr></table></figure>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs gherkin">               Local Hosts                     |<span class="hljs-string">  Foreign</span><br><span class="hljs-string">                                               </span>|<br>+---------+                                    |<span class="hljs-string"></span><br><span class="hljs-string"></span>|<span class="hljs-string">         </span>|<span class="hljs-string"> responses                          </span>|<br>|<span class="hljs-string"> Stub    </span>|<span class="hljs-string">&lt;--------------------+              </span>|<br>|<span class="hljs-string"> Resolver</span>|<span class="hljs-string">                     </span>|<span class="hljs-string">              </span>|<br>|<span class="hljs-string">         </span>|<span class="hljs-string">----------------+    </span>|<span class="hljs-string">              </span>|<br>+---------+ recursive      |<span class="hljs-string">    </span>|<span class="hljs-string">              </span>|<br>            queries        |<span class="hljs-string">    </span>|<span class="hljs-string">              </span>|<br>                           V    |<span class="hljs-string">              </span>|<br>+---------+ recursive     +----------+         |<span class="hljs-string">  +--------+</span><br><span class="hljs-string"></span>|<span class="hljs-string">         </span>|<span class="hljs-string"> queries       </span>|<span class="hljs-string">          </span>|<span class="hljs-string">queries  </span>|<span class="hljs-string">  </span>|<span class="hljs-string">        </span>|<br>|<span class="hljs-string"> Stub    </span>|<span class="hljs-string">--------------&gt;</span>|<span class="hljs-string"> Recursive</span>|<span class="hljs-string">---------</span>|<span class="hljs-string">-&gt;</span>|<span class="hljs-string">Foreign </span>|<br>|<span class="hljs-string"> Resolver</span>|<span class="hljs-string">               </span>|<span class="hljs-string"> Server   </span>|<span class="hljs-string">         </span>|<span class="hljs-string">  </span>|<span class="hljs-string">  Name  </span>|<br>|<span class="hljs-string">         </span>|<span class="hljs-string">&lt;--------------</span>|<span class="hljs-string">          </span>|<span class="hljs-string">&lt;--------</span>|<span class="hljs-string">--</span>|<span class="hljs-string"> Server </span>|<br>+---------+ responses     |<span class="hljs-string">          </span>|<span class="hljs-string">responses</span>|<span class="hljs-string">  </span>|<span class="hljs-string">        </span>|<br>                          +----------+         |<span class="hljs-string">  +--------+</span><br><span class="hljs-string">                          </span>|<span class="hljs-string">  Central </span>|<span class="hljs-string">         </span>|<br>                          |<span class="hljs-string">   cache  </span>|<span class="hljs-string">         </span>|<br>                          +----------+         |<br></code></pre></td></tr></table></figure>
 
 <p>无论如何，请注意，为了确保可靠性，始终会复制域组件。</p>
 <h2 id="2-3-约定"><a href="#2-3-约定" class="headerlink" title="2.3 约定"></a>2.3 约定</h2><p>域系统具有处理低级但基本问题的几种约定。尽管实现者可以在自己的系统内随意违反这些约定，但他必须在从其他主机观察到的所有行为中遵守这些约定。</p>
@@ -370,27 +294,8 @@
 <p>为了简化实施，域名的总长度（即，标签八位字节和标签长度八位字节）被限制为255个八位字节或更少。</p>
 <p>尽管标签可以包含组成标签的八位字节中的任何8位值，但强烈建议标签遵循本备忘录中其他地方描述的首选语法，该语法与现有主机命名约定兼容。名称服务器和解析器必须以不区分大小写的方式（即A = a）比较标签，并假设ASCII的奇偶校验为零。非字母代码必须完全匹配。</p>
 <h2 id="3-2-RR定义"><a href="#3-2-RR定义" class="headerlink" title="3.2  RR定义"></a>3.2  RR定义</h2><h3 id="3-2-1-格式"><a href="#3-2-1-格式" class="headerlink" title="3.2.1 格式"></a>3.2.1 格式</h3><p>所有RR具有相同的顶级格式，如下所示：</p>
-<div class="code-wrapper"><pre><code class="hljs">                                1  1  1  1  1  1
-  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                                               |
-/                                               /
-/                      NAME                     /
-|                                               |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                      TYPE                     |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                     CLASS                     |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                      TTL                      |
-|                                               |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                   RDLENGTH                    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--|
-/                     RDATA                     /
-/                                               /
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-</code></pre></div>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">                                1  1  1  1  1  1</span><br><span class="hljs-section">  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br>|                                               |<br>/                                               /<br>/                      NAME                     /<br><span class="hljs-section">|                                               |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                      TYPE                     |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                     CLASS                     |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br>|                      TTL                      |<br><span class="hljs-section">|                                               |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br>|                   RDLENGTH                    |<br><span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--|<br>/                     RDATA                     /<br><span class="hljs-section">/                                               /</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></code></pre></td></tr></table></figure>
+
 <p>在哪里：</p>
 <p>命名所有者名称，即此资源记录所属的节点的名称。</p>
 <p>TYPE包含RR TYPE代码之一的两个八位位组。</p>
@@ -400,64 +305,29 @@
 <p>RDATA是描述资源的八位字节的可变长度字符串。此信息的格式根据资源记录的类型和类别而有所不同。</p>
 <h3 id="3-2-2-TYPE值"><a href="#3-2-2-TYPE值" class="headerlink" title="3.2.2  TYPE值"></a>3.2.2  TYPE值</h3><p>TYPE字段用于资源记录中。请注意，这些类型是QTYPE的子集。</p>
 <p>TYPE的值和含义</p>
-<p>1主机地址</p>
-<p>NS 2权威名称服务器</p>
-<p>MD 3邮件目的地（已淘汰-使用MX）</p>
-<p>MF 4邮件转发器（已淘汰-使用MX）</p>
-<p>CNAME 5别名的规范名称</p>
-<p>SOA 6标志着授权区域的开始</p>
-<p>MB 7一个邮箱域名（EXPERIMENTAL）</p>
-<p>MG 8邮件组成员（EXPERIMENTAL）</p>
-<p>MR 9邮件重命名域名（EXPERIMENTAL）</p>
-<p>空10空RR（EXPERIMENTAL）</p>
-<p>WKS 11众所周知的服务描述</p>
-<p>PTR 12域名指针</p>
-<p>HINFO 13主机信息</p>
-<p>MINFO 14邮箱或邮件列表信息</p>
-<p>MX 15邮件交换</p>
-<p>TXT 16文字字串</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs dns"><span class="hljs-number">1</span>主机地址<br><br><span class="hljs-keyword">NS</span> <span class="hljs-number">2</span>权威名称服务器<br><br>MD <span class="hljs-number">3</span>邮件目的地（已淘汰-使用<span class="hljs-keyword">MX</span>）<br><br>MF <span class="hljs-number">4</span>邮件转发器（已淘汰-使用<span class="hljs-keyword">MX</span>）<br><br><span class="hljs-keyword">CNAME</span> <span class="hljs-number">5</span>别名的规范名称<br><br><span class="hljs-keyword">SOA</span> <span class="hljs-number">6</span>标志着授权区域的开始<br><br>MB <span class="hljs-number">7</span>一个邮箱域名（EXPERIMENTAL）<br><br>MG <span class="hljs-number">8</span>邮件组成员（EXPERIMENTAL）<br><br>MR <span class="hljs-number">9</span>邮件重命名域名（EXPERIMENTAL）<br><br>空<span class="hljs-number">10</span>空RR（EXPERIMENTAL）<br><br>WKS <span class="hljs-number">11</span>众所周知的服务描述<br><br><span class="hljs-keyword">PTR</span> <span class="hljs-number">12</span>域名指针<br><br>HINFO <span class="hljs-number">13</span>主机信息<br><br>MINFO <span class="hljs-number">14</span>邮箱或邮件列表信息<br><br><span class="hljs-keyword">MX</span> <span class="hljs-number">15</span>邮件交换<br><br><span class="hljs-keyword">TXT</span> <span class="hljs-number">16</span>文字字串<br></code></pre></td></tr></table></figure>
 <h3 id="3-2-3。-QTYPE值"><a href="#3-2-3。-QTYPE值" class="headerlink" title="3.2.3。 QTYPE值"></a>3.2.3。 QTYPE值</h3><p>QTYPE字段出现在查询的问题部分。 QTYPES是TYPE的超集，因此所有TYPE都是有效的QTYPE。此外，还定义了以下QTYPE：</p>
-<p>AXFR 252要求转移整个区域</p>
-<p>MAILB 253请求与邮箱相关的记录（MB，MG或MR）</p>
-<p>MAILA 254要求邮件代理RR（已淘汰-请参阅MX）</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">AXFR</span> <span class="hljs-number">252</span>要求转移整个区域<br><br><span class="hljs-attribute">MAILB</span> <span class="hljs-number">253</span>请求与邮箱相关的记录（MB，MG或MR）<br><br><span class="hljs-attribute">MAILA</span> <span class="hljs-number">254</span>要求邮件代理RR（已淘汰-请参阅MX）<br></code></pre></td></tr></table></figure>
 <ul>
 <li>255所有记录的请求</li>
 </ul>
 <h3 id="3-2-4。类别值"><a href="#3-2-4。类别值" class="headerlink" title="3.2.4。类别值"></a>3.2.4。类别值</h3><p>CLASS字段出现在资源记录中。以下CLASS助记符<br>和值定义：</p>
-<p>IN 1互联网</p>
-<p>CS 2 CSNET类（作废-仅用于某些作废的RFC中的示例）</p>
-<p>CH 3 CHAOS类</p>
-<p>HS 4 Hesiod [Dyer 87]</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">IN</span> <span class="hljs-number">1</span>互联网<br><br><span class="hljs-attribute">CS</span> <span class="hljs-number">2</span> CSNET类（作废-仅用于某些作废的RFC中的示例）<br><br><span class="hljs-attribute">CH</span> <span class="hljs-number">3</span> CHAOS类<br><br><span class="hljs-attribute">HS</span> <span class="hljs-number">4</span> Hesiod<span class="hljs-meta"> [Dyer 87]</span><br></code></pre></td></tr></table></figure>
 <h3 id="3-2-5。-QCLASS值"><a href="#3-2-5。-QCLASS值" class="headerlink" title="3.2.5。 QCLASS值"></a>3.2.5。 QCLASS值</h3><p>QCLASS字段出现在查询的问题部分。 QCLASS值是CLASS值的超集；每个CLASS都是有效的QCLASS。除了CLASS值，还定义了以下QCLASS：</p>
-<ul>
-<li>255个任何班级</li>
-</ul>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-bullet">* </span>255个任何班级<br></code></pre></td></tr></table></figure>
 <h2 id="3-3。标准RR"><a href="#3-3。标准RR" class="headerlink" title="3.3。标准RR"></a>3.3。标准RR</h2><p>预期至少在所有类别中都会出现以下RR定义。特别是，NS，SOA，CNAME和PTR将在所有类中使用，并且在所有类中具有相同的格式。因为它们的RDATA格式是已知的，所以可以压缩这些RR的RDATA部分中的所有域名。</p>
 <p><domain-name>是表示为一系列标签的域名，并以长度为零的标签终止。 <character-string>是一个单字节长度的八位位组，后跟该数量的字符。 <character-string>被视为二进制信息，并且最大长度为256个字符（包括长度八位位组）。</p>
-<h3 id="3-3-1。-CNAME-RDATA格式"><a href="#3-3-1。-CNAME-RDATA格式" class="headerlink" title="3.3.1。 CNAME RDATA格式"></a>3.3.1。 CNAME RDATA格式</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-/ CNAME /
-///
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-</code></pre></div>
+<h3 id="3-3-1。-CNAME-RDATA格式"><a href="#3-3-1。-CNAME-RDATA格式" class="headerlink" title="3.3.1。 CNAME RDATA格式"></a>3.3.1。 CNAME RDATA格式</h3><figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs arcade">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+<br><span class="hljs-regexp">/ CNAME /</span><br><span class="hljs-comment">///</span><br>+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+<br></code></pre></td></tr></table></figure>
 <p>在哪里：</p>
 <p>CNAME一个<domain-name>，它指定所有者的规范名称或主名称。所有者名称是别名。</p>
 <p>CNAME RR不会引起任何其他节处理，但是在某些情况下，名称服务器可以选择以规范名称重新启动查询。有关详细信息，请参见[RFC-1034]中名称服务器逻辑的描述。</p>
-<h3 id="3-3-2。-HINFO-RDATA格式"><a href="#3-3-2。-HINFO-RDATA格式" class="headerlink" title="3.3.2。 HINFO RDATA格式"></a>3.3.2。 HINFO RDATA格式</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-/                      中央处理器                      /
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-/操作系统/
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-</code></pre></div>
+<h3 id="3-3-2。-HINFO-RDATA格式"><a href="#3-3-2。-HINFO-RDATA格式" class="headerlink" title="3.3.2。 HINFO RDATA格式"></a>3.3.2。 HINFO RDATA格式</h3><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">+-+</span>-<span class="hljs-code">+-+</span>-<span class="hljs-code">+-+</span>-<span class="hljs-code">+-+</span>-<span class="hljs-code">+-+</span>-<span class="hljs-code">+-+</span>-<span class="hljs-code">+-+</span>-<span class="hljs-code">+-+</span>-<span class="hljs-code">+-+</span><br><span class="hljs-section">/                      中央处理器                      /</span><br><span class="hljs-section">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="hljs-section">/操作系统/</span><br><span class="hljs-section">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br></code></pre></td></tr></table></figure>
 <p>在哪里：</p>
 <p>CPU一个<character-string>，它指定CPU类型。</p>
 <p>OS A <character-string>指定操作<br>                系统类型。</p>
 <p>可在[RFC-1010]中找到CPU和OS的标准值。</p>
 <p>HINFO记录用于获取有关主机的常规信息。主要用途是用于诸如FTP之类的协议，当它们在相同类型的机器或操作系统之间进行交谈时，可以使用特殊的过程。</p>
-<h3 id="3-3-3。-MB-RDATA格式（EXPERIMENTAL）"><a href="#3-3-3。-MB-RDATA格式（EXPERIMENTAL）" class="headerlink" title="3.3.3。 MB RDATA格式（EXPERIMENTAL）"></a>3.3.3。 MB RDATA格式（EXPERIMENTAL）</h3><div class="code-wrapper"><pre><code class="hljs">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-/ MADNAME /
-///
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-</code></pre></div>
+<h3 id="3-3-3。-MB-RDATA格式（EXPERIMENTAL）"><a href="#3-3-3。-MB-RDATA格式（EXPERIMENTAL）" class="headerlink" title="3.3.3。 MB RDATA格式（EXPERIMENTAL）"></a>3.3.3。 MB RDATA格式（EXPERIMENTAL）</h3><figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs arcade">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+<br><span class="hljs-regexp">/ MADNAME /</span><br><span class="hljs-comment">///</span><br>+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+<br></code></pre></td></tr></table></figure>
 <p>在哪里：</p>
 <p>MADNAME一个<domain-name>，它指定具有指定邮箱的主机。</p>
 <p>MB记录引起附加的节处理，该节查找与MADNAME对应的A型RR。</p>
@@ -617,7 +487,7 @@
 <p>   -网关通常在单独的域中具有两个名称，其中只有一个可以是主要的。</p>
 <p>   -使用域数据库初始化其路由表的系统必须以足够的网关信息开头，以确保它们可以访问适当的名称服务器。</p>
 <p>   -网关数据仅以与当前HOSTS.TXT文件等效的方式反映网关的存在。它不会替代GGP或EGP中的动态可用性信息。</p>
-<h2 id="3-6。定义新类型，类和特殊名称空间"><a href="#3-6。定义新类型，类和特殊名称空间" class="headerlink" title="3.6。定义新类型，类和特殊名称空间"></a>3.6。定义新类型，类和特殊名称空间</h2><p>先前定义的类型和类别是截至本备忘录发布之日为止正在使用的类型和类别。应该有新的定义。本节向考虑添加现有设施的设计人员提出一些建议。邮件列表<a href="mailto:&#x4e;&#x41;&#x4d;&#x45;&#68;&#x52;&#x4f;&#80;&#x50;&#x45;&#x52;&#x53;&#x40;&#x53;&#82;&#x49;&#45;&#x4e;&#73;&#67;&#46;&#65;&#82;&#80;&#x41;">&#x4e;&#x41;&#x4d;&#x45;&#68;&#x52;&#x4f;&#80;&#x50;&#x45;&#x52;&#x53;&#x40;&#x53;&#82;&#x49;&#45;&#x4e;&#73;&#67;&#46;&#65;&#82;&#80;&#x41;</a>是讨论设计问题的论坛。</p>
+<h2 id="3-6。定义新类型，类和特殊名称空间"><a href="#3-6。定义新类型，类和特殊名称空间" class="headerlink" title="3.6。定义新类型，类和特殊名称空间"></a>3.6。定义新类型，类和特殊名称空间</h2><p>先前定义的类型和类别是截至本备忘录发布之日为止正在使用的类型和类别。应该有新的定义。本节向考虑添加现有设施的设计人员提出一些建议。邮件列表<a href="mailto:&#78;&#x41;&#77;&#69;&#68;&#82;&#x4f;&#x50;&#x50;&#69;&#82;&#x53;&#x40;&#x53;&#82;&#x49;&#45;&#x4e;&#x49;&#67;&#46;&#65;&#x52;&#80;&#x41;">&#78;&#x41;&#77;&#69;&#68;&#82;&#x4f;&#x50;&#x50;&#69;&#82;&#x53;&#x40;&#x53;&#82;&#x49;&#45;&#x4e;&#x49;&#67;&#46;&#65;&#x52;&#80;&#x41;</a>是讨论设计问题的论坛。</p>
 <p>通常，当要将有关现有对象的新信息添加到数据库中时，或者对于某些全新对象，我们需要新的数据格式时，使用新类型是合适的。设计人员应尝试定义通常适用于所有类的类型及其RDATA格式，并避免信息重复。当将DNS用于新协议等需要新的特定于类的数据格式时，或者需要复制现有名称空间但需要单独的管理域时，则使用新类是合适的。</p>
 <p>新的类型和类需要用于主文件的助记符。主文件的格式要求类型和类的助记符不相交。</p>
 <p>TYPE和CLASS值必须分别是QTYPE和QCLASS的适当子集。</p>
@@ -842,7 +712,7 @@ STOOGES MG MOE
         拉里
         MG库里
 </code></pre></div>
-<p>请注意，在SOA RR中使用\字符来指定负责人的邮箱“ <a href="mailto:&#x41;&#x63;&#116;&#105;&#111;&#x6e;&#46;&#100;&#111;&#x6d;&#97;&#x69;&#x6e;&#x73;&#x40;&#x45;&#46;&#x49;&#83;&#73;&#x2e;&#x45;&#x44;&#85;">&#x41;&#x63;&#116;&#105;&#111;&#x6e;&#46;&#100;&#111;&#x6d;&#97;&#x69;&#x6e;&#x73;&#x40;&#x45;&#46;&#x49;&#83;&#73;&#x2e;&#x45;&#x44;&#85;</a>”。</p>
+<p>请注意，在SOA RR中使用\字符来指定负责人的邮箱“ <a href="mailto:&#65;&#x63;&#116;&#x69;&#x6f;&#x6e;&#46;&#x64;&#x6f;&#109;&#97;&#x69;&#110;&#115;&#64;&#69;&#x2e;&#73;&#x53;&#x49;&#46;&#x45;&#68;&#x55;">&#65;&#x63;&#116;&#x69;&#x6f;&#x6e;&#46;&#x64;&#x6f;&#109;&#97;&#x69;&#110;&#115;&#64;&#69;&#x2e;&#73;&#x53;&#x49;&#46;&#x45;&#68;&#x55;</a>”。</p>
 <p>＃6.名称服务器的实现</p>
 <h2 id="6-1。建筑学"><a href="#6-1。建筑学" class="headerlink" title="6.1。建筑学"></a>6.1。建筑学</h2><p>名称服务器的最佳结构将取决于主机操作系统，以及名称服务器是否与解析程序操作集成在一起（通过支持递归服务或通过与解析程序共享其数据库）。本节讨论与解析器共享数据库的名称服务器的实现注意事项，但是大多数这些担忧都存在于任何名称服务器中。</p>
 <p>6.1.1。控制</p>
@@ -951,11 +821,11 @@ STOOGES MG MOE
 <p>＃8.邮件支持</p>
 <p>域系统定义了将邮箱映射到域名的标准，以及两种使用邮箱信息导出邮件路由信息的方法。第一种方法称为邮件交换绑定，另一种方法称为邮箱绑定。邮箱编码标准和邮件交换绑定是DNS官方协议的一部分，是Internet中邮件路由的推荐方法。邮箱绑定是一项实验性功能，目前仍在开发中，并且可能会发生变化。</p>
 <p>邮箱编码标准假定邮箱名称的格式为“ &lt;本地部分&gt; @ &lt;邮件域&gt;”。尽管这些部分中的每个部分中允许的语法在各种邮件Internet之间都有很大的不同，但ARPA Internet的首选语法在[RFC-822]中给出。</p>
-<p>DNS将<local-part>编码为单个标签，并将<mail-domain>编码为域名。 <local-part>中的单个标签以<mail-domain>中的域名开头，以形成与邮箱相对应的域名。因此，邮箱<a href="mailto:&#72;&#79;&#83;&#84;&#77;&#65;&#x53;&#84;&#69;&#82;&#x40;&#83;&#x52;&#x49;&#45;&#x4e;&#73;&#x43;&#46;&#65;&#82;&#x50;&#65;">&#72;&#79;&#83;&#84;&#77;&#65;&#x53;&#84;&#69;&#82;&#x40;&#83;&#x52;&#x49;&#45;&#x4e;&#73;&#x43;&#46;&#65;&#82;&#x50;&#65;</a>被映射到域名HOSTMASTER.SRI-NIC.ARPA。如果<local-part>包含点或其他特殊字符，则其在主文件中的表示形式将需要使用反斜杠引号来确保域名正确编码。例如，邮箱<a href="mailto:&#x41;&#x63;&#116;&#x69;&#x6f;&#x6e;&#46;&#100;&#x6f;&#109;&#x61;&#105;&#110;&#x73;&#64;&#x49;&#83;&#73;&#46;&#x45;&#68;&#x55;">&#x41;&#x63;&#116;&#x69;&#x6f;&#x6e;&#46;&#100;&#x6f;&#109;&#x61;&#105;&#110;&#x73;&#64;&#x49;&#83;&#73;&#46;&#x45;&#68;&#x55;</a>将表示为Action \ .domains.ISI.EDU。</p>
+<p>DNS将<local-part>编码为单个标签，并将<mail-domain>编码为域名。 <local-part>中的单个标签以<mail-domain>中的域名开头，以形成与邮箱相对应的域名。因此，邮箱<a href="mailto:&#x48;&#79;&#x53;&#84;&#77;&#65;&#x53;&#84;&#x45;&#82;&#64;&#83;&#x52;&#73;&#x2d;&#x4e;&#x49;&#67;&#x2e;&#x41;&#82;&#x50;&#x41;">&#x48;&#79;&#x53;&#84;&#77;&#65;&#x53;&#84;&#x45;&#82;&#64;&#83;&#x52;&#73;&#x2d;&#x4e;&#x49;&#67;&#x2e;&#x41;&#82;&#x50;&#x41;</a>被映射到域名HOSTMASTER.SRI-NIC.ARPA。如果<local-part>包含点或其他特殊字符，则其在主文件中的表示形式将需要使用反斜杠引号来确保域名正确编码。例如，邮箱<a href="mailto:&#x41;&#x63;&#x74;&#105;&#x6f;&#x6e;&#46;&#100;&#x6f;&#109;&#x61;&#x69;&#110;&#x73;&#x40;&#x49;&#83;&#73;&#46;&#x45;&#68;&#85;">&#x41;&#x63;&#x74;&#105;&#x6f;&#x6e;&#46;&#100;&#x6f;&#109;&#x61;&#x69;&#110;&#x73;&#x40;&#x49;&#83;&#73;&#46;&#x45;&#68;&#85;</a>将表示为Action \ .domains.ISI.EDU。</p>
 <h2 id="8-1。邮件交换绑定"><a href="#8-1。邮件交换绑定" class="headerlink" title="8.1。邮件交换绑定"></a>8.1。邮件交换绑定</h2><p>邮件交换绑定使用邮箱规范的<mail-domain>部分来确定应将邮件发送到的位置。甚至没有参考<local-part>。 [RFC-974]详细指定了此方法，在尝试使用邮件交换支持之前应进行咨询。</p>
 <p>此方法的优点之一是，它使邮件目标名称与用于支持邮件服务的主机脱钩，但代价是查找功能中需要另外一层间接层。但是，加法层应避免在<local-part>中使用复杂的“％”，“！”等编码。</p>
 <p>该方法的本质是将<mail-domain>用作域名来查找类型MX RR，该MX RR列出愿意接受<mail-domain>的邮件的主机，以及根据主机对主机进行排序的优先级值由管理员为<mail-domain>指定。</p>
-<p>在本备忘录中，示例中将<mail-domain> ISI.EDU与主机VENERA.ISI.EDU和VAXA.ISI.EDU一起用作ISI.EDU的邮件交换。如果邮件发给<a href="mailto:&#x4d;&#111;&#99;&#x6b;&#97;&#112;&#101;&#116;&#114;&#x69;&#115;&#64;&#73;&#x53;&#73;&#x2e;&#x45;&#x44;&#x55;">&#x4d;&#111;&#99;&#x6b;&#97;&#112;&#101;&#116;&#114;&#x69;&#115;&#64;&#73;&#x53;&#73;&#x2e;&#x45;&#x44;&#x55;</a>的邮件，它将通过查找ISI.EDU的MX RR进行路由。 ISI.EDU上的MX RR分别名为VENERA.ISI.EDU和VAXA.ISI.EDU，类型为A的查询可以找到主机地址。</p>
+<p>在本备忘录中，示例中将<mail-domain> ISI.EDU与主机VENERA.ISI.EDU和VAXA.ISI.EDU一起用作ISI.EDU的邮件交换。如果邮件发给<a href="mailto:&#77;&#111;&#99;&#107;&#97;&#112;&#101;&#116;&#114;&#x69;&#115;&#64;&#73;&#83;&#x49;&#x2e;&#69;&#x44;&#x55;">&#77;&#111;&#99;&#107;&#97;&#112;&#101;&#116;&#114;&#x69;&#115;&#64;&#73;&#83;&#x49;&#x2e;&#69;&#x44;&#x55;</a>的邮件，它将通过查找ISI.EDU的MX RR进行路由。 ISI.EDU上的MX RR分别名为VENERA.ISI.EDU和VAXA.ISI.EDU，类型为A的查询可以找到主机地址。</p>
 <h2 id="8-2。邮箱绑定（实验性）"><a href="#8-2。邮箱绑定（实验性）" class="headerlink" title="8.2。邮箱绑定（实验性）"></a>8.2。邮箱绑定（实验性）</h2><p>在邮箱绑定中，邮件程序使用整个邮件目标规范来构造域名。邮箱的编码域名在QTYPE = MAILB查询中用作QNAME字段。</p>
 <p>此查询可能有几种结果：</p>
 <p>   1.查询可能返回名称错误，表明邮箱不存在为域名。</p>
