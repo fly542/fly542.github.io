@@ -24,7 +24,7 @@
 <meta property="og:description" content="1. Introduction The Domain Name System (DNS) [RFC1034, RFC1035] is a replicated hierarchical distributed database system that provides information fundamental to Internet operations, such as name &lt;">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-06-21T01:03:26.000Z">
-<meta property="article:modified_time" content="2024-06-21T02:40:12.546Z">
+<meta property="article:modified_time" content="2024-06-24T02:18:16.424Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="dns">
 <meta name="twitter:card" content="summary_large_image">
@@ -197,7 +197,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      24k 字
+      25k 字
     </span>
   
 
@@ -206,7 +206,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      200 分钟
+      209 分钟
     </span>
   
 
@@ -239,22 +239,31 @@
             
             <div class="markdown-body">
               <h1 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h1><ul>
-<li><p>The Domain Name System (DNS) [RFC1034, RFC1035] is a replicated hierarchical distributed database system that provides information fundamental to Internet operations, such as name &lt;=&gt; address translation and mail handling information.  DNS has recently been extended [RFC2535] to provide for data origin authentication, and public key distribution, all based on public key cryptography and public key based digital signatures.  To be practical, this form of security generally requires extensive local caching of keys and tracing of authentication through multiple keys and signatures to a pre-trusted locally configured key.</p>
-</li>
-<li><p>One difficulty with the [RFC2535] scheme is that common DNS implementations include simple “stub” resolvers which do not have caches.  Such resolvers typically rely on a caching DNS server on another host.  It is impractical for these stub resolvers to perform general [RFC2535] authentication and they would naturally depend on their caching DNS server to perform such services for them.  To do so securely requires secure communication of queries and responses. [RFC2535] provides public key transaction signatures to support this, but such signatures are very expensive computationally to generate. In general, these require the same complex public key logic that is impractical for stubs.  This document specifies use of a message authentication code (MAC), specifically HMAC-MD5 (a keyed hash function), to provide an efficient means of point-to-point authentication and integrity checking for transactions.</p>
-</li>
-<li><p>A second area where use of straight [RFC2535] public key based mechanisms may be impractical is authenticating dynamic update [RFC2136] requests.  [RFC2535] provides for request signatures but with [RFC2535] they, like transaction signatures, require computationally expensive public key cryptography and complex authentication logic.  Secure Domain Name System Dynamic Update ([RFC2137]) describes how different keys are used in dynamically updated zones.  This document’s secret key based MACs can be used to authenticate DNS update requests as well as transaction responses, providing a lightweight alternative to the protocol described by [RFC2137].</p>
-</li>
-<li><p>A further use of this mechanism is to protect zone transfers. In this case the data covered would be the whole zone transfer including any glue records sent.  The protocol described by [RFC2535] does not protect glue records and unsigned records unless SIG(0) (transaction signature) is used.</p>
-</li>
-<li><p>The authentication mechanism proposed in this document uses shared secret keys to establish a trust relationship between two entities.  Such keys must be protected in a fashion similar to private keys, lest a third party masquerade as one of the intended parties (forge MACs).  There is an urgent need to provide simple and efficient authentication between clients and local servers and this proposal addresses that need.  This proposal is unsuitable for general server to server authentication for servers which speak with many other servers, since key management would become unwieldy with</p>
-</li>
+<li>The Domain Name System (DNS) [RFC1034, RFC1035] is a replicated hierarchical distributed database system that provides information fundamental to Internet operations, such as name &lt;=&gt; address translation and mail handling information.  DNS has recently been extended [RFC2535] to provide for data origin authentication, and public key distribution, all based on public key cryptography and public key based digital signatures.  To be practical, this form of security generally requires extensive local caching of keys and tracing of authentication through multiple keys and signatures to a pre-trusted locally configured key.</li>
 </ul>
-<p>the number of shared keys going up quadratically.  But it is suitable for many resolvers on hosts that only talk to a few recursive servers.</p>
+<p>域名系统 (DNS) [RFC1034、RFC1035] 是一个复制的分层分布式数据库系统，它提供互联网操作的基本信息，例如名称 &lt;=&gt; 地址转换和邮件处理信息。DNS 最近进行了扩展 [RFC2535]，以提供数据来源认证和公钥分发，所有这些都基于公钥加密和基于公钥的数字签名。从实用角度来看，这种形式的安全性通常需要对密钥进行广泛的本地缓存，并通过多个密钥和签名将身份验证跟踪到预先信任的本地配置密钥。</p>
 <ul>
-<li><p>A server acting as an indirect caching resolver – a “forwarder” in common usage – might use transaction-based authentication when communicating with its small number of preconfigured “upstream” servers.  Other uses of DNS secret key authentication and possible systems for automatic secret key distribution may be proposed in separate future documents.</p>
-</li>
-<li><p>New Assigned Numbers</p>
+<li>One difficulty with the [RFC2535] scheme is that common DNS implementations include simple “stub” resolvers which do not have caches.  Such resolvers typically rely on a caching DNS server on another host.  It is impractical for these stub resolvers to perform general [RFC2535] authentication and they would naturally depend on their caching DNS server to perform such services for them.  To do so securely requires secure communication of queries and responses. [RFC2535] provides public key transaction signatures to support this, but such signatures are very expensive computationally to generate. In general, these require the same complex public key logic that is impractical for stubs.  This document specifies use of a message authentication code (MAC), specifically HMAC-MD5 (a keyed hash function), to provide an efficient means of point-to-point authentication and integrity checking for transactions.</li>
+</ul>
+<p>[RFC2535] 方案的一个难点是，常见的 DNS 实现包括没有缓存的简单“存根”解析器。此类解析器通常依赖于另一台主机上的缓存 DNS 服务器。这些存根解析器执行一般的 [RFC2535] 身份验证是不切实际的，它们自然会依赖缓存 DNS 服务器为其执行此类服务。要安全地执行此操作，需要安全地通信查询和响应。[RFC2535] 提供了公钥事务签名来支持这一点，但生成此类签名的计算成本非常高。一般来说，它们需要相同的复杂公钥逻辑，而这对于存根来说是不切实际的。本文档指定使用消息认证码 (MAC)，特别是 HMAC-MD5（密钥哈希函数），以提供有效的点对点身份验证和事务完整性检查方法。</p>
+<ul>
+<li>A second area where use of straight [RFC2535] public key based mechanisms may be impractical is authenticating dynamic update [RFC2136] requests.  [RFC2535] provides for request signatures but with [RFC2535] they, like transaction signatures, require computationally expensive public key cryptography and complex authentication logic.  Secure Domain Name System Dynamic Update ([RFC2137]) describes how different keys are used in dynamically updated zones.  This document’s secret key based MACs can be used to authenticate DNS update requests as well as transaction responses, providing a lightweight alternative to the protocol described by [RFC2137].</li>
+</ul>
+<p>第二个可能不适合直接使用基于 [RFC2535] 公钥的机制的领域是验证动态更新 [RFC2136] 请求。[RFC2535] 提供了请求签名，但使用 [RFC2535]，它们与交易签名一样，需要计算成本高昂的公钥加密和复杂的身份验证逻辑。安全域名系统动态更新 ([RFC2137]) 描述了如何在动态更新区域中使用不同的密钥。本文档的基于密钥的 MAC 可用于验证 DNS 更新请求以及交易响应，为 [RFC2137] 描述的协议提供轻量级替代方案。</p>
+<ul>
+<li>A further use of this mechanism is to protect zone transfers. In this case the data covered would be the whole zone transfer including any glue records sent.  The protocol described by [RFC2535] does not protect glue records and unsigned records unless SIG(0) (transaction signature) is used.</li>
+</ul>
+<p>此机制的另一个用途是保护区域传输。在这种情况下，涵盖的数据将是整个区域传输，包括发送的任何粘合记录。除非使用 SIG(0)（交易签名），否则 [RFC2535] 描述的协议不保护粘合记录和未签名记录。</p>
+<ul>
+<li>The authentication mechanism proposed in this document uses shared secret keys to establish a trust relationship between two entities.  Such keys must be protected in a fashion similar to private keys, lest a third party masquerade as one of the intended parties (forge MACs).  There is an urgent need to provide simple and efficient authentication between clients and local servers and this proposal addresses that need.  This proposal is unsuitable for general server to server authentication for servers which speak with many other servers, since key management would become unwieldy with the number of shared keys going up quadratically.  But it is suitable for many resolvers on hosts that only talk to a few recursive servers.</li>
+</ul>
+<p>本文档中提出的身份验证机制使用共享密钥在两个实体之间建立信任关系。必须以类似于私钥的方式保护此类密钥，以免第三方冒充目标方之一（伪造 MAC）。迫切需要在客户端和本地服务器之间提供简单而有效的身份验证，而此提案满足了这一需求。此提案不适用于与许多其他服务器通信的服务器的一般服务器到服务器身份验证，因为随着共享密钥数量的二次增加，密钥管理将变得难以处理。但它适用于仅与少数递归服务器通信的主机上的许多解析器。</p>
+<ul>
+<li>A server acting as an indirect caching resolver – a “forwarder” in common usage – might use transaction-based authentication when communicating with its small number of preconfigured “upstream” servers.  Other uses of DNS secret key authentication and possible systems for automatic secret key distribution may be proposed in separate future documents.</li>
+</ul>
+<p>充当间接缓存解析器的服务器（通常称为“转发器”）在与其少量预配置的“上游”服务器通信时可能会使用基于事务的身份验证。DNS 密钥身份验证的其他用途和可能的自动密钥分发系统可能会在未来的单独文档中提出。</p>
+<ul>
+<li><p>New Assigned Numbers(新指定的数值)</p>
 <figure class="highlight subunit"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><pre><code class="hljs subunit">RRTYPE = TSIG (250)<br><span class="hljs-keyword">ERROR </span>= 0..15 (a DNS RCODE)<br><span class="hljs-keyword">ERROR </span>= 16 (BADSIG)<br><span class="hljs-keyword">ERROR </span>= 17 (BADKEY)<br><span class="hljs-keyword">ERROR </span>= 18 (BADTIME)<br></code></pre></td></tr></table></figure></li>
 <li><p>The key words “MUST”, “REQUIRED”, “SHOULD”, “RECOMMENDED”,  and “MAY” in this document are to be interpreted as described in [RFC2119].</p>
 </li>
@@ -274,7 +283,8 @@
 <p>一旦构造了传出消息，就可以执行密钥消息摘要操作。生成的消息摘要随后将存储在附加到附加数据部分的 TSIG 中（ARCOUNT 会递增以反映这一点）。如果无法添加 TSIG 记录而不导致消息被截断，则服务器必须更改响应以便包含 TSIG。此响应仅包含问题和 TSIG 记录，并且设置了 TC 位和 RCODE 0（无错误）。此时，客户端应使用 TCP 重试请求（根据 [RFC1035 4.2.2]）。</p>
 <h2 id="3-2-TSIG-processing-on-incoming-messages-处理传入消息中-TSIG"><a href="#3-2-TSIG-processing-on-incoming-messages-处理传入消息中-TSIG" class="headerlink" title="3.2. TSIG processing on incoming messages(处理传入消息中 TSIG )"></a>3.2. TSIG processing on incoming messages(处理传入消息中 TSIG )</h2><p>If an incoming message contains a TSIG record, it MUST be the last record in the additional section.  Multiple TSIG records are not allowed.  If a TSIG record is present in any other position, the packet is dropped and a response with RCODE 1 (FORMERR) MUST be returned.  Upon receipt of a message with a correctly placed TSIG RR, the TSIG RR is copied to a safe location, removed from the DNS Message, and decremented out of the DNS message header’s ARCOUNT. At this point the keyed message digest operation is performed.  If the algorithm name or key name is unknown to the recipient, or if the message digests do not match, the whole DNS message MUST be discarded.  If the message is a query, a response with RCODE 9 (NOTAUTH) MUST be sent back to the originator with TSIG ERROR 17 (BADKEY) or TSIG ERROR 16 (BADSIG).  If no key is available to sign this message it MUST be sent unsigned (MAC size == 0 and empty MAC). A message to the system operations log SHOULD be generated, to warn the operations staff of a possible security incident in progress. Care should be taken to ensure that logging of this type of event does not open the system to a denial of service attack.</p>
 <p>如果传入消息包含 TSIG 记录，则它必须是附加部分中的最后一条记录。不允许有多个 TSIG 记录。如果 TSIG 记录存在于任何其他位置，则数据包将被丢弃，并且必须返回带有 RCODE 1 (FORMERR) 的响应。在收到带有正确放置的 TSIG RR 的消息后，TSIG RR 将被复制到安全位置，从 DNS 消息中删除，并从 DNS 消息头的 ARCOUNT 中减去。此时将执行密钥消息摘要操作。如果接收者不知道算法名称或密钥名称，或者消息摘要不匹配，则必须丢弃整个 DNS 消息。如果该消息是查询，则必须将带有 RCODE 9 (NOTAUTH) 的响应发送回发起者，并显示 TSIG ERROR 17 (BADKEY) 或 TSIG ERROR 16 (BADSIG)。如果没有密钥可用于签署此消息，则必须以未签名形式发送该消息（MAC 大小 == 0 且 MAC 为空）。应生成一条消息发送到系统操作日志，以警告操作人员可能发生的安全事件。应注意确保记录此类事件不会使系统遭受拒绝服务攻击。</p>
-<h2 id="3-3-Time-values-used-in-TSIG-calculations-TSIG-计算中使用的时间值"><a href="#3-3-Time-values-used-in-TSIG-calculations-TSIG-计算中使用的时间值" class="headerlink" title="3.3. Time values used in TSIG calculations(TSIG 计算中使用的时间值)"></a>3.3. Time values used in TSIG calculations(TSIG 计算中使用的时间值)</h2><p>The data digested includes the two timer values in the TSIG header in order to defend against replay attacks.  If this were not done, an attacker could replay old messages but update the “Time Signed” and “Fudge” fields to make the message look new.  This data is named “TSIG Timers”, and for the purpose of digest calculation they are invoked in their “on the wire” format, in the following order: first Time Signed, then Fudge. For example:<br>摘要数据包括 TSIG 标头中的两个计时器值，以防御重放攻击。如果不这样做，攻击者可以重放旧消息，但更新’Time Signed’和’Fudge’字段，使消息看起来是新的。此数据称为’TSIG 计时器’，为了进行摘要计算，它们以’on the wire’格式调用，顺序如下：首先是 <code>Time Signed</code>，然后是 <code>Fudge</code>。示例如下:</p>
+<h2 id="3-3-Time-values-used-in-TSIG-calculations-TSIG-计算中使用的时间值"><a href="#3-3-Time-values-used-in-TSIG-calculations-TSIG-计算中使用的时间值" class="headerlink" title="3.3. Time values used in TSIG calculations(TSIG 计算中使用的时间值)"></a>3.3. Time values used in TSIG calculations(TSIG 计算中使用的时间值)</h2><p>The data digested includes the two timer values in the TSIG header in order to defend against replay attacks.  If this were not done, an attacker could replay old messages but update the “Time Signed” and “Fudge” fields to make the message look new.  This data is named “TSIG Timers”, and for the purpose of digest calculation they are invoked in their “on the wire” format, in the following order: first Time Signed, then Fudge. For example:</p>
+<p>摘要数据包括 TSIG 标头中的两个计时器值，以防御重放攻击。如果不这样做，攻击者可以重放旧消息，但更新’Time Signed’和’Fudge’字段，使消息看起来是新的。此数据称为’TSIG 计时器’，为了进行摘要计算，它们以’on the wire’格式调用，顺序如下：首先是 <code>Time Signed</code>，然后是 <code>Fudge</code>。示例如下:</p>
 <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-section">Field Name    Value       Wire Format         Meaning</span><br><span class="hljs-section">----------------------------------------------------------------------</span><br>Time Signed   853804800   00 00 32 e4 07 00   Tue Jan 21 00:00:00 1997<br>Fudge         300         01 2C               5 minutes<br></code></pre></td></tr></table></figure>
 <h2 id="3-4-TSIG-Variables-and-Coverage-TSIG-变量和覆盖范围"><a href="#3-4-TSIG-Variables-and-Coverage-TSIG-变量和覆盖范围" class="headerlink" title="3.4. TSIG Variables and Coverage(TSIG 变量和覆盖范围)"></a>3.4. TSIG Variables and Coverage(TSIG 变量和覆盖范围)</h2><p>When generating or verifying the contents of a TSIG record, the following data are digested, in network byte order or wire format, as appropriate:</p>
 <p>生成或验证 TSIG 记录的内容时，将根据情况以网络字节顺序或有线格式摘要以下数据：</p>
