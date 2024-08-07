@@ -191,6 +191,53 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2024/08/07/04DevOps/34linux%E6%8C%87%E5%AE%9A%E7%9B%AE%E5%BD%95%E6%90%9C%E7%B4%A2%E6%88%96%E9%93%BE%E6%8E%A5so/" target="_self">
+          linux指定目录搜索或链接so
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2024/08/07/04DevOps/34linux%E6%8C%87%E5%AE%9A%E7%9B%AE%E5%BD%95%E6%90%9C%E7%B4%A2%E6%88%96%E9%93%BE%E6%8E%A5so/" target="_self">
+          
+          当你编译一个程序，该程序依赖于某些动态链接库（如 OpenSSL）时，你需要告诉编译器和链接器在哪里找到这些库文件。使用 -L 选项指定库文件的目录，而 -Wl,-rpath-link 选项则指定在运行时程序链接这些库时，应该优先搜索的路径。这样做可以确保程序在运行时能够正确加载和链接依赖的 OpenSSL 动态链接库，避免出现类似找不到库文件的错误。 编译时使用特定目录下的so1export L
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-08-07 11:42" pubdate>
+              2024-08-07
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/devops/">devops</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/linux/">linux</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2024/06/21/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/26-rfc2136/" target="_self">
           RFC2136(DNS动态更新)
         </a>
@@ -587,53 +634,6 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2024-02-07 16:39" pubdate>
               2024-02-07
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/devops/">devops</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/linux/">linux</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/12/06/04DevOps/31docker%E9%95%9C%E5%83%8F%E7%9A%84%E5%AF%BC%E5%85%A5%E5%92%8C%E5%AF%BC%E5%87%BA/" target="_self">
-          docker镜像的导入和导出
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2023/12/06/04DevOps/31docker%E9%95%9C%E5%83%8F%E7%9A%84%E5%AF%BC%E5%85%A5%E5%92%8C%E5%AF%BC%E5%87%BA/" target="_self">
-          
-          对于镜像的导出和导入，Docker 提供了两种方案：① export与import配对使用，②save与load配对使用 1. export&#x2F;import1.1 导出(export)12345# 1. 通过docker ps -a 查看可导出的容器iddocker ps -a# 2. 使用export命令导出docker export container_id &gt; xxxx.tar 1.2
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-12-06 16:04" pubdate>
-              2023-12-06
             </time>
           </div>
         

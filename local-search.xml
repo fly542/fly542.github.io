@@ -4,6 +4,31 @@
   
   
   <entry>
+    <title>linux指定目录搜索或链接so</title>
+    <link href="/2024/08/07/04DevOps/34linux%E6%8C%87%E5%AE%9A%E7%9B%AE%E5%BD%95%E6%90%9C%E7%B4%A2%E6%88%96%E9%93%BE%E6%8E%A5so/"/>
+    <url>/2024/08/07/04DevOps/34linux%E6%8C%87%E5%AE%9A%E7%9B%AE%E5%BD%95%E6%90%9C%E7%B4%A2%E6%88%96%E9%93%BE%E6%8E%A5so/</url>
+    
+    <content type="html"><![CDATA[<p>当你编译一个程序，该程序依赖于某些动态链接库（如 OpenSSL）时，你需要告诉编译器和链接器在哪里找到这些库文件。使用 -L 选项指定库文件的目录，而 <code>-Wl,-rpath-link</code> 选项则指定在运行时程序链接这些库时，应该优先搜索的路径。这样做可以确保程序在运行时能够正确加载和链接依赖的 OpenSSL 动态链接库，避免出现类似找不到库文件的错误。</p><h1 id="编译时使用特定目录下的so"><a href="#编译时使用特定目录下的so" class="headerlink" title="编译时使用特定目录下的so"></a>编译时使用特定目录下的so</h1><figure class="highlight routeros"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-builtin-name">export</span> <span class="hljs-attribute">LDFLAGS</span>=<span class="hljs-string">&quot;-L/opt/soft/openssl/lib -Wl,-rpath-link,/opt/soft/openssl/lib&quot;</span><br></code></pre></td></tr></table></figure><ol><li><code>export LDFLAGS=：</code></li></ol><ul><li><code>export</code> 是一个 shell 命令，用于将环境变量导出，使得该变量在当前 shell 以及子进程中都可见和使用。</li><li><code>LDFLAGS</code> 是一个环境变量，通常用来设置链接器 ld 或 ld.so 在编译和链接时使用的标志。</li></ul><ol start="2"><li>“-L/opt/soft/openssl/lib：</li></ol><p>-L 选项告诉链接器在指定路径 /opt/soft/openssl/lib 中搜索库文件（.so 文件）。<br>在这个命令中，我们指定了 OpenSSL 库文件所在的路径 /opt/soft/openssl/lib。</p><ol start="3"><li><code>-Wl,-rpath-link,/opt/soft/openssl/lib：</code><br><code>-Wl</code>, 是将后面的选项传递给链接器 ld 的方式。-Wl 表示将后面的选项传递给链接器。<br><code>-rpath-link,/opt/soft/openssl/lib</code> 是告诉链接器在运行时使用 -rpath-link 选项，并指定 /opt/soft/openssl/lib 作为动态库搜索路径。<br><code>-rpath-link</code> 是链接器 ld 的选项，用于指定在运行时链接动态库时搜索的路径。与 -rpath 不同的是，-rpath-link 仅影响链接时搜索路径，而不影响运行时程序的搜索路径。</li></ol><h1 id="etc-ld-so-conf-与-LD-LIBRARY-PATH-的关系"><a href="#etc-ld-so-conf-与-LD-LIBRARY-PATH-的关系" class="headerlink" title="/etc/ld.so.conf 与 LD_LIBRARY_PATH 的关系"></a>/etc/ld.so.conf 与 LD_LIBRARY_PATH 的关系</h1><ul><li><p>优先级： <code>LD_LIBRARY_PATH</code> 设置的路径优先于 <code>/etc/ld.so.conf</code> 中的路径。如果两者同时设置，动态链接器会优先搜索 <code>LD_LIBRARY_PATH</code> 指定的路径。</p></li><li><p>使用场景：</p><ul><li>使用 <code>/etc/ld.so.conf</code>：通常用于全局配置，例如当你安装新的系统级共享库时。</li><li>使用 <code>LD_LIBRARY_PATH</code>：用于临时性或特定程序的库文件路径设置，例如在运行某个程序时需要加载非标准位置的库文件。</li></ul></li><li><p>注意事项：</p><ul><li>修改 /etc/ld.so.conf 后需要运行 sudo ldconfig 或者 sudo ldconfig -v 来使新的配置生效。</li><li>LD_LIBRARY_PATH 设置的路径对当前 shell 有效，退出 shell 后会失效，除非在登录脚本中设置。</li></ul></li></ul><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-builtin-name">export</span> <span class="hljs-attribute">LD_LIBRARY_PATH</span>=/path/to/mylibs:$LD_LIBRARY_PATH<br></code></pre></td></tr></table></figure><p>这会告诉系统在启动时先搜索 <code>/path/to/mylibs</code> 目录中的库文件，然后才是按照 <code>/etc/ld.so.conf </code>中的路径顺序搜索。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>devops</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>linux</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>RFC2136(DNS动态更新)</title>
     <link href="/2024/06/21/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/26-rfc2136/"/>
     <url>/2024/06/21/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/26-rfc2136/</url>
