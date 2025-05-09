@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://fly542.cn/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/00DNS%E5%9F%BA%E7%A1%80/2.png">
 <meta property="article:published_time" content="2020-08-26T11:02:20.000Z">
-<meta property="article:modified_time" content="2022-12-30T03:33:01.385Z">
+<meta property="article:modified_time" content="2025-05-09T01:41:28.000Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="dns">
@@ -200,7 +200,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      6.5k 字
+      7.5k 字
     </span>
   
 
@@ -209,7 +209,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      54 分钟
+      63 分钟
     </span>
   
 
@@ -316,9 +316,116 @@
 迭代查询: 在这种情况下，DNS客户端将允许DNS服务器返回它可以的最佳答案。如果查询的DNS服务器与查询名称不匹配，则它将返回对域名称空间的较低级别具有权威性的DNS服务器的引用。然后，DNS客户端将对引用地址进行查询。此过程将继续使用查询链中的其他DNS服务器，直到发生错误或超时。
 非递归查询: 通常在DNS解析器客户端向DNS服务器查询其有权访问的记录时会发生这种情况，因为它对记录具有权威性，或者记录存在于其缓存中。通常，DNS服务器将缓存DNS记录以防止额外的带宽消耗和上游服务器的负载。
 </code></pre></div>
-<h3 id="递归查询-VS-迭代查询"><a href="#递归查询-VS-迭代查询" class="headerlink" title="递归查询 VS. 迭代查询"></a>递归查询 VS. 迭代查询</h3><p>在递归查询模式下，DNS 服务器在接收到客户机请求时，必须使用一个准确的查询结果回复客户机。也就意味着，如果 DNS 服务器本地没有缓存所查询的 DNS 信息，那么该服务器会询问其它服务器，并将返回的查询结果提交给客户机。</p>
-<p>而在使用迭代查询时，DNS 服务器会向客户机提供其它能够解析查询请求的 DNS 服务器地址。也就是说，当客户机发送查询请求时，DNS 服务器并不直接回复查询结果，而是告诉客户机另一台 DNS 服务器地址，客户机需要再向这台 DNS 服务器提交请求，依次循环直到返回查询的结果为止。</p>
-<p>也就是说，关键的区别是由谁去查询最终的结果。</p>
+<h3 id="递归查询-VS-迭代查询-VS-转发查询"><a href="#递归查询-VS-迭代查询-VS-转发查询" class="headerlink" title="递归查询 VS. 迭代查询 VS. 转发查询"></a>递归查询 VS. 迭代查询 VS. 转发查询</h3><p>在DNS查询中，递归查询（Recursive Query）、迭代查询（Iterative Query）和转发查询（Forwarding Query）是三种不同的查询机制，它们的核心区别在于责任归属(由谁去查询最终)和查询路径。以下是详细对比：</p>
+<ol>
+<li><p>递归查询（Recursive Query）</p>
+<ul>
+<li>责任归属：DNS服务器必须返回最终答案（成功或失败），不能转嫁责任。</li>
+<li>查询过程：<ul>
+<li>客户端向递归解析器（如ISP的DNS服务器、Google的8.8.8.8）发起请求。</li>
+<li>递归解析器会自行完成所有查询步骤，从根域名服务器开始逐级查询，直到获得最终结果。</li>
+<li>客户端只需等待最终响应。</li>
+</ul>
+</li>
+<li>特点：<ul>
+<li>对客户端友好（客户端无需参与查询过程）。</li>
+<li>递归解析器需要承担更多负载（需缓存结果以减少重复查询）。</li>
+</ul>
+</li>
+<li>适用场景：<ul>
+<li>普通用户设备向本地DNS服务器发起的查询（如浏览器访问网站）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>迭代查询（Iterative Query）</p>
+<ul>
+<li>责任归属：DNS服务器只返回自己能提供的最佳答案（可能是其他服务器的引用），不代替客户端完成查询。</li>
+<li>查询过程：<ul>
+<li>客户端或递归解析器向某个DNS服务器（如根域名服务器）发起请求。</li>
+<li>该服务器若没有答案，会返回一个引用（如顶级域.com的服务器地址）。</li>
+<li>客户端或递归解析器继续向被引用的服务器发起查询，直到找到权威服务器并获得最终答案。</li>
+</ul>
+</li>
+<li>特点：<ul>
+<li>查询路径透明，客户端/递归解析器需自行处理多次请求。</li>
+<li>减轻了单个服务器的负担（根域名服务器仅返回引用）。</li>
+</ul>
+</li>
+<li>适用场景：<ul>
+<li>递归解析器向根域名服务器、TLD服务器等发起的查询。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>转发查询（Forwarding Query）</p>
+<ul>
+<li>责任归属：本地DNS服务器将查询请求转发给其他指定的上游DNS服务器（如企业内网DNS转发到公共DNS）。</li>
+<li>查询过程：<ul>
+<li>客户端向本地DNS服务器发起请求。</li>
+<li>本地DNS服务器不自行递归查询，而是将请求转发给配置的上游服务器（如ISP的DNS或公共DNS）。</li>
+<li>上游服务器完成递归或迭代查询后返回结果。</li>
+</ul>
+</li>
+<li>特点：<ul>
+<li>本地DNS服务器仅作为中继，不参与实际解析。</li>
+<li>可以减少本地DNS的负载或利用上游缓存。</li>
+</ul>
+</li>
+<li>适用场景：<ul>
+<li>企业内网DNS服务器将外部域名查询转发到公共DNS。</li>
+<li>特殊场景下绕过某些限制（如使用OpenDNS或Cloudflare的1.1.1.1）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>对比总结</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>责任归属</th>
+<th>查询路径</th>
+<th>典型使用者</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>递归查询</td>
+<td>服务器必须返回最终答案</td>
+<td>服务器完成所有步骤</td>
+<td>客户端（如浏览器）</td>
+</tr>
+<tr>
+<td>迭代查询</td>
+<td>服务器只返回已知最佳答案</td>
+<td>客户端/递归解析器逐步查询</td>
+<td>递归解析器向根/TLD服务器查询</td>
+</tr>
+<tr>
+<td>转发查询</td>
+<td>上游服务器完成解析</td>
+<td>本地DNS直接转发请求</td>
+<td>企业内网DNS服务器</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>示例流程<br> 假设客户端查询 example.com：<br> <strong>递归查询：</strong></p>
+<div class="code-wrapper"><pre><code class="hljs"> 客户端 → 递归解析器（如8.8.8.8）→ 根服务器 → .com服务器 → 权威服务器 → 返回结果给客户端。
+</code></pre></div>
+<p> <strong>迭代查询：</strong></p>
+<div class="code-wrapper"><pre><code class="hljs"> 递归解析器 → 根服务器（返回.com服务器地址）→ 递归解析器 → .com服务器（返回example.com的权威服务器）→ 递归解析器 → 权威服务器 → 获得结果。
+</code></pre></div>
+<p> <strong>转发查询：</strong></p>
+<div class="code-wrapper"><pre><code class="hljs"> 客户端 → 本地DNS → 上游DNS（如1.1.1.1）→ 上游DNS完成递归/迭代查询 → 返回结果给本地DNS → 返回客户端。
+</code></pre></div>
+</li>
+<li><p>关键区别</p>
+</li>
+</ol>
+<ul>
+<li>递归 vs 迭代：递归是“包办到底”，迭代是“指路不送”。</li>
+<li>转发 vs 递归/迭代：转发是“外包任务”，不参与实际解析。</li>
+</ul>
 <h2 id="DDoS"><a href="#DDoS" class="headerlink" title="DDoS"></a>DDoS</h2><p>发送大量的 DNS 递归查询会消耗服务端的一定资源，所以，只需要将发送的报文设置一个 RD 标志位即可。<br>当发送垃圾查询时，例如 <code>www.baidu.com</code> 这类必然不存在的域名，必然会导致查询很慢。</p>
 <h2 id="ECS"><a href="#ECS" class="headerlink" title="ECS"></a>ECS</h2><p>ECS（EDNS-Client-Subnet）是DNS服务支持的新协议。该协议会在DNS请求包中附加请求域名解析的用户IP地址。这样，DNS服务器就可以根据该地址返回用户更容易访问的服务器IP地址。该技术广泛应用于CDN应用中。Nmap的dns-client-subnet-scan脚本利用该协议，通过提交不同的IP地址，获取指定域名所有的IP地址。</p>
 <h2 id="Non-authoritative-answer"><a href="#Non-authoritative-answer" class="headerlink" title="Non-authoritative answer"></a>Non-authoritative answer</h2><p>为加快 DNS 的查询速度，一般会在服务端缓存一段时间，所以有可能 DNS 会返回缓存在 Cache 中的内容，那么此时就会将 AA 响应设置为 0 ，也就是是这里显示的 Non-authoritative answer 。</p>

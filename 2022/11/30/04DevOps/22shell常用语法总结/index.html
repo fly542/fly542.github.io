@@ -24,7 +24,7 @@
 <meta property="og:description" content="特殊符号说明   符号 说明    $$ Shell本身的PID（ProcessID，即脚本运行的当前进程ID号）   $! Shell最后运行的后台Process的PID(后台运行的最后一个进程的[进程ID]   $? 最后运行的命令的结束代码（返回值）即执行上一个指令的返回值 (显示最后命令的退出状态。0表示没有错误，其他任何值表明有错误)   $$ 显示shell使用的当前选项，与set命令">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-11-30T02:05:44.000Z">
-<meta property="article:modified_time" content="2024-01-09T07:39:30.884Z">
+<meta property="article:modified_time" content="2025-01-17T01:40:03.261Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="shell">
@@ -198,7 +198,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      4.9k 字
+      5.2k 字
     </span>
   
 
@@ -207,7 +207,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      41 分钟
+      43 分钟
     </span>
   
 
@@ -264,19 +264,15 @@
 </tr>
 <tr>
 <td>$*</td>
-<td>所有参数列表。如”$*“用「”」括起来的情况、以”$1 $2 … $n”的形式输出所有参数，此选项参数可超过9个。</td>
+<td>所有参数列表。跟$@类似，可以当作数组用；<br>使用时”$*”和$<em>的行为不同; <br>“$</em>“将所有参数合并成一个字符串<br>$*所有参数逐单词分割</td>
 </tr>
 <tr>
 <td>$@</td>
-<td>所有参数列表。如”$@“用「”」括起来的情况、以”$1” “2 “ … “ 2” … “2”…”n” 的形式输出所有参数。</td>
-</tr>
-<tr>
-<td>$*</td>
-<td>跟$@类似，但是可以当作数组用</td>
+<td>所有参数列表。使用时”$@”和$@的行为相同;<br>将每个参数保留为独立的字符串</td>
 </tr>
 <tr>
 <td>$#</td>
-<td>添加到Shell的参数个数</td>
+<td>代表传递给脚本的参数总数（不包括脚本自己的名称）</td>
 </tr>
 <tr>
 <td>$0</td>
@@ -287,6 +283,8 @@
 <td>添加到Shell的各参数值。$1是第1参数、$2是第2参数…</td>
 </tr>
 </tbody></table>
+<figure class="highlight bash"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></div></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/bash</span><br><br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Using \$*:&quot;</span><br><span class="hljs-keyword">for</span> arg <span class="hljs-keyword">in</span> $*; <span class="hljs-keyword">do</span><br>    <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Argument: <span class="hljs-variable">$arg</span>&quot;</span><br><span class="hljs-keyword">done</span><br><br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;&quot;</span><br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Using \&quot;\$*\&quot;:&quot;</span><br><span class="hljs-keyword">for</span> arg <span class="hljs-keyword">in</span> <span class="hljs-string">&quot;$*&quot;</span>; <span class="hljs-keyword">do</span><br>    <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Argument: <span class="hljs-variable">$arg</span>&quot;</span><br><span class="hljs-keyword">done</span><br></code></pre></td></tr></table></figure>
+<p>输入以下参数验证<code>./script.sh arg1 &quot;arg2 with spaces&quot; arg3</code></p>
 <h1 id="比较运算"><a href="#比较运算" class="headerlink" title="比较运算"></a>比较运算</h1><h2 id="文件比较运算符"><a href="#文件比较运算符" class="headerlink" title="文件比较运算符"></a>文件比较运算符</h2><table>
 <thead>
 <tr>
@@ -504,7 +502,7 @@
 <h2 id="判定变量是否是数值"><a href="#判定变量是否是数值" class="headerlink" title="判定变量是否是数值"></a>判定变量是否是数值</h2><p>使用<code>-z &quot;$&#123;p//[0-9]/&#125;&quot; </code> 判定变量是否是数值。原理为<code>//[0-9]/</code> 是一种字符串替换方式，将 <code>p</code> 变量中的数字(0到9)全部替换为空字符串，然后再判断(-z )替换后的字符串是否为空。如果 <code>p</code> 是空字符串或者只由数字组成，则条件为真，返回 true；</p>
 <p>其中<code>$&#123;p//[0-9]/&#125;</code>没有修改原始变量 <code>p</code> 的值，因为在 shell 中使用类似的字符串操作符都是返回一个新的字符串，而没有修改原字符串的值.</p>
 <p>示例如下:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><pre><code class="hljs bash">p=<span class="hljs-string">&quot;1234&quot;</span><br><span class="hljs-keyword">if</span> [ -z <span class="hljs-string">&quot;<span class="hljs-variable">$&#123;p//[0-9]/&#125;</span>&quot;</span> ]; <span class="hljs-keyword">then</span><br>	<span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;num=<span class="hljs-variable">$p</span>&quot;</span><br><span class="hljs-keyword">else</span><br>	<span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;string&quot;</span><br><span class="hljs-keyword">fi</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">p=<span class="hljs-string">&quot;1234&quot;</span><br><span class="hljs-keyword">if</span> [ -z <span class="hljs-string">&quot;<span class="hljs-variable">$&#123;p//[0-9]/&#125;</span>&quot;</span> ]; <span class="hljs-keyword">then</span><br>	<span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;num=<span class="hljs-variable">$p</span>&quot;</span><br><span class="hljs-keyword">else</span><br>	<span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;string&quot;</span><br><span class="hljs-keyword">fi</span><br></code></pre></td></tr></table></figure>
 
 <h1 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h1><ul>
 <li>读取数组 格式是：${array_name[index]}</li>

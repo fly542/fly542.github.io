@@ -1,0 +1,574 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Fly542">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Clarifications to the DNS Specification(DNS规范的澄清)  Status of this Memo  This document specifies an Internet standards track protocol for the Internet community, and requests discussion and">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Clarifications to the DNS Specification(DNS规范的澄清)">
+<meta property="og:url" content="http://fly542.cn/2025/01/02/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/27-rfc2181/index.html">
+<meta property="og:site_name" content="Fly542 技术沉淀">
+<meta property="og:description" content="Clarifications to the DNS Specification(DNS规范的澄清)  Status of this Memo  This document specifies an Internet standards track protocol for the Internet community, and requests discussion and">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-02T02:48:13.000Z">
+<meta property="article:modified_time" content="2025-01-02T05:19:04.429Z">
+<meta property="article:author" content="Fly542">
+<meta property="article:tag" content="dns">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>Clarifications to the DNS Specification(DNS规范的澄清) - Fly542 技术沉淀</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"fly542.cn","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fly542 技术沉淀</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Clarifications to the DNS Specification(DNS规范的澄清)">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2025-01-02 10:48" pubdate>
+        2025年1月2日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      34k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      286 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Clarifications to the DNS Specification(DNS规范的澄清)</h1>
+            
+            <div class="markdown-body">
+              <div class="code-wrapper"><pre><code class="hljs">            Clarifications to the DNS Specification(DNS规范的澄清)
+</code></pre></div>
+<p>Status of this Memo</p>
+<p> This document specifies an Internet standards track protocol for the Internet community, and requests discussion and suggestions for improvements.  Please refer to the current edition of the “Internet Official Protocol Standards” (STD 1) for the standardization state and status of this protocol.  Distribution of this memo is unlimited.<br> 本文档规定了互联网社区的一个互联网标准轨道协议，并希望对该协议进行讨论和改进建议。请参阅当前版本的《互联网官方协议标准》(STD 1) 以了解该协议的标准化状态和状态。本文档的分发不受限制。</p>
+<h1 id="1-Abstract"><a href="#1-Abstract" class="headerlink" title="1. Abstract"></a>1. Abstract</h1><p>This document considers some areas that have been identified as problems with the specification of the Domain Name System, and proposes remedies for the defects identified.  Eight separate issues are considered:</p>
+<p>本文档考虑了一些在域名系统规范中被认为有问题的领域，并提出了针对这些问题的补救措施。本文档讨论了八个独立的问题：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></div></td><td class="code"><pre><code class="hljs less">+ <span class="hljs-selector-tag">IP</span> <span class="hljs-selector-tag">packet</span> <span class="hljs-selector-tag">header</span> <span class="hljs-selector-tag">address</span> <span class="hljs-selector-tag">usage</span> <span class="hljs-selector-tag">from</span> <span class="hljs-selector-tag">multi-homed</span> <span class="hljs-selector-tag">servers</span>, (多宿主服务器中IP包头地址的使用)<br>+ <span class="hljs-selector-tag">TTLs</span> <span class="hljs-selector-tag">in</span> <span class="hljs-selector-tag">sets</span> <span class="hljs-selector-tag">of</span> <span class="hljs-selector-tag">records</span> <span class="hljs-selector-tag">with</span> <span class="hljs-selector-tag">the</span> <span class="hljs-selector-tag">same</span> <span class="hljs-selector-tag">name</span>, <span class="hljs-selector-tag">class</span>, <span class="hljs-selector-tag">and</span> <span class="hljs-selector-tag">type</span>,(具有相同名称、类和类型的记录集合中的TTL（生存时间）问题)<br>+ <span class="hljs-selector-tag">correct</span> <span class="hljs-selector-tag">handling</span> <span class="hljs-selector-tag">of</span> <span class="hljs-selector-tag">zone</span> <span class="hljs-selector-tag">cuts</span>,(正确处理区域分割的问题)<br>+ <span class="hljs-selector-tag">three</span> <span class="hljs-selector-tag">minor</span> <span class="hljs-selector-tag">issues</span> <span class="hljs-selector-tag">concerning</span> <span class="hljs-selector-tag">SOA</span> <span class="hljs-selector-tag">records</span> <span class="hljs-selector-tag">and</span> <span class="hljs-selector-tag">their</span> <span class="hljs-selector-tag">use</span>,(有关SOA记录及其使用的三个次要问题)<br>+ <span class="hljs-selector-tag">the</span> <span class="hljs-selector-tag">precise</span> <span class="hljs-selector-tag">definition</span> <span class="hljs-selector-tag">of</span> <span class="hljs-selector-tag">the</span> <span class="hljs-selector-tag">Time</span> <span class="hljs-selector-tag">to</span> <span class="hljs-selector-tag">Live</span> (TTL)(TTL（生存时间）的精确定义)<br>+ <span class="hljs-selector-tag">Use</span> <span class="hljs-selector-tag">of</span> <span class="hljs-selector-tag">the</span> <span class="hljs-selector-tag">TC</span> (truncated) <span class="hljs-selector-tag">header</span> <span class="hljs-selector-tag">bit</span>(TC（截断）标头位的使用)<br>+ <span class="hljs-selector-tag">the</span> <span class="hljs-selector-tag">issue</span> <span class="hljs-selector-tag">of</span> <span class="hljs-selector-tag">what</span> <span class="hljs-selector-tag">is</span> <span class="hljs-selector-tag">an</span> <span class="hljs-selector-tag">authoritative</span>, <span class="hljs-selector-tag">or</span> <span class="hljs-selector-tag">canonical</span>, <span class="hljs-selector-tag">name</span>,(权威姓名或规范姓名的问题)<br>+ <span class="hljs-selector-tag">and</span> <span class="hljs-selector-tag">the</span> <span class="hljs-selector-tag">issue</span> <span class="hljs-selector-tag">of</span> <span class="hljs-selector-tag">what</span> <span class="hljs-selector-tag">makes</span> <span class="hljs-selector-tag">a</span> <span class="hljs-selector-tag">valid</span> <span class="hljs-selector-tag">DNS</span> <span class="hljs-selector-tag">label</span>.(合法DNS标签的问题)<br></code></pre></td></tr></table></figure>
+
+<p> The first six of these are areas where the correct behaviour has been somewhat unclear, we seek to rectify that.  The other two are already adequately specified, however the specifications seem to be sometimes ignored.  We seek to reinforce the existing specifications.</p>
+<p>前六个问题提出了行为规范不够明确的地方，因此我们寻求对其进行纠正。其余两个问题已经有详细规定，但是这些规定有时似乎被忽视了。我们希望强调现有的规范。</p>
+<h1 id="2-Introduction-介绍"><a href="#2-Introduction-介绍" class="headerlink" title="2. Introduction(介绍)"></a>2. Introduction(介绍)</h1><p> Several problem areas in the Domain Name System specification [RFC1034, RFC1035] have been noted through the years [RFC1123].  This document addresses several additional problem areas.  The issues here are independent.  Those issues are the question of which source address a multi-homed DNS server should use when replying to a query, the issue of differing TTLs for DNS records with the same label, class and type, and the issue of canonical names, what they are, how CNAME records relate, what names are legal in what parts of the DNS, and what is the valid syntax of a DNS name.</p>
+<p> 多年来，人们注意到域名系统规范（[RFC1034，RFC1035]）中的若干问题领域（[RFC1123]）。本文档处理了几个附加的问题区域。这些问题是独立的。具体问题包括：多宿主DNS服务器在回复查询时应使用哪个源地址，不同TTL的DNS记录具有相同标签、类和类型的问题以及规范名称的问题，即它们是什么，CNAME记录如何关联，哪些名称在DNS的哪个部分是合法的，以及DNS名称的有效语法是什么。</p>
+<p> Clarifications to the DNS specification to avoid these problems are made in this memo.  A minor ambiguity in RFC1034 concerned with SOA records is also corrected, as is one in the definition of the TTL (Time To Live) and some possible confusion in use of the TC bit.</p>
+<p> 本文备忘录对DNS规范进行了澄清，以避免这些问题。还纠正了RFC1034中关于SOA记录的一个小歧义，以及TTL（生存时间）的定义中的一个误差和使用TC位时可能存在的一些混淆。</p>
+<h1 id="3-Terminology-术语"><a href="#3-Terminology-术语" class="headerlink" title="3. Terminology(术语)"></a>3. Terminology(术语)</h1><p> This memo does not use the oft used expressions MUST, SHOULD, MAY, or their negative forms.  In some sections it may seem that a specification is worded mildly, and hence some may infer that the specification is optional.  That is not correct.  Anywhere that this memo suggests that some action should be carried out, or must be carried out, or that some behaviour is acceptable, or not, that is to be considered as a fundamental aspect of this specification, regardless of the specific words used.  If some behaviour or action is truly optional, that will be clearly specified by the text.</p>
+<p> 本文备忘录没有使用常用的MUST、SHOULD、MAY或它们的否定形式。在某些部分，可能会感觉到规范的措辞比较温和，因此一些人可能推断规范是可选的。这是不正确的。本文备忘录中建议采取的任何行动、必须采取的任何行动、或指明某些行为是否可接受时，都应视为规范的基本方面，不论具体使用的词语是什么。如果某些行为或动作确实是可选的，文本中会清楚地说明。</p>
+<h1 id="4-Server-Reply-Source-Address-Selection-服务器回复源地址选择"><a href="#4-Server-Reply-Source-Address-Selection-服务器回复源地址选择" class="headerlink" title="4. Server Reply Source Address Selection(服务器回复源地址选择)"></a>4. Server Reply Source Address Selection(服务器回复源地址选择)</h1><p> Most, if not all, DNS clients, expect the address from which a reply is received to be the same address as that to which the query eliciting the reply was sent.  This is true for servers acting as clients for the purposes of recursive query resolution, as well as simple resolver clients.  The address, along with the identifier (ID) in the reply is used for disambiguating replies, and filtering spurious responses.  This may, or may not, have been intended when the DNS was designed, but is now a fact of life.</p>
+<p> 大多数DNS客户端都期望收到的回复地址与引发该回复的查询发送到的地址相同。这对执行递归查询解析的服务器客户机以及简单的解析器客户机都适用。地址连同回复中的标识符（ID）一起用于区分回复和过滤错误的响应。这在设计DNS时可能并未被预见，但现在是一个既定事实。</p>
+<p> Some multi-homed hosts running DNS servers generate a reply using a source address that is not the same as the destination address from the client’s request packet.  Such replies will be discarded by the client because the source address of the reply does not match that of a host to which the client sent the original request.  That is, it appears to be an unsolicited response.</p>
+<p> 某些运行DNS服务器的多宿主机生成的回复使用的源地址与客户端请求包的目标地址不同。这类回复会被客户端丢弃，因为回复的源地址与客户端发送原始请求的目标地址不匹配。也就是说，它看起来像是一个未经请求的回复。</p>
+<h2 id="4-1-UDP-Source-Address-Selection-UDP源地址选择"><a href="#4-1-UDP-Source-Address-Selection-UDP源地址选择" class="headerlink" title="4.1. UDP Source Address Selection(UDP源地址选择)"></a>4.1. UDP Source Address Selection(UDP源地址选择)</h2><p> To avoid these problems, servers when responding to queries using UDP must cause the reply to be sent with the source address field in the IP header set to the address that was in the destination address field of the IP header of the packet containing the query causing the response.  If this would cause the response to be sent from an IP address that is not permitted for this purpose, then the response may be sent from any legal IP address allocated to the server.  That address should be chosen to maximise the possibility that the client will be able to use it for further queries.  Servers configured in such a way that not all their addresses are equally reachable from all potential clients need take particular care when responding to queries sent to anycast, multicast, or similar, addresses.</p>
+<p> 为了避免这些问题，服务器在使用UDP响应查询时，必须在IP头中的源地址字段设置为发送查询包的IP头目标地址。如果这会导致从不允许用于此目的的IP地址发送响应，则该响应可以从分配给该服务器的任何合法IP地址发送。该地址应选择使客户端能够最大限度地将其用于进一步查询。服务器配置方式不相同，需要特别注意响应发送到任播、多播或类似地址的查询。</p>
+<h2 id="4-2-Port-Number-Selection-端口号选择"><a href="#4-2-Port-Number-Selection-端口号选择" class="headerlink" title="4.2. Port Number Selection(端口号选择)"></a>4.2. Port Number Selection(端口号选择)</h2><p> Replies to all queries must be directed to the port from which they were sent.  When queries are received via TCP this is an inherent part of the transport protocol.  For queries received by UDP the server must take note of the source port and use that as the destination port in the response.  Replies should always be sent from the port to which they were directed.  Except in extraordinary circumstances, this will be the well known port assigned for DNS queries [RFC1700].</p>
+<p> 所有查询的回复必须定向到它们发送的端口。当通过TCP接收查询时，这是传输协议的内在部分。对于通过UDP接收的查询，服务器必须注意源端口并使用该端口作为响应的目标端口。回复应始终从它们被定向的端口发送。除非发生特殊情况，否则这将是用于DNS查询的已知端口 [RFC1700]。</p>
+<h1 id="5-Resource-Record-Sets-资源记录集"><a href="#5-Resource-Record-Sets-资源记录集" class="headerlink" title="5. Resource Record Sets(资源记录集)"></a>5. Resource Record Sets(资源记录集)</h1><p> Each DNS Resource Record (RR) has a label, class, type, and data.  It is meaningless for two records to ever have label, class, type and data all equal - servers should suppress such duplicates if encountered.  It is however possible for most record types to exist with the same label, class and type, but with different data.  Such a group of records is hereby defined to be a Resource Record Set (RRSet).</p>
+<p> 每个DNS资源记录（RR）都有标签、类、类型和数据。两个记录具有相同的标签、类、类型和数据是没有意义的——服务器应在遇到此类重复项时删除它们。然而，大多数记录类型可能存在相同标签、类和类型，但数据不同。此类记录组在本文中定义为资源记录集（RRSet）。</p>
+<h2 id="5-1-Sending-RRs-from-an-RRSet-发送RRSet中的记录"><a href="#5-1-Sending-RRs-from-an-RRSet-发送RRSet中的记录" class="headerlink" title="5.1. Sending RRs from an RRSet(发送RRSet中的记录)"></a>5.1. Sending RRs from an RRSet(发送RRSet中的记录)</h2><p> A query for a specific (or non-specific) label, class, and type, will always return all records in the associated RRSet - whether that be one or more RRs.  The response must be marked as “truncated” if the entire RRSet will not fit in the response.</p>
+<p> 针对特定（或非特定）标签、类和类型的查询将始终返回关联RRSet中的所有记录——无论是一个还是多个RR。如果整个RRSet无法放入响应中，则响应必须标记为“截断”。</p>
+<h2 id="5-2-TTLs-of-RRs-in-an-RRSet-RRSet中的记录的TTL"><a href="#5-2-TTLs-of-RRs-in-an-RRSet-RRSet中的记录的TTL" class="headerlink" title="5.2. TTLs of RRs in an RRSet(RRSet中的记录的TTL)"></a>5.2. TTLs of RRs in an RRSet(RRSet中的记录的TTL)</h2><p> Resource Records also have a time to live (TTL).  It is possible for the RRs in an RRSet to have different TTLs.  No uses for this have been found that cannot be better accomplished in other ways.  This can, however, cause partial replies (not marked “truncated”) from a caching server, where the TTLs for some but not all the RRs in the RRSet have expired.<br> Consequently the use of differing TTLs in an RRSet is hereby deprecated, the TTLs of all RRs in an RRSet must be the same.<br> 资源记录（RR）也有生存时间（TTL）。RRSet中的RR的TTL可能不同。尚未发现通过其他方式更好地完成任务的用途。然而，这可能会导致缓存服务器的部分回复（未标记为“截断”），在此情况下，RRSet中的某些记录的TTL已过期。因此，RRSet中不同TTL的使用在本文中不再推荐，RRSet中所有记录的TTL必须相同。</p>
+<p> Should a client receive a response containing RRs from an RRSet with differing TTLs, it should treat this as an error.  If the RRSet concerned is from a non-authoritative source for this data, the client should simply ignore the RRSet, and if the values were required, seek to acquire them from an authoritative source.  Clients that are configured to send all queries to one, or more, particular servers should treat those servers as authoritative for this purpose.<br>  如果客户端收到包含不同TTL的RRSet记录的响应，则应将其视为错误。如果相关RRSet来自非权威数据源，客户端应忽略RRSet，如果需要这些值，则尝试从权威数据源获取。配置为将所有查询发送到一个或多个特定服务器的客户端应将这些服务器视为权威来源。</p>
+<p> Should an authoritative source send such a malformed RRSet, the client should treat the RRs for all purposes as if all TTLs in the RRSet had been set to the value of the lowest TTL in the RRSet.  In no case may a server send an RRSet with TTLs not all equal.<br> 如果权威数据源发送如此格式错误的RRSet，客户端应将RRSet的所有记录视为RRSet中所有TTL的最低值。在任何情况下，服务器都不得发送具有不同TTL的RRSet。</p>
+<h2 id="5-3-DNSSEC-Special-Cases-DNSSEC-特殊情况"><a href="#5-3-DNSSEC-Special-Cases-DNSSEC-特殊情况" class="headerlink" title="5.3. DNSSEC Special Cases(DNSSEC 特殊情况)"></a>5.3. DNSSEC Special Cases(DNSSEC 特殊情况)</h2><p> Two of the record types added by DNS Security (DNSSEC) [RFC2065] require special attention when considering the formation of Resource Record Sets.  Those are the SIG and NXT records.  It should be noted that DNS Security is still very new, and there is, as yet, little experience with it.  Readers should be prepared for the information related to DNSSEC contained in this document to become outdated as the DNS Security specification matures.</p>
+<p> DNS安全（DNSSEC）[RFC2065] 添加的两种记录类型在考虑形成资源记录集时需要特别注意。这些是SIG和NXT记录。需要注意的是，DNS安全仍然非常新，经验尚少。读者应准备好应对与DNS安全相关的信息，随着DNS安全规范的成熟，这些信息可能会过时。</p>
+<h3 id="5-3-1-SIG-records-and-RRSets-SIG记录与RRSets"><a href="#5-3-1-SIG-records-and-RRSets-SIG记录与RRSets" class="headerlink" title="5.3.1. SIG records and RRSets(SIG记录与RRSets)"></a>5.3.1. SIG records and RRSets(SIG记录与RRSets)</h3><p> A SIG record provides signature (validation) data for another RRSet in the DNS.  Where a zone has been signed, every RRSet in the zone will have had a SIG record associated with it.  The data type of the RRSet is included in the data of the SIG RR, to indicate with which particular RRSet this SIG record is associated.  Were the rules above applied, whenever a SIG record was included with a response to validate that response, the SIG records for all other RRSets associated with the appropriate node would also need to be included. In some cases, this could be a very large number of records, not helped by their being rather large RRs.</p>
+<p> SIG记录为DNS中的其他RRSet提供签名（验证）数据。已签名区域的每个RRSet都会有一个关联的SIG记录。RRSet的数据类型包括在SIG RR的数据中，以指示该SIG记录与哪个特定RRSet关联。如果上述规则得到应用，每当SIG记录包含在响应中以验证该响应时，与相关节点关联的所有其他RRSet的SIG记录也需要包含在内。在某些情况下，这可能是一非常大型记录，不利于其较大的RR。</p>
+<p> Thus, it is specifically permitted for the authority section to contain only those SIG RRs with the “type covered” field equal to the type field of an answer being returned.  However, where SIG records are being returned in the answer section, in response to a query for SIG records, or a query for all records associated with a name (type=ANY) the entire SIG RRSet must be included, as for any other RR type.</p>
+<p> 因此，专门允许权限部分仅包含”覆盖类型”字段等于返回的答案类型字段的那些SIG RR。然而，当SIG记录在答案部分返回时，响应SIG记录查询，或者对名称相关的所有记录（type=ANY）的查询时，必须包括整个SIG RRSet，如同任何其他RR类型一样。</p>
+<p> Servers that receive responses containing SIG records in the authority section, or (probably incorrectly) as additional data, must understand that the entire RRSet has almost certainly not been included.  Thus, they must not cache that SIG record in a way that would permit it to be returned should a query for SIG records be received at that server.  RFC2065 actually requires that SIG queries be directed only to authoritative servers to avoid the problems that could be caused here, and while servers exist that do not understand the special properties of SIG records, this will remain necessary. However, careful design of SIG record processing in new implementations should permit this restriction to be relaxed in the future, so resolvers do not need to treat SIG record queries specially.</p>
+<p> 收到包含权限部分SIG记录或（可能错误地）作为附加数据的响应的服务器必须理解，几乎可以肯定未包括整个RRSet。因此，当应答查询SIG记录时，不得缓存SIG记录。RFC2065 实际上要求SIG查询仅定向到权威服务器，以避免可能在此产生的问题，同时仍然存在不理解SIG记录特殊属性的服务器。不过，新的实现的SIG记录处理的仔细设计应允许将来放宽这种限制，这样解析器无需特别处理SIG记录查询。</p>
+<p> It has been occasionally stated that a received request for a SIG record should be forwarded to an authoritative server, rather than being answered from data in the cache.  This is not necessary - a server that has the knowledge of SIG as a special case for processing this way would be better to correctly cache SIG records, taking into account their characteristics.  Then the server can determine when it is safe to reply from the cache, and when the answer is not available and the query must be forwarded.</p>
+<p> 曾有人偶尔提出，收到的SIG记录请求应转发给权威服务器，而不是从缓存中的数据回答。这是不必要的——知道如何处理SIG为特殊情况的服务器应更好地正确缓存SIG记录，考虑它们的特性。这样，服务器可以确定何时安全回复缓存，以及何时回答不可用并必须转发查询。</p>
+<h3 id="5-3-2-NXT-RRs-NXT-记录"><a href="#5-3-2-NXT-RRs-NXT-记录" class="headerlink" title="5.3.2. NXT RRs(NXT 记录)"></a>5.3.2. NXT RRs(NXT 记录)</h3><p> Next Resource Records (NXT) are even more peculiar.  There will only ever be one NXT record in a zone for a particular label, so superficially, the RRSet problem is trivial.  However, at a zone cut, both the parent zone, and the child zone (superzone and subzone in RFC2065 terminology) will have NXT records for the same name.  Those two NXT records do not form an RRSet, even where both zones are housed at the same server.  NXT RRSets always contain just a single RR.  Where both NXT records are visible, two RRSets exist.  However, servers are not required to treat this as a special case when receiving NXT records in a response.  They may elect to notice the existence of two different NXT RRSets, and treat that as they would two different RRSets of any other type.  That is, cache one, and ignore the other.  Security aware servers will need to correctly process the NXT record in the received response though.</p>
+<p> 后续资源记录（NXT）更为特别。在一个区域中，一个特定标签只会有一条NXT记录，所以表面上，RRSet问题很简单。然而，在区域分割处，父区域和子区域（在RFC2065术语中的超级区域和子区域）会有相同名称的NXT记录。这两个NXT记录即使都存在于同一个服务器中，也不构成RRSet。NXT RRSet始终只包含一个RR。如果两个NXT记录都可以见，则存在两个RRSet。然而，服务器在响应中接收到NXT记录时不需要将其视为特例。它们可以选择注意到两个不同NXT RRSet的存在，并将其视为两种类型的RRSet。这就是缓存一个，忽略另一个。安全感知的服务器需要正确处理收到响应中的NXT记录。</p>
+<h2 id="5-4-Receiving-RRSets"><a href="#5-4-Receiving-RRSets" class="headerlink" title="5.4. Receiving RRSets"></a>5.4. Receiving RRSets</h2><p> Servers must never merge RRs from a response with RRs in their cache to form an RRSet.  If a response contains data that would form an RRSet with data in a server’s cache the server must either ignore the RRs in the response, or discard the entire RRSet currently in the cache, as appropriate.  Consequently the issue of TTLs varying between the cache and a response does not cause concern, one will be ignored.  That is, one of the data sets is always incorrect if the data from an answer differs from the data in the cache.  The challenge for the server is to determine which of the data sets is correct, if one is, and retain that, while ignoring the other.  Note that if a server receives an answer containing an RRSet that is identical to that in its cache, with the possible exception of the TTL value, it may, optionally, update the TTL in its cache with the TTL of the received answer.  It should do this if the received answer would be considered more authoritative (as discussed in the next section) than the previously cached answer.</p>
+<p> 服务器决不能将响应中的RR与其缓存中的RR合并以形成RRSet。如果响应中包含的数据将与服务器缓存中的数据形成RRSet，服务器必须忽略响应中的RR，或者适当丢弃缓存中的整个RRSet。因此，缓存和响应之间的TTL差异问题不会引起关注，因为会忽略其中一个数据集。这意味着，如果答案中的数据与缓存中的数据不同，则其中一个数据集始终是错误的。服务器的挑战是确定哪个数据集是正确的，如果有的话，保留它，同时忽略另一个。请注意，如果服务器收到包含与其缓存相同的RRSet的答案，唯一不同的可能只是TTL值，则服务器可以选择使用收到的答案的TTL更新其缓存中的TTL。如果收到的答案被认为比先前缓存的答案更权威（如下一节所述），则应这样做。</p>
+<h3 id="5-4-1-Ranking-data"><a href="#5-4-1-Ranking-data" class="headerlink" title="5.4.1. Ranking data"></a>5.4.1. Ranking data</h3><p> When considering whether to accept an RRSet in a reply, or retain an RRSet already in its cache instead, a server should consider the relative likely trustworthiness of the various data.  An authoritative answer from a reply should replace cached data that had been obtained from additional information in an earlier reply. However additional information from a reply will be ignored if the cache contains data from an authoritative answer or a zone file.<br> 在考虑是否接受回复中的RRSet，或保留缓存中已有的RRSet时，服务器应考虑各个数据的相对可信性。回复中的权威答案应替换早前回复附加信息中缓存的数据。然而，如果缓存中有来自权威答案或区域文件的数据，将忽略回复中的附加信息。</p>
+<p> The accuracy of data available is assumed from its source.<br> Trustworthiness shall be, in order from most to least:</p>
+<p> 数据的准确性假设来自其来源。可信度应按从高到低的顺序排列</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">+ Data <span class="hljs-built_in">from</span> <span class="hljs-keyword">a</span> primary zone <span class="hljs-built_in">file</span>, other than glue data,(主区域文件中的数据，除粘着数据外)<br>+ Data <span class="hljs-built_in">from</span> <span class="hljs-keyword">a</span> zone transfer, other than glue,(区域传输中的数据，除粘着数据外)<br>+ The authoritative data included <span class="hljs-keyword">in</span> <span class="hljs-keyword">the</span> answer section <span class="hljs-keyword">of</span> <span class="hljs-keyword">an</span> authoritative reply.(包含在权威回复的答案部分的权威数据)<br>+ Data <span class="hljs-built_in">from</span> <span class="hljs-keyword">the</span> authority section <span class="hljs-keyword">of</span> <span class="hljs-keyword">an</span> authoritative answer,(权威回复的权威部分的数据)<br>+ Glue <span class="hljs-built_in">from</span> <span class="hljs-keyword">a</span> primary zone, <span class="hljs-keyword">or</span> glue <span class="hljs-built_in">from</span> <span class="hljs-keyword">a</span> zone transfer,(主区域的粘着数据，或区域传输的粘着数据)<br>+ Data <span class="hljs-built_in">from</span> <span class="hljs-keyword">the</span> answer section <span class="hljs-keyword">of</span> <span class="hljs-keyword">a</span> non-authoritative answer, <span class="hljs-keyword">and</span> non-authoritative data <span class="hljs-built_in">from</span> <span class="hljs-keyword">the</span> answer section <span class="hljs-keyword">of</span> authoritative answers,(非权威答案的答案部分的数据，和权威答案的答案部分的非权威数据)<br>+ Additional information <span class="hljs-built_in">from</span> <span class="hljs-keyword">an</span> authoritative answer, Data <span class="hljs-built_in">from</span> <span class="hljs-keyword">the</span> authority section <span class="hljs-keyword">of</span> <span class="hljs-keyword">a</span> non-authoritative answer, Additional information <span class="hljs-built_in">from</span> non-authoritative answers.(权威答案中的附加信息，非权威答案的权威部分中的数据，非权威答案中的附加信息)<br></code></pre></td></tr></table></figure>
+<p> Note that the answer section of an authoritative answer normally contains only authoritative data.  However when the name sought is an alias (see section 10.1.1) only the record describing that alias is necessarily authoritative.  Clients should assume that other records may have come from the server’s cache.  Where authoritative answers are required, the client should query again, using the canonical name associated with the alias.</p>
+<p> 请注意，权威答案的答案部分通常只包含权威数据。然而，当查找的名称是别名时（见第10.1.1节），只有描述该别名的记录是权威的。客户端应假设其他记录可能来自服务器的缓存。如果需要权威答案，客户端应再次查询，使用与别名关联的规范名称。</p>
+<p> Unauthenticated RRs received and cached from the least trustworthy of those groupings, that is data from the additional data section, and data from the authority section of a non-authoritative answer, should not be cached in such a way that they would ever be returned as answers to a received query.  They may be returned as additional information where appropriate.  Ignoring this would allow the trustworthiness of relatively untrustworthy data to be increased without cause or excuse.</p>
+<p> 从最不可信的那些类别接收到并缓存的未认证RR，即附加数据部分的数据和非权威答案的权威部分的数据，不应以任何方式缓存，以便在接收到查询时作为答案返回。仅在适当时可以作为附加信息返回。忽略这一点将允许相对不可信数据的可信度未经正当理由或借口增加。</p>
+<p> When DNS security [RFC2065] is in use, and an authenticated reply has been received and verified, the data thus authenticated shall be considered more trustworthy than unauthenticated data of the same type.  Note that throughout this document, “authoritative” means a reply with the AA bit set.  DNSSEC uses trusted chains of SIG and KEY records to determine the authenticity of data, the AA bit is almost irrelevant.  However DNSSEC aware servers must still correctly set the AA bit in responses to enable correct operation with servers that are not security aware (almost all currently).</p>
+<p> 当使用DNS安全（[RFC2065]）时，接收到并验证的认证回复，其认证数据应被视为比相同类型的未认证数据更可信。请注意，本文档中的”权威的”是指具有AA位设置的回复。DNSSEC使用SIG和KEY记录的可信链来确定数据的真实性，AA位几乎无关紧要。然而，DNSSEC感知的服务器仍需在回应中正确设置AA位，以确保与非安全感知的服务器正确操作（目前几乎所有服务器）。</p>
+<p> Note that, glue excluded, it is impossible for data from two correctly configured primary zone files, two correctly configured secondary zones (data from zone transfers) or data from correctly configured primary and secondary zones to ever conflict.  Where glue for the same name exists in multiple zones, and differs in value, the nameserver should select data from a primary zone file in preference to secondary, but otherwise may choose any single set of such data. Choosing that which appears to come from a source nearer the authoritative data source may make sense where that can be determined.  Choosing primary data over secondary allows the source of incorrect glue data to be discovered more readily, when a problem with such data exists.  Where a server can detect from two zone files that one or more are incorrectly configured, so as to create conflicts, it should refuse to load the zones determined to be erroneous, and issue suitable diagnostics.</p>
+<p> 请注意，除了粘着数据外，来自两个正确配置的主区域文件的数据、两个正确配置的次级区域的数据（区域传输的数据）或正确配置的主区域和次级区域的数据决不会冲突。如果在多个区域存在为同一名称的粘着，并且在值上存在差异，名称服务器应选择来自主区域文件的数据优先于次级区域，但是可以选择任何一组这样的数据。选择接近权威数据源的源可能有意义，如果可确定。选择主数据而非次级数据允许在存在此类数据问题时，更容易发现不正确的粘着数据的来源。如果服务器可以检测到来自两个区域文件，一个或多个配置错误，以致造成冲突，服务器应拒绝加载确定错误的区域，并发出适当的诊断。</p>
+<p> “Glue” above includes any record in a zone file that is not properly part of that zone, including name server records of delegated sub-zones (NS records), address records that accompany those NS records (A, AAAA, etc), and any other stray data that might appear.</p>
+<p> 上述“粘着”包括任何在区域文件中不正确地属于该区域的记录，包括被委派的子区域的名称服务器记录（NS记录）、伴随这些NS记录的地址记录（A，AAAA，等），以及可能出现的任何其他零散数据。</p>
+<h2 id="5-5-Sending-RRSets-reprise-发送RRSet（再次强调）"><a href="#5-5-Sending-RRSets-reprise-发送RRSet（再次强调）" class="headerlink" title="5.5. Sending RRSets (reprise) (发送RRSet（再次强调）)"></a>5.5. Sending RRSets (reprise) (发送RRSet（再次强调）)</h2><p> A Resource Record Set should only be included once in any DNS reply. It may occur in any of the Answer, Authority, or Additional Information sections, as required.  However it should not be repeated in the same, or any other, section, except where explicitly required by a specification.  For example, an AXFR response requires the SOA record (always an RRSet containing a single RR) be both the first and last record of the reply.  Where duplicates are required this way, the TTL transmitted in each case must be the same.</p>
+<p> 资源记录集只应在任何DNS回复中包含一次。它可以按需要出现在答案、权威或附加信息部分。然而，除非规范明确要求，不应在同一部分或任何其他部分重复。例如，AXFR响应要求SOA记录（总是包含一个RR的RRSet）既是回复的第一个记录，也是最后一个记录。在这种情况下需要重复，传输的TTL必须相同。</p>
+<h1 id="6-Zone-Cuts-区域分割"><a href="#6-Zone-Cuts-区域分割" class="headerlink" title="6. Zone Cuts (区域分割)"></a>6. Zone Cuts (区域分割)</h1><p> The DNS tree is divided into “zones”, which are collections of domains that are treated as a unit for certain management purposes. Zones are delimited by “zone cuts”.  Each zone cut separates a “child” zone (below the cut) from a “parent” zone (above the cut). The domain name that appears at the top of a zone (just below the cut that separates the zone from its parent) is called the zone’s “origin”.  The name of the zone is the same as the name of the domain at the zone’s origin.  Each zone comprises that subset of the DNS tree that is at or below the zone’s origin, and that is above the cuts that separate the zone from its children (if any).  The existence of a zone cut is indicated in the parent zone by the existence of NS records specifying the origin of the child zone.  A child zone does not contain any explicit reference to its parent.</p>
+<p> DNS树分为“区域”，它们是用于特定管理目的的域集合。区域由“区域分割”界定。每个区域分割将“子”区域（在分割下）与“父”区域（在分割上方）分开。出现在区域顶部（将区域与其父区域分开的分割下）下区域的域名称为区域的“原点”。区域的名称与区域原点的域名相同。每个区域包括位于区域原点的DNS树下或该区域之内，并且在与其子区域分隔的分割上方的DNS树的子集。区域分割的存在由父区域中的NS记录表示，这些NS记录指定了子区域原点。子区域没有任何指明父区域的显式引用。</p>
+<h2 id="6-1-Zone-authority-区域权威"><a href="#6-1-Zone-authority-区域权威" class="headerlink" title="6.1. Zone authority(区域权威)"></a>6.1. Zone authority(区域权威)</h2><p> The authoritative servers for a zone are enumerated in the NS records for the origin of the zone, which, along with a Start of Authority (SOA) record are the mandatory records in every zone.  Such a server is authoritative for all resource records in a zone that are not in another zone.  The NS records that indicate a zone cut are the property of the child zone created, as are any other records for the origin of that child zone, or any sub-domains of it.  A server for a zone should not return authoritative answers for queries related to names in another zone, which includes the NS, and perhaps A, records at a zone cut, unless it also happens to be a server for the other zone.</p>
+<p> 区域的权威服务器在区域原点的NS记录中列出，这些NS记录与权威启动（SOA）记录一起是每个区域的强制记录。这样的服务器是该区域中所有非其他区域的资源记录的权威。指示区域分割的NS记录属于创建的子区域，也属于子区域原点或其子域的其他记录。一个区域的服务器不应返回与其他区域相关的查询的权威答案，这包括在区域分割处的NS记录，以及可能的A记录，除非它也恰好是另一个区域的服务器。</p>
+<p> Other than the DNSSEC cases mentioned immediately below, servers should ignore data other than NS records, and necessary A records to locate the servers listed in the NS records, that may happen to be configured in a zone at a zone cut.</p>
+<p> 除非立即下面提到的DNSSEC案例，服务器应忽略配置在区域分割处除NS记录和定位NS记录中列出的服务器的必要A记录之外的其他数据。</p>
+<h2 id="6-2-DNSSEC-issues-DNSSEC问题"><a href="#6-2-DNSSEC-issues-DNSSEC问题" class="headerlink" title="6.2. DNSSEC issues(DNSSEC问题)"></a>6.2. DNSSEC issues(DNSSEC问题)</h2><p> The DNS security mechanisms [RFC2065] complicate this somewhat, as some of the new resource record types added are very unusual when compared with other DNS RRs.  In particular the NXT (“next”) RR type contains information about which names exist in a zone, and hence which do not, and thus must necessarily relate to the zone in which it exists.  The same domain name may have different NXT records in the parent zone and the child zone, and both are valid, and are not an RRSet.  See also section 5.3.2.</p>
+<p> DNS安全机制（[RFC2065]）使情况复杂化，因为添加的一些新资源记录类型与其他DNS RR相比非常不寻常。特别是NXT（“后续”）RR类型包含哪些名称存在于区域中的信息，以及哪些不存在，因此必须与该区域相关。同一个域名在父区域和子区域中可能有不同的NXT记录，这两者都是有效的，不是RRSet。详见第5.3.2节。</p>
+<p> Since NXT records are intended to be automatically generated, rather than configured by DNS operators, servers may, but are not required to, retain all differing NXT records they receive regardless of the rules in section 5.4.</p>
+<p> 由于NXT记录旨在自动生成，而不是由DNS操作员配置，服务器可能会，但不要求保留它们接收到的所有不同NXT记录，无论第5.4节的规则如何。</p>
+<p> For a secure parent zone to securely indicate that a subzone is insecure, DNSSEC requires that a KEY RR indicating that the subzone is insecure, and the parent zone’s authenticating SIG RR(s) be present in the parent zone, as they by definition cannot be in the subzone.  Where a subzone is secure, the KEY and SIG records will be present, and authoritative, in that zone, but should also always be present in the parent zone (if secure).</p>
+<p> 为了安全父区域安全指示子区域是不安全的，DNSSEC要求在父区域中有一个指示子区域是不安全的KEY RR和父区域的认证SIG RR。这些记录从定义上不能在子区域中。对于安全的子区域，KEY和SIG记录将存在并在该区域是权威的，但应始终存在于父区域中（如果安全）。</p>
+<p> Note that in none of these cases should a server for the parent zone, not also being a server for the subzone, set the AA bit in any response for a label at a zone cut.</p>
+<p> 请注意，在这些情况下，父区域服务器（不也是子区域服务器）不应在涉及区域分割标签的任何响应中设置AA位。</p>
+<h1 id="7-SOA-RRs-SOA-记录"><a href="#7-SOA-RRs-SOA-记录" class="headerlink" title="7. SOA RRs( SOA 记录)"></a>7. SOA RRs( SOA 记录)</h1><p> Three minor issues concerning the Start of Zone of Authority (SOA) Resource Record need some clarification.</p>
+<p> 需要澄清的关于SOA记录的三个小问题。</p>
+<h2 id="7-1-Placement-of-SOA-RRs-in-authoritative-answers-在权威答案中SOA记录的位置"><a href="#7-1-Placement-of-SOA-RRs-in-authoritative-answers-在权威答案中SOA记录的位置" class="headerlink" title="7.1. Placement of SOA RRs in authoritative answers(在权威答案中SOA记录的位置)"></a>7.1. Placement of SOA RRs in authoritative answers(在权威答案中SOA记录的位置)</h2><p> RFC1034, in section 3.7, indicates that the authority section of an authoritative answer may contain the SOA record for the zone from which the answer was obtained.  When discussing negative caching, RFC1034 section 4.3.4 refers to this technique but mentions the additional section of the response.  The former is correct, as is implied by the example shown in section 6.2.5 of RFC1034.  SOA records, if added, are to be placed in the authority section.</p>
+<p> RFC1034第3.7节中指出，权威答案的权威部分可以包含从中获取答案的区域的SOA记录。讨论负面缓存时，RFC1034第4.3.4节提到了这种技术，但提到了响应的附加部分。前者是正确的，如RFC1034第6.2.5节中的示例所暗示的。添加的SOA记录应放置在权威部分。</p>
+<h2 id="7-2-TTLs-on-SOA-RRs-SOA记录的TTL"><a href="#7-2-TTLs-on-SOA-RRs-SOA记录的TTL" class="headerlink" title="7.2. TTLs on SOA RRs(SOA记录的TTL)"></a>7.2. TTLs on SOA RRs(SOA记录的TTL)</h2><p> It may be observed that in section 3.2.1 of RFC1035, which defines the format of a Resource Record, that the definition of the TTL field contains a throw away line which states that the TTL of an SOA record should always be sent as zero to prevent caching.  This is mentioned nowhere else, and has not generally been implemented. Implementations should not assume that SOA records will have a TTL of zero, nor are they required to send SOA records with a TTL of zero.</p>
+<p> 在RFC1035第3.2.1节中定义了资源记录格式，可以观察到TTL字段定义包含了这样一行，指出SOA记录的TTL应始终作为零发送，以防止缓存。这在其他地方未被提到，一般未实现。实现不应假设SOA记录的TTL为零，也不需要发送TTL为零的SOA记录。</p>
+<h2 id="7-3-The-SOA-MNAME-field-SOA-MNAME字段"><a href="#7-3-The-SOA-MNAME-field-SOA-MNAME字段" class="headerlink" title="7.3. The SOA.MNAME field(SOA.MNAME字段)"></a>7.3. The SOA.MNAME field(SOA.MNAME字段)</h2><p> It is quite clear in the specifications, yet seems to have been widely ignored, that the MNAME field of the SOA record should contain the name of the primary (master) server for the zone identified by the SOA.  It should not contain the name of the zone itself.  That information would be useless, as to discover it, one needs to start with the domain name of the SOA record - that is the name of the zone.</p>
+<p> 尽管规范中很明确，但似乎广泛被忽略的是，SOA记录的MNAME字段应包含一个识别SOA的区域的主（主）服务器的名称。它应不包含区域本身的名称。发现该信息将是无用的，因为要发现它，需要以SOA记录的域名开始——即区域的名称。</p>
+<h1 id="8-Time-to-Live-TTL-生存时间"><a href="#8-Time-to-Live-TTL-生存时间" class="headerlink" title="8. Time to Live (TTL)(生存时间)"></a>8. Time to Live (TTL)(生存时间)</h1><p> The definition of values appropriate to the TTL field in STD 13 is not as clear as it could be, with respect to how many significant bits exist, and whether the value is signed or unsigned.  It is hereby specified that a TTL value is an unsigned number, with a minimum value of 0, and a maximum value of 2147483647.  That is, a maximum of 2^31 - 1.  When transmitted, this value shall be encoded in the less significant 31 bits of the 32 bit TTL field, with the most significant, or sign, bit set to zero.</p>
+<p> STD 13 对TTL字段的值的定义不够清晰，关于有多少有效位，以及该值是有符号的还是无符号的。现规定，TTL值是一个无符号数字，最小值为0，最大值为2147483647，即2^31 - 1。当传输时，该值应编码在32位TTL字段的低31位中，最高的或符号位应设置为零。</p>
+<p> Implementations should treat TTL values received with the most significant bit set as if the entire value received was zero.</p>
+<p> 实现应将接收到的设置有最高位的TTL值视为整个接收到的值为零。</p>
+<p> Implementations are always free to place an upper bound on any TTL received, and treat any larger values as if they were that upper bound.  The TTL specifies a maximum time to live, not a mandatory time to live.</p>
+<p> 实现可以随时对接收到的任何TTL设置上限，并将任何大于该上限的值视为该上限。TTL指定了最大生存时间，而不是强制生存时间。</p>
+<h1 id="9-The-TC-truncated-header-bit-TC（截断）标头位"><a href="#9-The-TC-truncated-header-bit-TC（截断）标头位" class="headerlink" title="9. The TC (truncated) header bit(TC（截断）标头位)"></a>9. The TC (truncated) header bit(TC（截断）标头位)</h1><p> The TC bit should be set in responses only when an RRSet is required as a part of the response, but could not be included in its entirety. The TC bit should not be set merely because some extra information could have been included, but there was insufficient room.  This includes the results of additional section processing.  In such cases the entire RRSet that will not fit in the response should be omitted, and the reply sent as is, with the TC bit clear.  If the recipient of the reply needs the omitted data, it can construct a query for that data and send that separately.</p>
+<p> 仅当需要RRSet作为响应的一部分但无法完全包含时，才应在响应中设置TC位。不能仅仅因为可能包含一些额外信息但空间不足而设置TC位。这包括附加部分处理的结果。在这种情况下，不能完全适应响应的整个RRSet应省略，并按原样发送回复，并清除TC位。如果回复的接收者需要省略的数据，可以构造一个请求并单独发送。</p>
+<p> Where TC is set, the partial RRSet that would not completely fit may be left in the response.  When a DNS client receives a reply with TC set, it should ignore that response, and query again, using a mechanism, such as a TCP connection, that will permit larger replies.</p>
+<p> 当设置TC位时，可能无法完全容纳的部分RRSet可以留在响应中。如果DNS客户端收到设置了TC位的回复，应忽略该响应，并使用允许更大回复的机制，如TCP连接，再次查询。</p>
+<h1 id="10-Naming-issues-命名问题"><a href="#10-Naming-issues-命名问题" class="headerlink" title="10. Naming issues(命名问题)"></a>10. Naming issues(命名问题)</h1><p> It has sometimes been inferred from some sections of the DNS specification [RFC1034, RFC1035] that a host, or perhaps an interface of a host, is permitted exactly one authoritative, or official, name, called the canonical name.  There is no such requirement in the DNS.</p>
+<p> 有时从DNS规范的某些部分（[RFC1034，RFC1035]）推断主机或主机的某个接口被允许只有一个权威或官方名称，称为规范名称。在DNS中没有这种要求。</p>
+<h2 id="10-1-CNAME-resource-records"><a href="#10-1-CNAME-resource-records" class="headerlink" title="10.1. CNAME resource records"></a>10.1. CNAME resource records</h2><p>  The DNS CNAME (“canonical name”) record exists to provide the  canonical name associated with an alias name.  There may be only one  such canonical name for any one alias.  That name should generally be  a name that exists elsewhere in the DNS, though there are some rare  applications for aliases with the accompanying canonical name  undefined in the DNS.  An alias name (label of a CNAME record) may,  if DNSSEC is in use, have SIG, NXT, and KEY RRs, but may have no  other data.  That is, for any label in the DNS (any domain name)  exactly one of the following is true:</p>
+<p>  DNS CNAME（“规范名称”）记录的存在是为了提供与别名关联的规范名称。对于任何一个别名可能只有一个这样的规范名称。该名称通常应该是DNS中的一个存在的名称，尽管有一些罕见的应用是别名的伴随规范名称在DNS中未定义。如果使用DNSSEC，别名名称（CNAME记录的标签）可能有SIG、NXT和KEY RR，但不能有其他数据。就是说，对于DNS中的任何标签（任何域名），恰好有如下之一：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">+ one CNAME <span class="hljs-type">record</span> <span class="hljs-keyword">exists</span>, optionally accompanied <span class="hljs-keyword">by</span> SIG, NXT, <span class="hljs-keyword">and</span> KEY RRs,<br>一个CNAME记录，可以伴随SIG、NXT和KEY RR<br>+ one <span class="hljs-keyword">or</span> more records exist, <span class="hljs-keyword">none</span> being CNAME records,<br>存在一个或多个记录，但没有CNAME记录<br>+ the <span class="hljs-type">name</span> <span class="hljs-keyword">exists</span>, but has <span class="hljs-keyword">no</span> associated RRs <span class="hljs-keyword">of</span> <span class="hljs-keyword">any</span> <span class="hljs-keyword">type</span>,<br>名称存在，但没有任何类型的关联RR<br>+ the <span class="hljs-type">name</span> does <span class="hljs-keyword">not</span> exist at <span class="hljs-keyword">all</span>.<br>名称根本不存在<br></code></pre></td></tr></table></figure>
+
+<h3 id="10-1-1-CNAME-terminology-CNAME-术语"><a href="#10-1-1-CNAME-terminology-CNAME-术语" class="headerlink" title="10.1.1. CNAME terminology(CNAME 术语)"></a>10.1.1. CNAME terminology(CNAME 术语)</h3><p> It has been traditional to refer to the label of a CNAME record as “a CNAME”.  This is unfortunate, as “CNAME” is an abbreviation of “canonical name”, and the label of a CNAME record is most certainly not a canonical name.  It is, however, an entrenched usage.  Care must therefore be taken to be very clear whether the label, or the value (the canonical name) of a CNAME resource record is intended. In this document, the label of a CNAME resource record will always be referred to as an alias.</p>
+<p> 传统上将CNAME记录的标签称为“CNAME”。这是不幸的，因为“CNAME”是“规范名称”的缩写，而CNAME记录的标签绝不是规范名称。然而，这是一种根深蒂固的用法。因此必须非常清楚CNAME资源记录是指标签还是值（即规范名称）。在本文档中，CNAME资源记录的标签将始终称为别名。</p>
+<h2 id="10-2-PTR-records-PTR记录"><a href="#10-2-PTR-records-PTR记录" class="headerlink" title="10.2. PTR records(PTR记录)"></a>10.2. PTR records(PTR记录)</h2><p> Confusion about canonical names has lead to a belief that a PTR record should have exactly one RR in its RRSet.  This is incorrect, the relevant section of RFC1034 (section 3.6.2) indicates that the value of a PTR record should be a canonical name.  That is, it should not be an alias.  There is no implication in that section that only one PTR record is permitted for a name.  No such restriction should be inferred.</p>
+<p> 对规范名称的混淆导致了一个误解，即PTR记录应在其RRSet中有且仅有一个RR。这是不正确的，RFC1034的相关部分（第3.6.2节）指出PTR记录的值应是一个规范名称。也就是说，它不应是一个别名。该节中并未暗示一个名称只允许一个PTR记录。不应推断出这样的限制。</p>
+<p> Note that while the value of a PTR record must not be an alias, there is no requirement that the process of resolving a PTR record not encounter any aliases.  The label that is being looked up for a PTR value might have a CNAME record.  That is, it might be an alias.  The value of that CNAME RR, if not another alias, which it should not be, will give the location where the PTR record is found.  That record gives the result of the PTR type lookup.  This final result, the value of the PTR RR, is the label which must not be an alias.</p>
+<p> 注意，虽然PTR记录的值不能是别名，但解析PTR记录的过程中遇到任何别名也没有要求。查找PTR值的标签可能有一个CNAME记录。这就是说，它可能是一个别名。该CNAME记录的值，如果不是另一个别名（应该不是），将提供PTR记录的位置。该记录给出PTR类型查询的结果。最终结果，PTR RR的值，是一个不能是别名的标签。</p>
+<h2 id="10-3-MX-and-NS-records-MX和NS记录"><a href="#10-3-MX-and-NS-records-MX和NS记录" class="headerlink" title="10.3. MX and NS records(MX和NS记录)"></a>10.3. MX and NS records(MX和NS记录)</h2><p> The domain name used as the value of a NS resource record, or part of the value of a MX resource record must not be an alias.  Not only is the specification clear on this point, but using an alias in either of these positions neither works as well as might be hoped, nor well fulfills the ambition that may have led to this approach.  This domain name must have as its value one or more address records. Currently those will be A records, however in the future other record types giving addressing information may be acceptable.  It can also have other RRs, but never a CNAME RR.</p>
+<p> 用作NS资源记录值的域名，或用作MX资源记录部分的域名不能是一个别名。不仅规范在这一点上很明确，在这两个位置使用别名效果也可能不如预期的那样好，也不能很好地实现可能导致采用这种方法的目标。这个域名必须有一个或多个地址记录。目前这些将是A记录，不过将来其他提供地址信息的记录类型可能是可接受的。它也可以有其他RR，但绝不能是CNAME RR。</p>
+<p> Searching for either NS or MX records causes “additional section processing” in which address records associated with the value of the record sought are appended to the answer.  This helps avoid needless extra queries that are easily anticipated when the first was made.</p>
+<p> 搜索NS或MX记录会导致“附加部分处理”，其中与所查记录值相关的地址记录会附加到答案中。这有助于避免在第一次查询时容易预见的多余查询。</p>
+<p> Additional section processing does not include CNAME records, let alone the address records that may be associated with the canonical name derived from the alias.  Thus, if an alias is used as the value of an NS or MX record, no address will be returned with the NS or MX value.  This can cause extra queries, and extra network burden, on every query.  It is trivial for the DNS administrator to avoid this by resolving the alias and placing the canonical name directly in the affected record just once when it is updated or installed.  In some particular hard cases the lack of the additional section address records in the results of a NS lookup can cause the request to fail.</p>
+<p> 附加部分处理不包括CNAME记录，更不包括与从别名派生出来的规范名称相关的地址记录。因此，如果用作NS或MX记录值的是别名，NS或MX值将不会返回任何地址。这会导致每次查询时的额外查询和额外的网络负担。通过在更新或安装时解析别名并直接在受影响的记录中放置规范名称，DNS管理员可以轻松避免这一点。在某些特殊困难情况下，缺少NS查找结果中的附加部分地址记录可能会导致请求失败。</p>
+<h1 id="11-Name-syntax-名称语法"><a href="#11-Name-syntax-名称语法" class="headerlink" title="11. Name syntax(名称语法)"></a>11. Name syntax(名称语法)</h1><p> Occasionally it is assumed that the Domain Name System serves only the purpose of mapping Internet host names to data, and mapping Internet addresses to host names.  This is not correct, the DNS is a general (if somewhat limited) hierarchical database, and can store almost any kind of data, for almost any purpose.</p>
+<p> 偶尔有人认为域名系统（DNS）仅用于将互联网主机名映射到数据，以及将互联网地址映射到主机名。这是不正确的，DNS是一个通用的（尽管有些有限制的）层级数据库，可以存储几乎任何类型的数据，用于几乎任何目的。</p>
+<p> The DNS itself places only one restriction on the particular labels that can be used to identify resource records.  That one restriction relates to the length of the label and the full name.  The length of any one label is limited to between 1 and 63 octets.  A full domain name is limited to 255 octets (including the separators).  The zero length full name is defined as representing the root of the DNS tree, and is typically written and displayed as “.”.  Those restrictions aside, any binary string whatever can be used as the label of any resource record.  Similarly, any binary string can serve as the value of any record that includes a domain name as some or all of its value (SOA, NS, MX, PTR, CNAME, and any others that may be added). Implementations of the DNS protocols must not place any restrictions on the labels that can be used.  In particular, DNS servers must not refuse to serve a zone because it contains labels that might not be acceptable to some DNS client programs.  A DNS server may be configurable to issue warnings when loading, or even to refuse to load, a primary zone containing labels that might be considered questionable, however this should not happen by default.</p>
+<p> DNS本身对用于标识资源记录的特定标签仅施加一个限制。这个限制与标签和完整名称的长度有关。任何一个标签的长度限制为1到63个八位字节。完整域名的长度限制为255个八位字节（包括分隔符）。定义零长度完整名称表示DNS树的根，通常写作并显示为”.”. 除了这些限制之外，任何二进制字符串都可以用作任何资源记录的标签。同样，任何二进制字符串都可以用作包括域名作为其值的一部分或全部的任何记录的值（SOA，NS，MX，PTR，CNAME，及其他可能添加的记录）。DNS协议的实现不得对可以使用的标签施加任何限制。特别是，DNS服务器不能因为某些标签可能不被某些DNS客户端程序接受而拒绝为一个区域提供服务。DNS服务器可以配置为在加载一个主要区域时发出警告，甚至拒绝加载包含可能被认为有问题的标签的主要区域，但默认情况下不应如此。</p>
+<p> Note however, that the various applications that make use of DNS data can have restrictions imposed on what particular values are acceptable in their environment.  For example, that any binary label can have an MX record does not imply that any binary name can be used as the host part of an e-mail address.  Clients of the DNS can impose whatever restrictions are appropriate to their circumstances on the values they use as keys for DNS lookup requests, and on the values returned by the DNS.  If the client has such restrictions, it is solely responsible for validating the data from the DNS to ensure that it conforms before it makes any use of that data.</p>
+<p> 但是，使用DNS数据的各种应用程序可以对其环境中可接受的特定值施加限制。例如，任何二进制标签都可以有MX记录，这并不意味着任何二进制名称可以用作电子邮件地址的主机部分。DNS的客户端可以对它们用作DNS查询请求的键值以及DNS返回的值施加适当的限制。如果客户端有这样的限制，它完全负责验证来自DNS的数据，以确保其符合在使用这些数据之前。</p>
+<p> See also [RFC1123] section 6.1.3.5.</p>
+<p> 另见[RFC1123]第6.1.3.5节。</p>
+<h1 id="12-Security-Considerations-安全考虑"><a href="#12-Security-Considerations-安全考虑" class="headerlink" title="12. Security Considerations(安全考虑)"></a>12. Security Considerations(安全考虑)</h1><p> This document does not consider security.</p>
+<p> 本文档不考虑安全问题。</p>
+<p> In particular, nothing in section 4 is any way related to, or useful for, any security related purposes.</p>
+<p> 特别是，第4节中的内容与任何安全相关的目的无关，也无任何用处</p>
+<p> Section 5.4.1 is also not related to security.  Security of DNS data will be obtained by the Secure DNS [RFC2065], which is mostly orthogonal to this memo.</p>
+<p> 第5.4.1节也与安全无关。DNS数据的安全将通过安全DNS [RFC2065]获得，这与本备忘录基本无关。</p>
+<p> It is not believed that anything in this document adds to any security issues that may exist with the DNS, nor does it do anything to that will necessarily lessen them.  Correct implementation of the clarifications in this document might play some small part in limiting the spread of non-malicious bad data in the DNS, but only DNSSEC can help with deliberate attempts to subvert DNS data.</p>
+<p> 本文档中认为没有任何内容增加了与DNS相关的任何安全问题，也没有任何内容必然会减少这些问题。正确实施本文档中的澄清可能会在限制DNS中非恶意错误数据传播方面发挥一些小作用，但只有DNSSEC才能帮助对抗故意企图颠覆DNS数据的行为。</p>
+<h1 id="13-References"><a href="#13-References" class="headerlink" title="13. References"></a>13. References</h1><p>[RFC1034]   Mockapetris, P., “Domain Names - Concepts and Facilities”,<br>            STD 13, RFC 1034, November 1987.</p>
+<p>[RFC1035]   Mockapetris, P., “Domain Names - Implementation and<br>            Specification”, STD 13, RFC 1035, November 1987.</p>
+<p>[RFC1123]   Braden, R., “Requirements for Internet Hosts - application<br>            and support”, STD 3, RFC 1123, January 1989.</p>
+<p>[RFC1700]   Reynolds, J., Postel, J., “Assigned Numbers”,<br>            STD 2, RFC 1700, October 1994.</p>
+<p>[RFC2065]   Eastlake, D., Kaufman, C., “Domain Name System Security<br>            Extensions”, RFC 2065, January 1997.</p>
+<h1 id="14-Acknowledgements"><a href="#14-Acknowledgements" class="headerlink" title="14. Acknowledgements"></a>14. Acknowledgements</h1><p>This memo arose from discussions in the DNSIND working group of the IETF in 1995 and 1996, the members of that working group are largely responsible for the ideas captured herein.  Particular thanks to Donald E. Eastlake, 3rd, and Olafur Gudmundsson, for help with the DNSSEC issues in this document, and to John Gilmore for pointing out where the clarifications were not necessarily clarifying.  Bob Halley suggested clarifying the placement of SOA records in authoritative answers, and provided the references.  Michael Patton, as usual, and Mark Andrews, Alan Barrett and Stan Barber provided much assistance with many details.  Josh Littlefield helped make sure that the clarifications didn’t cause problems in some irritating corner cases.</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/devops/">devops</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/dns/">dns</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/11/06/06%E6%9D%82%E9%A1%B9/02hexo%E5%88%9B%E5%BB%BA%E7%AB%99%E7%82%B9/">
+                        <span class="hidden-mobile">hexo+github+gitee创建个人站点</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
