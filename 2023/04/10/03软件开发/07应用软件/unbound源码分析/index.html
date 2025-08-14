@@ -16,15 +16,15 @@
   <meta name="author" content="Fly542">
   <meta name="keywords" content="">
   
-    <meta name="description" content="源码分析初始化核心流程123456789101112131415main---------------------------------------unbound.c    &#x2F;&#x2F; 程序入口    run_daemon-----------------------------unbound.c    &#x2F;&#x2F; 启动守护服务        daemon_open_shared_ports-------u">
+    <meta name="description" content="源码分析重要结构体说明   结构体名 定义位置 说明    query_info util&#x2F;data&#x2F;msgreply.h 存储DNS查询信息的结构体   reply_info util&#x2F;data&#x2F;msgreply.h 存储DNS查询和回复数据包的结构   comm_point util&#x2F;netevent.h 和网络通信有关的结构体   初始化核心流程123456789101112131415ma">
 <meta property="og:type" content="article">
 <meta property="og:title" content="unbound源码分析">
 <meta property="og:url" content="http://fly542.cn/2023/04/10/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/07%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6/unbound%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/index.html">
 <meta property="og:site_name" content="Fly542 技术沉淀">
-<meta property="og:description" content="源码分析初始化核心流程123456789101112131415main---------------------------------------unbound.c    &#x2F;&#x2F; 程序入口    run_daemon-----------------------------unbound.c    &#x2F;&#x2F; 启动守护服务        daemon_open_shared_ports-------u">
+<meta property="og:description" content="源码分析重要结构体说明   结构体名 定义位置 说明    query_info util&#x2F;data&#x2F;msgreply.h 存储DNS查询信息的结构体   reply_info util&#x2F;data&#x2F;msgreply.h 存储DNS查询和回复数据包的结构   comm_point util&#x2F;netevent.h 和网络通信有关的结构体   初始化核心流程123456789101112131415ma">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-04-10T01:18:04.000Z">
-<meta property="article:modified_time" content="2024-08-26T02:05:22.393Z">
+<meta property="article:modified_time" content="2025-05-21T08:48:29.298Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="dns">
 <meta property="article:tag" content="unbound">
@@ -198,7 +198,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      6.4k 字
+      6.8k 字
     </span>
   
 
@@ -207,7 +207,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      54 分钟
+      57 分钟
     </span>
   
 
@@ -239,7 +239,31 @@
             <h1 style="display: none">unbound源码分析</h1>
             
             <div class="markdown-body">
-              <h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><h2 id="初始化核心流程"><a href="#初始化核心流程" class="headerlink" title="初始化核心流程"></a>初始化核心流程</h2><figure class="highlight stylus"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></div></td><td class="code"><pre><code class="hljs stylus">main---------------------------------------unbound<span class="hljs-selector-class">.c</span>    <span class="hljs-comment">// 程序入口</span><br>    run_daemon-----------------------------unbound<span class="hljs-selector-class">.c</span>    <span class="hljs-comment">// 启动守护服务</span><br>        daemon_open_shared_ports-------unbound<span class="hljs-selector-class">.c</span>    <span class="hljs-comment">// 打开监听端口</span><br>        daemon_fork------------------------daemon<span class="hljs-selector-class">.c</span>     <span class="hljs-comment">// 启动服务</span><br>                daemon_create_workers----------daemon<span class="hljs-selector-class">.c</span>     <span class="hljs-comment">// 创建工作线程对象和资源</span><br>                        worker_create--------------worker<span class="hljs-selector-class">.c</span>     <span class="hljs-comment">// 创建各个工作线程对象，每个对象负责部分部分临时端口数据</span><br>														<span class="hljs-comment">// 的接收和发送</span><br>                worker_init--------------------worker<span class="hljs-selector-class">.c</span>     <span class="hljs-comment">// 工作线程初始化，worker_start_accept，</span><br>                        worker_start_accept--------worker<span class="hljs-selector-class">.c</span>     <span class="hljs-comment">// 启动监听并accept</span><br>                        worker_handle_request------worker<span class="hljs-selector-class">.c</span>     <span class="hljs-comment">// 请求处理函数</span><br>                        tube_setup_bg_listen-------util/tube<span class="hljs-selector-class">.c</span>  <span class="hljs-comment">// 管理命令后台监听服务</span><br>                daemon_start_others(daemon)---------daemon<span class="hljs-selector-class">.c</span>    <span class="hljs-comment">// 启动非主线程的其他工作线程</span><br>                        thread_start--------------------daemon<span class="hljs-selector-class">.c</span>    <span class="hljs-comment">//线程工作函数</span><br>                                worker_work(worker)---------wroker<span class="hljs-selector-class">.c</span>    <span class="hljs-comment">// 工作线程进入工作循环</span><br>                worker_work(daemon-&gt;workers<span class="hljs-selector-attr">[0]</span>)-----worker<span class="hljs-selector-class">.c</span>   <span class="hljs-comment">// 启动主工作线程循环处理事件，大家都监听udp端口进行数据循环处理</span><br></code></pre></td></tr></table></figure>
+              <h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><h2 id="重要结构体说明"><a href="#重要结构体说明" class="headerlink" title="重要结构体说明"></a>重要结构体说明</h2><table>
+<thead>
+<tr>
+<th>结构体名</th>
+<th>定义位置</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>query_info</td>
+<td>util/data/msgreply.h</td>
+<td>存储DNS查询信息的结构体</td>
+</tr>
+<tr>
+<td>reply_info</td>
+<td>util/data/msgreply.h</td>
+<td>存储DNS查询和回复数据包的结构</td>
+</tr>
+<tr>
+<td>comm_point</td>
+<td>util/netevent.h</td>
+<td>和网络通信有关的结构体</td>
+</tr>
+</tbody></table>
+<h2 id="初始化核心流程"><a href="#初始化核心流程" class="headerlink" title="初始化核心流程"></a>初始化核心流程</h2><figure class="highlight stylus"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></div></td><td class="code"><pre><code class="hljs stylus">main---------------------------------------unbound<span class="hljs-selector-class">.c</span>    <span class="hljs-comment">// 程序入口</span><br>    run_daemon-----------------------------unbound<span class="hljs-selector-class">.c</span>    <span class="hljs-comment">// 启动守护服务</span><br>        daemon_open_shared_ports-------unbound<span class="hljs-selector-class">.c</span>    <span class="hljs-comment">// 打开监听端口</span><br>        daemon_fork------------------------daemon<span class="hljs-selector-class">.c</span>     <span class="hljs-comment">// 启动服务</span><br>                daemon_create_workers----------daemon<span class="hljs-selector-class">.c</span>     <span class="hljs-comment">// 创建工作线程对象和资源</span><br>                        worker_create--------------worker<span class="hljs-selector-class">.c</span>     <span class="hljs-comment">// 创建各个工作线程对象，每个对象负责部分部分临时端口数据</span><br>														<span class="hljs-comment">// 的接收和发送</span><br>                worker_init--------------------worker<span class="hljs-selector-class">.c</span>     <span class="hljs-comment">// 工作线程初始化，worker_start_accept，</span><br>                        worker_start_accept--------worker<span class="hljs-selector-class">.c</span>     <span class="hljs-comment">// 启动监听并accept</span><br>                        worker_handle_request------worker<span class="hljs-selector-class">.c</span>     <span class="hljs-comment">// 请求处理函数</span><br>                        tube_setup_bg_listen-------util/tube<span class="hljs-selector-class">.c</span>  <span class="hljs-comment">// 管理命令后台监听服务</span><br>                daemon_start_others(daemon)---------daemon<span class="hljs-selector-class">.c</span>    <span class="hljs-comment">// 启动非主线程的其他工作线程</span><br>                        thread_start--------------------daemon<span class="hljs-selector-class">.c</span>    <span class="hljs-comment">//线程工作函数</span><br>                                worker_work(worker)---------wroker<span class="hljs-selector-class">.c</span>    <span class="hljs-comment">// 工作线程进入工作循环</span><br>                worker_work(daemon-&gt;workers<span class="hljs-selector-attr">[0]</span>)-----worker<span class="hljs-selector-class">.c</span>   <span class="hljs-comment">// 启动主工作线程循环处理事件，大家都监听udp端口进行数据循环处理</span><br></code></pre></td></tr></table></figure>
 
 <h2 id="工作线程循环处理事件"><a href="#工作线程循环处理事件" class="headerlink" title="工作线程循环处理事件"></a>工作线程循环处理事件</h2><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli">main<span class="hljs-params">---------daemon/unbound</span>.c<br>    run_daemon<span class="hljs-params">---------daemon/unbound</span>.c<br>        daemon_fork <span class="hljs-params">--------------daemon/daemon</span>.c<br>            worker_work<span class="hljs-params">-----worker</span>.c<br>                comm_base_dispatch<span class="hljs-params">----------util/netevent</span>.c<br>                    ub_event_base_dispatch<span class="hljs-params">-------util/ub_event</span>.c   <span class="hljs-string">//</span> 事件封装<br>                        event_base_dispatch<span class="hljs-params">------util/mini_event</span>.c <span class="hljs-string">//</span> 进入while事件循环处理过程 《事件处理可替换为libevent》<br>                            handle_select<span class="hljs-params">--------util/mini_event</span>.c  <span class="hljs-string">//</span> 调用selec阻塞等待事件并回调处理函数<br></code></pre></td></tr></table></figure>
 
@@ -331,6 +355,9 @@
 <p>这些模块可以通过配置文件中的 <code>module-config</code> 选项进行加载和配置，以实现各种不同的功能。同时，Unbound还支持许多其他模块，如dnstap模块、subnetcachedb模块、python_certgen模块等，可以根据需要选择适当的模块来实现自己的需求。</p>
 <ul>
 <li>1.6.7版 编译加–enable-subnet后默认将启动三个插件，按执行顺序分别是subnetcache,validator,iterator,所以mesh_run的执行顺序是按照这个插件顺序执行的。</li>
+</ul>
+<h1 id="常用测试代码"><a href="#常用测试代码" class="headerlink" title="常用测试代码"></a>常用测试代码</h1><ul>
+<li>获取连接客户端ip地址<figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs clojure">&#123;<br>    char ip[<span class="hljs-number">128</span>]<span class="hljs-comment">;</span><br>    struct sockaddr_storage *addr = &amp;repinfo-&gt;addr;<br>    addr_to_str(<span class="hljs-name">addr</span>, repinfo-&gt;addrlen, ip, sizeof(<span class="hljs-name">ip</span>))<span class="hljs-comment">;</span><br>    log_info(<span class="hljs-string">&quot;@@@@Client IP= %s#%d\n&quot;</span>, ip,<br>            ntohs(((<span class="hljs-name">struct</span> sockaddr_in *)addr)-&gt;sin_port))<span class="hljs-comment">;</span><br>&#125;<br></code></pre></td></tr></table></figure></li>
 </ul>
 
             </div>
