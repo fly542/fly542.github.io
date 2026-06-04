@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://fly542.cn/2020/08/26/03%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/03linux/01DNS%E5%8D%8F%E8%AE%AE/srv.png">
 <meta property="article:published_time" content="2020-08-26T13:10:15.000Z">
-<meta property="article:modified_time" content="2024-06-20T06:28:11.685Z">
+<meta property="article:modified_time" content="2026-06-04T03:06:14.170Z">
 <meta property="article:author" content="Fly542">
 <meta property="article:tag" content="linux">
 <meta property="article:tag" content="dns">
@@ -200,7 +200,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      20k 字
+      21k 字
     </span>
   
 
@@ -209,7 +209,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      171 分钟
+      172 分钟
     </span>
   
 
@@ -253,73 +253,104 @@
 </ul>
 <p>剩下的3个段包含相同的格式:一系列可能为空的<a href="#rr">资源记录(RR)</a>。 Answer段包含回答问题的RR列表；Authority段包含授权域名服务器的RR列表； <span id=additional> Additional</span>段包含和请求相关的RR列表，但这些附件的RR不是必须回答的。</p>
 <h2 id="报文头-Header"><a href="#报文头-Header" class="headerlink" title="报文头(Header)"></a>报文头(Header)</h2><p>DNS的报文头由固定的12个字节构成。</p>
-<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--+<br><span class="hljs-section">|                      ID                       |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|QR|  Opcode   |AA|TC|RD|RA|   Z    |   RCODE   |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    QDCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    ANCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    NSCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    ARCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--<span class="hljs-code">+--+</span>--+<br><span class="hljs-section">|                      ID                       |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|QR|  Opcode   |AA|TC|RD|RA| Z|AD|CD|   RCODE   |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    QDCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    ANCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    NSCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="hljs-section">|                    ARCOUNT                    |</span><br><span class="hljs-section">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></code></pre></td></tr></table></figure>
 
 <p>字段介绍如下：</p>
 <table>
 <thead>
 <tr>
+<th>位序号</th>
 <th>字段简写</th>
 <th>字段长度</th>
 <th>说明</th>
 </tr>
 </thead>
 <tbody><tr>
+<td>16位中序号</td>
 <td>ID</td>
 <td>16 bits无符号整数</td>
 <td>客户端设置，响应报文会原样带回，用于客户端区分不同的请求应答；</td>
 </tr>
 <tr>
+<td>0</td>
 <td>QR</td>
 <td>1 bit</td>
 <td>区分是请求还是应答<br>0 请求<br>1 应答</td>
 </tr>
 <tr>
+<td>1</td>
 <td>Opcode</td>
 <td>4 bits</td>
 <td>设置查询的种类，响应报文会原样带回.<br> 0 标准查询 QUERY；<br> 1 反向查询 IQUERY；<br> 2 服务器状态查询 STATUS；<br> 5 增量更新<br> 3~15 保留；</td>
 </tr>
 <tr>
+<td>5</td>
 <td>AA</td>
 <td>1bit</td>
 <td>授权应答 AuthoritativeAnswer，响应报文生效，用于标示服务器响应报文是否为授权服务器返回的结果，可能是在本地 Cache 的缓存；</td>
 </tr>
 <tr>
+<td>6</td>
 <td>TC</td>
 <td>1bit</td>
 <td>截断 TrunCation，报文因为超过了允许的长度，导致被截断；</td>
 </tr>
 <tr>
+<td>7</td>
 <td>RD</td>
 <td>1bit</td>
 <td>用于请求报文，代表期望是否使用递归查询；<br>0 不使用递归查询<br>1 使用递归查询</td>
 </tr>
 <tr>
+<td>8</td>
 <td>RA</td>
 <td>1bit</td>
 <td>用于响应报文中，表示服务端是否支持递归查询<br>0 不支持递归<br>1 支持递归</td>
 </tr>
 <tr>
+<td>9</td>
+<td>Z</td>
+<td>1bit</td>
+<td>保持0。RFC 1035 严格规定”在所有的查询和响应中Z代表的3个位必须置零”<br>后因RFC 4035 / RFC 6895要支持DNSSEC，第10和第11被占用,Z现在只剩余第9位</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Z–AD</td>
+<td>1bit</td>
+<td>响应中表示数据通过了安全验证(RFC 4035 / RFC 6895)</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Z–CD</td>
+<td>1bit</td>
+<td>查询中要求服务器不要做验证(RFC 4035 / RFC 6895)</td>
+</tr>
+<tr>
+<td>12</td>
 <td>RCODE</td>
 <td>4 bits</td>
 <td>应答码 ResponseCode，会在响应报文中设置。<br> 0 没有错误；<br> 1 报文格式错误(Format Error)，服务器解析请求报文时报错<br> 2 服务器失败(Server Failure)，意思是服务器失败，也就是这个域名的权威服务器拒绝响应或者响应REFUSE，递归服务器返回Rcode值为2给CLIENT<br> 3 名字错误(Name Error)，对应的DNS应答状态为NXDOMAIN，意思是不存在的记录，也就是这个具体的域名在权威服务器中并不存在<br>  4 没有实现(Not Implemented)，域名服务器不支持查询类型<br>  5 拒绝(Refused)，由于服务器设置的策略拒绝给出应答，通常是安全的配置；也就是这个请求源IP不在服务的范围内<br>  6-15 保留值，暂未使用。</td>
 </tr>
 <tr>
+<td></td>
 <td>QDCOUNT</td>
 <td>16 bits 无符号整数</td>
 <td>请求段中的<a href="#rr">RR</a>数</td>
 </tr>
 <tr>
+<td></td>
 <td>ANCOUNT</td>
 <td>16 bits 无符号整数</td>
 <td>应答段中的<a href="#rr">RR</a>数,</td>
 </tr>
 <tr>
+<td></td>
 <td>NSCOUNT</td>
 <td>16 bits 无符号整数</td>
 <td>报文授权段中的授权<a href="#rr">RR</a>数</td>
 </tr>
 <tr>
+<td></td>
 <td>ARCOUNT</td>
 <td>16 bits 无符号整数</td>
 <td>报文附加段中的附加<a href="#rr">RR</a>数</td>
@@ -1191,7 +1222,7 @@
 <figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs llvm">@ IN SOA lv<span class="hljs-number">3</span>ns<span class="hljs-number">1</span>.ffdns.net. webmaster.ffdns.net. (<br>    <span class="hljs-number">2009092868</span> <span class="hljs-comment">; Serial</span><br>    <span class="hljs-number">604800</span> <span class="hljs-comment">; Refresh</span><br>    <span class="hljs-number">3600</span> <span class="hljs-comment">; Retry</span><br>    <span class="hljs-number">2419200</span> <span class="hljs-comment">; Expire</span><br>    <span class="hljs-number">3600</span> ) <span class="hljs-comment">; Minimum</span><br></code></pre></td></tr></table></figure>
 
 <blockquote>
-<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#x77;&#x65;&#98;&#x6d;&#97;&#x73;&#x74;&#101;&#114;&#64;&#102;&#x66;&#100;&#x6e;&#x73;&#46;&#110;&#101;&#116;">&#x77;&#x65;&#98;&#x6d;&#97;&#x73;&#x74;&#101;&#114;&#64;&#102;&#x66;&#100;&#x6e;&#x73;&#46;&#110;&#101;&#116;</a>)`，即该 zone 的管理者信箱。</p>
+<p><strong>第一行：</strong><code>@</code>指代该 zone ； <code>lv3ns1.ffdns.net.</code>是该 zone 的授权主机；<code>webmaster.ffdns.net.</code>代表[<code>webmaster@ffdns.net](mailto:</code><a href="mailto:&#119;&#x65;&#x62;&#109;&#97;&#x73;&#116;&#x65;&#x72;&#x40;&#x66;&#102;&#x64;&#x6e;&#x73;&#x2e;&#110;&#x65;&#116;">&#119;&#x65;&#x62;&#109;&#97;&#x73;&#116;&#x65;&#x72;&#x40;&#x66;&#102;&#x64;&#x6e;&#x73;&#x2e;&#110;&#x65;&#116;</a>)`，即该 zone 的管理者信箱。</p>
 <p><strong>Serial：</strong>代表 zone file 的版本，每当 zone file 内容有变动，name server 管理者就应该增加这个号码，因为 slave 会将这个号码与其 copy 的那份比对以便决定是否要再 copy 一次（即进行 zone transfer ）。</p>
 <p><strong>Refresh：</strong> slave server 每隔这段时间(秒)，就去检查 master server 上的 serial number 。</p>
 <p><strong>Retry：</strong>当 slave server 无法和 master 进行 serial check 时，要每隔这段时间（秒） retry 一次。</p>
